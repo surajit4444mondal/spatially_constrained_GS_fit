@@ -30,6 +30,8 @@ The other 2 are spatial axes
 		return space_grad,time_grad
 	else:
 		raise RuntimeError("Array dimension not supported")
+		
+
 
 
 		
