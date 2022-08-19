@@ -38,13 +38,17 @@ class GS_minimizer:
 					    continue
 						
 					residual=np.sum((model[...,low_ind:high_ind+1]-spectrum)**2/error**2,axis=num_params)  
+					
 					### assumes that the first axis of model is the frequency axis
 					min_residual=np.min(residual)
 					pos=np.where(abs(residual-min_residual)<1e-5)
+					print (pos)
 					if len(pos[0])>1:
 					    print ("Multiple vals in "+str(y1)+" "+str(x1))
 					for i in range(num_params):
 						fitted[y1,x1,i]=param_vals[i][pos[i][0]]
 					fitted[t,y1,x1,num_params]=min_residual
 					del pos_freq,low_ind,high_ind
+					break
+				break
 		return fitted,param_names		
