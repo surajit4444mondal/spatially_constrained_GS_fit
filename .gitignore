@@ -3,3 +3,4 @@ __pycache__/*
 .eggs/*
 *.so
 *.html
+*.hdf5
