@@ -14,16 +14,14 @@ class GS_minimizer:
 		cube=self.spectral_cube.spectrum
 		err_cube=self.spectral_cube.error
 		model=self.model_structure.model
-		param_vals=self.model_structure.param_vals
-		param_names=self.model_structure.param_names
+		
 		num_params=self.model_structure.num_params
 		freqs=self.model_structure.freqs
 		
-		fitted=np.zeros((shape[1],shape[2],shape[3],num_params+1))
+		fitted=np.zeros((shape[0],shape[2],shape[3],num_params+1))
 		print ("Starting minimisation")
 		for t in range(shape[0]):
 			for y1 in range(shape[2]):
-				print (y1)
 				for x1 in range(shape[3]):
 					pos_freq=np.where((freqs>self.spectral_cube.lower_freq[t,y1,x1])&(freqs<self.spectral_cube.upper_freq[t,y1,x1]))[0]
 					low_ind=pos_freq[0]
@@ -42,13 +40,12 @@ class GS_minimizer:
 					### assumes that the first axis of model is the frequency axis
 					min_residual=np.min(residual)
 					pos=np.where(abs(residual-min_residual)<1e-5)
-					print (pos)
 					if len(pos[0])>1:
 					    print ("Multiple vals in "+str(y1)+" "+str(x1))
 					for i in range(num_params):
-						fitted[y1,x1,i]=param_vals[i][pos[i][0]]
+						fitted[t,y1,x1,i]=pos[i][0]
 					fitted[t,y1,x1,num_params]=min_residual
 					del pos_freq,low_ind,high_ind
-					break
-				break
-		return fitted,param_names		
+						
+				
+		return fitted	

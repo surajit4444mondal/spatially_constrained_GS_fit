@@ -7,7 +7,7 @@ from libc.string cimport memcpy
 #@cython.boundscheck(False)
 #@cython.wraparound(False)
 
-cdef int find_min_freq(numpy.ndarray[numpy.double_t,ndim=1] freqs,double lower_freq,int num_freqs):
+cdef int find_min_freq(double * freqs,double lower_freq,int num_freqs):
 	cdef int i
 	if freqs[0]>=lower_freq:
 		return 0
@@ -17,7 +17,7 @@ cdef int find_min_freq(numpy.ndarray[numpy.double_t,ndim=1] freqs,double lower_f
 		if freqs[i]>lower_freq and freqs[i-1]<lower_freq:
 			return i
 
-cdef int find_max_freq(numpy.ndarray[numpy.double_t,ndim=1] freqs,double upper_freq,int num_freqs):
+cdef int find_max_freq(double * freqs,double upper_freq,int num_freqs):
 	cdef int i
 	for i in range(num_freqs-1):
 		if freqs[i]==upper_freq:
@@ -45,25 +45,23 @@ cdef int detect_low_snr_freqs(double *spectrum,double *rms, double rms_thresh, i
 cdef double square(double x):
 	return x*x	
 	
-cdef void fill_value(numpy.ndarray[numpy.double_t,ndim=1] model, double * model_comb, int num_freqs):	
+cdef void fill_value(double [:] model, double * model_comb, int num_freqs):	
 	cdef int i
 	for i in range(num_freqs):
 		model_comb[i]=model[i]
 		
 	return
 
-cdef double min_chi_square(numpy.ndarray[numpy.double_t,ndim=1] model,\
+cdef double min_chi_square(double [:]  model,\
 		double *spectrum,double *error,int low_ind,int high_ind, \
 		double rms_thresh, double *rms, int num_params, int num_freqs, \
-		numpy.ndarray[numpy.int_t,ndim=1]param_lengths, int *low_snr_freqs,\
+		int *param_lengths, int *low_snr_freqs,\
 		double sys_error, int * param_inds):
 	
 	cdef double min_chi=1e100
 	cdef int i,j,min_ind
 	cdef double chi=0.0
-	cdef double *model_comb
 	
-	model_comb=<double *>PyMem_Malloc(num_freqs*sizeof(double))
 	
 	cdef int num_elem_model,num_param_comb=1
 	
@@ -71,14 +69,16 @@ cdef double min_chi_square(numpy.ndarray[numpy.double_t,ndim=1] model,\
 		num_param_comb=num_param_comb*param_lengths[i]
 	num_elem_model=num_param_comb*num_freqs
 	cdef int k=0
-	for i in range(0,num_elem_model,num_freqs):
-		fill_value(model[i:i+num_freqs],model_comb,num_freqs)
+	
+	i=0
+	while i<num_elem_model:
+	#for i in range(0,num_elem_model,num_freqs):
 		chi=0.0
 		for j in range(low_ind,high_ind+1):
 			if low_snr_freqs[j]==0:
-				chi=chi+square((spectrum[j]-model_comb[j])/error[j])
+				chi=chi+square((spectrum[j]-model[i+j])/error[j])
 			else:
-				if model_comb[j]>(1+sys_error)*rms_thresh*rms[j]:
+				if model[i+j]>(1+sys_error)*rms_thresh*rms[j]:
 					chi=chi+1000   ### above the upper limit. Hence a high value to the chi square
 				else:
 					chi=chi+0.0
@@ -87,7 +87,8 @@ cdef double min_chi_square(numpy.ndarray[numpy.double_t,ndim=1] model,\
 			min_chi=chi
 			min_ind=k
 		k=k+1
-	PyMem_Free(model_comb)
+		i=i+num_freqs
+	
 	
 	for i in range(num_params-1,-1,-1):
 		param_inds[i]=min_ind%param_lengths[i]
@@ -131,13 +132,25 @@ cpdef numpy.ndarray[numpy.double_t,ndim=1] compute_min_chi_square(numpy.ndarray[
 	cdef int low_snr_freq_num
 	cdef double red_chi
 	
+	cdef int *param_lengths1
+	param_lengths1=<int *>PyMem_Malloc(num_params*sizeof(int))
+	
+	cdef double *freqs1
+	freqs1=<double *>PyMem_Malloc(num_freqs*sizeof(double))
+	
+	for i in range(num_params):
+		param_lengths1[i]=param_lengths[i]  #### making it a raw pointer. Faster access
+	
+	for i in range(num_freqs):
+		freqs1[i]=freqs[i]
+		
 	for t in range(num_times):
 		for i in range(num_freqs):
 			rms[i]=err_cube[t,i]
 		for y1 in range(num_y):
 			for x1 in range(num_x):
-				low_ind=find_min_freq(freqs,lower_freq[t,y1,x1],num_freqs)
-				high_ind=find_max_freq(freqs,upper_freq[t,y1,x1],num_freqs)
+				low_ind=find_min_freq(freqs1,lower_freq[t,y1,x1],num_freqs)
+				high_ind=find_max_freq(freqs1,upper_freq[t,y1,x1],num_freqs)
 				for j in range(num_freqs):
 					spectrum[j]=cube[t,j,y1,x1]
 					sys_err[j]=sys_error*spectrum[j]
@@ -152,13 +165,13 @@ cpdef numpy.ndarray[numpy.double_t,ndim=1] compute_min_chi_square(numpy.ndarray[
 					continue
 				
 				red_chi=min_chi_square(model,spectrum,error,low_ind,high_ind,\
-						rms_thresh,rms,num_params,num_freqs,param_lengths,pos,sys_error,param_ind)
+						rms_thresh,rms,num_params,num_freqs,param_lengths1,pos,sys_error,param_ind)
 				
 				for l in range(num_params):
 					fitted[t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+l]=param_ind[l]
 				fitted[t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params]=red_chi
-				break
-			break	
+				
+			
 	PyMem_Free(pos)
 	PyMem_Free(param_ind)
 	PyMem_Free(spectrum)

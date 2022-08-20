@@ -28,6 +28,7 @@ class Model:
 		self.param_vals=params
 		self.param_names=param_names
 		hf.close()
+	
 
 time_slice='190200_190210'
 model_file='/home/surajit/Downloads/20210507/eovsa_data/model_gs_spectra.hdf5'
@@ -57,16 +58,30 @@ spectrum.read_map()
 #plt.imshow(spec[0,25,:,:],origin='lower')
 #plt.show()
 
-start=time.time()
-gs_minimizer=GS_minimizer(model,spectrum,sys_error=sys_error,rms_thresh=rms_thresh,min_freq_num=min_freq_num)
-fitted=gs_minimizer.fit_data()
-end=time.time()
-print (end-start)
 
+#gs_minimizer=GS_minimizer(model,spectrum,sys_error=sys_error,rms_thresh=rms_thresh,min_freq_num=min_freq_num)
+#fitted=gs_minimizer.fit_data()
+
+
+start=time.time()
+param_lengths=np.zeros(len(model.param_names),dtype=int)
+shape=np.shape(model.model)
+
+for i in range(model.num_params):
+	param_lengths[i]=shape[i]
 
 spectrum_shape=np.shape(spectrum.spectrum)
+model1=np.ravel(model.model)
 
-print (fitted.shape,spectrum_shape)
+f1=chi_mod.compute_min_chi_square(model1,spectrum.spectrum,spectrum.error,spectrum.lower_freq,\
+		spectrum.upper_freq,param_lengths,model.freqs,sys_error,rms_thresh,min_freq_num,\
+		model.num_params, spectrum_shape[0],spectrum_shape[1],spectrum_shape[2],\
+		spectrum_shape[3])
+
+f1=f1.reshape((spectrum_shape[0],spectrum_shape[2],spectrum_shape[3],model.num_params+1))
+#print (f1[0,0,0,:])
+end=time.time()
+print (end-start)
 
 param_maps=np.zeros((spectrum_shape[0],spectrum_shape[2],spectrum_shape[3],model.num_params))
 chi_map=np.zeros((spectrum_shape[0],spectrum_shape[2],spectrum_shape[3]))
@@ -75,12 +90,12 @@ for t in range(spectrum_shape[0]):
 	for y1 in range(spectrum_shape[2]):
 		for x1 in range(spectrum_shape[3]):
 			for m in range(model.num_params):
-				param_maps[t,y1,x1,m]=model.param_vals[m][int(fitted[t,y1,x1,m])]
-			chi_map[t,y1,x1]=fitted[t,y1,x1,model.num_params]
+				param_maps[t,y1,x1,m]=model.param_vals[m][int(f1[t,y1,x1,m])]
+			chi_map[t,y1,x1]=f1[t,y1,x1,model.num_params]
 
 param_names=model.param_names
 
-hf=h5py.File("fitted_param_maps_python.hdf5",'w')
+hf=h5py.File("fitted_param_maps.hdf5",'w')
 hf.attrs['xmin']=xmin
 hf.attrs['ymin']=ymin
 hf.attrs['xmax']=xmax
@@ -97,26 +112,4 @@ for n,key in enumerate(param_names):
 hf.create_dataset('chi_sq',data=chi_map[:,:,:])
 hf.close()
 
-'''
-start=time.time()
-param_lengths=np.zeros(len(model.param_names),dtype=int)
-shape=np.shape(model.model)
 
-for i in range(len(model.param_names)):
-	param_lengths[i]=shape[i]
-
-spectrum_shape=np.shape(spectrum.spectrum)
-model1=np.ravel(model.model)
-
-f1=chi_mod.compute_min_chi_square(model1,spectrum.spectrum,spectrum.error,spectrum.lower_freq,\
-		spectrum.upper_freq,param_lengths,model.freqs,sys_error,rms_thresh,min_freq_num,\
-		len(model.param_names), spectrum_shape[0],spectrum_shape[1],spectrum_shape[2],\
-		spectrum_shape[3])
-
-f1=f1.reshape((spectrum_shape[0],spectrum_shape[2],spectrum_shape[3],len(model.param_names)+1))
-
-
-print (f1[0,0,0,:])
-end=time.time()
-print (end-start)
-'''
