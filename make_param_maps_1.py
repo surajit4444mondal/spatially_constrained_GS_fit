@@ -4,7 +4,7 @@ import time
 #from get_model import Model
 from spectrum import Spectrum
 from gs_minimizer import GS_minimizer
-import calculate_chi_square as chi_mod
+import spatial_minimiser as chi_mod
 import h5py
 
 class Model:
@@ -30,17 +30,17 @@ class Model:
 		hf.close()
 	
 
-time_slice='185900_185910'
+time_slice='190200_190210'
 model_file='/home/surajit/Downloads/20210507/eovsa_data/model_gs_spectra.hdf5'
 outfile='model_paramaters_'+time_slice+'.hdf5'
 lower_freq=2
-upper_freq=14
+upper_freq=15
 
 
-xmin=550
-ymin=520
-xmax=554
-ymax=524
+xmin=519
+ymin=482
+xmax=576
+ymax=558
 lowest_freq=2
 highest_freq=15
 sys_error=0.2
@@ -92,10 +92,10 @@ for t in range(spectrum_shape[0]):
 			for m in range(model.num_params):
 				param_maps[t,y1,x1,m]=model.param_vals[m][int(f1[t,y1,x1,m])]
 			chi_map[t,y1,x1]=f1[t,y1,x1,model.num_params]
-'''
+
 param_names=model.param_names
 
-hf=h5py.File("fitted_param_maps.hdf5",'w')
+hf=h5py.File("fitted_param_maps_"+time_slice+".hdf5",'w')
 hf.attrs['xmin']=xmin
 hf.attrs['ymin']=ymin
 hf.attrs['xmax']=xmax
@@ -111,5 +111,5 @@ for n,key in enumerate(param_names):
 	hf.create_dataset(key,data=param_maps[:,:,:,n])
 hf.create_dataset('chi_sq',data=chi_map[:,:,:])
 hf.close()
-'''
+
 

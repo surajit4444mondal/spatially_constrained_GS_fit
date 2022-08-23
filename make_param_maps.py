@@ -35,7 +35,7 @@ outfile='model_paramaters_'+time_slice+'.hdf5'
 lower_freq=2
 upper_freq=14
 
-
+'''
 xmin=550
 ymin=520
 xmax=551
@@ -45,6 +45,17 @@ highest_freq=15
 sys_error=0.2
 rms_thresh=3.0
 min_freq_num=10
+'''
+xmin=519
+ymin=482
+xmax=576
+ymax=558
+lowest_freq=2
+highest_freq=15
+sys_error=0.2
+rms_thresh=3.0
+min_freq_num=10
+
 
 spectrum_files=['/home/surajit/Downloads/20210507/eovsa_data/time_'+time_slice+'_scaled.fits']
 
@@ -79,8 +90,8 @@ for t in range(spectrum_shape[0]):
 			chi_map[t,y1,x1]=fitted[t,y1,x1,model.num_params]
 
 param_names=model.param_names
-'''
-hf=h5py.File("fitted_param_maps_python.hdf5",'w')
+
+hf=h5py.File("fitted_param_maps_"+time_slice+"_python.hdf5",'w')
 hf.attrs['xmin']=xmin
 hf.attrs['ymin']=ymin
 hf.attrs['xmax']=xmax
@@ -96,4 +107,4 @@ for n,key in enumerate(param_names):
 	hf.create_dataset(key,data=param_maps[:,:,:,n])
 hf.create_dataset('chi_sq',data=chi_map[:,:,:])
 hf.close()
-'''
+

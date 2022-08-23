@@ -34,9 +34,6 @@ class Spectrum:
 			if i==0:
 				spectrum=np.zeros((num_files,shape[0],shape[1],shape[2]))
 				error=np.zeros((num_files,shape[0]))
-				lower_freq=np.ones((num_files,shape[1],shape[2]))*self.lowest_freq
-				upper_freq=np.ones((num_files,shape[1],shape[2]))*self.highest_freq
-				upper_limit=np.zeros((num_files,shape[0],shape[1],shape[2]),dtype=bool)
 				
 			spectrum[i,:,:,:]=pgdata
 			rms=np.nanstd(rdata[0,:,0:full_shape[1]//3,0:full_shape[2]],axis=(1,2))  ### taking rms along
@@ -45,9 +42,6 @@ class Spectrum:
 		
 		self.spectrum=spectrum
 		self.error=error
-		self.lower_freq=lower_freq
-		self.upper_freq=upper_freq
-		self.upper_limit=upper_limit
 		
 	
 	

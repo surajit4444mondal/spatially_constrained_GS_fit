@@ -117,13 +117,20 @@ cdef int find_max_pos(double *spectrum, int *lower_freq_ind, int *upper_freq_ind
 			
 		
 cdef void calc_fitrange_homogenous(double *spectrum, int *lower_freq_ind, int *upper_freq_ind,int num_freqs):
-	cdef int max_loc=find_max_pos(spectrum,lower_freq_ind, upper_freq_ind, num_freqs)		
+	cdef int max_loc=find_max_pos(spectrum,lower_freq_ind, upper_freq_ind, num_freqs)
+			
 	cdef double *smoothed_spectrum
 	smoothed_spectrum=<double *>PyMem_Malloc(num_freqs*sizeof(double))
+	
+	
+		
 	cdef int smooth_length=3
 	cdef int i,j
 	cdef int smooth_interval=smooth_length//2
 	cdef double sum1
+	
+	for i in range(num_freqs):
+		smoothed_spectrum[i]=0.0
 	
 	for i in range(lower_freq_ind[0],upper_freq_ind[0]):
 		if i<smooth_interval:
@@ -278,7 +285,8 @@ cdef double calc_grad_chi(double [:]fitted, int num_times, int num_y, int num_x,
 			for x1 in range(num_x):
 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
 				ind3=t*num_y*num_x*num_params+y1*num_x*num_params+x1*num_params
-				if fitted[ind]>0:
+				
+				if fitted[ind]>-0.2:
 					tot_chi=tot_chi+fitted[ind]
 					calc_grad(fitted,num_times,num_y,num_x,t,y1,x1,num_params,grad_x+ind3,grad_y+ind3,grad_t+ind3)
 					
@@ -295,12 +303,53 @@ cdef double calc_grad_chi(double [:]fitted, int num_times, int num_y, int num_x,
 							
 	return tot_chi
 	
-cdef calc_red_chi_all_pix(int num_times, int num_freqs, int num_y, int num_x, int num_params,int ***low_freq_ind,\
+cdef void make_cube_fit_ready(int num_times,int num_y, int num_x,int num_freqs, double [:,:]err_cube,\
+			double [:,:,:,:]cube, double *freqs1, double lower_freq,\
+			double upper_freq, int ***low_freq_ind, int ***upper_freq_ind, int min_freq_num,\
+			int num_params, double [:] fitted, int *pos, double rms_thresh):
+
+	cdef int t, i, y1, x1,j, low_ind, high_ind, low_snr_freq_num,l, ind5, ind3
+	cdef double *spectrum
+	cdef double *rms
+	
+	spectrum=<double *>PyMem_Malloc(num_freqs*sizeof(double))
+	rms=<double *>PyMem_Malloc(num_freqs*sizeof(double))
+	
+	
+	for t in range(num_times):
+		for i in range(num_freqs):
+			rms[i]=err_cube[t,i]
+		for y1 in range(num_y):
+			for x1 in range(num_x):
+				for i in range(num_freqs):
+					spectrum[i]=cube[t,i,y1,x1]
+				ind3=t*num_y*num_x*num_freqs+y1*num_x*num_freqs+x1*num_freqs		
+				low_ind=find_min_freq(freqs1,lower_freq,num_freqs)
+				high_ind=find_max_freq(freqs1,upper_freq,num_freqs)
+				calc_fitrange_homogenous(spectrum, &low_ind, &high_ind,num_freqs)
+				low_freq_ind[t][y1][x1]=low_ind
+				upper_freq_ind[t][y1][x1]=high_ind
+				low_snr_freq_num=detect_low_snr_freqs(spectrum,rms,rms_thresh,pos+ind3,num_freqs)
+				if low_snr_freq_num>min_freq_num:
+					for l in range(num_params):
+						ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+l
+						fitted[ind5]=-1
+					ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
+					fitted[ind5]=-1
+				else:
+					ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
+					fitted[ind5]=0.00
+					
+	PyMem_Free(spectrum)
+	PyMem_Free(rms)
+	return
+	
+cdef double calc_red_chi_all_pix(int num_times, int num_freqs, int num_y, int num_x, int num_params,int ***low_freq_ind,\
 						int ***upper_freq_ind, numpy.ndarray[numpy.double_t,ndim=4] cube,\
 						numpy.ndarray[numpy.double_t,ndim=2] err_cube,numpy.ndarray[numpy.double_t,ndim=1] model, double sys_error,\
 						int *pos,double [:] fitted, double *freqs1, double lower_freq,\
 						double upper_freq, int first_pass, double rms_thresh, int min_freq_num, int *param_lengths1,\
-						int *param_ind, double *grad_x, double *grad_y, double *grad_t, double spatial_smoothness_enforcer,\
+						int *param_ind, double spatial_smoothness_enforcer,\
 						double temporal_smoothness_enforcer):
 						
 						
@@ -309,7 +358,7 @@ cdef calc_red_chi_all_pix(int num_times, int num_freqs, int num_y, int num_x, in
 	cdef double *sys_err
 	cdef double *error
 	cdef double red_chi
-	cdef int low_ind,high_ind, t, x1,y1,j, ind3
+	cdef int low_ind,high_ind, t, x1,y1,j, ind3,ind
 	cdef int low_snr_freq_num
 	cdef int ind5
 	
@@ -318,51 +367,62 @@ cdef calc_red_chi_all_pix(int num_times, int num_freqs, int num_y, int num_x, in
 	sys_err=<double *>PyMem_Malloc(num_freqs*sizeof(double))
 	error=<double *>PyMem_Malloc(num_freqs*sizeof(double))
 	
+	for i in range(num_freqs):
+		spectrum[i]=0.0
+		rms[i]=0.0
+		sys_err[i]=0.0
+		error[i]=0.0
 	
+			
 	for t in range(num_times):
 		for i in range(num_freqs):
 			rms[i]=err_cube[t,i]
 		for y1 in range(num_y):
 			for x1 in range(num_x):
-				ind3=t*num_y*num_x*num_params+y1*num_x*num_params+x1*num_params
-				if first_pass==0:
-					low_ind=find_min_freq(freqs1,lower_freq,num_freqs)
-					high_ind=find_max_freq(freqs1,upper_freq,num_freqs)
 				for j in range(num_freqs):
 					spectrum[j]=cube[t,j,y1,x1]
 					sys_err[j]=sys_error*spectrum[j]
 					error[j]=sqrt(rms[j]**2+sys_err[j]**2)
-				if first_pass==0:
-					calc_fitrange_homogenous(spectrum, &low_ind, &high_ind,num_freqs)
-					low_freq_ind[t][y1][x1]=low_ind
-					upper_freq_ind[t][y1][x1]=high_ind
-					low_snr_freq_num=detect_low_snr_freqs(spectrum,rms,rms_thresh,pos,num_freqs)
-					if low_snr_freq_num>min_freq_num:
-						for l in range(num_params):
-							ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+l
-							fitted[ind5]=-1
-						ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
-						fitted[ind5]=-1
-						continue
-					else:
-						ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
-						fitted[ind5]=0.0
+				
 				ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
 				if fitted[ind5]<-0.2:
 					continue
+				ind3=t*num_y*num_x*num_freqs+y1*num_x*num_freqs+x1*num_freqs	
 				red_chi=min_chi_square(model,spectrum,error,low_freq_ind[t][y1][x1],upper_freq_ind[t][y1][x1],\
-							rms_thresh,rms,num_params,num_freqs,param_lengths1,pos,sys_error,param_ind)
+							rms_thresh,rms,num_params,num_freqs,param_lengths1,pos+ind3,sys_error,param_ind)
 				
 				for l in range(num_params):
 					ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+l
 					fitted[ind5]=param_ind[l]
 				ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
-				fitted[ind5]=red_chi
+				fitted[ind5]=red_chi	
+					
 	PyMem_Free(spectrum)
 	PyMem_Free(rms)
 	PyMem_Free(sys_err)
 	PyMem_Free(error)
-	return		
+	
+	cdef double *grad_x
+	cdef double *grad_y
+	cdef double *grad_t
+	grad_x=<double *>PyMem_Malloc(num_times*num_y*num_x*num_params*sizeof(double))
+	grad_y=<double *>PyMem_Malloc(num_times*num_y*num_x*num_params*sizeof(double))
+	grad_t=<double *>PyMem_Malloc(num_times*num_y*num_x*num_params*sizeof(double))
+	
+	for t in range(num_times):
+		for y1 in range(num_y):
+			for x1 in range(num_x):
+				for l in range(num_params):
+					ind=t*num_y*num_x*num_params+y1*num_x*num_params+x1*num_params+l
+					grad_x[ind]=0.0
+					grad_y[ind]=0.0
+					grad_t[ind]=0.0
+					
+	cdef double grad_chi=calc_grad_chi(fitted,num_times,num_y,num_x,num_params, \
+						grad_x,grad_y,grad_t, spatial_smoothness_enforcer,\
+						temporal_smoothness_enforcer)
+	return grad_chi
+	
 
 cdef double absolute (double x):
 	if x<0:
@@ -381,31 +441,32 @@ cpdef numpy.ndarray[numpy.double_t,ndim=1] compute_min_chi_square(numpy.ndarray[
 				
 	cdef int t,y1,x1,i,j,l,ind
 	cdef numpy.ndarray[numpy.double_t,ndim=1] fitted1=np.zeros(num_times*num_y*num_x*(num_params+1))
-	cdef int low_ind, high_ind
-	cdef double *spectrum
-	cdef double *rms
-	cdef double *sys_err
-	cdef double *error
-	
-	spectrum=<double *>PyMem_Malloc(num_freqs*sizeof(double))
-	rms=<double *>PyMem_Malloc(num_freqs*sizeof(double))
-	sys_err=<double *>PyMem_Malloc(num_freqs*sizeof(double))
-	error=<double *>PyMem_Malloc(num_freqs*sizeof(double))
 	
 	cdef int *pos
-	pos=<int *>PyMem_Malloc(num_freqs*sizeof(int))
+	pos=<int *>PyMem_Malloc(num_times*num_y*num_x*num_freqs*sizeof(int))
+	
+	for i in range(num_times*num_y*num_x*num_freqs):
+		pos[i]=-1
 	
 	cdef int *param_ind
 	param_ind=<int *>PyMem_Malloc(num_params*sizeof(int))
+	
+	for i in range(num_params):
+		param_ind[i]=-1
+	
 	
 	cdef int low_snr_freq_num
 	cdef double red_chi
 	
 	cdef int *param_lengths1
 	param_lengths1=<int *>PyMem_Malloc(num_params*sizeof(int))
+	for i in range(num_params):
+		param_lengths1[i]=param_lengths[i]  #### making it a raw pointer. Faster access
 	
 	cdef double *freqs1
 	freqs1=<double *>PyMem_Malloc(num_freqs*sizeof(double))
+	for i in range(num_freqs):
+		freqs1[i]=freqs[i]
 	
 	cdef int ***low_freq_ind
 	cdef int ***upper_freq_ind
@@ -419,47 +480,33 @@ cpdef numpy.ndarray[numpy.double_t,ndim=1] compute_min_chi_square(numpy.ndarray[
 		for y1 in range(num_y):
 			low_freq_ind[t][y1]=<int *>PyMem_Malloc(num_x*sizeof(int))
 			upper_freq_ind[t][y1]=<int *>PyMem_Malloc(num_x*sizeof(int))
+			for x1 in range(num_x):
+				low_freq_ind[t][y1][x1]=0
+				upper_freq_ind[t][y1][x1]=0
 	
-	for i in range(num_params):
-		param_lengths1[i]=param_lengths[i]  #### making it a raw pointer. Faster access
 	
-	for i in range(num_freqs):
-		freqs1[i]=freqs[i]
+	
 	
 	cdef int first_try=0	
 	
-	cdef double *grad_x
-	cdef double *grad_y
-	cdef double *grad_t
-	grad_x=<double *>PyMem_Malloc(num_times*num_y*num_x*num_params*sizeof(double))
-	grad_y=<double *>PyMem_Malloc(num_times*num_y*num_x*num_params*sizeof(double))
-	grad_t=<double *>PyMem_Malloc(num_times*num_y*num_x*num_params*sizeof(double))
 	
-	for t in range(num_times):
-		for y1 in range(num_y):
-			for x1 in range(num_x):
-				for l in range(num_params):
-					ind=t*num_y*num_x*num_params+y1*num_x*num_params+x1*num_params+l
-					grad_x[ind]=0.0
-					grad_y[ind]=0.0
-					grad_t[ind]=0.0
+	
+	make_cube_fit_ready(num_times, num_y, num_x,num_freqs, err_cube,\
+			cube, freqs1, lower_freq,\
+			upper_freq, low_freq_ind, upper_freq_ind,min_freq_num,\
+			num_params, fitted1, pos,rms_thresh)
 					
-	calc_red_chi_all_pix(num_times, num_freqs, num_y, num_x, num_params,low_freq_ind,\
+	cdef double grad_chi=calc_red_chi_all_pix(num_times, num_freqs, num_y, num_x, num_params,low_freq_ind,\
 						upper_freq_ind, cube, err_cube, model, sys_error,\
 						pos, fitted1, freqs1, lower_freq,\
 						upper_freq, first_try, rms_thresh, min_freq_num,\
-						param_lengths1,param_ind, grad_x,grad_y,grad_t,\
+						param_lengths1,param_ind,\
 						spatial_smoothness_enforcer, temporal_smoothness_enforcer)
 						
+						
+	print (grad_chi)	
 	
-	
-	cdef double grad_chi=calc_grad_chi(fitted1,num_times,num_y,num_x,num_params, \
-						grad_x,grad_y,grad_t, spatial_smoothness_enforcer,\
-						temporal_smoothness_enforcer)
-	print (grad_chi)
-	
-	
-					
+				
 	
 	for t in range(num_times):
 		for y1 in range(num_y):
@@ -472,12 +519,5 @@ cpdef numpy.ndarray[numpy.double_t,ndim=1] compute_min_chi_square(numpy.ndarray[
 			
 	PyMem_Free(pos)
 	PyMem_Free(param_ind)
-	PyMem_Free(spectrum)
-	PyMem_Free(rms)
-	PyMem_Free(sys_err)
-	PyMem_Free(error)
-	PyMem_Free(grad_x)
-	PyMem_Free(grad_y)
-	PyMem_Free(grad_t)
 	return fitted1
 				
