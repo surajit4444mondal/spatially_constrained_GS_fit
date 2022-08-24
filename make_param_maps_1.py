@@ -4,7 +4,7 @@ import time
 #from get_model import Model
 from spectrum import Spectrum
 from gs_minimizer import GS_minimizer
-import spatial_minimiser as chi_mod
+import spatial_minimiser1 as chi_mod
 import h5py
 
 class Model:
@@ -69,14 +69,37 @@ shape=np.shape(model.model)
 
 for i in range(model.num_params):
 	param_lengths[i]=shape[i]
+max_len=np.max(param_lengths)
 
 spectrum_shape=np.shape(spectrum.spectrum)
 model1=np.ravel(model.model)
 
+
+
+
+j=0
+tot_params=np.sum(param_lengths)
+
+param_vals=np.zeros(tot_params)
+
+for i in range(model.num_params):
+	param_vals[j:j+param_lengths[i]]=model.param_vals[i]
+	j=j+param_lengths[i]
+	
+search_length=5
+discontinuity_thresh=20.0
+spatial_smooth=0.001
+temporal_smooth=0.0
+frac_tol=0.1
+max_iter=10
+
 f1=chi_mod.compute_min_chi_square(model1,spectrum.spectrum,spectrum.error,lowest_freq,\
 		highest_freq,param_lengths,model.freqs,sys_error,rms_thresh,min_freq_num,\
 		model.num_params, spectrum_shape[0],spectrum_shape[1],spectrum_shape[2],\
-		spectrum_shape[3],0.001,0.0)
+		spectrum_shape[3],param_vals,spatial_smoothness_enforcer=0.001,
+		temporal_smoothness_enforcer=temporal_smooth,\
+		search_length=search_length,discont_thresh=discontinuity_thresh,\
+		frac_tol=0.1,max_iter=max_iter)
 
 f1=f1.reshape((spectrum_shape[0],spectrum_shape[2],spectrum_shape[3],model.num_params+1))
 #print (f1[0,0,0,:])
@@ -111,5 +134,4 @@ for n,key in enumerate(param_names):
 	hf.create_dataset(key,data=param_maps[:,:,:,n])
 hf.create_dataset('chi_sq',data=chi_map[:,:,:])
 hf.close()
-
 

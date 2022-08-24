@@ -4,8 +4,207 @@ from libc.math cimport sqrt,exp
 from cpython.mem cimport PyMem_Malloc, PyMem_Realloc, PyMem_Free
 from libc.string cimport memcpy 
 import cython
+import h5py
 #@cython.boundscheck(False)
 #@cython.wraparound(False)
+
+cdef void remove_discontinuities(double [:] fitted,double **param_val,\
+				 int num_times, int num_x, int num_y, int num_params,\
+				int search_length, double thresh):
+	
+	cdef int tot_pix,i,j
+					
+	tot_pix=num_times*num_y*num_x  
+	
+	
+	cdef int *discont[3]
+	#cdef double 
+	
+	for i in range(3):
+		discont[i]=<int *>PyMem_Malloc(tot_pix*sizeof(int))
+		for j in range(tot_pix):
+			discont[i][j]=-1
+			
+	cdef int discont_num=list_discont(fitted, param_val, num_x,num_y, num_times, num_params,\
+			discont, search_length, thresh)
+			
+	#for i in range(discont_num):
+			
+			
+	for i in range(3):
+		PyMem_Free(discont[i])
+	
+	return
+
+cdef int detect_discont(double[:] fitted, double **param_val,int t0, int y, int x, int param,int num_x, \
+			int num_y, int num_times, int num_params, int search_length,\
+			 int axis, double thresh,int reverse):
+	
+	cdef int t,x1,y1,ind, ind1, ind5,j
+	cdef double sum1, sum2, mean,std, all_mean, ratio
+	
+	sum1=0.0
+	sum2=0.0
+	
+	ind5=t0*num_y*num_x*(num_params+1)+y*num_x*(num_params+1)+x*(num_params+1)+num_params
+	if fitted[ind5]<-0.2:
+		return 0
+			
+	cdef double param_value
+	
+	param_value=param_val[param][int(fitted[ind5-num_params+param])]
+	
+	
+	cdef int num
+	if axis==0:
+		num=num_x
+		ind=x
+		
+	elif axis==1:
+		num=num_y
+		ind=y
+	else:
+		num=num_times
+		ind=t0
+	
+	ind1=ind
+		
+	cdef int low_ind, high_ind
+	
+	if reverse==0:
+		low_ind=ind-search_length
+		high_ind=ind
+	elif reverse==1:
+		low_ind=ind
+		high_ind=ind+search_length
+	
+	if reverse==0:
+		while low_ind<0 and high_ind<num-1:
+			low_ind=low_ind+1
+			high_ind=high_ind+1
+	elif reverse==1:
+		while high_ind>num-1 and low_ind>0:
+			high_ind=high_ind-1
+			low_ind=low_ind-1
+		
+	ind=high_ind-low_ind
+	if ind<search_length:
+		return 0
+	
+	if axis==0:
+		j=0
+		
+		for x1 in range(low_ind,high_ind+1):
+			if x1==ind1:
+				continue
+			ind5=t0*num_y*num_x*(num_params+1)+y*num_x*(num_params+1)+x1*(num_params+1)+num_params
+			if fitted[ind5]>0.0:
+				ind=t0*num_y*num_x*(num_params+1)+y*num_x*(num_params+1)+x1*(num_params+1)+param
+				sum1=sum1+square(param_val[param][int(fitted[ind])])
+				sum2=sum2+param_val[param][int(fitted[ind])]
+				j=j+1
+		
+		if j<search_length//2:
+			return 0
+		mean=sum2/(search_length-1)
+		std=sqrt(sum1/(search_length-1)-square(mean))
+		all_mean=(sum2+param_value)/search_length
+		if std<1e-4 and absolute(all_mean-mean)<1e-4:
+			return 0
+		elif std<1e-4 and absolute(all_mean-mean)>1e-4:
+			return 1
+		ratio=(absolute((all_mean-mean)/std))
+		if ratio>thresh:
+			return 1
+	
+	elif axis==1:
+		j=0
+		for y1 in range(low_ind,high_ind+1):
+			if y1==ind1:
+				continue
+			ind5=t0*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x*(num_params+1)+num_params
+			if fitted[ind5]>0.0:
+				ind=t0*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x*(num_params+1)+param
+				sum1=sum1+square(param_val[param][int(fitted[ind])])
+				sum2=sum2+param_val[param][int(fitted[ind])]
+				j=j+1
+		if j<search_length//2:
+			return 0
+		mean=sum2/(search_length-1)
+		std=sqrt(sum1/(search_length-1)-square(mean))
+		all_mean=(sum2+param_value)/search_length
+		if std<1e-4 and absolute(all_mean-mean)<1e-4:
+			return 0
+		elif std<1e-4 and absolute(all_mean-mean)>1e-4:
+			return 1
+		ratio=(absolute((all_mean-mean)/std))
+		if ratio>thresh:
+			return 1
+	
+	else:
+		return 0  ### temporal discontinuity detection not implemented
+	
+	return 0
+
+
+
+cdef int list_discont(double[:] fitted, double **param_val, int num_x, int num_y,\
+			 int num_times, int num_params, int **discont, int search_length, double thresh):
+	
+			 
+	cdef int t, x1,y1,param,j
+	
+	cdef int detected=0
+	
+	cdef int present_already=0
+	
+	#### remember that grad is a array with size num_times*num_y*num_x*num_params
+	j=0
+	for t in range(num_times):
+		for y1 in range(num_y):
+			for x1 in range(num_x):
+				detected=0
+				for param in range(num_params):
+					detected=detect_discont(fitted,param_val,t,y1,x1,param,num_x,num_y,num_times,\
+							 	num_params, search_length=search_length,thresh=thresh,axis=0,reverse=0)	
+					if detected==1:
+						break
+						
+					detected=detect_discont(fitted,param_val,t,y1,x1,param,num_x,num_y,num_times,\
+							 	num_params, search_length=search_length,thresh=thresh,axis=1,reverse=0)
+					if detected==1:
+						break
+					
+					detected=detect_discont(fitted,param_val,t,y1,x1,param,num_x,num_y,num_times,\
+							 	num_params, search_length=search_length,thresh=thresh,axis=2,reverse=0)	
+					if detected==1:
+						break
+				if detected==0:
+					for param in range(num_params):
+						detected=detect_discont(fitted,param_val,t,y1,x1,param,num_x,num_y,num_times,\
+								 	num_params, search_length=search_length,axis=0,thresh=thresh,reverse=1)	
+						if detected==1:
+							break
+							
+						detected=detect_discont(fitted,param_val,t,y1,x1,param,num_x,num_y,num_times,\
+								 	num_params, search_length=search_length,axis=1,thresh=thresh,reverse=1)
+						if detected==1:
+							break
+						
+						detected=detect_discont(fitted,param_val,t,y1,x1,param,num_x,num_y,num_times,\
+								 	num_params, search_length=search_length,axis=2,thresh=thresh,reverse=1)	
+						if detected==1:
+							break
+				if detected==1:
+					discont[0][j]=t
+					discont[1][j]=y1
+					discont[2][j]=x1
+					j=j+1
+					
+			
+	return j
+	
+	
 
 cdef int find_min_freq(double * freqs,double lower_freq,int num_freqs):
 	cdef int i
@@ -175,7 +374,7 @@ cdef void calc_fitrange_homogenous(double *spectrum, int *lower_freq_ind, int *u
 	PyMem_Free(smoothed_spectrum)
 	return
 	
-cdef void calc_grad(double [:]fitted, int num_times, int num_y, int num_x, int t, int y1, int x1, int num_params,\
+cdef void calc_grad(double [:]fitted,double **param_val, int num_times, int num_y, int num_x, int t, int y1, int x1, int num_params,\
 					double * grad_x, double * grad_y, double * grad_t):
 
 
@@ -188,11 +387,14 @@ cdef void calc_grad(double [:]fitted, int num_times, int num_y, int num_x, int t
 				ind1=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+(x1-1)*(num_params+1)+param1
 				ind2=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+(x1+1)*(num_params+1)+param1
 				if fitted[ind1-param1+num_params]>0 and fitted[ind2-param1+num_params]>0:
-					grad_x[param1]=(ind2-ind1)/2
+					grad_x[param1]=(param_val[param1][int(fitted[ind2])]-\
+							param_val[param1][int(fitted[ind1])])/2
 				elif fitted[ind1-param1+num_params]>0:
-					grad_x[param1]=(ind-ind1)
+					grad_x[param1]=(param_val[param1][int(fitted[ind])]-\
+							param_val[param1][int(fitted[ind1])])
 				elif fitted[ind2-param1+num_params]>0:
-					grad_x[param1]=(ind2-ind)
+					grad_x[param1]=(param_val[param1][int(fitted[ind2])]-\
+							param_val[param1][int(fitted[ind])])
 				else:
 					grad_x[param1]=0.0
 		elif x1==0:
@@ -200,7 +402,8 @@ cdef void calc_grad(double [:]fitted, int num_times, int num_y, int num_x, int t
 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
 				ind2=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+(x1+1)*(num_params+1)+param1
 				if fitted[ind2-param1+num_params]>0:
-					grad_x[param1]=(ind2-ind)
+					grad_x[param1]=(param_val[param1][int(fitted[ind2])]-\
+							param_val[param1][int(fitted[ind])])
 				else:
 					grad_x[param1]=0.0
 		elif x1==num_x-1:
@@ -208,7 +411,8 @@ cdef void calc_grad(double [:]fitted, int num_times, int num_y, int num_x, int t
 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
 				ind1=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+(x1-1)*(num_params+1)+param1
 				if fitted[ind1-param1+num_params]>0:
-					grad_x[param1]=(ind-ind1)
+					grad_x[param1]=(param_val[param1][int(fitted[ind])]-\
+							param_val[param1][int(fitted[ind1])])
 				else:
 					grad_x[param1]=0.0
 	if num_y>1:
@@ -218,11 +422,14 @@ cdef void calc_grad(double [:]fitted, int num_times, int num_y, int num_x, int t
 				ind1=t*num_y*num_x*(num_params+1)+(y1-1)*num_x*(num_params+1)+x1*(num_params+1)+param1
 				ind2=t*num_y*num_x*(num_params+1)+(y1+1)*num_x*(num_params+1)+x1*(num_params+1)+param1
 				if fitted[ind1-param1+num_params]>0 and fitted[ind2-param1+num_params]>0:
-					grad_y[param1]=(ind2-ind1)/2
+					grad_y[param1]=(param_val[param1][int(fitted[ind2])]-\
+							param_val[param1][int(fitted[ind1])])/2
 				elif fitted[ind1-param1+num_params]>0:
-					grad_y[param1]=(ind-ind1)
+					grad_y[param1]=(param_val[param1][int(fitted[ind])]-\
+							param_val[param1][int(fitted[ind1])])
 				elif fitted[ind2-param1+num_params]>0:
-					grad_y[param1]=(ind2-ind)
+					grad_y[param1]=(param_val[param1][int(fitted[ind2])]-\
+							param_val[param1][int(fitted[ind])])
 				else:
 					grad_y[param1]=0.0
 		elif y1==0:
@@ -230,7 +437,8 @@ cdef void calc_grad(double [:]fitted, int num_times, int num_y, int num_x, int t
 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
 				ind2=t*num_y*num_x*(num_params+1)+(y1+1)*num_x*(num_params+1)+x1*(num_params+1)+param1
 				if fitted[ind2-param1+num_params]>0:
-					grad_y[param1]=(ind2-ind)
+					grad_y[param1]=(param_val[param1][int(fitted[ind2])]-\
+							param_val[param1][int(fitted[ind])])
 				else:
 					grad_y[param1]=0.0
 		elif y1==num_y-1:
@@ -238,7 +446,8 @@ cdef void calc_grad(double [:]fitted, int num_times, int num_y, int num_x, int t
 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
 				ind1=t*num_y*num_x*(num_params+1)+(y1-1)*num_x*(num_params+1)+x1*(num_params+1)+param1
 				if fitted[ind1-param1+num_params]>0:
-					grad_y[param1]=(ind-ind1)
+					grad_y[param1]=(param_val[param1][int(fitted[ind])]-\
+							param_val[param1][int(fitted[ind1])])
 				else:
 					grad_y[param1]=0.0
 	
@@ -249,11 +458,14 @@ cdef void calc_grad(double [:]fitted, int num_times, int num_y, int num_x, int t
 				ind1=(t-1)*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
 				ind2=(t+1)*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
 				if fitted[ind1-param1+num_params]>0 and fitted[ind2-param1+num_params]>0:
-					grad_t[param1]=(ind2-ind1)/2
+					grad_t[param1]=(param_val[param1][int(fitted[ind2])]-\
+							param_val[param1][int(fitted[ind1])])/2
 				elif fitted[ind1-param1+num_params]>0:
-					grad_t[param1]=(ind-ind1)
+					grad_t[param1]=(param_val[param1][int(fitted[ind])]-\
+							param_val[param1][int(fitted[ind1])])
 				elif fitted[ind2-param1+num_params]>0:
-					grad_t[param1]=(ind2-ind)
+					grad_t[param1]=(param_val[param1][int(fitted[ind2])]-\
+							param_val[param1][int(fitted[ind])])
 				else:
 					grad_t[param1]=0.0
 		elif t==0:
@@ -261,7 +473,8 @@ cdef void calc_grad(double [:]fitted, int num_times, int num_y, int num_x, int t
 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
 				ind2=(t+1)*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
 				if fitted[ind2-param1+num_params]>0:
-					grad_t[param1]=(ind2-ind)
+					grad_t[param1]=(param_val[param1][int(fitted[ind2])]-\
+							param_val[param1][int(fitted[ind])])
 				else:
 					grad_t[param1]=0.0
 		elif t==num_times-1:
@@ -269,11 +482,13 @@ cdef void calc_grad(double [:]fitted, int num_times, int num_y, int num_x, int t
 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
 				ind1=(t-1)*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
 				if fitted[ind1-param1+num_params]>0:
-					grad_t[param1]=(ind-ind1)
+					grad_t[param1]=(param_val[param1][int(fitted[ind])]-\
+							param_val[param1][int(fitted[ind1])])
 				else:
 					grad_t[param1]=0.0
+	return
 
-cdef double calc_grad_chi(double [:]fitted, int num_times, int num_y, int num_x, int num_params, \
+cdef double calc_grad_chi(double [:]fitted, double **param_val,int num_times, int num_y, int num_x, int num_params, \
 				double *grad_x, double *grad_y, double *grad_t,\
 				double spatial_smoothness_enforcer=0.0, double temporal_smoothness_enforcer=0.0):
 	cdef double tot_chi=0.0
@@ -288,7 +503,7 @@ cdef double calc_grad_chi(double [:]fitted, int num_times, int num_y, int num_x,
 				
 				if fitted[ind]>-0.2:
 					tot_chi=tot_chi+fitted[ind]
-					calc_grad(fitted,num_times,num_y,num_x,t,y1,x1,num_params,grad_x+ind3,grad_y+ind3,grad_t+ind3)
+					calc_grad(fitted,param_val,num_times,num_y,num_x,t,y1,x1,num_params,grad_x+ind3,grad_y+ind3,grad_t+ind3)
 					
 					if num_x>1:
 						for param1 in range(num_params):
@@ -300,6 +515,7 @@ cdef double calc_grad_chi(double [:]fitted, int num_times, int num_y, int num_x,
 					if num_times>1:
 						for param1 in range(num_params):
 							tot_chi=tot_chi+temporal_smoothness_enforcer*square(grad_t[ind3+param1])
+				
 							
 	return tot_chi
 	
@@ -349,8 +565,8 @@ cdef double calc_red_chi_all_pix(int num_times, int num_freqs, int num_y, int nu
 						numpy.ndarray[numpy.double_t,ndim=2] err_cube,numpy.ndarray[numpy.double_t,ndim=1] model, double sys_error,\
 						int *pos,double [:] fitted, double *freqs1, double lower_freq,\
 						double upper_freq, int first_pass, double rms_thresh, int min_freq_num, int *param_lengths1,\
-						int *param_ind, double spatial_smoothness_enforcer,\
-						double temporal_smoothness_enforcer):
+						int *param_ind, double **param_val,double spatial_smoothness_enforcer,\
+						double temporal_smoothness_enforcer, int search_length, double discont_thresh):
 						
 						
 	cdef double *spectrum
@@ -393,7 +609,7 @@ cdef double calc_red_chi_all_pix(int num_times, int num_freqs, int num_y, int nu
 				
 				for l in range(num_params):
 					ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+l
-					fitted[ind5]=param_ind[l]
+					fitted[ind5]=param_ind[l]#param_val[l][int(param_ind[l])]
 				ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
 				fitted[ind5]=red_chi	
 					
@@ -401,7 +617,20 @@ cdef double calc_red_chi_all_pix(int num_times, int num_freqs, int num_y, int nu
 	PyMem_Free(rms)
 	PyMem_Free(sys_err)
 	PyMem_Free(error)
+	'''
+	###------------------------------------------ For testing the code after initial value finding---------------------####
 	
+	hf=h5py.File("test_cython_code.hdf5","w")
+	hf.create_dataset("fitted",data=fitted)
+	hf.close()
+	
+	hf=h5py.File('test_cython_code.hdf5')
+	cdef numpy.ndarray[numpy.double_t,ndim=1]fitted1
+	fitted1=np.array(hf['fitted'])
+	hf.close()
+	
+	####------------------------------------ for testing---------------------------------####
+	'''
 	cdef double *grad_x
 	cdef double *grad_y
 	cdef double *grad_t
@@ -418,10 +647,13 @@ cdef double calc_red_chi_all_pix(int num_times, int num_freqs, int num_y, int nu
 					grad_y[ind]=0.0
 					grad_t[ind]=0.0
 					
-	cdef double grad_chi=calc_grad_chi(fitted,num_times,num_y,num_x,num_params, \
+	cdef double grad_chi=calc_grad_chi(fitted,param_val,num_times,num_y,num_x,num_params, \
 						grad_x,grad_y,grad_t, spatial_smoothness_enforcer,\
 						temporal_smoothness_enforcer)
 						
+	
+				
+	remove_discontinuities(fitted,param_val,num_times,num_x, num_y, num_params,search_length=search_length, thresh=discont_thresh)
 	
 						
 	
@@ -440,8 +672,9 @@ cpdef numpy.ndarray[numpy.double_t,ndim=1] compute_min_chi_square(numpy.ndarray[
 				numpy.ndarray[numpy.int_t,ndim=1] param_lengths,\
 				numpy.ndarray[numpy.double_t,ndim=1] freqs,
 				double sys_error, double rms_thresh, int min_freq_num, int num_params,\
-				int num_times, int num_freqs, int num_y,int num_x, double spatial_smoothness_enforcer,\
-				double temporal_smoothness_enforcer, double frac_tol=0.1, int max_iter=10):
+				int num_times, int num_freqs, int num_y,int num_x, numpy.ndarray[numpy.double_t,ndim=1]param_vals,\
+				double spatial_smoothness_enforcer=0.001,double temporal_smoothness_enforcer=0.0,\
+				double frac_tol=0.1, int max_iter=10, int search_length=20, double discont_thresh=3.0):
 				
 	cdef int t,y1,x1,i,j,l,ind
 	cdef numpy.ndarray[numpy.double_t,ndim=1] fitted1=np.zeros(num_times*num_y*num_x*(num_params+1))
@@ -499,13 +732,29 @@ cpdef numpy.ndarray[numpy.double_t,ndim=1] compute_min_chi_square(numpy.ndarray[
 			cube, freqs1, lower_freq,\
 			upper_freq, low_freq_ind, upper_freq_ind,min_freq_num,\
 			num_params, fitted1, pos,rms_thresh)
-					
+			
+			
+	cdef double **param_vals1
+	param_vals1=<double **>PyMem_Malloc(num_params*sizeof(double **))
+	
+	
+	l=0
+	for i in range(num_params):
+		param_vals1[i]=<double *>PyMem_Malloc(param_lengths1[i]*sizeof(double))
+		for j in range(param_lengths1[i]):
+			param_vals1[i][j]=param_vals[l]
+			l=l+1
+			
+			
+			
+				
 	cdef double grad_chi=calc_red_chi_all_pix(num_times, num_freqs, num_y, num_x, num_params,low_freq_ind,\
 						upper_freq_ind, cube, err_cube, model, sys_error,\
 						pos, fitted1, freqs1, lower_freq,\
 						upper_freq, first_try, rms_thresh, min_freq_num,\
-						param_lengths1,param_ind,\
-						spatial_smoothness_enforcer, temporal_smoothness_enforcer)
+						param_lengths1,param_ind, param_vals1,\
+						spatial_smoothness_enforcer, temporal_smoothness_enforcer,\
+						search_length=search_length,discont_thresh=discont_thresh)
 						
 						
 	print (grad_chi)	
@@ -518,6 +767,11 @@ cpdef numpy.ndarray[numpy.double_t,ndim=1] compute_min_chi_square(numpy.ndarray[
 			PyMem_Free(upper_freq_ind[t][y1])
 		PyMem_Free(low_freq_ind[t])
 		PyMem_Free(upper_freq_ind[t])	
+		
+		
+	for i in range(num_params):
+		PyMem_Free(param_vals1[i])
+	PyMem_Free(param_vals1)
 	PyMem_Free(low_freq_ind)
 	PyMem_Free(upper_freq_ind)	
 			
