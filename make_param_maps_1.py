@@ -100,7 +100,7 @@ f1=chi_mod.compute_min_chi_square(model1,spectrum.spectrum,spectrum.error,lowest
 		temporal_smoothness_enforcer=temporal_smooth,\
 		search_length=search_length,discont_thresh=discontinuity_thresh,\
 		frac_tol=0.1,max_iter=max_iter)
-
+'''
 f1=f1.reshape((spectrum_shape[0],spectrum_shape[2],spectrum_shape[3],model.num_params+1))
 #print (f1[0,0,0,:])
 end=time.time()
@@ -134,4 +134,4 @@ for n,key in enumerate(param_names):
 	hf.create_dataset(key,data=param_maps[:,:,:,n])
 hf.create_dataset('chi_sq',data=chi_map[:,:,:])
 hf.close()
-
+'''
