@@ -88,7 +88,7 @@ for i in range(model.num_params):
 	
 search_length=5
 discontinuity_thresh=20.0
-spatial_smooth=0.001
+spatial_smooth=0.05
 temporal_smooth=0.0
 frac_tol=0.1
 max_iter=10
@@ -96,7 +96,7 @@ max_iter=10
 f1=chi_mod.compute_min_chi_square(model1,spectrum.spectrum,spectrum.error,lowest_freq,\
 		highest_freq,param_lengths,model.freqs,sys_error,rms_thresh,min_freq_num,\
 		model.num_params, spectrum_shape[0],spectrum_shape[1],spectrum_shape[2],\
-		spectrum_shape[3],param_vals,spatial_smoothness_enforcer=0.001,
+		spectrum_shape[3],param_vals,spatial_smoothness_enforcer=spatial_smooth,
 		temporal_smoothness_enforcer=temporal_smooth,\
 		search_length=search_length,discont_thresh=discontinuity_thresh,\
 		frac_tol=0.1,max_iter=max_iter)
