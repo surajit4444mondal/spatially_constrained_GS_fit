@@ -54,19 +54,184 @@ cdef void gen_seed(double *seed, int num):
 		seed[i]=x/134456.0
 		current=x
 	return	
+	
+cdef int find_model_ind(double [:] fitted, int x, int y, double *param_lengths, int num_params,\
+			int num_x, int num_y):
+	
+	cdef int i,ind,j, product
+	ind=y*num_x*(num_params+1)+x*(num_params+1)
+	
+	cdef int *param_inds
+	param_inds=<int *>PyMem_Malloc(num_params*sizeof(int))
+	
+	for i in range(num_params):
+		param_inds[i]=fitted[ind+i]
+	
+	
+	for i in range(num_params):
+		product=1
+		for j in range(i+1,num_params):
+			product=product*param_lengths[j]*num_freqs  #### in model array, the last axis is that of frequency
+			
+		ind=ind+param_inds[i]*product
+	return ind
+	
+cdef void calc_map_chi(double **spectrum, double *rms, double [:] sub_fitted,\
+				double [:] model, int num_x, int num_y, int num_freqs,\
+				int num_params, double sys_error):
 
+	cdef int x1,y1,t,ind, num_times
+	cdef double *spectrum_1d
+	cdef double error
+	cdef double sum1=0.0
+	
+	num_times=1
+	
+	t=0
+	for y1 in range(num_y):
+		for x1 in range(num_x):
+			sum1=0.0
+			ind=y1*num_x+x1
+			spectrum_1d=spectrum[ind]
+			ind=find_model_ind(sub_fitted,x1,y1,param_lengths,num_params, num_x, num_y)
+			for i in range(num_freqs):
+				if spectrum_1d[i]<0:
+					continue
+				error=sqrt(square(rms[i])+square(sys_error*spectrum_1d[i]))
+				sum1=sum1+square((model[ind+i]-spectrum_1d[i])/error)
+			ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
+			sub_fitted[ind]=sum1
+	return
+	
+cdef void get_random_param_ind(int *rand_param_inds, int num_params, int **param_val_ind, int *param_val_lengths):
 
-cdef void do_bee_swarm_optimisation(double **spectrum, double **rms, double [:] model,\
+	cdef double *seed
+	seed=<double *>PyMem_Malloc(num_params*sizeof(double))
+	
+	gen_seed(seed, num_params)
+	
+	cdef int i
+	cdef int rand_ind
+	for i in range(num_params):
+		rand_int=int(seed[i]*param_val_lengths[i])  ### seed[i] should lie between 0 and 1
+		if rand_int<param_val_lengths[i]:
+			rand_param_inds[i]=param_val_ind[i][rand_int]
+		else:
+			rand_param_inds[i]=0  #### fail-safe mechanism. This should not be triggered.
+	
+	PyMem_Free(seed)
+	return
+					
+
+cdef void do_bee_swarm_optimisation(double **spectrum, double *rms, double [:] model,\
 					int num_freqs, int **param_val_ind,int *param_val_lengths,\
 					int num_params, int low_indx, int low_indy, int low_indt,\
-					int high_indx, int high_indy, int high_indt):
+					int high_indx, int high_indy, int high_indt, double [:] fitted,\
+					double **param_val_actual, double sys_error, double spatial_smoothness_enforcer,\
+					double temporal_smoothness_enforcer):
 					
-	cdef int x1,y1
-		
+	cdef int x1,y1,i,ind,t,m
+	
+	cdef int num_val=(high_indx-low_indx+1)*(high_indy-low_indy+1)*(num_params+1)
+	cdef double *subcube_fit
+	cdef double *subcube_fit_copy
+	cdef double *current_subcube_fit
+	
+	subcube_fit1=<double*>PyMem_Malloc(num_val*sizeof(double))
+	
+	subcube_fit_copy=<double*>PyMem_Malloc(num_val*sizeof(double))
+	current_subcube_fit=<double*>PyMem_Malloc(num_val*sizeof(double))
+	
+	cdef double[:] sub_fitted=<double [:num_val]>subcube_fit
+	
+	
+	i=0
+	t=0
 	for y1 in range(low_indy,high_indy+1):
-		for x1 in range(low_indx, high_indx+1):
-			continue
-		continue
+		for x1 in range(low_indx, high_indy+1):
+			ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)
+			for m in range(num_params+1):
+				sub_fitted[i]=fitted[ind+m]
+				i=i+1
+				
+	
+	for i in range(num_val):
+		subcube_fit_copy[i]=sub_fitted[i]
+		current_subcube_fit[i]=sub_fitted[i]
+		
+	cdef int num_y, num_x, num_times
+	
+	num_times=1
+	num_x=high_indx-low_indx+1
+	num_y=high_indy-low_indy+1
+	
+	
+	cdef double *grad_x
+	cdef double *grad_y
+	cdef double *grad_t
+	grad_x=<double *>PyMem_Malloc(num_times*num_y*num_x*num_params*sizeof(double))
+	grad_y=<double *>PyMem_Malloc(num_times*num_y*num_x*num_params*sizeof(double))
+	grad_t=<double *>PyMem_Malloc(num_times*num_y*num_x*num_params*sizeof(double))
+	
+	cdef double grad_chi=calc_grad_chi(sub_fitted, param_val, num_times, num_y, num_x, num_params, \
+			grad_x, grad_y, grad_t, spatial_smoothness_enforcer, temporal_smoothness_enforcer)
+	
+	cdef double init_grad_chi=grad_chi
+	cdef int max_iter=100
+	cdef double exit_drop=0.2
+	cdef double good_drop=0.1
+	cdef int max_iter_good_drop=max_iter//2
+	
+	cdef int iter1=0
+	cdef double drop=0.0
+	cdef double current_grad_chi
+	cdef double drop
+	
+	cdef int *rand_param_inds
+	
+	rand_param_inds=<int *>PyMem_Malloc(num_params*sizeof(int))
+	
+	while iter1<max_iter:
+		i=0
+		t=0
+		for y1 in range(low_indy,high_indy+1):
+			for x1 in range(low_indx, high_indy+1):
+				for m in range(num_params+1):
+					sub_fitted[i]=-1.0
+					i=i+1
+		i=0
+		t=0
+		for y1 in range(low_indy,high_indy+1):
+			for x1 in range(low_indx, high_indy+1):
+				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)
+				get_random_param_ind(rand_param_inds,num_params,param_val_ind, param_val_lengths)
+				for m in range(num_params):
+					sub_fitted[i]=rand_param_inds[m]
+					i=i+1
+		calc_map_chi(spectrum, rms, sub_fitted,\
+				model, num_x, num_y, num_freqs,\
+				num_params, sys_error)
+		current_grad_chi=calc_grad_chi(sub_fitted, param_val, num_times, num_y, num_x, num_params, \
+			grad_x, grad_y, grad_t, spatial_smoothness_enforcer, temporal_smoothness_enforcer)
+	
+		if current_grad_chi<grad_chi:
+			grad_chi=current_grad_chi
+			for i in range(num_val):
+				current_subcube_fit[i]=sub_fitted[i]
+			drop=absolute((grad_chi-init_grad_chi)/grad_chi)
+			if drop>exit_drop:
+				break
+			elif drop>good_drop and iter1>max_iter_good_drop:
+				break
+		iter1=iter1+1
+	
+	PyMem_Free(subcube_fit)
+	PyMem_Free(grad_x)
+	PyMem_Free(grad_y)
+	PyMem_Free(grad_t)
+	PyMem_Free(subcube_fit_copy)
+	PyMem_Free(rand_param_inds)
+	PyMem_Free(current_subcube_fit)
 	return
 	
 		
@@ -103,7 +268,7 @@ cdef void make_data_ready_for_discont_removal(numpy.ndarray[numpy.double_t,ndim=
 	high_indy[0]=high_indy_val
 	high_indt[0]=0	
 	
-	cdef int i,k
+	cdef int i,k,t
 	cdef int t,j, ind, insert_position			
 	
 	
@@ -111,11 +276,11 @@ cdef void make_data_ready_for_discont_removal(numpy.ndarray[numpy.double_t,ndim=
 	for i in range((2*half_box_size+1)*(2*half_box_size+1)):
 		for j in range(num_freqs):
 			spectrum[i][j]=-1
-			
+	t=t0		
 	for i in range(num_freqs):
 		rms[i]=err_cube[t,i]
 	
-	t=0
+	t=t0
 	i=0
 	k=0		
 	for y1 in range(low_indy_val,high_indy_val+1):
@@ -123,12 +288,13 @@ cdef void make_data_ready_for_discont_removal(numpy.ndarray[numpy.double_t,ndim=
 			ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
 			if fitted[ind]>0:
 				for j in range(low_freq_ind[t][y1][x1],upper_freq_ind[t][y1][x1]+1):
-					spectrum[i][j]=cube[t,j,y1,x1]
+					if low_snr_loc[t*num_y*num_x*num_freqs+y1*num_x*num_freqs+x1*num_freqs+j]==0:  ### not a low SNR point
+						spectrum[i][j]=cube[t,j,y1,x1]
 					
 				for j in range(num_params):
 					ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+j
 					if fitted[ind]>0:
-						insert_position=check_present_already(param_val_ind[j],int(fitted[ind]), 2*half_box_size+1)
+						insert_position=check_present_already(param_val_ind[j],int(fitted[ind]), (2*half_box_size+1)*(2*half_box_size+1))
 						if insert_position>=0:
 							param_val_ind[j][insert_position]=int(fitted[ind])
 					
@@ -158,7 +324,10 @@ cdef void remove_discontinuities(numpy.ndarray[numpy.double_t, ndim=4] cube,\
 				int ***upper_freq_ind,\
 				double [:] fitted,double **param_val,\
 				 int num_times, int num_x, int num_y, int num_params,\
-				int num_freqs,int search_length, double thresh):
+				int num_freqs,int search_length, double thresh, \
+				double **param_val_actual,double sys_error,\
+				double spatial_smoothness_enforcer,\
+				double temporal_smoothness_enforcer):
 	
 	cdef int tot_pix,i,j
 					
@@ -177,18 +346,19 @@ cdef void remove_discontinuities(numpy.ndarray[numpy.double_t, ndim=4] cube,\
 			discont, search_length, thresh)
 			
 	cdef int box_size=2*search_length+1
+	box_size=box_size*box_size
 	cdef double **spectrum
 	cdef double *rms
 	cdef int **param_val_ind
 	cdef int *param_val_lengths
 	
-	spectrum=<double **>PyMem_Malloc(box_size*box_size*sizeof(double *))
+	spectrum=<double **>PyMem_Malloc(box_size*sizeof(double *))
 	rms=<double *>PyMem_Malloc(num_freqs*sizeof(double *))
 	param_val_ind=<int **>PyMem_Malloc(num_params*sizeof(int *))
 	param_val_lengths=<int *>PyMem_Malloc(num_params*sizeof(int ))
 	
 	
-	for i in range(box_size*box_size):
+	for i in range(box_size):
 		spectrum[i]=<double *>PyMem_Malloc(num_freqs*sizeof(double))
 		for j in range(num_freqs):
 			spectrum[i][j]=-1.0
@@ -216,14 +386,17 @@ cdef void remove_discontinuities(numpy.ndarray[numpy.double_t, ndim=4] cube,\
 		count_unique_param_vals(param_val_ind,param_val_lengths, num_params, box_size)
 		
 		do_bee_swarm_optimisation(spectrum, rms, model,num_freqs, param_val_ind, param_val_lengths,\
-					 num_params, low_indx,low_indy,low_indt,high_indx,high_indy,high_indt)
+					 num_params, low_indx,low_indy,low_indt,high_indx,high_indy,high_indt,\
+					 fitted, param_val_actual, sys_error,spatial_smoothness_enforcer,\
+						temporal_smoothness_enforcer)
 		
 		print (i)	
+		break
 			
 	for i in range(3):
 		PyMem_Free(discont[i])
 	
-	for i in range(box_size*box_size):
+	for i in range(box_size):
 		PyMem_Free(spectrum[i])
 		
 	for i in range(num_params):
@@ -797,7 +970,7 @@ cdef double calc_red_chi_all_pix(int num_times, int num_freqs, int num_y, int nu
 				for j in range(num_freqs):
 					spectrum[j]=cube[t,j,y1,x1]
 					sys_err[j]=sys_error*spectrum[j]
-					error[j]=sqrt(rms[j]**2+sys_err[j]**2)
+					error[j]=sqrt(square(rms[j])+square(sys_err[j]))
 				
 				ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
 				if fitted[ind5]<-0.2:
@@ -853,7 +1026,8 @@ cdef double calc_red_chi_all_pix(int num_times, int num_freqs, int num_y, int nu
 	
 				
 	remove_discontinuities(cube, err_cube, model, pos, low_freq_ind, upper_freq_ind, fitted1,param_val,num_times,num_x, num_y, \
-				num_params,num_freqs,search_length,discont_thresh)
+				num_params,num_freqs,search_length,discont_thresh, param_val, sys_error,spatial_smoothness_enforcer,\
+						temporal_smoothness_enforcer)
 	
 						
 	
