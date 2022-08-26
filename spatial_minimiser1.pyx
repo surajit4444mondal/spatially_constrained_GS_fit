@@ -141,15 +141,12 @@ cdef void do_bee_swarm_optimisation(double **spectrum, double *rms, double [:] m
 	cdef double *current_subcube_fit
 	
 	subcube_fit=<double*>PyMem_Malloc(num_val*sizeof(double))
-	
-	subcube_fit_copy=<double*>PyMem_Malloc(num_val*sizeof(double))
 	current_subcube_fit=<double*>PyMem_Malloc(num_val*sizeof(double))
 	
 	cdef double[:] sub_fitted=<double [:num_val]>subcube_fit
 	
 	i=0
 	t=0
-	
 	for y1 in range(low_indy,high_indy+1):
 		for x1 in range(low_indx, high_indx+1):
 			ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)
@@ -161,7 +158,6 @@ cdef void do_bee_swarm_optimisation(double **spectrum, double *rms, double [:] m
 			
 	
 	for i in range(num_val):
-		subcube_fit_copy[i]=sub_fitted[i]
 		current_subcube_fit[i]=sub_fitted[i]
 		
 	cdef int num_y1, num_x1, num_times
@@ -173,19 +169,13 @@ cdef void do_bee_swarm_optimisation(double **spectrum, double *rms, double [:] m
 	
 	
 	
-	cdef double *grad_x
-	cdef double *grad_y
-	cdef double *grad_t
-	grad_x=<double *>PyMem_Malloc(num_params*sizeof(double))
-	grad_y=<double *>PyMem_Malloc(num_params*sizeof(double))
-	grad_t=<double *>PyMem_Malloc(num_params*sizeof(double))
 	
 	cdef double grad_chi=calc_grad_chi(sub_fitted, param_val_actual, num_times, num_y1, num_x1, num_params, \
-			grad_x, grad_y, grad_t, spatial_smoothness_enforcer, temporal_smoothness_enforcer)
+					 spatial_smoothness_enforcer, temporal_smoothness_enforcer)
 	
 	
 	cdef double init_grad_chi=grad_chi
-	cdef int max_iter=10000
+	cdef int max_iter=1000
 	cdef double exit_drop=0.2
 	cdef double good_drop=0.1
 	cdef int max_iter_good_drop=max_iter//2
@@ -222,13 +212,14 @@ cdef void do_bee_swarm_optimisation(double **spectrum, double *rms, double [:] m
 				num_params, sys_error,model_param_lengths)
 				
 		current_grad_chi=calc_grad_chi(sub_fitted, param_val_actual, num_times, num_y1, num_x1, num_params, \
-			grad_x, grad_y, grad_t, spatial_smoothness_enforcer, temporal_smoothness_enforcer)
+						 spatial_smoothness_enforcer, temporal_smoothness_enforcer)
 		
 		if current_grad_chi<grad_chi:
 			grad_chi=current_grad_chi
+			print ("successfull")
 			for i in range(num_val):
 				current_subcube_fit[i]=sub_fitted[i]
-			drop=absolute((grad_chi-init_grad_chi)/grad_chi)
+			drop=absolute((grad_chi-init_grad_chi)/init_grad_chi)
 			if drop>exit_drop:
 				break
 			elif drop>good_drop and iter1>max_iter_good_drop:
@@ -236,11 +227,16 @@ cdef void do_bee_swarm_optimisation(double **spectrum, double *rms, double [:] m
 		
 		iter1=iter1+1
 	
+	i=0
+	t=0	
+	for y1 in range(low_indy,high_indy+1):
+		for x1 in range(low_indx, high_indx+1):
+			ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)
+			for m in range(num_params+1):
+				fitted[ind+m]=current_subcube_fit[i]
+				i=i+1
+	
 	PyMem_Free(subcube_fit)
-	PyMem_Free(grad_x)
-	PyMem_Free(grad_y)
-	PyMem_Free(grad_t)
-	PyMem_Free(subcube_fit_copy)
 	PyMem_Free(rand_param_inds)
 	PyMem_Free(current_subcube_fit)
 	return
@@ -254,7 +250,8 @@ cdef void make_data_ready_for_discont_removal(numpy.ndarray[numpy.double_t,ndim=
 						int num_x, int num_freqs, int num_params,double **spectrum, double *rms,\
 						int t0, int y0, int x0, int *low_indx, int *low_indy,\
 						int *low_indt, int *high_indx, int *high_indy, int *high_indt,\
-						int half_box_size, int **param_val_ind, double [:] fitted):
+						int half_box_size, int **param_val_ind, double [:] fitted,\
+						double *previous_param_inds):
 						
 	cdef int low_indx_val, low_indy_val, low_indt_val
 	cdef int high_indx_val,high_indy_val,high_indt_val
@@ -311,6 +308,16 @@ cdef void make_data_ready_for_discont_removal(numpy.ndarray[numpy.double_t,ndim=
 					
 			i=i+1
 	
+	t=t0
+	i=0
+	k=0
+	for y1 in range(low_indy_val,high_indy_val+1):
+		for x1 in range(low_indx_val,high_indx_val+1):
+			ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)
+			for j in range(num_params+1):
+				previous_param_inds[i]=fitted[ind+j]
+				i=i+1
+	
 				
 	return
 	
@@ -327,8 +334,23 @@ cdef void count_unique_param_vals(int **param_val_ind, int *param_val_lengths, i
 		if full_box==1:
 			param_val_lengths[i]=box_size
 	return
+	
+cdef void remove_duplicate_findings(int **discont, int discont_num, int low_indx, int low_indy, int low_indt,\
+					int  high_indx, int high_indy, int high_indt):
+					
+	cdef int i,j
+	for i in range(discont_num):
+		if discont[0][i]>=low_indt and discont[0][i]<=high_indt and \
+		   discont[1][i]>=low_indy and discont[1][i]<=high_indy and \
+		   discont[2][i]>=low_indx and discont[2][i]<=high_indx :
+		   
+			for j in range(3):
+				discont[j][i]=-1
+	return
 
-cdef void remove_discontinuities(numpy.ndarray[numpy.double_t, ndim=4] cube,\
+		
+
+cdef double remove_discontinuities(numpy.ndarray[numpy.double_t, ndim=4] cube,\
 				numpy.ndarray[numpy.double_t,ndim=2] err_cube,\
 				numpy.ndarray[numpy.double_t,ndim=1] model, \
 				int *low_snr_loc, int ***low_freq_ind,\
@@ -344,6 +366,20 @@ cdef void remove_discontinuities(numpy.ndarray[numpy.double_t, ndim=4] cube,\
 					
 	tot_pix=num_times*num_y*num_x  
 	
+	cdef unsigned int num_val=num_times*num_y*num_x*(num_params+1)
+	
+	cdef double grad_chi=calc_grad_chi(fitted,param_val,num_times,num_y,num_x,num_params, \
+						spatial_smoothness_enforcer,\
+						temporal_smoothness_enforcer)
+	cdef double current_grad_chi=1e9
+	cdef double *fitted_pointer
+	fitted_pointer=<double *>PyMem_Malloc(num_val*sizeof(double))
+	cdef double [:] fitted_copy=<double [:num_val]>fitted_pointer
+	
+	for i in range(num_val):
+		fitted_copy[i]=fitted[i]
+		
+	print (grad_chi)
 	
 	cdef int *discont[3]
 	#cdef double 
@@ -384,24 +420,31 @@ cdef void remove_discontinuities(numpy.ndarray[numpy.double_t, ndim=4] cube,\
 	
 	
 	cdef int low_indx, low_indy, low_indt, high_indx, high_indy, high_indt
+	
+	cdef double **previous_param_inds
+	
+	previous_param_inds=<double **>PyMem_Malloc(discont_num*sizeof(double*))
+	
 			
 	for i in range(discont_num):
-		print (i)
+		previous_param_inds[i]=<double *>PyMem_Malloc(box_size*(num_params+1)*sizeof(double))
+		if discont[0][i]<0 and discont[1][i]<0 and discont[2][i]<0:
+			continue
 		make_data_ready_for_discont_removal(cube,err_cube,low_snr_loc,\
 					low_freq_ind,upper_freq_ind,\
 					num_times,num_y,num_x,num_freqs, \
 					num_params,spectrum, rms, discont[0][i],\
 					discont[1][i],discont[2][i], &low_indx,\
 					&low_indy, &low_indt, &high_indx, &high_indy,\
-					&high_indt,search_length, param_val_ind, fitted)
-		
+					&high_indt,search_length, param_val_ind, fitted,\
+					previous_param_inds[i])
 		count_unique_param_vals(param_val_ind,param_val_lengths, num_params, box_size)
-		
 		
 		do_bee_swarm_optimisation(spectrum, rms, model,num_freqs, param_val_ind, param_val_lengths,\
 					 num_params, low_indx,low_indy,low_indt,high_indx,high_indy,high_indt,\
 					 fitted, param_val_actual, sys_error,spatial_smoothness_enforcer,\
 						temporal_smoothness_enforcer, num_x, num_y,model_param_lengths)
+		remove_duplicate_findings(discont, discont_num,low_indx, low_indy, low_indt, high_indx, high_indy,high_indt)				
 		
 		
 		
@@ -414,11 +457,33 @@ cdef void remove_discontinuities(numpy.ndarray[numpy.double_t, ndim=4] cube,\
 	for i in range(num_params):
 		PyMem_Free(param_val_ind[i])
 	
+	for i in range(discont_num):
+		PyMem_Free(previous_param_inds[i])
+		
+	current_grad_chi=calc_grad_chi(fitted,param_val,num_times,num_y,num_x,num_params, \
+						spatial_smoothness_enforcer,\
+						temporal_smoothness_enforcer)
+						
+	
+	
+	if grad_chi<=current_grad_chi:
+		print ("Entered 1")
+		for i in range(num_val):
+			fitted[i]=fitted_copy[i]
+	else:
+		print ("Entered 2")
+		grad_chi=current_grad_chi
+
+		
+					
+			
 	PyMem_Free(spectrum)
 	PyMem_Free(rms)
 	PyMem_Free(param_val_ind)
 	PyMem_Free(param_val_lengths)
-	return
+	PyMem_Free(previous_param_inds)
+	PyMem_Free(fitted_pointer)
+	return grad_chi
 
 cdef int detect_discont(double[:] fitted, double **param_val,int t0, int y, int x, int param,int num_x, \
 			int num_y, int num_times, int num_params, int search_length,\
@@ -873,11 +938,25 @@ cdef void calc_grad(double [:]fitted,double **param_val, int num_times, int num_
 	return
 
 cdef double calc_grad_chi(double [:]fitted, double **param_val,int num_times, int num_y, int num_x, int num_params, \
-				double *grad_x, double *grad_y, double *grad_t,\
 				double spatial_smoothness_enforcer=0.0, double temporal_smoothness_enforcer=0.0):
 	cdef double tot_chi=0.0
 	cdef int t,y1,x1,ind,param1
 	cdef int ind1,ind2,ind3
+	
+	cdef double *grad_x
+	cdef double *grad_y
+	cdef double *grad_t
+	grad_x=<double *>PyMem_Malloc(num_params*sizeof(double))
+	grad_y=<double *>PyMem_Malloc(num_params*sizeof(double))
+	grad_t=<double *>PyMem_Malloc(num_params*sizeof(double))
+	
+	
+	for l in range(num_params):
+		grad_x[l]=0.0
+		grad_y[l]=0.0
+		grad_t[l]=0.0
+	
+	
 	
 	for t in range(num_times):
 		for y1 in range(num_y):
@@ -900,7 +979,9 @@ cdef double calc_grad_chi(double [:]fitted, double **param_val,int num_times, in
 						for param1 in range(num_params):
 							tot_chi=tot_chi+temporal_smoothness_enforcer*square(grad_t[param1])
 				
-							
+	PyMem_Free(grad_x)
+	PyMem_Free(grad_y)
+	PyMem_Free(grad_t)						
 	return tot_chi
 	
 cdef void make_cube_fit_ready(int num_times,int num_y, int num_x,int num_freqs, double [:,:]err_cube,\
@@ -961,7 +1042,7 @@ cdef double calc_red_chi_all_pix(int num_times, int num_freqs, int num_y, int nu
 	cdef int low_ind,high_ind, t, x1,y1,j, ind3,ind
 	cdef int low_snr_freq_num
 	cdef int ind5
-	'''
+	
 	spectrum=<double *>PyMem_Malloc(num_freqs*sizeof(double))
 	rms=<double *>PyMem_Malloc(num_freqs*sizeof(double))
 	sys_err=<double *>PyMem_Malloc(num_freqs*sizeof(double))
@@ -1003,42 +1084,27 @@ cdef double calc_red_chi_all_pix(int num_times, int num_freqs, int num_y, int nu
 	PyMem_Free(error)
 	
 	###------------------------------------------ For testing the code after initial value finding---------------------####
-	
+	'''
 	hf=h5py.File("test_cython_code.hdf5","w")
 	hf.create_dataset("fitted",data=fitted)
 	hf.close()
-	'''
+	
 	hf=h5py.File('test_cython_code.hdf5')
 	cdef numpy.ndarray[numpy.double_t,ndim=1]fitted1
 	fitted1=np.array(hf['fitted'])
 	hf.close()
-	
+	'''
 	####------------------------------------ for testing---------------------------------####
 	
-	cdef double *grad_x
-	cdef double *grad_y
-	cdef double *grad_t
-	grad_x=<double *>PyMem_Malloc(num_params*sizeof(double))
-	grad_y=<double *>PyMem_Malloc(num_params*sizeof(double))
-	grad_t=<double *>PyMem_Malloc(num_params*sizeof(double))
 	
-	
-	for l in range(num_params):
-		grad_x[l]=0.0
-		grad_y[l]=0.0
-		grad_t[l]=0.0
 					
-	cdef double grad_chi=calc_grad_chi(fitted1,param_val,num_times,num_y,num_x,num_params, \
-						grad_x,grad_y,grad_t, spatial_smoothness_enforcer,\
-						temporal_smoothness_enforcer)
+	
 						
 	
 				
-	remove_discontinuities(cube, err_cube, model, pos, low_freq_ind, upper_freq_ind, fitted1,param_val,num_times,num_x, num_y, \
+	cdef double grad_chi=remove_discontinuities(cube, err_cube, model, pos, low_freq_ind, upper_freq_ind, fitted,param_val,num_times,num_x, num_y, \
 				num_params,num_freqs,search_length,discont_thresh, param_val, sys_error,spatial_smoothness_enforcer,\
-						temporal_smoothness_enforcer,param_lengths1)
-	
-						
+						temporal_smoothness_enforcer,param_lengths1)				
 	
 	return grad_chi
 	
@@ -1142,6 +1208,8 @@ cpdef numpy.ndarray[numpy.double_t,ndim=1] compute_min_chi_square(numpy.ndarray[
 						
 	print (grad_chi)	
 	
+	
+
 				
 	
 	for t in range(num_times):
