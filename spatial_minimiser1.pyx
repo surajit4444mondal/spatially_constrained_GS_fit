@@ -176,9 +176,9 @@ cdef void do_bee_swarm_optimisation(double **spectrum, double *rms, double [:] m
 	cdef double *grad_x
 	cdef double *grad_y
 	cdef double *grad_t
-	grad_x=<double *>PyMem_Malloc(num_times*num_y1*num_x1*num_params*sizeof(double))
-	grad_y=<double *>PyMem_Malloc(num_times*num_y1*num_x1*num_params*sizeof(double))
-	grad_t=<double *>PyMem_Malloc(num_times*num_y1*num_x1*num_params*sizeof(double))
+	grad_x=<double *>PyMem_Malloc(num_params*sizeof(double))
+	grad_y=<double *>PyMem_Malloc(num_params*sizeof(double))
+	grad_t=<double *>PyMem_Malloc(num_params*sizeof(double))
 	
 	cdef double grad_chi=calc_grad_chi(sub_fitted, param_val_actual, num_times, num_y1, num_x1, num_params, \
 			grad_x, grad_y, grad_t, spatial_smoothness_enforcer, temporal_smoothness_enforcer)
@@ -883,22 +883,22 @@ cdef double calc_grad_chi(double [:]fitted, double **param_val,int num_times, in
 		for y1 in range(num_y):
 			for x1 in range(num_x):
 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
-				ind3=t*num_y*num_x*num_params+y1*num_x*num_params+x1*num_params
+				
 				
 				if fitted[ind]>-0.2:
 					tot_chi=tot_chi+fitted[ind]
-					calc_grad(fitted,param_val,num_times,num_y,num_x,t,y1,x1,num_params,grad_x+ind3,grad_y+ind3,grad_t+ind3)
+					calc_grad(fitted,param_val,num_times,num_y,num_x,t,y1,x1,num_params,grad_x,grad_y,grad_t)
 					
 					if num_x>1:
 						for param1 in range(num_params):
-							tot_chi=tot_chi+spatial_smoothness_enforcer*square(grad_x[ind3+param1])
+							tot_chi=tot_chi+spatial_smoothness_enforcer*square(grad_x[param1])
 					if num_y>1:
 						for param1 in range(num_params):
-							tot_chi=tot_chi+spatial_smoothness_enforcer*square(grad_y[ind3+param1])
+							tot_chi=tot_chi+spatial_smoothness_enforcer*square(grad_y[param1])
 					
 					if num_times>1:
 						for param1 in range(num_params):
-							tot_chi=tot_chi+temporal_smoothness_enforcer*square(grad_t[ind3+param1])
+							tot_chi=tot_chi+temporal_smoothness_enforcer*square(grad_t[param1])
 				
 							
 	return tot_chi
@@ -1018,18 +1018,15 @@ cdef double calc_red_chi_all_pix(int num_times, int num_freqs, int num_y, int nu
 	cdef double *grad_x
 	cdef double *grad_y
 	cdef double *grad_t
-	grad_x=<double *>PyMem_Malloc(num_times*num_y*num_x*num_params*sizeof(double))
-	grad_y=<double *>PyMem_Malloc(num_times*num_y*num_x*num_params*sizeof(double))
-	grad_t=<double *>PyMem_Malloc(num_times*num_y*num_x*num_params*sizeof(double))
+	grad_x=<double *>PyMem_Malloc(num_params*sizeof(double))
+	grad_y=<double *>PyMem_Malloc(num_params*sizeof(double))
+	grad_t=<double *>PyMem_Malloc(num_params*sizeof(double))
 	
-	for t in range(num_times):
-		for y1 in range(num_y):
-			for x1 in range(num_x):
-				for l in range(num_params):
-					ind=t*num_y*num_x*num_params+y1*num_x*num_params+x1*num_params+l
-					grad_x[ind]=0.0
-					grad_y[ind]=0.0
-					grad_t[ind]=0.0
+	
+	for l in range(num_params):
+		grad_x[l]=0.0
+		grad_y[l]=0.0
+		grad_t[l]=0.0
 					
 	cdef double grad_chi=calc_grad_chi(fitted1,param_val,num_times,num_y,num_x,num_params, \
 						grad_x,grad_y,grad_t, spatial_smoothness_enforcer,\
