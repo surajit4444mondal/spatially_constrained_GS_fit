@@ -92,6 +92,7 @@ spatial_smooth=0.05
 temporal_smooth=0.0
 frac_tol=0.1
 max_iter=10
+max_dist_parameter_space=3
 
 f1=chi_mod.compute_min_chi_square(model1,spectrum.spectrum,spectrum.error,lowest_freq,\
 		highest_freq,param_lengths,model.freqs,sys_error,rms_thresh,min_freq_num,\
@@ -99,7 +100,7 @@ f1=chi_mod.compute_min_chi_square(model1,spectrum.spectrum,spectrum.error,lowest
 		spectrum_shape[3],param_vals,spatial_smoothness_enforcer=spatial_smooth,
 		temporal_smoothness_enforcer=temporal_smooth,\
 		search_length=search_length,discont_thresh=discontinuity_thresh,\
-		frac_tol=0.1,max_iter=max_iter)
+		frac_tol=0.1,max_iter=max_iter, max_dist_parameter_space=max_dist_parameter_space)
 
 f1=f1.reshape((spectrum_shape[0],spectrum_shape[2],spectrum_shape[3],model.num_params+1))
 #print (f1[0,0,0,:])

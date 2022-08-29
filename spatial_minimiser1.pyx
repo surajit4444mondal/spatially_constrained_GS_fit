@@ -10,7 +10,200 @@ from libc.time cimport time,time_t
 #@cython.boundscheck(False)
 #@cython.wraparound(False)
 
+cdef struct fof_struct:
+	int x
+	int y
+	int t
+	double *fof_params
+	fof_struct *cluster_forward
+	fof_struct *cluster_backward
+	fof_struct *member_forward
+	fof_struct *member_backward
+	
+cdef void make_fof_struct(int x0, int y0, int t0, int num_times, int num_y, \
+			int num_x, int num_params, double [:] fitted, double **param_vals,\
+			 fof_struct *fof):
+	cdef int i
+	cdef unsigned int ind
+	
+	ind=t0*num_y*num_x*(num_params+1)+y0*num_x*(num_params+1)+x0*(num_params+1)
+	
+	fof.cluster_forward=NULL
+	fof.cluster_backward=NULL
+	fof.member_forward=NULL
+	fof.member_backward=NULL
+	cdef double *fof_params
+	fof_params=<double *>PyMem_Malloc(num_params*sizeof(double))
+	
+	for i in range(num_params):
+		fof_params[i]=param_vals[i][int(fitted[ind+i])]
+	
+	fof.fof_params=fof_params
+	
+	fof.x=x0
+	fof.y=y0
+	fof.t=t0
+	return
+	
+	
+cdef void add_first_cluster(fof_struct *fof_list, fof_struct *cluster):
+	fof_list=cluster
+	return
+	
+cdef void add_clusters(fof_struct *fof_list, fof_struct *cluster):
+	cdef fof_struct *temp
+	temp=fof_list
+	
+	while temp.cluster_forward!=NULL:
+		temp=temp.cluster_forward
+	### when the while loop exits, temp is a pointer to the last element of the cluster list
+	
+	temp.cluster_forward=cluster
+	cluster.cluster_backward=temp
+	
+	return
+	
+cdef void add_member(fof_struct *fof_list, int cluster_number,fof_struct *member):
+	cdef int i
+	i=0
+	cdef fof_struct *temp
+	temp=fof_list
+	
+	while i<cluster_number:
+		temp=temp.cluster_forward
+		i=i+1
+		
+	while temp.member_forward!=NULL:
+		temp=temp.member_forward
 
+	temp.member_forward=member
+	member.member_backward=temp
+	return		
+	
+cdef void join_clusters(fof_struct *fof_list, int cluster_number1, int cluster_number2):
+	cdef int i
+	
+	cdef fof_struct *temp1
+	temp1=fof_list
+	
+	i=0
+	while i<cluster_number1:
+		temp1=temp1.cluster_forward
+		i=i+1
+		
+	cdef fof_struct *temp2
+	temp2=fof_list
+	
+	i=0
+	temp2=fof_list
+	while temp2.cluster_forward!=NULL and i<cluster_number2:
+		temp2=temp2.cluster_forward
+		i=i+1
+	cdef fof_struct *temp3
+
+
+	temp3=temp2.cluster_backward
+	
+	temp3.cluster_forward=temp2.cluster_forward
+	if temp2.cluster_forward!=NULL:
+		temp2.cluster_forward.cluster_backward=temp3
+	while temp1.member_forward!=NULL:
+		temp1=temp1.member_forward
+	
+	
+	temp1.member_forward=temp2
+	temp2.member_backward=temp1	
+	temp2.cluster_forward=NULL
+	temp2.cluster_backward=NULL
+	return
+	
+cdef free_members(fof_struct *member_list):
+	cdef fof_struct *temp2
+	
+	temp2=member_list
+	
+	while temp2.member_forward!=NULL:
+		PyMem_Free(temp2.fof_params)
+		temp2=temp2.member_forward
+		
+	while temp2.member_backward!=NULL:
+		temp2=temp2.member_backward
+		
+		PyMem_Free(temp2.member_forward)
+		
+	return
+	
+	
+cdef void free_cluster(fof_struct *fof_list):
+	cdef fof_struct *temp1
+	cdef fof_struct *temp2
+	
+	temp1=fof_list
+	
+	while temp1.cluster_forward!=NULL:
+		temp2=temp1
+		free_members(temp2)
+		temp1=temp1.cluster_forward
+	
+	free_members(temp1)
+	temp1=fof_list
+	
+	while temp1.cluster_forward!=NULL:
+		temp1=temp1.cluster_forward
+		
+	while temp1.cluster_backward!=NULL:
+		temp1=temp1.cluster_backward
+		PyMem_Free(temp1.cluster_forward)
+	
+	PyMem_Free(fof_list)
+	return
+
+	
+cdef void cluster_to_add(fof_struct *fof_list, fof_struct *member_struct, double max_dist, int *cluster_numbers, int num_params):
+	
+	cdef fof_struct *temp1
+	cdef fof_struct *temp2
+	cdef double dist
+	cdef int i,j
+	
+	temp1=fof_list
+	i=0
+	j=0
+	while temp1!=NULL:
+		temp2=temp1
+		while temp2!=NULL:
+			dist=find_distance(temp2,member_struct, num_params)
+			if dist<=max_dist:
+				cluster_numbers[j]=i
+				j=j+1
+				if j==2:
+					return
+				break
+			temp2=temp2.member_forward
+		temp1=temp1.cluster_forward
+		i=i+1
+	return
+
+cdef int print_cluster(fof_struct *fof_list):
+	
+	cdef fof_struct *temp1
+	cdef fof_struct *temp2
+	cdef double dist
+	cdef int i,j
+	
+	temp1=fof_list
+	i=0
+	j=0
+	while temp1!=NULL:
+		print ("new_cluster")
+		temp2=temp1
+		while temp2!=NULL:
+			print (temp2.x,temp2.y)
+			temp2=temp2.member_forward
+		temp1=temp1.cluster_forward
+		i=i+1
+	return i
+	
 cdef int find_high_indx(int high_ind_val, int num):
 	cdef int i
 	i=high_ind_val
@@ -21,7 +214,7 @@ cdef int find_high_indx(int high_ind_val, int num):
 cdef int find_low_indx(int low_ind_val):
 	cdef int i=low_ind_val
 	while i<0:
-		i=i-1
+		i=i+1
 	return i
 	
 cdef int check_present_already(int *param_val_ind,int value, int max_size):
@@ -350,8 +543,58 @@ cdef void remove_duplicate_findings(int **discont, int discont_num, int low_indx
 			for j in range(3):
 				discont[j][i]=-1
 	return
+	
+cdef double find_distance(fof_struct *temp2, fof_struct *member_struct, int num_params):
+	cdef int i
+	cdef double dist=0.0
+	for i in range(num_params):
+		dist=dist+square(temp2.fof_params[i]-member_struct.fof_params[i])
+	dist=sqrt(dist)
+	return dist
 
-		
+cdef void do_clustering_analysis(int **cluster_coords, int num_times, int num_y, int num_x,int num_params, int low_indx,\
+				int low_indy, int low_indt, int high_indx, int high_indy,\
+				int high_indt, double **param_vals, double [:] fitted, double max_dist):
+	
+	cdef int x1,y1,t1
+	cdef fof_struct *fof
+	cdef fof_struct *fof_list
+	cdef int i
+	
+	cdef int cluster_numbers[2]
+	cluster_numbers[0]=-1
+	cluster_numbers[1]=-1
+	
+	t1=0
+	i=0
+	
+	for y1 in range(low_indy,high_indy+1):
+		for x1 in range(low_indx,high_indx+1):
+			fof=<fof_struct *>PyMem_Malloc(sizeof(fof_struct))
+			make_fof_struct(x1, y1, t1, num_times, num_y, \
+					num_x, num_params, fitted, param_vals,\
+			 		fof)	
+			if i==0:
+				fof_list=fof
+			else:
+				cluster_numbers[0]=-1
+				cluster_numbers[1]=-1
+				cluster_to_add(fof_list, fof, max_dist, cluster_numbers, num_params)
+				if cluster_numbers[1]<0:
+					if cluster_numbers[0]>=0:
+						add_member(fof_list, cluster_numbers[0],fof)
+					else:
+						add_clusters(fof_list, fof)
+				else:
+					add_member(fof_list, cluster_numbers[0],fof)
+					join_clusters(fof_list, cluster_numbers[0], cluster_numbers[1])
+			i=i+1
+					
+	cdef int num_cluster=print_cluster(fof_list)
+	#find_cluster_params(fof_list)
+	free_cluster(fof_list)
+	return	
+	 		
 
 cdef double remove_discontinuities(numpy.ndarray[numpy.double_t, ndim=4] cube,\
 				numpy.ndarray[numpy.double_t,ndim=2] err_cube,\
@@ -363,7 +606,8 @@ cdef double remove_discontinuities(numpy.ndarray[numpy.double_t, ndim=4] cube,\
 				int num_freqs,int search_length, double thresh, \
 				double **param_val_actual,double sys_error,\
 				double spatial_smoothness_enforcer,\
-				double temporal_smoothness_enforcer, int *model_param_lengths):
+				double temporal_smoothness_enforcer, int *model_param_lengths,\
+				double max_dist):
 	
 	cdef int tot_pix,i,j
 					
@@ -394,6 +638,8 @@ cdef double remove_discontinuities(numpy.ndarray[numpy.double_t, ndim=4] cube,\
 			
 	cdef int discont_num=list_discont(fitted, param_val, num_x,num_y, num_times, num_params,\
 			discont, search_length, thresh)
+			
+	
 			
 	cdef int box_size=2*search_length+1
 	box_size=box_size*box_size
@@ -428,9 +674,18 @@ cdef double remove_discontinuities(numpy.ndarray[numpy.double_t, ndim=4] cube,\
 	
 	previous_param_inds=<double **>PyMem_Malloc(discont_num*sizeof(double*))
 	
-			
+	cdef int *cluster_coords[3]
+	
+	for i in range(3):
+		cluster_coords[i]=<int *>PyMem_Malloc(box_size*sizeof(int))
+		for j in range(box_size):
+			cluster_coords[i][j]=-1
+	
+		
 	for i in range(discont_num):
 		previous_param_inds[i]=<double *>PyMem_Malloc(box_size*(num_params+1)*sizeof(double))
+	
+	for i in range(21,discont_num):
 		if discont[0][i]<0 and discont[1][i]<0 and discont[2][i]<0:
 			continue
 		make_data_ready_for_discont_removal(cube,err_cube,low_snr_loc,\
@@ -441,34 +696,46 @@ cdef double remove_discontinuities(numpy.ndarray[numpy.double_t, ndim=4] cube,\
 					&low_indy, &low_indt, &high_indx, &high_indy,\
 					&high_indt,search_length, param_val_ind, fitted,\
 					previous_param_inds[i])
+		
 		count_unique_param_vals(param_val_ind,param_val_lengths, num_params, box_size)
 		
-		do_bee_swarm_optimisation(spectrum, rms, model,num_freqs, param_val_ind, param_val_lengths,\
-					 num_params, low_indx,low_indy,low_indt,high_indx,high_indy,high_indt,\
-					 fitted, param_val_actual, sys_error,spatial_smoothness_enforcer,\
-						temporal_smoothness_enforcer, num_x, num_y,model_param_lengths)
+		do_clustering_analysis(cluster_coords, num_times, num_y, num_x,num_params, low_indx,low_indy,low_indt,\
+					high_indx, high_indy, high_indt, param_val_actual, fitted, max_dist) 
+		
+		#do_bee_swarm_optimisation(spectrum, rms, model,num_freqs, param_val_ind, param_val_lengths,\
+		#			 num_params, low_indx,low_indy,low_indt,high_indx,high_indy,high_indt,\
+		#			 fitted, param_val_actual, sys_error,spatial_smoothness_enforcer,\
+		#				temporal_smoothness_enforcer, num_x, num_y,model_param_lengths)
 		remove_duplicate_findings(discont, discont_num,low_indx, low_indy, low_indt, high_indx, high_indy,high_indt)				
+		break
 		
-		
+	
+	
 		
 	for i in range(3):
 		PyMem_Free(discont[i])
+		PyMem_Free(cluster_coords[i])
+	
 	
 	for i in range(box_size):
 		PyMem_Free(spectrum[i])
-		
+	
+	
 	for i in range(num_params):
 		PyMem_Free(param_val_ind[i])
+	
 	
 	for i in range(discont_num):
 		PyMem_Free(previous_param_inds[i])
 		
+		
+	
 	current_grad_chi=calc_grad_chi(fitted,param_val,num_times,num_y,num_x,num_params, \
 						spatial_smoothness_enforcer,\
 						temporal_smoothness_enforcer)
 						
 	
-	print (grad_chi,current_grad_chi)
+	
 	if grad_chi<=current_grad_chi:
 			fitted[i]=fitted_copy[i]
 	else:
@@ -840,8 +1107,10 @@ cdef void calc_grad(double [:]fitted,double **param_val, int num_times, int num_
 				ind1=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+(x1-1)*(num_params+1)+param1
 				ind2=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+(x1+1)*(num_params+1)+param1
 				if fitted[ind1-param1+num_params]>0 and fitted[ind2-param1+num_params]>0:
-					grad_x[param1]=(param_val[param1][int(fitted[ind2])]-\
-							param_val[param1][int(fitted[ind1])])/2
+					grad_x[param1]=(absolute(param_val[param1][int(fitted[ind])]-\
+							param_val[param1][int(fitted[ind1])])+\
+							absolute(param_val[param1][int(fitted[ind2])]-\
+							param_val[param1][int(fitted[ind])]))/2
 				elif fitted[ind1-param1+num_params]>0:
 					grad_x[param1]=(param_val[param1][int(fitted[ind])]-\
 							param_val[param1][int(fitted[ind1])])
@@ -875,8 +1144,10 @@ cdef void calc_grad(double [:]fitted,double **param_val, int num_times, int num_
 				ind1=t*num_y*num_x*(num_params+1)+(y1-1)*num_x*(num_params+1)+x1*(num_params+1)+param1
 				ind2=t*num_y*num_x*(num_params+1)+(y1+1)*num_x*(num_params+1)+x1*(num_params+1)+param1
 				if fitted[ind1-param1+num_params]>0 and fitted[ind2-param1+num_params]>0:
-					grad_y[param1]=(param_val[param1][int(fitted[ind2])]-\
-							param_val[param1][int(fitted[ind1])])/2
+					grad_y[param1]=(absolute(param_val[param1][int(fitted[ind])]-\
+							param_val[param1][int(fitted[ind1])])+\
+							absolute(param_val[param1][int(fitted[ind2])]-\
+							param_val[param1][int(fitted[ind])]))/2
 				elif fitted[ind1-param1+num_params]>0:
 					grad_y[param1]=(param_val[param1][int(fitted[ind])]-\
 							param_val[param1][int(fitted[ind1])])
@@ -911,8 +1182,10 @@ cdef void calc_grad(double [:]fitted,double **param_val, int num_times, int num_
 				ind1=(t-1)*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
 				ind2=(t+1)*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
 				if fitted[ind1-param1+num_params]>0 and fitted[ind2-param1+num_params]>0:
-					grad_t[param1]=(param_val[param1][int(fitted[ind2])]-\
-							param_val[param1][int(fitted[ind1])])/2
+					grad_t[param1]=(absolute(param_val[param1][int(fitted[ind])]-\
+							param_val[param1][int(fitted[ind1])])+\
+							absolute(param_val[param1][int(fitted[ind2])]-\
+							param_val[param1][int(fitted[ind])]))/2
 				elif fitted[ind1-param1+num_params]>0:
 					grad_t[param1]=(param_val[param1][int(fitted[ind])]-\
 							param_val[param1][int(fitted[ind1])])
@@ -1035,7 +1308,7 @@ cdef double calc_red_chi_all_pix(int num_times, int num_freqs, int num_y, int nu
 						int *pos,double [:] fitted, double *freqs1, double lower_freq,\
 						double upper_freq, int first_pass, double rms_thresh, int min_freq_num, int *param_lengths1,\
 						int *param_ind, double **param_val,double spatial_smoothness_enforcer,\
-						double temporal_smoothness_enforcer, int search_length, double discont_thresh):
+						double temporal_smoothness_enforcer, int search_length, double discont_thresh, double max_dist):
 						
 						
 	cdef double *spectrum
@@ -1108,7 +1381,7 @@ cdef double calc_red_chi_all_pix(int num_times, int num_freqs, int num_y, int nu
 				
 	cdef double grad_chi=remove_discontinuities(cube, err_cube, model, pos, low_freq_ind, upper_freq_ind, fitted1,param_val,num_times,num_x, num_y, \
 				num_params,num_freqs,search_length,discont_thresh, param_val, sys_error,spatial_smoothness_enforcer,\
-						temporal_smoothness_enforcer,param_lengths1)		
+						temporal_smoothness_enforcer,param_lengths1, max_dist)		
 						
 	cdef unsigned int num_val=num_times*num_x*num_y*(num_params+1)
 	
@@ -1131,8 +1404,8 @@ cpdef numpy.ndarray[numpy.double_t,ndim=1] compute_min_chi_square(numpy.ndarray[
 				numpy.ndarray[numpy.double_t,ndim=1] freqs,
 				double sys_error, double rms_thresh, int min_freq_num, int num_params,\
 				int num_times, int num_freqs, int num_y,int num_x, numpy.ndarray[numpy.double_t,ndim=1]param_vals,\
-				double spatial_smoothness_enforcer=0.001,double temporal_smoothness_enforcer=0.0,\
-				double frac_tol=0.1, int max_iter=10, int search_length=20, double discont_thresh=3.0):
+				double spatial_smoothness_enforcer, double temporal_smoothness_enforcer,\
+				double frac_tol, int max_iter, int search_length, double discont_thresh, double max_dist_parameter_space):
 				
 	cdef int t,y1,x1,i,j,l,ind
 	cdef numpy.ndarray[numpy.double_t,ndim=1] fitted1=np.zeros(num_times*num_y*num_x*(num_params+1))
@@ -1212,7 +1485,7 @@ cpdef numpy.ndarray[numpy.double_t,ndim=1] compute_min_chi_square(numpy.ndarray[
 						upper_freq, first_try, rms_thresh, min_freq_num,\
 						param_lengths1,param_ind, param_vals1,\
 						spatial_smoothness_enforcer, temporal_smoothness_enforcer,\
-						search_length=search_length,discont_thresh=discont_thresh)
+						search_length,discont_thresh, max_dist_parameter_space)
 						
 						
 	print (grad_chi)	

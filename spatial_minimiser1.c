@@ -1355,10 +1355,28 @@ typedef npy_clongdouble __pyx_t_5numpy_clongdouble_t;
  * cdef inline object PyArray_MultiIterNew1(a):
  */
 typedef npy_cdouble __pyx_t_5numpy_complex_t;
+struct __pyx_t_18spatial_minimiser1_fof_struct;
 struct __pyx_opt_args_18spatial_minimiser1_calc_grad_chi;
-struct __pyx_opt_args_18spatial_minimiser1_compute_min_chi_square;
 
-/* "spatial_minimiser1.pyx":941
+/* "spatial_minimiser1.pyx":13
+ * #@cython.wraparound(False)
+ * 
+ * cdef struct fof_struct:             # <<<<<<<<<<<<<<
+ * 	int x
+ * 	int y
+ */
+struct __pyx_t_18spatial_minimiser1_fof_struct {
+  int x;
+  int y;
+  int t;
+  double *fof_params;
+  struct __pyx_t_18spatial_minimiser1_fof_struct *cluster_forward;
+  struct __pyx_t_18spatial_minimiser1_fof_struct *cluster_backward;
+  struct __pyx_t_18spatial_minimiser1_fof_struct *member_forward;
+  struct __pyx_t_18spatial_minimiser1_fof_struct *member_backward;
+};
+
+/* "spatial_minimiser1.pyx":1217
  * 	return
  * 
  * cdef double calc_grad_chi(double [:]fitted, double **param_val,int num_times, int num_y, int num_x, int num_params, \             # <<<<<<<<<<<<<<
@@ -1369,23 +1387,6 @@ struct __pyx_opt_args_18spatial_minimiser1_calc_grad_chi {
   int __pyx_n;
   double spatial_smoothness_enforcer;
   double temporal_smoothness_enforcer;
-};
-
-/* "spatial_minimiser1.pyx":1122
- * 		return -x
- * 	return x
- * cpdef numpy.ndarray[numpy.double_t,ndim=1] compute_min_chi_square(numpy.ndarray[numpy.double_t, ndim=1] model, \             # <<<<<<<<<<<<<<
- * 				numpy.ndarray[numpy.double_t,ndim=4] cube,\
- * 				numpy.ndarray[numpy.double_t,ndim=2] err_cube,\
- */
-struct __pyx_opt_args_18spatial_minimiser1_compute_min_chi_square {
-  int __pyx_n;
-  double spatial_smoothness_enforcer;
-  double temporal_smoothness_enforcer;
-  double frac_tol;
-  int max_iter;
-  int search_length;
-  double discont_thresh;
 };
 
 /* "View.MemoryView":106
@@ -1587,12 +1588,8 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_GetAttrStr(PyObject* obj, PyObject
 /* GetBuiltinName.proto */
 static PyObject *__Pyx_GetBuiltinName(PyObject *name);
 
-/* PyIntFromDouble.proto */
-#if PY_MAJOR_VERSION < 3
-static CYTHON_INLINE PyObject* __Pyx_PyInt_FromDouble(double value);
-#else
-#define __Pyx_PyInt_FromDouble(value) PyLong_FromDouble(value)
-#endif
+/* BufferIndexError.proto */
+static void __Pyx_RaiseBufferIndexError(int axis);
 
 /* PyThreadStateGet.proto */
 #if CYTHON_FAST_THREAD_STATE
@@ -1635,8 +1632,19 @@ static void __Pyx_WriteUnraisable(const char *name, int clineno,
                                   int lineno, const char *filename,
                                   int full_traceback, int nogil);
 
-/* BufferIndexError.proto */
-static void __Pyx_RaiseBufferIndexError(int axis);
+/* PyObjectCall.proto */
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg, PyObject *kw);
+#else
+#define __Pyx_PyObject_Call(func, arg, kw) PyObject_Call(func, arg, kw)
+#endif
+
+/* PyIntFromDouble.proto */
+#if PY_MAJOR_VERSION < 3
+static CYTHON_INLINE PyObject* __Pyx_PyInt_FromDouble(double value);
+#else
+#define __Pyx_PyInt_FromDouble(value) PyLong_FromDouble(value)
+#endif
 
 /* PyCFunctionFastCall.proto */
 #if CYTHON_FAST_PYCCALL
@@ -1674,13 +1682,6 @@ static PyObject *__Pyx_PyFunction_FastCallDict(PyObject *func, PyObject **args, 
   #define __Pyx_PyFrame_GetLocalsplus(frame)\
     (assert(__pyx_pyframe_localsplus_offset), (PyObject **)(((char *)(frame)) + __pyx_pyframe_localsplus_offset))
 #endif // CYTHON_FAST_PYCALL
-#endif
-
-/* PyObjectCall.proto */
-#if CYTHON_COMPILING_IN_CPYTHON
-static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg, PyObject *kw);
-#else
-#define __Pyx_PyObject_Call(func, arg, kw) PyObject_Call(func, arg, kw)
 #endif
 
 /* PyObjectCallMethO.proto */
@@ -2419,6 +2420,14 @@ static PyObject *contiguous = 0;
 static PyObject *indirect_contiguous = 0;
 static int __pyx_memoryview_thread_locks_used;
 static PyThread_type_lock __pyx_memoryview_thread_locks[8];
+static void __pyx_f_18spatial_minimiser1_make_fof_struct(int, int, int, int, int, int, int, __Pyx_memviewslice, double **, struct __pyx_t_18spatial_minimiser1_fof_struct *); /*proto*/
+static void __pyx_f_18spatial_minimiser1_add_clusters(struct __pyx_t_18spatial_minimiser1_fof_struct *, struct __pyx_t_18spatial_minimiser1_fof_struct *); /*proto*/
+static void __pyx_f_18spatial_minimiser1_add_member(struct __pyx_t_18spatial_minimiser1_fof_struct *, int, struct __pyx_t_18spatial_minimiser1_fof_struct *); /*proto*/
+static void __pyx_f_18spatial_minimiser1_join_clusters(struct __pyx_t_18spatial_minimiser1_fof_struct *, int, int); /*proto*/
+static PyObject *__pyx_f_18spatial_minimiser1_free_members(struct __pyx_t_18spatial_minimiser1_fof_struct *); /*proto*/
+static void __pyx_f_18spatial_minimiser1_free_cluster(struct __pyx_t_18spatial_minimiser1_fof_struct *); /*proto*/
+static void __pyx_f_18spatial_minimiser1_cluster_to_add(struct __pyx_t_18spatial_minimiser1_fof_struct *, struct __pyx_t_18spatial_minimiser1_fof_struct *, double, int *, int); /*proto*/
+static int __pyx_f_18spatial_minimiser1_print_cluster(struct __pyx_t_18spatial_minimiser1_fof_struct *); /*proto*/
 static int __pyx_f_18spatial_minimiser1_find_high_indx(int, int); /*proto*/
 static int __pyx_f_18spatial_minimiser1_find_low_indx(int); /*proto*/
 static int __pyx_f_18spatial_minimiser1_check_present_already(int *, int, int); /*proto*/
@@ -2426,11 +2435,12 @@ static void __pyx_f_18spatial_minimiser1_gen_seed(double *, int); /*proto*/
 static unsigned int __pyx_f_18spatial_minimiser1_find_model_ind(__Pyx_memviewslice, int, int, int *, int, int, int, int); /*proto*/
 static void __pyx_f_18spatial_minimiser1_calc_map_chi(double **, double *, __Pyx_memviewslice, __Pyx_memviewslice, int, int, int, int, double, int *); /*proto*/
 static void __pyx_f_18spatial_minimiser1_get_random_param_ind(int *, int, int **, int *); /*proto*/
-static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **, double *, __Pyx_memviewslice, int, int **, int *, int, int, int, int, int, int, int, __Pyx_memviewslice, double **, double, double, double, int, int, int *); /*proto*/
 static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyArrayObject *, PyArrayObject *, int *, int ***, int ***, int, int, int, int, int, double **, double *, int, int, int, int *, int *, int *, int *, int *, int *, int, int **, __Pyx_memviewslice, double *); /*proto*/
 static void __pyx_f_18spatial_minimiser1_count_unique_param_vals(int **, int *, int, int); /*proto*/
 static void __pyx_f_18spatial_minimiser1_remove_duplicate_findings(int **, int, int, int, int, int, int, int); /*proto*/
-static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject *, PyArrayObject *, PyArrayObject *, int *, int ***, int ***, __Pyx_memviewslice, double **, int, int, int, int, int, int, double, double **, double, double, double, int *); /*proto*/
+static double __pyx_f_18spatial_minimiser1_find_distance(struct __pyx_t_18spatial_minimiser1_fof_struct *, struct __pyx_t_18spatial_minimiser1_fof_struct *, int); /*proto*/
+static void __pyx_f_18spatial_minimiser1_do_clustering_analysis(int **, int, int, int, int, int, int, int, int, int, int, double **, __Pyx_memviewslice, double); /*proto*/
+static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject *, PyArrayObject *, PyArrayObject *, int *, int ***, int ***, __Pyx_memviewslice, double **, int, int, int, int, int, int, double, double **, double, double, double, int *, double); /*proto*/
 static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice, double **, int, int, int, int, int, int, int, int, int, int, double, int); /*proto*/
 static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice, double **, int, int, int, int, int **, int, double); /*proto*/
 static int __pyx_f_18spatial_minimiser1_find_min_freq(double *, double, int); /*proto*/
@@ -2442,9 +2452,9 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *, int 
 static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice, double **, int, int, int, int, int, int, int, double *, double *, double *); /*proto*/
 static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice, double **, int, int, int, int, struct __pyx_opt_args_18spatial_minimiser1_calc_grad_chi *__pyx_optional_args); /*proto*/
 static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int, int, int, int, __Pyx_memviewslice, __Pyx_memviewslice, double *, double, double, int ***, int ***, int, int, __Pyx_memviewslice, int *, double); /*proto*/
-static double __pyx_f_18spatial_minimiser1_calc_red_chi_all_pix(int, int, int, int, int, int ***, int ***, PyArrayObject *, PyArrayObject *, PyArrayObject *, double, int *, __Pyx_memviewslice, double *, double, double, int, double, int, int *, int *, double **, double, double, int, double); /*proto*/
+static double __pyx_f_18spatial_minimiser1_calc_red_chi_all_pix(int, int, int, int, int, int ***, int ***, PyArrayObject *, PyArrayObject *, PyArrayObject *, double, int *, __Pyx_memviewslice, double *, double, double, int, double, int, int *, int *, double **, double, double, int, double, double); /*proto*/
 static double __pyx_f_18spatial_minimiser1_absolute(double); /*proto*/
-static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArrayObject *, PyArrayObject *, PyArrayObject *, double, double, PyArrayObject *, PyArrayObject *, double, double, int, int, int, int, int, int, PyArrayObject *, int __pyx_skip_dispatch, struct __pyx_opt_args_18spatial_minimiser1_compute_min_chi_square *__pyx_optional_args); /*proto*/
+static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArrayObject *, PyArrayObject *, PyArrayObject *, double, double, PyArrayObject *, PyArrayObject *, double, double, int, int, int, int, int, int, PyArrayObject *, double, double, double, int, int, double, double, int __pyx_skip_dispatch); /*proto*/
 static struct __pyx_array_obj *__pyx_array_new(PyObject *, Py_ssize_t, char *, char *, char *); /*proto*/
 static void *__pyx_align_pointer(void *, size_t); /*proto*/
 static PyObject *__pyx_memoryview_new(PyObject *, int, int, __Pyx_TypeInfo *); /*proto*/
@@ -2503,11 +2513,11 @@ static const char __pyx_k_T[] = "T{";
   static const char __pyx_k_s[] = "(%s)";
   static const char __pyx_k_id[] = "id";
   static const char __pyx_k_np[] = "np";
-  static const char __pyx_k__23[] = "^";
-  static const char __pyx_k__24[] = "";
-  static const char __pyx_k__25[] = ":";
-static const char __pyx_k__26[] = "}";
-static const char __pyx_k__27[] = ",";
+  static const char __pyx_k__24[] = "^";
+  static const char __pyx_k__25[] = "";
+  static const char __pyx_k__26[] = ":";
+static const char __pyx_k__27[] = "}";
+static const char __pyx_k__28[] = ",";
 static const char __pyx_k_new[] = "__new__";
 static const char __pyx_k_obj[] = "obj";
 static const char __pyx_k_File[] = "File";
@@ -2580,6 +2590,7 @@ static const char __pyx_k_upper_freq[] = "upper_freq";
 static const char __pyx_k_ImportError[] = "ImportError";
 static const char __pyx_k_MemoryError[] = "MemoryError";
 static const char __pyx_k_PickleError[] = "PickleError";
+static const char __pyx_k_new_cluster[] = "new_cluster";
 static const char __pyx_k_successfull[] = "successfull";
 static const char __pyx_k_min_freq_num[] = "min_freq_num";
 static const char __pyx_k_pyx_checksum[] = "__pyx_checksum";
@@ -2604,6 +2615,7 @@ static const char __pyx_k_MemoryView_of_r_object[] = "<MemoryView of %r object>"
 static const char __pyx_k_MemoryView_of_r_at_0x_x[] = "<MemoryView of %r at 0x%x>";
 static const char __pyx_k_contiguous_and_indirect[] = "<contiguous and indirect>";
 static const char __pyx_k_Cannot_index_with_type_s[] = "Cannot index with type '%s'";
+static const char __pyx_k_max_dist_parameter_space[] = "max_dist_parameter_space";
 static const char __pyx_k_Invalid_shape_in_axis_d_d[] = "Invalid shape in axis %d: %d.";
 static const char __pyx_k_itemsize_0_for_cython_array[] = "itemsize <= 0 for cython.array";
 static const char __pyx_k_spatial_smoothness_enforcer[] = "spatial_smoothness_enforcer";
@@ -2651,11 +2663,11 @@ static PyObject *__pyx_n_s_TypeError;
 static PyObject *__pyx_kp_s_Unable_to_convert_item_to_object;
 static PyObject *__pyx_n_s_ValueError;
 static PyObject *__pyx_n_s_View_MemoryView;
-static PyObject *__pyx_kp_b__23;
 static PyObject *__pyx_kp_b__24;
 static PyObject *__pyx_kp_b__25;
 static PyObject *__pyx_kp_b__26;
-static PyObject *__pyx_kp_u__27;
+static PyObject *__pyx_kp_b__27;
+static PyObject *__pyx_kp_u__28;
 static PyObject *__pyx_n_s_allocate_buffer;
 static PyObject *__pyx_n_s_array;
 static PyObject *__pyx_n_s_base;
@@ -2691,6 +2703,7 @@ static PyObject *__pyx_kp_s_itemsize_0_for_cython_array;
 static PyObject *__pyx_n_s_join;
 static PyObject *__pyx_n_s_lower_freq;
 static PyObject *__pyx_n_s_main;
+static PyObject *__pyx_n_s_max_dist_parameter_space;
 static PyObject *__pyx_n_s_max_iter;
 static PyObject *__pyx_n_s_memview;
 static PyObject *__pyx_n_s_min_freq_num;
@@ -2700,6 +2713,7 @@ static PyObject *__pyx_n_s_name;
 static PyObject *__pyx_n_s_name_2;
 static PyObject *__pyx_n_s_ndim;
 static PyObject *__pyx_n_s_new;
+static PyObject *__pyx_n_u_new_cluster;
 static PyObject *__pyx_kp_s_no_default___reduce___due_to_non;
 static PyObject *__pyx_n_s_np;
 static PyObject *__pyx_n_s_num_freqs;
@@ -2755,7 +2769,7 @@ static PyObject *__pyx_n_s_unpack;
 static PyObject *__pyx_n_s_update;
 static PyObject *__pyx_n_s_upper_freq;
 static PyObject *__pyx_n_s_zeros;
-static PyObject *__pyx_pf_18spatial_minimiser1_compute_min_chi_square(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_model, PyArrayObject *__pyx_v_cube, PyArrayObject *__pyx_v_err_cube, double __pyx_v_lower_freq, double __pyx_v_upper_freq, PyArrayObject *__pyx_v_param_lengths, PyArrayObject *__pyx_v_freqs, double __pyx_v_sys_error, double __pyx_v_rms_thresh, int __pyx_v_min_freq_num, int __pyx_v_num_params, int __pyx_v_num_times, int __pyx_v_num_freqs, int __pyx_v_num_y, int __pyx_v_num_x, PyArrayObject *__pyx_v_param_vals, double __pyx_v_spatial_smoothness_enforcer, double __pyx_v_temporal_smoothness_enforcer, double __pyx_v_frac_tol, int __pyx_v_max_iter, int __pyx_v_search_length, double __pyx_v_discont_thresh); /* proto */
+static PyObject *__pyx_pf_18spatial_minimiser1_compute_min_chi_square(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_model, PyArrayObject *__pyx_v_cube, PyArrayObject *__pyx_v_err_cube, double __pyx_v_lower_freq, double __pyx_v_upper_freq, PyArrayObject *__pyx_v_param_lengths, PyArrayObject *__pyx_v_freqs, double __pyx_v_sys_error, double __pyx_v_rms_thresh, int __pyx_v_min_freq_num, int __pyx_v_num_params, int __pyx_v_num_times, int __pyx_v_num_freqs, int __pyx_v_num_y, int __pyx_v_num_x, PyArrayObject *__pyx_v_param_vals, double __pyx_v_spatial_smoothness_enforcer, double __pyx_v_temporal_smoothness_enforcer, double __pyx_v_frac_tol, int __pyx_v_max_iter, int __pyx_v_search_length, double __pyx_v_discont_thresh, double __pyx_v_max_dist_parameter_space); /* proto */
 static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __pyx_array_obj *__pyx_v_self, PyObject *__pyx_v_shape, Py_ssize_t __pyx_v_itemsize, PyObject *__pyx_v_format, PyObject *__pyx_v_mode, int __pyx_v_allocate_buffer); /* proto */
 static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array_2__getbuffer__(struct __pyx_array_obj *__pyx_v_self, Py_buffer *__pyx_v_info, int __pyx_v_flags); /* proto */
 static void __pyx_array___pyx_pf_15View_dot_MemoryView_5array_4__dealloc__(struct __pyx_array_obj *__pyx_v_self); /* proto */
@@ -2817,7 +2831,7 @@ static PyObject *__pyx_tuple__6;
 static PyObject *__pyx_tuple__7;
 static PyObject *__pyx_tuple__8;
 static PyObject *__pyx_tuple__9;
-static PyObject *__pyx_slice__18;
+static PyObject *__pyx_slice__19;
 static PyObject *__pyx_tuple__10;
 static PyObject *__pyx_tuple__11;
 static PyObject *__pyx_tuple__12;
@@ -2826,21 +2840,1390 @@ static PyObject *__pyx_tuple__14;
 static PyObject *__pyx_tuple__15;
 static PyObject *__pyx_tuple__16;
 static PyObject *__pyx_tuple__17;
-static PyObject *__pyx_tuple__19;
+static PyObject *__pyx_tuple__18;
 static PyObject *__pyx_tuple__20;
 static PyObject *__pyx_tuple__21;
 static PyObject *__pyx_tuple__22;
-static PyObject *__pyx_tuple__28;
+static PyObject *__pyx_tuple__23;
 static PyObject *__pyx_tuple__29;
 static PyObject *__pyx_tuple__30;
 static PyObject *__pyx_tuple__31;
 static PyObject *__pyx_tuple__32;
 static PyObject *__pyx_tuple__33;
-static PyObject *__pyx_codeobj__34;
+static PyObject *__pyx_tuple__34;
+static PyObject *__pyx_codeobj__35;
 /* Late includes */
 
-/* "spatial_minimiser1.pyx":14
+/* "spatial_minimiser1.pyx":23
+ * 	fof_struct *member_backward
  * 
+ * cdef void make_fof_struct(int x0, int y0, int t0, int num_times, int num_y, \             # <<<<<<<<<<<<<<
+ * 			int num_x, int num_params, double [:] fitted, double **param_vals,\
+ * 			 fof_struct *fof):
+ */
+
+static void __pyx_f_18spatial_minimiser1_make_fof_struct(int __pyx_v_x0, int __pyx_v_y0, int __pyx_v_t0, CYTHON_UNUSED int __pyx_v_num_times, int __pyx_v_num_y, int __pyx_v_num_x, int __pyx_v_num_params, __Pyx_memviewslice __pyx_v_fitted, double **__pyx_v_param_vals, struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_v_fof) {
+  int __pyx_v_i;
+  unsigned int __pyx_v_ind;
+  double *__pyx_v_fof_params;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  int __pyx_t_2;
+  int __pyx_t_3;
+  size_t __pyx_t_4;
+  int __pyx_t_5;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("make_fof_struct", 0);
+
+  /* "spatial_minimiser1.pyx":29
+ * 	cdef unsigned int ind
+ * 
+ * 	ind=t0*num_y*num_x*(num_params+1)+y0*num_x*(num_params+1)+x0*(num_params+1)             # <<<<<<<<<<<<<<
+ * 
+ * 	fof.cluster_forward=NULL
+ */
+  __pyx_v_ind = (((((__pyx_v_t0 * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y0 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x0 * (__pyx_v_num_params + 1)));
+
+  /* "spatial_minimiser1.pyx":31
+ * 	ind=t0*num_y*num_x*(num_params+1)+y0*num_x*(num_params+1)+x0*(num_params+1)
+ * 
+ * 	fof.cluster_forward=NULL             # <<<<<<<<<<<<<<
+ * 	fof.cluster_backward=NULL
+ * 	fof.member_forward=NULL
+ */
+  __pyx_v_fof->cluster_forward = NULL;
+
+  /* "spatial_minimiser1.pyx":32
+ * 
+ * 	fof.cluster_forward=NULL
+ * 	fof.cluster_backward=NULL             # <<<<<<<<<<<<<<
+ * 	fof.member_forward=NULL
+ * 	fof.member_backward=NULL
+ */
+  __pyx_v_fof->cluster_backward = NULL;
+
+  /* "spatial_minimiser1.pyx":33
+ * 	fof.cluster_forward=NULL
+ * 	fof.cluster_backward=NULL
+ * 	fof.member_forward=NULL             # <<<<<<<<<<<<<<
+ * 	fof.member_backward=NULL
+ * 	cdef double *fof_params
+ */
+  __pyx_v_fof->member_forward = NULL;
+
+  /* "spatial_minimiser1.pyx":34
+ * 	fof.cluster_backward=NULL
+ * 	fof.member_forward=NULL
+ * 	fof.member_backward=NULL             # <<<<<<<<<<<<<<
+ * 	cdef double *fof_params
+ * 	fof_params=<double *>PyMem_Malloc(num_params*sizeof(double))
+ */
+  __pyx_v_fof->member_backward = NULL;
+
+  /* "spatial_minimiser1.pyx":36
+ * 	fof.member_backward=NULL
+ * 	cdef double *fof_params
+ * 	fof_params=<double *>PyMem_Malloc(num_params*sizeof(double))             # <<<<<<<<<<<<<<
+ * 
+ * 	for i in range(num_params):
+ */
+  __pyx_v_fof_params = ((double *)PyMem_Malloc((__pyx_v_num_params * (sizeof(double)))));
+
+  /* "spatial_minimiser1.pyx":38
+ * 	fof_params=<double *>PyMem_Malloc(num_params*sizeof(double))
+ * 
+ * 	for i in range(num_params):             # <<<<<<<<<<<<<<
+ * 		fof_params[i]=param_vals[i][int(fitted[ind+i])]
+ * 
+ */
+  __pyx_t_1 = __pyx_v_num_params;
+  __pyx_t_2 = __pyx_t_1;
+  for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
+    __pyx_v_i = __pyx_t_3;
+
+    /* "spatial_minimiser1.pyx":39
+ * 
+ * 	for i in range(num_params):
+ * 		fof_params[i]=param_vals[i][int(fitted[ind+i])]             # <<<<<<<<<<<<<<
+ * 
+ * 	fof.fof_params=fof_params
+ */
+    __pyx_t_4 = (__pyx_v_ind + __pyx_v_i);
+    __pyx_t_5 = -1;
+    if (unlikely(__pyx_t_4 >= (size_t)__pyx_v_fitted.shape[0])) __pyx_t_5 = 0;
+    if (unlikely(__pyx_t_5 != -1)) {
+      __Pyx_RaiseBufferIndexError(__pyx_t_5);
+      __PYX_ERR(0, 39, __pyx_L1_error)
+    }
+    (__pyx_v_fof_params[__pyx_v_i]) = ((__pyx_v_param_vals[__pyx_v_i])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_4 * __pyx_v_fitted.strides[0]) ))))]);
+  }
+
+  /* "spatial_minimiser1.pyx":41
+ * 		fof_params[i]=param_vals[i][int(fitted[ind+i])]
+ * 
+ * 	fof.fof_params=fof_params             # <<<<<<<<<<<<<<
+ * 
+ * 	fof.x=x0
+ */
+  __pyx_v_fof->fof_params = __pyx_v_fof_params;
+
+  /* "spatial_minimiser1.pyx":43
+ * 	fof.fof_params=fof_params
+ * 
+ * 	fof.x=x0             # <<<<<<<<<<<<<<
+ * 	fof.y=y0
+ * 	fof.t=t0
+ */
+  __pyx_v_fof->x = __pyx_v_x0;
+
+  /* "spatial_minimiser1.pyx":44
+ * 
+ * 	fof.x=x0
+ * 	fof.y=y0             # <<<<<<<<<<<<<<
+ * 	fof.t=t0
+ * 	return
+ */
+  __pyx_v_fof->y = __pyx_v_y0;
+
+  /* "spatial_minimiser1.pyx":45
+ * 	fof.x=x0
+ * 	fof.y=y0
+ * 	fof.t=t0             # <<<<<<<<<<<<<<
+ * 	return
+ * 
+ */
+  __pyx_v_fof->t = __pyx_v_t0;
+
+  /* "spatial_minimiser1.pyx":46
+ * 	fof.y=y0
+ * 	fof.t=t0
+ * 	return             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  goto __pyx_L0;
+
+  /* "spatial_minimiser1.pyx":23
+ * 	fof_struct *member_backward
+ * 
+ * cdef void make_fof_struct(int x0, int y0, int t0, int num_times, int num_y, \             # <<<<<<<<<<<<<<
+ * 			int num_x, int num_params, double [:] fitted, double **param_vals,\
+ * 			 fof_struct *fof):
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_WriteUnraisable("spatial_minimiser1.make_fof_struct", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+}
+
+/* "spatial_minimiser1.pyx":49
+ * 
+ * 
+ * cdef void add_first_cluster(fof_struct *fof_list, fof_struct *cluster):             # <<<<<<<<<<<<<<
+ * 	fof_list=cluster
+ * 	return
+ */
+
+static void __pyx_f_18spatial_minimiser1_add_first_cluster(CYTHON_UNUSED struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_v_fof_list, struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_v_cluster) {
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("add_first_cluster", 0);
+
+  /* "spatial_minimiser1.pyx":50
+ * 
+ * cdef void add_first_cluster(fof_struct *fof_list, fof_struct *cluster):
+ * 	fof_list=cluster             # <<<<<<<<<<<<<<
+ * 	return
+ * 
+ */
+  __pyx_v_fof_list = __pyx_v_cluster;
+
+  /* "spatial_minimiser1.pyx":51
+ * cdef void add_first_cluster(fof_struct *fof_list, fof_struct *cluster):
+ * 	fof_list=cluster
+ * 	return             # <<<<<<<<<<<<<<
+ * 
+ * cdef void add_clusters(fof_struct *fof_list, fof_struct *cluster):
+ */
+  goto __pyx_L0;
+
+  /* "spatial_minimiser1.pyx":49
+ * 
+ * 
+ * cdef void add_first_cluster(fof_struct *fof_list, fof_struct *cluster):             # <<<<<<<<<<<<<<
+ * 	fof_list=cluster
+ * 	return
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+}
+
+/* "spatial_minimiser1.pyx":53
+ * 	return
+ * 
+ * cdef void add_clusters(fof_struct *fof_list, fof_struct *cluster):             # <<<<<<<<<<<<<<
+ * 	cdef fof_struct *temp
+ * 	temp=fof_list
+ */
+
+static void __pyx_f_18spatial_minimiser1_add_clusters(struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_v_fof_list, struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_v_cluster) {
+  struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_v_temp;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_t_2;
+  __Pyx_RefNannySetupContext("add_clusters", 0);
+
+  /* "spatial_minimiser1.pyx":55
+ * cdef void add_clusters(fof_struct *fof_list, fof_struct *cluster):
+ * 	cdef fof_struct *temp
+ * 	temp=fof_list             # <<<<<<<<<<<<<<
+ * 
+ * 	while temp.cluster_forward!=NULL:
+ */
+  __pyx_v_temp = __pyx_v_fof_list;
+
+  /* "spatial_minimiser1.pyx":57
+ * 	temp=fof_list
+ * 
+ * 	while temp.cluster_forward!=NULL:             # <<<<<<<<<<<<<<
+ * 		temp=temp.cluster_forward
+ * 	### when the while loop exits, temp is a pointer to the last element of the cluster list
+ */
+  while (1) {
+    __pyx_t_1 = ((__pyx_v_temp->cluster_forward != NULL) != 0);
+    if (!__pyx_t_1) break;
+
+    /* "spatial_minimiser1.pyx":58
+ * 
+ * 	while temp.cluster_forward!=NULL:
+ * 		temp=temp.cluster_forward             # <<<<<<<<<<<<<<
+ * 	### when the while loop exits, temp is a pointer to the last element of the cluster list
+ * 
+ */
+    __pyx_t_2 = __pyx_v_temp->cluster_forward;
+    __pyx_v_temp = __pyx_t_2;
+  }
+
+  /* "spatial_minimiser1.pyx":61
+ * 	### when the while loop exits, temp is a pointer to the last element of the cluster list
+ * 
+ * 	temp.cluster_forward=cluster             # <<<<<<<<<<<<<<
+ * 	cluster.cluster_backward=temp
+ * 
+ */
+  __pyx_v_temp->cluster_forward = __pyx_v_cluster;
+
+  /* "spatial_minimiser1.pyx":62
+ * 
+ * 	temp.cluster_forward=cluster
+ * 	cluster.cluster_backward=temp             # <<<<<<<<<<<<<<
+ * 
+ * 	return
+ */
+  __pyx_v_cluster->cluster_backward = __pyx_v_temp;
+
+  /* "spatial_minimiser1.pyx":64
+ * 	cluster.cluster_backward=temp
+ * 
+ * 	return             # <<<<<<<<<<<<<<
+ * 
+ * cdef void add_member(fof_struct *fof_list, int cluster_number,fof_struct *member):
+ */
+  goto __pyx_L0;
+
+  /* "spatial_minimiser1.pyx":53
+ * 	return
+ * 
+ * cdef void add_clusters(fof_struct *fof_list, fof_struct *cluster):             # <<<<<<<<<<<<<<
+ * 	cdef fof_struct *temp
+ * 	temp=fof_list
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+}
+
+/* "spatial_minimiser1.pyx":66
+ * 	return
+ * 
+ * cdef void add_member(fof_struct *fof_list, int cluster_number,fof_struct *member):             # <<<<<<<<<<<<<<
+ * 	cdef int i
+ * 	i=0
+ */
+
+static void __pyx_f_18spatial_minimiser1_add_member(struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_v_fof_list, int __pyx_v_cluster_number, struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_v_member) {
+  int __pyx_v_i;
+  struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_v_temp;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_t_2;
+  __Pyx_RefNannySetupContext("add_member", 0);
+
+  /* "spatial_minimiser1.pyx":68
+ * cdef void add_member(fof_struct *fof_list, int cluster_number,fof_struct *member):
+ * 	cdef int i
+ * 	i=0             # <<<<<<<<<<<<<<
+ * 	cdef fof_struct *temp
+ * 	temp=fof_list
+ */
+  __pyx_v_i = 0;
+
+  /* "spatial_minimiser1.pyx":70
+ * 	i=0
+ * 	cdef fof_struct *temp
+ * 	temp=fof_list             # <<<<<<<<<<<<<<
+ * 
+ * 	while i<cluster_number:
+ */
+  __pyx_v_temp = __pyx_v_fof_list;
+
+  /* "spatial_minimiser1.pyx":72
+ * 	temp=fof_list
+ * 
+ * 	while i<cluster_number:             # <<<<<<<<<<<<<<
+ * 		temp=temp.cluster_forward
+ * 		i=i+1
+ */
+  while (1) {
+    __pyx_t_1 = ((__pyx_v_i < __pyx_v_cluster_number) != 0);
+    if (!__pyx_t_1) break;
+
+    /* "spatial_minimiser1.pyx":73
+ * 
+ * 	while i<cluster_number:
+ * 		temp=temp.cluster_forward             # <<<<<<<<<<<<<<
+ * 		i=i+1
+ * 
+ */
+    __pyx_t_2 = __pyx_v_temp->cluster_forward;
+    __pyx_v_temp = __pyx_t_2;
+
+    /* "spatial_minimiser1.pyx":74
+ * 	while i<cluster_number:
+ * 		temp=temp.cluster_forward
+ * 		i=i+1             # <<<<<<<<<<<<<<
+ * 
+ * 	while temp.member_forward!=NULL:
+ */
+    __pyx_v_i = (__pyx_v_i + 1);
+  }
+
+  /* "spatial_minimiser1.pyx":76
+ * 		i=i+1
+ * 
+ * 	while temp.member_forward!=NULL:             # <<<<<<<<<<<<<<
+ * 		temp=temp.member_forward
+ * 
+ */
+  while (1) {
+    __pyx_t_1 = ((__pyx_v_temp->member_forward != NULL) != 0);
+    if (!__pyx_t_1) break;
+
+    /* "spatial_minimiser1.pyx":77
+ * 
+ * 	while temp.member_forward!=NULL:
+ * 		temp=temp.member_forward             # <<<<<<<<<<<<<<
+ * 
+ * 	temp.member_forward=member
+ */
+    __pyx_t_2 = __pyx_v_temp->member_forward;
+    __pyx_v_temp = __pyx_t_2;
+  }
+
+  /* "spatial_minimiser1.pyx":79
+ * 		temp=temp.member_forward
+ * 
+ * 	temp.member_forward=member             # <<<<<<<<<<<<<<
+ * 	member.member_backward=temp
+ * 	return
+ */
+  __pyx_v_temp->member_forward = __pyx_v_member;
+
+  /* "spatial_minimiser1.pyx":80
+ * 
+ * 	temp.member_forward=member
+ * 	member.member_backward=temp             # <<<<<<<<<<<<<<
+ * 	return
+ * 
+ */
+  __pyx_v_member->member_backward = __pyx_v_temp;
+
+  /* "spatial_minimiser1.pyx":81
+ * 	temp.member_forward=member
+ * 	member.member_backward=temp
+ * 	return             # <<<<<<<<<<<<<<
+ * 
+ * cdef void join_clusters(fof_struct *fof_list, int cluster_number1, int cluster_number2):
+ */
+  goto __pyx_L0;
+
+  /* "spatial_minimiser1.pyx":66
+ * 	return
+ * 
+ * cdef void add_member(fof_struct *fof_list, int cluster_number,fof_struct *member):             # <<<<<<<<<<<<<<
+ * 	cdef int i
+ * 	i=0
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+}
+
+/* "spatial_minimiser1.pyx":83
+ * 	return
+ * 
+ * cdef void join_clusters(fof_struct *fof_list, int cluster_number1, int cluster_number2):             # <<<<<<<<<<<<<<
+ * 	cdef int i
+ * 
+ */
+
+static void __pyx_f_18spatial_minimiser1_join_clusters(struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_v_fof_list, int __pyx_v_cluster_number1, int __pyx_v_cluster_number2) {
+  int __pyx_v_i;
+  struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_v_temp1;
+  struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_v_temp2;
+  struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_v_temp3;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_t_2;
+  int __pyx_t_3;
+  __Pyx_RefNannySetupContext("join_clusters", 0);
+
+  /* "spatial_minimiser1.pyx":87
+ * 
+ * 	cdef fof_struct *temp1
+ * 	temp1=fof_list             # <<<<<<<<<<<<<<
+ * 
+ * 	i=0
+ */
+  __pyx_v_temp1 = __pyx_v_fof_list;
+
+  /* "spatial_minimiser1.pyx":89
+ * 	temp1=fof_list
+ * 
+ * 	i=0             # <<<<<<<<<<<<<<
+ * 	while i<cluster_number1:
+ * 		temp1=temp1.cluster_forward
+ */
+  __pyx_v_i = 0;
+
+  /* "spatial_minimiser1.pyx":90
+ * 
+ * 	i=0
+ * 	while i<cluster_number1:             # <<<<<<<<<<<<<<
+ * 		temp1=temp1.cluster_forward
+ * 		i=i+1
+ */
+  while (1) {
+    __pyx_t_1 = ((__pyx_v_i < __pyx_v_cluster_number1) != 0);
+    if (!__pyx_t_1) break;
+
+    /* "spatial_minimiser1.pyx":91
+ * 	i=0
+ * 	while i<cluster_number1:
+ * 		temp1=temp1.cluster_forward             # <<<<<<<<<<<<<<
+ * 		i=i+1
+ * 
+ */
+    __pyx_t_2 = __pyx_v_temp1->cluster_forward;
+    __pyx_v_temp1 = __pyx_t_2;
+
+    /* "spatial_minimiser1.pyx":92
+ * 	while i<cluster_number1:
+ * 		temp1=temp1.cluster_forward
+ * 		i=i+1             # <<<<<<<<<<<<<<
+ * 
+ * 	cdef fof_struct *temp2
+ */
+    __pyx_v_i = (__pyx_v_i + 1);
+  }
+
+  /* "spatial_minimiser1.pyx":95
+ * 
+ * 	cdef fof_struct *temp2
+ * 	temp2=fof_list             # <<<<<<<<<<<<<<
+ * 
+ * 	i=0
+ */
+  __pyx_v_temp2 = __pyx_v_fof_list;
+
+  /* "spatial_minimiser1.pyx":97
+ * 	temp2=fof_list
+ * 
+ * 	i=0             # <<<<<<<<<<<<<<
+ * 	temp2=fof_list
+ * 	while temp2.cluster_forward!=NULL and i<cluster_number2:
+ */
+  __pyx_v_i = 0;
+
+  /* "spatial_minimiser1.pyx":98
+ * 
+ * 	i=0
+ * 	temp2=fof_list             # <<<<<<<<<<<<<<
+ * 	while temp2.cluster_forward!=NULL and i<cluster_number2:
+ * 		temp2=temp2.cluster_forward
+ */
+  __pyx_v_temp2 = __pyx_v_fof_list;
+
+  /* "spatial_minimiser1.pyx":99
+ * 	i=0
+ * 	temp2=fof_list
+ * 	while temp2.cluster_forward!=NULL and i<cluster_number2:             # <<<<<<<<<<<<<<
+ * 		temp2=temp2.cluster_forward
+ * 		i=i+1
+ */
+  while (1) {
+    __pyx_t_3 = ((__pyx_v_temp2->cluster_forward != NULL) != 0);
+    if (__pyx_t_3) {
+    } else {
+      __pyx_t_1 = __pyx_t_3;
+      goto __pyx_L7_bool_binop_done;
+    }
+    __pyx_t_3 = ((__pyx_v_i < __pyx_v_cluster_number2) != 0);
+    __pyx_t_1 = __pyx_t_3;
+    __pyx_L7_bool_binop_done:;
+    if (!__pyx_t_1) break;
+
+    /* "spatial_minimiser1.pyx":100
+ * 	temp2=fof_list
+ * 	while temp2.cluster_forward!=NULL and i<cluster_number2:
+ * 		temp2=temp2.cluster_forward             # <<<<<<<<<<<<<<
+ * 		i=i+1
+ * 	cdef fof_struct *temp3
+ */
+    __pyx_t_2 = __pyx_v_temp2->cluster_forward;
+    __pyx_v_temp2 = __pyx_t_2;
+
+    /* "spatial_minimiser1.pyx":101
+ * 	while temp2.cluster_forward!=NULL and i<cluster_number2:
+ * 		temp2=temp2.cluster_forward
+ * 		i=i+1             # <<<<<<<<<<<<<<
+ * 	cdef fof_struct *temp3
+ * 
+ */
+    __pyx_v_i = (__pyx_v_i + 1);
+  }
+
+  /* "spatial_minimiser1.pyx":105
+ * 
+ * 
+ * 	temp3=temp2.cluster_backward             # <<<<<<<<<<<<<<
+ * 
+ * 	temp3.cluster_forward=temp2.cluster_forward
+ */
+  __pyx_t_2 = __pyx_v_temp2->cluster_backward;
+  __pyx_v_temp3 = __pyx_t_2;
+
+  /* "spatial_minimiser1.pyx":107
+ * 	temp3=temp2.cluster_backward
+ * 
+ * 	temp3.cluster_forward=temp2.cluster_forward             # <<<<<<<<<<<<<<
+ * 	if temp2.cluster_forward!=NULL:
+ * 		temp2.cluster_forward.cluster_backward=temp3
+ */
+  __pyx_t_2 = __pyx_v_temp2->cluster_forward;
+  __pyx_v_temp3->cluster_forward = __pyx_t_2;
+
+  /* "spatial_minimiser1.pyx":108
+ * 
+ * 	temp3.cluster_forward=temp2.cluster_forward
+ * 	if temp2.cluster_forward!=NULL:             # <<<<<<<<<<<<<<
+ * 		temp2.cluster_forward.cluster_backward=temp3
+ * 	while temp1.member_forward!=NULL:
+ */
+  __pyx_t_1 = ((__pyx_v_temp2->cluster_forward != NULL) != 0);
+  if (__pyx_t_1) {
+
+    /* "spatial_minimiser1.pyx":109
+ * 	temp3.cluster_forward=temp2.cluster_forward
+ * 	if temp2.cluster_forward!=NULL:
+ * 		temp2.cluster_forward.cluster_backward=temp3             # <<<<<<<<<<<<<<
+ * 	while temp1.member_forward!=NULL:
+ * 		temp1=temp1.member_forward
+ */
+    __pyx_v_temp2->cluster_forward->cluster_backward = __pyx_v_temp3;
+
+    /* "spatial_minimiser1.pyx":108
+ * 
+ * 	temp3.cluster_forward=temp2.cluster_forward
+ * 	if temp2.cluster_forward!=NULL:             # <<<<<<<<<<<<<<
+ * 		temp2.cluster_forward.cluster_backward=temp3
+ * 	while temp1.member_forward!=NULL:
+ */
+  }
+
+  /* "spatial_minimiser1.pyx":110
+ * 	if temp2.cluster_forward!=NULL:
+ * 		temp2.cluster_forward.cluster_backward=temp3
+ * 	while temp1.member_forward!=NULL:             # <<<<<<<<<<<<<<
+ * 		temp1=temp1.member_forward
+ * 
+ */
+  while (1) {
+    __pyx_t_1 = ((__pyx_v_temp1->member_forward != NULL) != 0);
+    if (!__pyx_t_1) break;
+
+    /* "spatial_minimiser1.pyx":111
+ * 		temp2.cluster_forward.cluster_backward=temp3
+ * 	while temp1.member_forward!=NULL:
+ * 		temp1=temp1.member_forward             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+    __pyx_t_2 = __pyx_v_temp1->member_forward;
+    __pyx_v_temp1 = __pyx_t_2;
+  }
+
+  /* "spatial_minimiser1.pyx":114
+ * 
+ * 
+ * 	temp1.member_forward=temp2             # <<<<<<<<<<<<<<
+ * 	temp2.member_backward=temp1
+ * 	temp2.cluster_forward=NULL
+ */
+  __pyx_v_temp1->member_forward = __pyx_v_temp2;
+
+  /* "spatial_minimiser1.pyx":115
+ * 
+ * 	temp1.member_forward=temp2
+ * 	temp2.member_backward=temp1             # <<<<<<<<<<<<<<
+ * 	temp2.cluster_forward=NULL
+ * 	temp2.cluster_backward=NULL
+ */
+  __pyx_v_temp2->member_backward = __pyx_v_temp1;
+
+  /* "spatial_minimiser1.pyx":116
+ * 	temp1.member_forward=temp2
+ * 	temp2.member_backward=temp1
+ * 	temp2.cluster_forward=NULL             # <<<<<<<<<<<<<<
+ * 	temp2.cluster_backward=NULL
+ * 	return
+ */
+  __pyx_v_temp2->cluster_forward = NULL;
+
+  /* "spatial_minimiser1.pyx":117
+ * 	temp2.member_backward=temp1
+ * 	temp2.cluster_forward=NULL
+ * 	temp2.cluster_backward=NULL             # <<<<<<<<<<<<<<
+ * 	return
+ * 
+ */
+  __pyx_v_temp2->cluster_backward = NULL;
+
+  /* "spatial_minimiser1.pyx":118
+ * 	temp2.cluster_forward=NULL
+ * 	temp2.cluster_backward=NULL
+ * 	return             # <<<<<<<<<<<<<<
+ * 
+ * cdef free_members(fof_struct *member_list):
+ */
+  goto __pyx_L0;
+
+  /* "spatial_minimiser1.pyx":83
+ * 	return
+ * 
+ * cdef void join_clusters(fof_struct *fof_list, int cluster_number1, int cluster_number2):             # <<<<<<<<<<<<<<
+ * 	cdef int i
+ * 
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+}
+
+/* "spatial_minimiser1.pyx":120
+ * 	return
+ * 
+ * cdef free_members(fof_struct *member_list):             # <<<<<<<<<<<<<<
+ * 	cdef fof_struct *temp2
+ * 
+ */
+
+static PyObject *__pyx_f_18spatial_minimiser1_free_members(struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_v_member_list) {
+  struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_v_temp2;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_t_2;
+  __Pyx_RefNannySetupContext("free_members", 0);
+
+  /* "spatial_minimiser1.pyx":123
+ * 	cdef fof_struct *temp2
+ * 
+ * 	temp2=member_list             # <<<<<<<<<<<<<<
+ * 
+ * 	while temp2.member_forward!=NULL:
+ */
+  __pyx_v_temp2 = __pyx_v_member_list;
+
+  /* "spatial_minimiser1.pyx":125
+ * 	temp2=member_list
+ * 
+ * 	while temp2.member_forward!=NULL:             # <<<<<<<<<<<<<<
+ * 		PyMem_Free(temp2.fof_params)
+ * 		temp2=temp2.member_forward
+ */
+  while (1) {
+    __pyx_t_1 = ((__pyx_v_temp2->member_forward != NULL) != 0);
+    if (!__pyx_t_1) break;
+
+    /* "spatial_minimiser1.pyx":126
+ * 
+ * 	while temp2.member_forward!=NULL:
+ * 		PyMem_Free(temp2.fof_params)             # <<<<<<<<<<<<<<
+ * 		temp2=temp2.member_forward
+ * 
+ */
+    PyMem_Free(__pyx_v_temp2->fof_params);
+
+    /* "spatial_minimiser1.pyx":127
+ * 	while temp2.member_forward!=NULL:
+ * 		PyMem_Free(temp2.fof_params)
+ * 		temp2=temp2.member_forward             # <<<<<<<<<<<<<<
+ * 
+ * 	while temp2.member_backward!=NULL:
+ */
+    __pyx_t_2 = __pyx_v_temp2->member_forward;
+    __pyx_v_temp2 = __pyx_t_2;
+  }
+
+  /* "spatial_minimiser1.pyx":129
+ * 		temp2=temp2.member_forward
+ * 
+ * 	while temp2.member_backward!=NULL:             # <<<<<<<<<<<<<<
+ * 		temp2=temp2.member_backward
+ * 
+ */
+  while (1) {
+    __pyx_t_1 = ((__pyx_v_temp2->member_backward != NULL) != 0);
+    if (!__pyx_t_1) break;
+
+    /* "spatial_minimiser1.pyx":130
+ * 
+ * 	while temp2.member_backward!=NULL:
+ * 		temp2=temp2.member_backward             # <<<<<<<<<<<<<<
+ * 
+ * 		PyMem_Free(temp2.member_forward)
+ */
+    __pyx_t_2 = __pyx_v_temp2->member_backward;
+    __pyx_v_temp2 = __pyx_t_2;
+
+    /* "spatial_minimiser1.pyx":132
+ * 		temp2=temp2.member_backward
+ * 
+ * 		PyMem_Free(temp2.member_forward)             # <<<<<<<<<<<<<<
+ * 
+ * 	return
+ */
+    PyMem_Free(__pyx_v_temp2->member_forward);
+  }
+
+  /* "spatial_minimiser1.pyx":134
+ * 		PyMem_Free(temp2.member_forward)
+ * 
+ * 	return             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_r = Py_None; __Pyx_INCREF(Py_None);
+  goto __pyx_L0;
+
+  /* "spatial_minimiser1.pyx":120
+ * 	return
+ * 
+ * cdef free_members(fof_struct *member_list):             # <<<<<<<<<<<<<<
+ * 	cdef fof_struct *temp2
+ * 
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "spatial_minimiser1.pyx":137
+ * 
+ * 
+ * cdef void free_cluster(fof_struct *fof_list):             # <<<<<<<<<<<<<<
+ * 	cdef fof_struct *temp1
+ * 	cdef fof_struct *temp2
+ */
+
+static void __pyx_f_18spatial_minimiser1_free_cluster(struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_v_fof_list) {
+  struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_v_temp1;
+  struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_v_temp2;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  PyObject *__pyx_t_2 = NULL;
+  struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_t_3;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("free_cluster", 0);
+
+  /* "spatial_minimiser1.pyx":141
+ * 	cdef fof_struct *temp2
+ * 
+ * 	temp1=fof_list             # <<<<<<<<<<<<<<
+ * 
+ * 	while temp1.cluster_forward!=NULL:
+ */
+  __pyx_v_temp1 = __pyx_v_fof_list;
+
+  /* "spatial_minimiser1.pyx":143
+ * 	temp1=fof_list
+ * 
+ * 	while temp1.cluster_forward!=NULL:             # <<<<<<<<<<<<<<
+ * 		temp2=temp1
+ * 		free_members(temp2)
+ */
+  while (1) {
+    __pyx_t_1 = ((__pyx_v_temp1->cluster_forward != NULL) != 0);
+    if (!__pyx_t_1) break;
+
+    /* "spatial_minimiser1.pyx":144
+ * 
+ * 	while temp1.cluster_forward!=NULL:
+ * 		temp2=temp1             # <<<<<<<<<<<<<<
+ * 		free_members(temp2)
+ * 		temp1=temp1.cluster_forward
+ */
+    __pyx_v_temp2 = __pyx_v_temp1;
+
+    /* "spatial_minimiser1.pyx":145
+ * 	while temp1.cluster_forward!=NULL:
+ * 		temp2=temp1
+ * 		free_members(temp2)             # <<<<<<<<<<<<<<
+ * 		temp1=temp1.cluster_forward
+ * 
+ */
+    __pyx_t_2 = __pyx_f_18spatial_minimiser1_free_members(__pyx_v_temp2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 145, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+    /* "spatial_minimiser1.pyx":146
+ * 		temp2=temp1
+ * 		free_members(temp2)
+ * 		temp1=temp1.cluster_forward             # <<<<<<<<<<<<<<
+ * 
+ * 	free_members(temp1)
+ */
+    __pyx_t_3 = __pyx_v_temp1->cluster_forward;
+    __pyx_v_temp1 = __pyx_t_3;
+  }
+
+  /* "spatial_minimiser1.pyx":148
+ * 		temp1=temp1.cluster_forward
+ * 
+ * 	free_members(temp1)             # <<<<<<<<<<<<<<
+ * 	temp1=fof_list
+ * 
+ */
+  __pyx_t_2 = __pyx_f_18spatial_minimiser1_free_members(__pyx_v_temp1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 148, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "spatial_minimiser1.pyx":149
+ * 
+ * 	free_members(temp1)
+ * 	temp1=fof_list             # <<<<<<<<<<<<<<
+ * 
+ * 	while temp1.cluster_forward!=NULL:
+ */
+  __pyx_v_temp1 = __pyx_v_fof_list;
+
+  /* "spatial_minimiser1.pyx":151
+ * 	temp1=fof_list
+ * 
+ * 	while temp1.cluster_forward!=NULL:             # <<<<<<<<<<<<<<
+ * 		temp1=temp1.cluster_forward
+ * 
+ */
+  while (1) {
+    __pyx_t_1 = ((__pyx_v_temp1->cluster_forward != NULL) != 0);
+    if (!__pyx_t_1) break;
+
+    /* "spatial_minimiser1.pyx":152
+ * 
+ * 	while temp1.cluster_forward!=NULL:
+ * 		temp1=temp1.cluster_forward             # <<<<<<<<<<<<<<
+ * 
+ * 	while temp1.cluster_backward!=NULL:
+ */
+    __pyx_t_3 = __pyx_v_temp1->cluster_forward;
+    __pyx_v_temp1 = __pyx_t_3;
+  }
+
+  /* "spatial_minimiser1.pyx":154
+ * 		temp1=temp1.cluster_forward
+ * 
+ * 	while temp1.cluster_backward!=NULL:             # <<<<<<<<<<<<<<
+ * 		temp1=temp1.cluster_backward
+ * 		PyMem_Free(temp1.cluster_forward)
+ */
+  while (1) {
+    __pyx_t_1 = ((__pyx_v_temp1->cluster_backward != NULL) != 0);
+    if (!__pyx_t_1) break;
+
+    /* "spatial_minimiser1.pyx":155
+ * 
+ * 	while temp1.cluster_backward!=NULL:
+ * 		temp1=temp1.cluster_backward             # <<<<<<<<<<<<<<
+ * 		PyMem_Free(temp1.cluster_forward)
+ * 
+ */
+    __pyx_t_3 = __pyx_v_temp1->cluster_backward;
+    __pyx_v_temp1 = __pyx_t_3;
+
+    /* "spatial_minimiser1.pyx":156
+ * 	while temp1.cluster_backward!=NULL:
+ * 		temp1=temp1.cluster_backward
+ * 		PyMem_Free(temp1.cluster_forward)             # <<<<<<<<<<<<<<
+ * 
+ * 	PyMem_Free(fof_list)
+ */
+    PyMem_Free(__pyx_v_temp1->cluster_forward);
+  }
+
+  /* "spatial_minimiser1.pyx":158
+ * 		PyMem_Free(temp1.cluster_forward)
+ * 
+ * 	PyMem_Free(fof_list)             # <<<<<<<<<<<<<<
+ * 	return
+ * 
+ */
+  PyMem_Free(__pyx_v_fof_list);
+
+  /* "spatial_minimiser1.pyx":159
+ * 
+ * 	PyMem_Free(fof_list)
+ * 	return             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  goto __pyx_L0;
+
+  /* "spatial_minimiser1.pyx":137
+ * 
+ * 
+ * cdef void free_cluster(fof_struct *fof_list):             # <<<<<<<<<<<<<<
+ * 	cdef fof_struct *temp1
+ * 	cdef fof_struct *temp2
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_WriteUnraisable("spatial_minimiser1.free_cluster", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+}
+
+/* "spatial_minimiser1.pyx":162
+ * 
+ * 
+ * cdef void cluster_to_add(fof_struct *fof_list, fof_struct *member_struct, double max_dist, int *cluster_numbers, int num_params):             # <<<<<<<<<<<<<<
+ * 
+ * 	cdef fof_struct *temp1
+ */
+
+static void __pyx_f_18spatial_minimiser1_cluster_to_add(struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_v_fof_list, struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_v_member_struct, double __pyx_v_max_dist, int *__pyx_v_cluster_numbers, int __pyx_v_num_params) {
+  struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_v_temp1;
+  struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_v_temp2;
+  double __pyx_v_dist;
+  int __pyx_v_i;
+  int __pyx_v_j;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_t_2;
+  __Pyx_RefNannySetupContext("cluster_to_add", 0);
+
+  /* "spatial_minimiser1.pyx":169
+ * 	cdef int i,j
+ * 
+ * 	temp1=fof_list             # <<<<<<<<<<<<<<
+ * 	i=0
+ * 	j=0
+ */
+  __pyx_v_temp1 = __pyx_v_fof_list;
+
+  /* "spatial_minimiser1.pyx":170
+ * 
+ * 	temp1=fof_list
+ * 	i=0             # <<<<<<<<<<<<<<
+ * 	j=0
+ * 	while temp1!=NULL:
+ */
+  __pyx_v_i = 0;
+
+  /* "spatial_minimiser1.pyx":171
+ * 	temp1=fof_list
+ * 	i=0
+ * 	j=0             # <<<<<<<<<<<<<<
+ * 	while temp1!=NULL:
+ * 		temp2=temp1
+ */
+  __pyx_v_j = 0;
+
+  /* "spatial_minimiser1.pyx":172
+ * 	i=0
+ * 	j=0
+ * 	while temp1!=NULL:             # <<<<<<<<<<<<<<
+ * 		temp2=temp1
+ * 		while temp2!=NULL:
+ */
+  while (1) {
+    __pyx_t_1 = ((__pyx_v_temp1 != NULL) != 0);
+    if (!__pyx_t_1) break;
+
+    /* "spatial_minimiser1.pyx":173
+ * 	j=0
+ * 	while temp1!=NULL:
+ * 		temp2=temp1             # <<<<<<<<<<<<<<
+ * 		while temp2!=NULL:
+ * 			dist=find_distance(temp2,member_struct, num_params)
+ */
+    __pyx_v_temp2 = __pyx_v_temp1;
+
+    /* "spatial_minimiser1.pyx":174
+ * 	while temp1!=NULL:
+ * 		temp2=temp1
+ * 		while temp2!=NULL:             # <<<<<<<<<<<<<<
+ * 			dist=find_distance(temp2,member_struct, num_params)
+ * 			if dist<=max_dist:
+ */
+    while (1) {
+      __pyx_t_1 = ((__pyx_v_temp2 != NULL) != 0);
+      if (!__pyx_t_1) break;
+
+      /* "spatial_minimiser1.pyx":175
+ * 		temp2=temp1
+ * 		while temp2!=NULL:
+ * 			dist=find_distance(temp2,member_struct, num_params)             # <<<<<<<<<<<<<<
+ * 			if dist<=max_dist:
+ * 				cluster_numbers[j]=i
+ */
+      __pyx_v_dist = __pyx_f_18spatial_minimiser1_find_distance(__pyx_v_temp2, __pyx_v_member_struct, __pyx_v_num_params);
+
+      /* "spatial_minimiser1.pyx":176
+ * 		while temp2!=NULL:
+ * 			dist=find_distance(temp2,member_struct, num_params)
+ * 			if dist<=max_dist:             # <<<<<<<<<<<<<<
+ * 				cluster_numbers[j]=i
+ * 				j=j+1
+ */
+      __pyx_t_1 = ((__pyx_v_dist <= __pyx_v_max_dist) != 0);
+      if (__pyx_t_1) {
+
+        /* "spatial_minimiser1.pyx":177
+ * 			dist=find_distance(temp2,member_struct, num_params)
+ * 			if dist<=max_dist:
+ * 				cluster_numbers[j]=i             # <<<<<<<<<<<<<<
+ * 				j=j+1
+ * 				if j==2:
+ */
+        (__pyx_v_cluster_numbers[__pyx_v_j]) = __pyx_v_i;
+
+        /* "spatial_minimiser1.pyx":178
+ * 			if dist<=max_dist:
+ * 				cluster_numbers[j]=i
+ * 				j=j+1             # <<<<<<<<<<<<<<
+ * 				if j==2:
+ * 					return
+ */
+        __pyx_v_j = (__pyx_v_j + 1);
+
+        /* "spatial_minimiser1.pyx":179
+ * 				cluster_numbers[j]=i
+ * 				j=j+1
+ * 				if j==2:             # <<<<<<<<<<<<<<
+ * 					return
+ * 				break
+ */
+        __pyx_t_1 = ((__pyx_v_j == 2) != 0);
+        if (__pyx_t_1) {
+
+          /* "spatial_minimiser1.pyx":180
+ * 				j=j+1
+ * 				if j==2:
+ * 					return             # <<<<<<<<<<<<<<
+ * 				break
+ * 			temp2=temp2.member_forward
+ */
+          goto __pyx_L0;
+
+          /* "spatial_minimiser1.pyx":179
+ * 				cluster_numbers[j]=i
+ * 				j=j+1
+ * 				if j==2:             # <<<<<<<<<<<<<<
+ * 					return
+ * 				break
+ */
+        }
+
+        /* "spatial_minimiser1.pyx":181
+ * 				if j==2:
+ * 					return
+ * 				break             # <<<<<<<<<<<<<<
+ * 			temp2=temp2.member_forward
+ * 		temp1=temp1.cluster_forward
+ */
+        goto __pyx_L6_break;
+
+        /* "spatial_minimiser1.pyx":176
+ * 		while temp2!=NULL:
+ * 			dist=find_distance(temp2,member_struct, num_params)
+ * 			if dist<=max_dist:             # <<<<<<<<<<<<<<
+ * 				cluster_numbers[j]=i
+ * 				j=j+1
+ */
+      }
+
+      /* "spatial_minimiser1.pyx":182
+ * 					return
+ * 				break
+ * 			temp2=temp2.member_forward             # <<<<<<<<<<<<<<
+ * 		temp1=temp1.cluster_forward
+ * 		i=i+1
+ */
+      __pyx_t_2 = __pyx_v_temp2->member_forward;
+      __pyx_v_temp2 = __pyx_t_2;
+    }
+    __pyx_L6_break:;
+
+    /* "spatial_minimiser1.pyx":183
+ * 				break
+ * 			temp2=temp2.member_forward
+ * 		temp1=temp1.cluster_forward             # <<<<<<<<<<<<<<
+ * 		i=i+1
+ * 	return
+ */
+    __pyx_t_2 = __pyx_v_temp1->cluster_forward;
+    __pyx_v_temp1 = __pyx_t_2;
+
+    /* "spatial_minimiser1.pyx":184
+ * 			temp2=temp2.member_forward
+ * 		temp1=temp1.cluster_forward
+ * 		i=i+1             # <<<<<<<<<<<<<<
+ * 	return
+ * 
+ */
+    __pyx_v_i = (__pyx_v_i + 1);
+  }
+
+  /* "spatial_minimiser1.pyx":185
+ * 		temp1=temp1.cluster_forward
+ * 		i=i+1
+ * 	return             # <<<<<<<<<<<<<<
+ * 
+ * cdef int print_cluster(fof_struct *fof_list):
+ */
+  goto __pyx_L0;
+
+  /* "spatial_minimiser1.pyx":162
+ * 
+ * 
+ * cdef void cluster_to_add(fof_struct *fof_list, fof_struct *member_struct, double max_dist, int *cluster_numbers, int num_params):             # <<<<<<<<<<<<<<
+ * 
+ * 	cdef fof_struct *temp1
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+}
+
+/* "spatial_minimiser1.pyx":187
+ * 	return
+ * 
+ * cdef int print_cluster(fof_struct *fof_list):             # <<<<<<<<<<<<<<
+ * 
+ * 	cdef fof_struct *temp1
+ */
+
+static int __pyx_f_18spatial_minimiser1_print_cluster(struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_v_fof_list) {
+  struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_v_temp1;
+  struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_v_temp2;
+  int __pyx_v_i;
+  CYTHON_UNUSED int __pyx_v_j;
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_t_5;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("print_cluster", 0);
+
+  /* "spatial_minimiser1.pyx":194
+ * 	cdef int i,j
+ * 
+ * 	temp1=fof_list             # <<<<<<<<<<<<<<
+ * 	i=0
+ * 	j=0
+ */
+  __pyx_v_temp1 = __pyx_v_fof_list;
+
+  /* "spatial_minimiser1.pyx":195
+ * 
+ * 	temp1=fof_list
+ * 	i=0             # <<<<<<<<<<<<<<
+ * 	j=0
+ * 	while temp1!=NULL:
+ */
+  __pyx_v_i = 0;
+
+  /* "spatial_minimiser1.pyx":196
+ * 	temp1=fof_list
+ * 	i=0
+ * 	j=0             # <<<<<<<<<<<<<<
+ * 	while temp1!=NULL:
+ * 		print ("new_cluster")
+ */
+  __pyx_v_j = 0;
+
+  /* "spatial_minimiser1.pyx":197
+ * 	i=0
+ * 	j=0
+ * 	while temp1!=NULL:             # <<<<<<<<<<<<<<
+ * 		print ("new_cluster")
+ * 		temp2=temp1
+ */
+  while (1) {
+    __pyx_t_1 = ((__pyx_v_temp1 != NULL) != 0);
+    if (!__pyx_t_1) break;
+
+    /* "spatial_minimiser1.pyx":198
+ * 	j=0
+ * 	while temp1!=NULL:
+ * 		print ("new_cluster")             # <<<<<<<<<<<<<<
+ * 		temp2=temp1
+ * 		while temp2!=NULL:
+ */
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple_, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 198, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+    /* "spatial_minimiser1.pyx":199
+ * 	while temp1!=NULL:
+ * 		print ("new_cluster")
+ * 		temp2=temp1             # <<<<<<<<<<<<<<
+ * 		while temp2!=NULL:
+ * 			print (temp2.x,temp2.y)
+ */
+    __pyx_v_temp2 = __pyx_v_temp1;
+
+    /* "spatial_minimiser1.pyx":200
+ * 		print ("new_cluster")
+ * 		temp2=temp1
+ * 		while temp2!=NULL:             # <<<<<<<<<<<<<<
+ * 			print (temp2.x,temp2.y)
+ * 			temp2=temp2.member_forward
+ */
+    while (1) {
+      __pyx_t_1 = ((__pyx_v_temp2 != NULL) != 0);
+      if (!__pyx_t_1) break;
+
+      /* "spatial_minimiser1.pyx":201
+ * 		temp2=temp1
+ * 		while temp2!=NULL:
+ * 			print (temp2.x,temp2.y)             # <<<<<<<<<<<<<<
+ * 			temp2=temp2.member_forward
+ * 		temp1=temp1.cluster_forward
+ */
+      __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_temp2->x); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 201, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_temp2->y); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 201, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 201, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_4);
+      __Pyx_GIVEREF(__pyx_t_2);
+      PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_2);
+      __Pyx_GIVEREF(__pyx_t_3);
+      PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_t_3);
+      __pyx_t_2 = 0;
+      __pyx_t_3 = 0;
+      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 201, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+      /* "spatial_minimiser1.pyx":202
+ * 		while temp2!=NULL:
+ * 			print (temp2.x,temp2.y)
+ * 			temp2=temp2.member_forward             # <<<<<<<<<<<<<<
+ * 		temp1=temp1.cluster_forward
+ * 		i=i+1
+ */
+      __pyx_t_5 = __pyx_v_temp2->member_forward;
+      __pyx_v_temp2 = __pyx_t_5;
+    }
+
+    /* "spatial_minimiser1.pyx":203
+ * 			print (temp2.x,temp2.y)
+ * 			temp2=temp2.member_forward
+ * 		temp1=temp1.cluster_forward             # <<<<<<<<<<<<<<
+ * 		i=i+1
+ * 	return i
+ */
+    __pyx_t_5 = __pyx_v_temp1->cluster_forward;
+    __pyx_v_temp1 = __pyx_t_5;
+
+    /* "spatial_minimiser1.pyx":204
+ * 			temp2=temp2.member_forward
+ * 		temp1=temp1.cluster_forward
+ * 		i=i+1             # <<<<<<<<<<<<<<
+ * 	return i
+ * 
+ */
+    __pyx_v_i = (__pyx_v_i + 1);
+  }
+
+  /* "spatial_minimiser1.pyx":205
+ * 		temp1=temp1.cluster_forward
+ * 		i=i+1
+ * 	return i             # <<<<<<<<<<<<<<
+ * 
+ * cdef int find_high_indx(int high_ind_val, int num):
+ */
+  __pyx_r = __pyx_v_i;
+  goto __pyx_L0;
+
+  /* "spatial_minimiser1.pyx":187
+ * 	return
+ * 
+ * cdef int print_cluster(fof_struct *fof_list):             # <<<<<<<<<<<<<<
+ * 
+ * 	cdef fof_struct *temp1
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_WriteUnraisable("spatial_minimiser1.print_cluster", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
+  __pyx_r = 0;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "spatial_minimiser1.pyx":207
+ * 	return i
  * 
  * cdef int find_high_indx(int high_ind_val, int num):             # <<<<<<<<<<<<<<
  * 	cdef int i
@@ -2854,7 +4237,7 @@ static int __pyx_f_18spatial_minimiser1_find_high_indx(int __pyx_v_high_ind_val,
   int __pyx_t_1;
   __Pyx_RefNannySetupContext("find_high_indx", 0);
 
-  /* "spatial_minimiser1.pyx":16
+  /* "spatial_minimiser1.pyx":209
  * cdef int find_high_indx(int high_ind_val, int num):
  * 	cdef int i
  * 	i=high_ind_val             # <<<<<<<<<<<<<<
@@ -2863,7 +4246,7 @@ static int __pyx_f_18spatial_minimiser1_find_high_indx(int __pyx_v_high_ind_val,
  */
   __pyx_v_i = __pyx_v_high_ind_val;
 
-  /* "spatial_minimiser1.pyx":17
+  /* "spatial_minimiser1.pyx":210
  * 	cdef int i
  * 	i=high_ind_val
  * 	while i>=num:             # <<<<<<<<<<<<<<
@@ -2874,7 +4257,7 @@ static int __pyx_f_18spatial_minimiser1_find_high_indx(int __pyx_v_high_ind_val,
     __pyx_t_1 = ((__pyx_v_i >= __pyx_v_num) != 0);
     if (!__pyx_t_1) break;
 
-    /* "spatial_minimiser1.pyx":18
+    /* "spatial_minimiser1.pyx":211
  * 	i=high_ind_val
  * 	while i>=num:
  * 		i=i-1             # <<<<<<<<<<<<<<
@@ -2884,7 +4267,7 @@ static int __pyx_f_18spatial_minimiser1_find_high_indx(int __pyx_v_high_ind_val,
     __pyx_v_i = (__pyx_v_i - 1);
   }
 
-  /* "spatial_minimiser1.pyx":19
+  /* "spatial_minimiser1.pyx":212
  * 	while i>=num:
  * 		i=i-1
  * 	return i             # <<<<<<<<<<<<<<
@@ -2894,8 +4277,8 @@ static int __pyx_f_18spatial_minimiser1_find_high_indx(int __pyx_v_high_ind_val,
   __pyx_r = __pyx_v_i;
   goto __pyx_L0;
 
-  /* "spatial_minimiser1.pyx":14
- * 
+  /* "spatial_minimiser1.pyx":207
+ * 	return i
  * 
  * cdef int find_high_indx(int high_ind_val, int num):             # <<<<<<<<<<<<<<
  * 	cdef int i
@@ -2908,7 +4291,7 @@ static int __pyx_f_18spatial_minimiser1_find_high_indx(int __pyx_v_high_ind_val,
   return __pyx_r;
 }
 
-/* "spatial_minimiser1.pyx":21
+/* "spatial_minimiser1.pyx":214
  * 	return i
  * 
  * cdef int find_low_indx(int low_ind_val):             # <<<<<<<<<<<<<<
@@ -2923,39 +4306,39 @@ static int __pyx_f_18spatial_minimiser1_find_low_indx(int __pyx_v_low_ind_val) {
   int __pyx_t_1;
   __Pyx_RefNannySetupContext("find_low_indx", 0);
 
-  /* "spatial_minimiser1.pyx":22
+  /* "spatial_minimiser1.pyx":215
  * 
  * cdef int find_low_indx(int low_ind_val):
  * 	cdef int i=low_ind_val             # <<<<<<<<<<<<<<
  * 	while i<0:
- * 		i=i-1
+ * 		i=i+1
  */
   __pyx_v_i = __pyx_v_low_ind_val;
 
-  /* "spatial_minimiser1.pyx":23
+  /* "spatial_minimiser1.pyx":216
  * cdef int find_low_indx(int low_ind_val):
  * 	cdef int i=low_ind_val
  * 	while i<0:             # <<<<<<<<<<<<<<
- * 		i=i-1
+ * 		i=i+1
  * 	return i
  */
   while (1) {
     __pyx_t_1 = ((__pyx_v_i < 0) != 0);
     if (!__pyx_t_1) break;
 
-    /* "spatial_minimiser1.pyx":24
+    /* "spatial_minimiser1.pyx":217
  * 	cdef int i=low_ind_val
  * 	while i<0:
- * 		i=i-1             # <<<<<<<<<<<<<<
+ * 		i=i+1             # <<<<<<<<<<<<<<
  * 	return i
  * 
  */
-    __pyx_v_i = (__pyx_v_i - 1);
+    __pyx_v_i = (__pyx_v_i + 1);
   }
 
-  /* "spatial_minimiser1.pyx":25
+  /* "spatial_minimiser1.pyx":218
  * 	while i<0:
- * 		i=i-1
+ * 		i=i+1
  * 	return i             # <<<<<<<<<<<<<<
  * 
  * cdef int check_present_already(int *param_val_ind,int value, int max_size):
@@ -2963,7 +4346,7 @@ static int __pyx_f_18spatial_minimiser1_find_low_indx(int __pyx_v_low_ind_val) {
   __pyx_r = __pyx_v_i;
   goto __pyx_L0;
 
-  /* "spatial_minimiser1.pyx":21
+  /* "spatial_minimiser1.pyx":214
  * 	return i
  * 
  * cdef int find_low_indx(int low_ind_val):             # <<<<<<<<<<<<<<
@@ -2977,7 +4360,7 @@ static int __pyx_f_18spatial_minimiser1_find_low_indx(int __pyx_v_low_ind_val) {
   return __pyx_r;
 }
 
-/* "spatial_minimiser1.pyx":27
+/* "spatial_minimiser1.pyx":220
  * 	return i
  * 
  * cdef int check_present_already(int *param_val_ind,int value, int max_size):             # <<<<<<<<<<<<<<
@@ -2995,7 +4378,7 @@ static int __pyx_f_18spatial_minimiser1_check_present_already(int *__pyx_v_param
   int __pyx_t_4;
   __Pyx_RefNannySetupContext("check_present_already", 0);
 
-  /* "spatial_minimiser1.pyx":29
+  /* "spatial_minimiser1.pyx":222
  * cdef int check_present_already(int *param_val_ind,int value, int max_size):
  * 	cdef int i
  * 	for i in range(max_size):             # <<<<<<<<<<<<<<
@@ -3007,7 +4390,7 @@ static int __pyx_f_18spatial_minimiser1_check_present_already(int *__pyx_v_param
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "spatial_minimiser1.pyx":30
+    /* "spatial_minimiser1.pyx":223
  * 	cdef int i
  * 	for i in range(max_size):
  * 		if param_val_ind[i]==value:             # <<<<<<<<<<<<<<
@@ -3017,7 +4400,7 @@ static int __pyx_f_18spatial_minimiser1_check_present_already(int *__pyx_v_param
     __pyx_t_4 = (((__pyx_v_param_val_ind[__pyx_v_i]) == __pyx_v_value) != 0);
     if (__pyx_t_4) {
 
-      /* "spatial_minimiser1.pyx":31
+      /* "spatial_minimiser1.pyx":224
  * 	for i in range(max_size):
  * 		if param_val_ind[i]==value:
  * 			return -1             # <<<<<<<<<<<<<<
@@ -3027,7 +4410,7 @@ static int __pyx_f_18spatial_minimiser1_check_present_already(int *__pyx_v_param
       __pyx_r = -1;
       goto __pyx_L0;
 
-      /* "spatial_minimiser1.pyx":30
+      /* "spatial_minimiser1.pyx":223
  * 	cdef int i
  * 	for i in range(max_size):
  * 		if param_val_ind[i]==value:             # <<<<<<<<<<<<<<
@@ -3036,7 +4419,7 @@ static int __pyx_f_18spatial_minimiser1_check_present_already(int *__pyx_v_param
  */
     }
 
-    /* "spatial_minimiser1.pyx":32
+    /* "spatial_minimiser1.pyx":225
  * 		if param_val_ind[i]==value:
  * 			return -1
  * 		if param_val_ind[i]<0:             # <<<<<<<<<<<<<<
@@ -3046,7 +4429,7 @@ static int __pyx_f_18spatial_minimiser1_check_present_already(int *__pyx_v_param
     __pyx_t_4 = (((__pyx_v_param_val_ind[__pyx_v_i]) < 0) != 0);
     if (__pyx_t_4) {
 
-      /* "spatial_minimiser1.pyx":33
+      /* "spatial_minimiser1.pyx":226
  * 			return -1
  * 		if param_val_ind[i]<0:
  * 			return i             # <<<<<<<<<<<<<<
@@ -3056,7 +4439,7 @@ static int __pyx_f_18spatial_minimiser1_check_present_already(int *__pyx_v_param
       __pyx_r = __pyx_v_i;
       goto __pyx_L0;
 
-      /* "spatial_minimiser1.pyx":32
+      /* "spatial_minimiser1.pyx":225
  * 		if param_val_ind[i]==value:
  * 			return -1
  * 		if param_val_ind[i]<0:             # <<<<<<<<<<<<<<
@@ -3066,7 +4449,7 @@ static int __pyx_f_18spatial_minimiser1_check_present_already(int *__pyx_v_param
     }
   }
 
-  /* "spatial_minimiser1.pyx":34
+  /* "spatial_minimiser1.pyx":227
  * 		if param_val_ind[i]<0:
  * 			return i
  * 	return 0             # <<<<<<<<<<<<<<
@@ -3076,7 +4459,7 @@ static int __pyx_f_18spatial_minimiser1_check_present_already(int *__pyx_v_param
   __pyx_r = 0;
   goto __pyx_L0;
 
-  /* "spatial_minimiser1.pyx":27
+  /* "spatial_minimiser1.pyx":220
  * 	return i
  * 
  * cdef int check_present_already(int *param_val_ind,int value, int max_size):             # <<<<<<<<<<<<<<
@@ -3090,7 +4473,7 @@ static int __pyx_f_18spatial_minimiser1_check_present_already(int *__pyx_v_param
   return __pyx_r;
 }
 
-/* "spatial_minimiser1.pyx":36
+/* "spatial_minimiser1.pyx":229
  * 	return 0
  * 
  * cdef void gen_seed(double *seed, int num):             # <<<<<<<<<<<<<<
@@ -3120,7 +4503,7 @@ static void __pyx_f_18spatial_minimiser1_gen_seed(double *__pyx_v_seed, int __py
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("gen_seed", 0);
 
-  /* "spatial_minimiser1.pyx":41
+  /* "spatial_minimiser1.pyx":234
  * 	cdef time_t t
  * 	cdef int i
  * 	cdef unsigned int a=8121             # <<<<<<<<<<<<<<
@@ -3129,7 +4512,7 @@ static void __pyx_f_18spatial_minimiser1_gen_seed(double *__pyx_v_seed, int __py
  */
   __pyx_v_a = 0x1FB9;
 
-  /* "spatial_minimiser1.pyx":42
+  /* "spatial_minimiser1.pyx":235
  * 	cdef int i
  * 	cdef unsigned int a=8121
  * 	cdef unsigned int c=28411             # <<<<<<<<<<<<<<
@@ -3138,7 +4521,7 @@ static void __pyx_f_18spatial_minimiser1_gen_seed(double *__pyx_v_seed, int __py
  */
   __pyx_v_c = 0x6EFB;
 
-  /* "spatial_minimiser1.pyx":43
+  /* "spatial_minimiser1.pyx":236
  * 	cdef unsigned int a=8121
  * 	cdef unsigned int c=28411
  * 	cdef unsigned int m=134456             # <<<<<<<<<<<<<<
@@ -3147,7 +4530,7 @@ static void __pyx_f_18spatial_minimiser1_gen_seed(double *__pyx_v_seed, int __py
  */
   __pyx_v_m = 0x20D38;
 
-  /* "spatial_minimiser1.pyx":46
+  /* "spatial_minimiser1.pyx":239
  * 	cdef unsigned int x
  * 
  * 	t = time(NULL)             # <<<<<<<<<<<<<<
@@ -3156,7 +4539,7 @@ static void __pyx_f_18spatial_minimiser1_gen_seed(double *__pyx_v_seed, int __py
  */
   __pyx_v_t = time(NULL);
 
-  /* "spatial_minimiser1.pyx":47
+  /* "spatial_minimiser1.pyx":240
  * 
  * 	t = time(NULL)
  * 	clock_gettime(CLOCK_REALTIME, &ts)             # <<<<<<<<<<<<<<
@@ -3165,7 +4548,7 @@ static void __pyx_f_18spatial_minimiser1_gen_seed(double *__pyx_v_seed, int __py
  */
   (void)(clock_gettime(CLOCK_REALTIME, (&__pyx_v_ts)));
 
-  /* "spatial_minimiser1.pyx":48
+  /* "spatial_minimiser1.pyx":241
  * 	t = time(NULL)
  * 	clock_gettime(CLOCK_REALTIME, &ts)
  * 	current = ts.tv_sec + (ts.tv_nsec / 1000000000.)-t             # <<<<<<<<<<<<<<
@@ -3174,7 +4557,7 @@ static void __pyx_f_18spatial_minimiser1_gen_seed(double *__pyx_v_seed, int __py
  */
   __pyx_v_current = ((__pyx_v_ts.tv_sec + (((double)__pyx_v_ts.tv_nsec) / 1000000000.)) - __pyx_v_t);
 
-  /* "spatial_minimiser1.pyx":51
+  /* "spatial_minimiser1.pyx":244
  * 
  * 
  * 	for i in range(num):             # <<<<<<<<<<<<<<
@@ -3186,26 +4569,26 @@ static void __pyx_f_18spatial_minimiser1_gen_seed(double *__pyx_v_seed, int __py
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "spatial_minimiser1.pyx":52
+    /* "spatial_minimiser1.pyx":245
  * 
  * 	for i in range(num):
  * 		x=int(current*a)+c             # <<<<<<<<<<<<<<
  * 		x=x%m
  * 		seed[i]=x/134456.0
  */
-    __pyx_t_4 = __Pyx_PyInt_FromDouble((__pyx_v_current * __pyx_v_a)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 52, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyInt_FromDouble((__pyx_v_current * __pyx_v_a)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 245, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = __Pyx_PyInt_From_unsigned_int(__pyx_v_c); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 52, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyInt_From_unsigned_int(__pyx_v_c); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 245, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_6 = PyNumber_Add(__pyx_t_4, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 52, __pyx_L1_error)
+    __pyx_t_6 = PyNumber_Add(__pyx_t_4, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 245, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_7 = __Pyx_PyInt_As_unsigned_int(__pyx_t_6); if (unlikely((__pyx_t_7 == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 52, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyInt_As_unsigned_int(__pyx_t_6); if (unlikely((__pyx_t_7 == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 245, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __pyx_v_x = __pyx_t_7;
 
-    /* "spatial_minimiser1.pyx":53
+    /* "spatial_minimiser1.pyx":246
  * 	for i in range(num):
  * 		x=int(current*a)+c
  * 		x=x%m             # <<<<<<<<<<<<<<
@@ -3214,11 +4597,11 @@ static void __pyx_f_18spatial_minimiser1_gen_seed(double *__pyx_v_seed, int __py
  */
     if (unlikely(__pyx_v_m == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "integer division or modulo by zero");
-      __PYX_ERR(0, 53, __pyx_L1_error)
+      __PYX_ERR(0, 246, __pyx_L1_error)
     }
     __pyx_v_x = (__pyx_v_x % __pyx_v_m);
 
-    /* "spatial_minimiser1.pyx":54
+    /* "spatial_minimiser1.pyx":247
  * 		x=int(current*a)+c
  * 		x=x%m
  * 		seed[i]=x/134456.0             # <<<<<<<<<<<<<<
@@ -3227,7 +4610,7 @@ static void __pyx_f_18spatial_minimiser1_gen_seed(double *__pyx_v_seed, int __py
  */
     (__pyx_v_seed[__pyx_v_i]) = (((double)__pyx_v_x) / 134456.0);
 
-    /* "spatial_minimiser1.pyx":55
+    /* "spatial_minimiser1.pyx":248
  * 		x=x%m
  * 		seed[i]=x/134456.0
  * 		current=x             # <<<<<<<<<<<<<<
@@ -3237,7 +4620,7 @@ static void __pyx_f_18spatial_minimiser1_gen_seed(double *__pyx_v_seed, int __py
     __pyx_v_current = __pyx_v_x;
   }
 
-  /* "spatial_minimiser1.pyx":56
+  /* "spatial_minimiser1.pyx":249
  * 		seed[i]=x/134456.0
  * 		current=x
  * 	return             # <<<<<<<<<<<<<<
@@ -3246,7 +4629,7 @@ static void __pyx_f_18spatial_minimiser1_gen_seed(double *__pyx_v_seed, int __py
  */
   goto __pyx_L0;
 
-  /* "spatial_minimiser1.pyx":36
+  /* "spatial_minimiser1.pyx":229
  * 	return 0
  * 
  * cdef void gen_seed(double *seed, int num):             # <<<<<<<<<<<<<<
@@ -3264,7 +4647,7 @@ static void __pyx_f_18spatial_minimiser1_gen_seed(double *__pyx_v_seed, int __py
   __Pyx_RefNannyFinishContext();
 }
 
-/* "spatial_minimiser1.pyx":58
+/* "spatial_minimiser1.pyx":251
  * 	return
  * 
  * cdef unsigned int find_model_ind(double [:] fitted, int x, int y, int *param_lengths, int num_params,\             # <<<<<<<<<<<<<<
@@ -3292,7 +4675,7 @@ static unsigned int __pyx_f_18spatial_minimiser1_find_model_ind(__Pyx_memviewsli
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("find_model_ind", 0);
 
-  /* "spatial_minimiser1.pyx":62
+  /* "spatial_minimiser1.pyx":255
  * 
  * 	cdef unsigned int i,ind,j, product
  * 	ind=y*num_x*(num_params+1)+x*(num_params+1)             # <<<<<<<<<<<<<<
@@ -3301,7 +4684,7 @@ static unsigned int __pyx_f_18spatial_minimiser1_find_model_ind(__Pyx_memviewsli
  */
   __pyx_v_ind = (((__pyx_v_y * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + (__pyx_v_x * (__pyx_v_num_params + 1)));
 
-  /* "spatial_minimiser1.pyx":66
+  /* "spatial_minimiser1.pyx":259
  * 
  * 	cdef int *param_inds
  * 	param_inds=<int *>PyMem_Malloc(num_params*sizeof(int))             # <<<<<<<<<<<<<<
@@ -3310,7 +4693,7 @@ static unsigned int __pyx_f_18spatial_minimiser1_find_model_ind(__Pyx_memviewsli
  */
   __pyx_v_param_inds = ((int *)PyMem_Malloc((__pyx_v_num_params * (sizeof(int)))));
 
-  /* "spatial_minimiser1.pyx":68
+  /* "spatial_minimiser1.pyx":261
  * 	param_inds=<int *>PyMem_Malloc(num_params*sizeof(int))
  * 
  * 	for i in range(num_params):             # <<<<<<<<<<<<<<
@@ -3322,7 +4705,7 @@ static unsigned int __pyx_f_18spatial_minimiser1_find_model_ind(__Pyx_memviewsli
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "spatial_minimiser1.pyx":69
+    /* "spatial_minimiser1.pyx":262
  * 
  * 	for i in range(num_params):
  * 		param_inds[i]=int(fitted[ind+i])             # <<<<<<<<<<<<<<
@@ -3334,12 +4717,12 @@ static unsigned int __pyx_f_18spatial_minimiser1_find_model_ind(__Pyx_memviewsli
     if (unlikely(__pyx_t_4 >= (size_t)__pyx_v_fitted.shape[0])) __pyx_t_5 = 0;
     if (unlikely(__pyx_t_5 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_5);
-      __PYX_ERR(0, 69, __pyx_L1_error)
+      __PYX_ERR(0, 262, __pyx_L1_error)
     }
     (__pyx_v_param_inds[__pyx_v_i]) = ((int)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_4 * __pyx_v_fitted.strides[0]) ))));
   }
 
-  /* "spatial_minimiser1.pyx":71
+  /* "spatial_minimiser1.pyx":264
  * 		param_inds[i]=int(fitted[ind+i])
  * 
  * 	ind=0             # <<<<<<<<<<<<<<
@@ -3348,7 +4731,7 @@ static unsigned int __pyx_f_18spatial_minimiser1_find_model_ind(__Pyx_memviewsli
  */
   __pyx_v_ind = 0;
 
-  /* "spatial_minimiser1.pyx":72
+  /* "spatial_minimiser1.pyx":265
  * 
  * 	ind=0
  * 	for i in range(num_params):             # <<<<<<<<<<<<<<
@@ -3360,7 +4743,7 @@ static unsigned int __pyx_f_18spatial_minimiser1_find_model_ind(__Pyx_memviewsli
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "spatial_minimiser1.pyx":73
+    /* "spatial_minimiser1.pyx":266
  * 	ind=0
  * 	for i in range(num_params):
  * 		product=1             # <<<<<<<<<<<<<<
@@ -3369,7 +4752,7 @@ static unsigned int __pyx_f_18spatial_minimiser1_find_model_ind(__Pyx_memviewsli
  */
     __pyx_v_product = 1;
 
-    /* "spatial_minimiser1.pyx":74
+    /* "spatial_minimiser1.pyx":267
  * 	for i in range(num_params):
  * 		product=1
  * 		for j in range(i+1,num_params):             # <<<<<<<<<<<<<<
@@ -3381,7 +4764,7 @@ static unsigned int __pyx_f_18spatial_minimiser1_find_model_ind(__Pyx_memviewsli
     for (__pyx_t_7 = (__pyx_v_i + 1); __pyx_t_7 < __pyx_t_6; __pyx_t_7+=1) {
       __pyx_v_j = __pyx_t_7;
 
-      /* "spatial_minimiser1.pyx":75
+      /* "spatial_minimiser1.pyx":268
  * 		product=1
  * 		for j in range(i+1,num_params):
  * 			product=product*param_lengths[j]             # <<<<<<<<<<<<<<
@@ -3391,7 +4774,7 @@ static unsigned int __pyx_f_18spatial_minimiser1_find_model_ind(__Pyx_memviewsli
       __pyx_v_product = (__pyx_v_product * (__pyx_v_param_lengths[__pyx_v_j]));
     }
 
-    /* "spatial_minimiser1.pyx":76
+    /* "spatial_minimiser1.pyx":269
  * 		for j in range(i+1,num_params):
  * 			product=product*param_lengths[j]
  * 		ind=ind+param_inds[i]*product*num_freqs  #### in model array, the last axis is that of frequency             # <<<<<<<<<<<<<<
@@ -3401,7 +4784,7 @@ static unsigned int __pyx_f_18spatial_minimiser1_find_model_ind(__Pyx_memviewsli
     __pyx_v_ind = (__pyx_v_ind + (((__pyx_v_param_inds[__pyx_v_i]) * __pyx_v_product) * __pyx_v_num_freqs));
   }
 
-  /* "spatial_minimiser1.pyx":77
+  /* "spatial_minimiser1.pyx":270
  * 			product=product*param_lengths[j]
  * 		ind=ind+param_inds[i]*product*num_freqs  #### in model array, the last axis is that of frequency
  * 	return ind             # <<<<<<<<<<<<<<
@@ -3411,7 +4794,7 @@ static unsigned int __pyx_f_18spatial_minimiser1_find_model_ind(__Pyx_memviewsli
   __pyx_r = __pyx_v_ind;
   goto __pyx_L0;
 
-  /* "spatial_minimiser1.pyx":58
+  /* "spatial_minimiser1.pyx":251
  * 	return
  * 
  * cdef unsigned int find_model_ind(double [:] fitted, int x, int y, int *param_lengths, int num_params,\             # <<<<<<<<<<<<<<
@@ -3428,7 +4811,7 @@ static unsigned int __pyx_f_18spatial_minimiser1_find_model_ind(__Pyx_memviewsli
   return __pyx_r;
 }
 
-/* "spatial_minimiser1.pyx":79
+/* "spatial_minimiser1.pyx":272
  * 	return ind
  * 
  * cdef void calc_map_chi(double **spectrum, double *rms, double [:] sub_fitted,\             # <<<<<<<<<<<<<<
@@ -3471,7 +4854,7 @@ static void __pyx_f_18spatial_minimiser1_calc_map_chi(double **__pyx_v_spectrum,
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("calc_map_chi", 0);
 
-  /* "spatial_minimiser1.pyx":86
+  /* "spatial_minimiser1.pyx":279
  * 	cdef double *spectrum_1d
  * 	cdef double error
  * 	cdef double sum1=0.0             # <<<<<<<<<<<<<<
@@ -3480,7 +4863,7 @@ static void __pyx_f_18spatial_minimiser1_calc_map_chi(double **__pyx_v_spectrum,
  */
   __pyx_v_sum1 = 0.0;
 
-  /* "spatial_minimiser1.pyx":89
+  /* "spatial_minimiser1.pyx":282
  * 	cdef unsigned int ind
  * 
  * 	num_times=1             # <<<<<<<<<<<<<<
@@ -3489,7 +4872,7 @@ static void __pyx_f_18spatial_minimiser1_calc_map_chi(double **__pyx_v_spectrum,
  */
   __pyx_v_num_times = 1;
 
-  /* "spatial_minimiser1.pyx":91
+  /* "spatial_minimiser1.pyx":284
  * 	num_times=1
  * 
  * 	t=0             # <<<<<<<<<<<<<<
@@ -3498,7 +4881,7 @@ static void __pyx_f_18spatial_minimiser1_calc_map_chi(double **__pyx_v_spectrum,
  */
   __pyx_v_t = 0;
 
-  /* "spatial_minimiser1.pyx":93
+  /* "spatial_minimiser1.pyx":286
  * 	t=0
  * 	cdef int k
  * 	for y1 in range(num_y):             # <<<<<<<<<<<<<<
@@ -3510,7 +4893,7 @@ static void __pyx_f_18spatial_minimiser1_calc_map_chi(double **__pyx_v_spectrum,
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_y1 = __pyx_t_3;
 
-    /* "spatial_minimiser1.pyx":94
+    /* "spatial_minimiser1.pyx":287
  * 	cdef int k
  * 	for y1 in range(num_y):
  * 		for x1 in range(num_x):             # <<<<<<<<<<<<<<
@@ -3522,7 +4905,7 @@ static void __pyx_f_18spatial_minimiser1_calc_map_chi(double **__pyx_v_spectrum,
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_x1 = __pyx_t_6;
 
-      /* "spatial_minimiser1.pyx":95
+      /* "spatial_minimiser1.pyx":288
  * 	for y1 in range(num_y):
  * 		for x1 in range(num_x):
  * 			sum1=0.0             # <<<<<<<<<<<<<<
@@ -3531,7 +4914,7 @@ static void __pyx_f_18spatial_minimiser1_calc_map_chi(double **__pyx_v_spectrum,
  */
       __pyx_v_sum1 = 0.0;
 
-      /* "spatial_minimiser1.pyx":96
+      /* "spatial_minimiser1.pyx":289
  * 		for x1 in range(num_x):
  * 			sum1=0.0
  * 			ind=y1*num_x+x1             # <<<<<<<<<<<<<<
@@ -3540,7 +4923,7 @@ static void __pyx_f_18spatial_minimiser1_calc_map_chi(double **__pyx_v_spectrum,
  */
       __pyx_v_ind = ((__pyx_v_y1 * __pyx_v_num_x) + __pyx_v_x1);
 
-      /* "spatial_minimiser1.pyx":97
+      /* "spatial_minimiser1.pyx":290
  * 			sum1=0.0
  * 			ind=y1*num_x+x1
  * 			spectrum_1d=spectrum[ind]             # <<<<<<<<<<<<<<
@@ -3549,7 +4932,7 @@ static void __pyx_f_18spatial_minimiser1_calc_map_chi(double **__pyx_v_spectrum,
  */
       __pyx_v_spectrum_1d = (__pyx_v_spectrum[__pyx_v_ind]);
 
-      /* "spatial_minimiser1.pyx":98
+      /* "spatial_minimiser1.pyx":291
  * 			ind=y1*num_x+x1
  * 			spectrum_1d=spectrum[ind]
  * 			ind=find_model_ind(sub_fitted,x1,y1,param_lengths,num_params, num_x, num_y, num_freqs)             # <<<<<<<<<<<<<<
@@ -3558,7 +4941,7 @@ static void __pyx_f_18spatial_minimiser1_calc_map_chi(double **__pyx_v_spectrum,
  */
       __pyx_v_ind = __pyx_f_18spatial_minimiser1_find_model_ind(__pyx_v_sub_fitted, __pyx_v_x1, __pyx_v_y1, __pyx_v_param_lengths, __pyx_v_num_params, __pyx_v_num_x, __pyx_v_num_y, __pyx_v_num_freqs);
 
-      /* "spatial_minimiser1.pyx":99
+      /* "spatial_minimiser1.pyx":292
  * 			spectrum_1d=spectrum[ind]
  * 			ind=find_model_ind(sub_fitted,x1,y1,param_lengths,num_params, num_x, num_y, num_freqs)
  * 			k=0             # <<<<<<<<<<<<<<
@@ -3567,25 +4950,25 @@ static void __pyx_f_18spatial_minimiser1_calc_map_chi(double **__pyx_v_spectrum,
  */
       __pyx_v_k = 0;
 
-      /* "spatial_minimiser1.pyx":100
+      /* "spatial_minimiser1.pyx":293
  * 			ind=find_model_ind(sub_fitted,x1,y1,param_lengths,num_params, num_x, num_y, num_freqs)
  * 			k=0
  * 			for i in range(num_freqs):             # <<<<<<<<<<<<<<
  * 				if spectrum_1d[i]<0:
  * 					continue
  */
-      __pyx_t_7 = __Pyx_PyInt_From_int(__pyx_v_num_freqs); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 100, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyInt_From_int(__pyx_v_num_freqs); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 293, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
-      __pyx_t_8 = __Pyx_PyObject_CallOneArg(__pyx_builtin_range, __pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 100, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyObject_CallOneArg(__pyx_builtin_range, __pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 293, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       if (likely(PyList_CheckExact(__pyx_t_8)) || PyTuple_CheckExact(__pyx_t_8)) {
         __pyx_t_7 = __pyx_t_8; __Pyx_INCREF(__pyx_t_7); __pyx_t_9 = 0;
         __pyx_t_10 = NULL;
       } else {
-        __pyx_t_9 = -1; __pyx_t_7 = PyObject_GetIter(__pyx_t_8); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 100, __pyx_L1_error)
+        __pyx_t_9 = -1; __pyx_t_7 = PyObject_GetIter(__pyx_t_8); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 293, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_7);
-        __pyx_t_10 = Py_TYPE(__pyx_t_7)->tp_iternext; if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 100, __pyx_L1_error)
+        __pyx_t_10 = Py_TYPE(__pyx_t_7)->tp_iternext; if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 293, __pyx_L1_error)
       }
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       for (;;) {
@@ -3593,17 +4976,17 @@ static void __pyx_f_18spatial_minimiser1_calc_map_chi(double **__pyx_v_spectrum,
           if (likely(PyList_CheckExact(__pyx_t_7))) {
             if (__pyx_t_9 >= PyList_GET_SIZE(__pyx_t_7)) break;
             #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-            __pyx_t_8 = PyList_GET_ITEM(__pyx_t_7, __pyx_t_9); __Pyx_INCREF(__pyx_t_8); __pyx_t_9++; if (unlikely(0 < 0)) __PYX_ERR(0, 100, __pyx_L1_error)
+            __pyx_t_8 = PyList_GET_ITEM(__pyx_t_7, __pyx_t_9); __Pyx_INCREF(__pyx_t_8); __pyx_t_9++; if (unlikely(0 < 0)) __PYX_ERR(0, 293, __pyx_L1_error)
             #else
-            __pyx_t_8 = PySequence_ITEM(__pyx_t_7, __pyx_t_9); __pyx_t_9++; if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 100, __pyx_L1_error)
+            __pyx_t_8 = PySequence_ITEM(__pyx_t_7, __pyx_t_9); __pyx_t_9++; if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 293, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_8);
             #endif
           } else {
             if (__pyx_t_9 >= PyTuple_GET_SIZE(__pyx_t_7)) break;
             #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-            __pyx_t_8 = PyTuple_GET_ITEM(__pyx_t_7, __pyx_t_9); __Pyx_INCREF(__pyx_t_8); __pyx_t_9++; if (unlikely(0 < 0)) __PYX_ERR(0, 100, __pyx_L1_error)
+            __pyx_t_8 = PyTuple_GET_ITEM(__pyx_t_7, __pyx_t_9); __Pyx_INCREF(__pyx_t_8); __pyx_t_9++; if (unlikely(0 < 0)) __PYX_ERR(0, 293, __pyx_L1_error)
             #else
-            __pyx_t_8 = PySequence_ITEM(__pyx_t_7, __pyx_t_9); __pyx_t_9++; if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 100, __pyx_L1_error)
+            __pyx_t_8 = PySequence_ITEM(__pyx_t_7, __pyx_t_9); __pyx_t_9++; if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 293, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_8);
             #endif
           }
@@ -3613,7 +4996,7 @@ static void __pyx_f_18spatial_minimiser1_calc_map_chi(double **__pyx_v_spectrum,
             PyObject* exc_type = PyErr_Occurred();
             if (exc_type) {
               if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-              else __PYX_ERR(0, 100, __pyx_L1_error)
+              else __PYX_ERR(0, 293, __pyx_L1_error)
             }
             break;
           }
@@ -3622,18 +5005,18 @@ static void __pyx_f_18spatial_minimiser1_calc_map_chi(double **__pyx_v_spectrum,
         __Pyx_XDECREF_SET(__pyx_v_i, __pyx_t_8);
         __pyx_t_8 = 0;
 
-        /* "spatial_minimiser1.pyx":101
+        /* "spatial_minimiser1.pyx":294
  * 			k=0
  * 			for i in range(num_freqs):
  * 				if spectrum_1d[i]<0:             # <<<<<<<<<<<<<<
  * 					continue
  * 				error=sqrt(square(rms[i])+square(sys_error*spectrum_1d[i]))
  */
-        __pyx_t_11 = __Pyx_PyIndex_AsSsize_t(__pyx_v_i); if (unlikely((__pyx_t_11 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 101, __pyx_L1_error)
+        __pyx_t_11 = __Pyx_PyIndex_AsSsize_t(__pyx_v_i); if (unlikely((__pyx_t_11 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 294, __pyx_L1_error)
         __pyx_t_12 = (((__pyx_v_spectrum_1d[__pyx_t_11]) < 0.0) != 0);
         if (__pyx_t_12) {
 
-          /* "spatial_minimiser1.pyx":102
+          /* "spatial_minimiser1.pyx":295
  * 			for i in range(num_freqs):
  * 				if spectrum_1d[i]<0:
  * 					continue             # <<<<<<<<<<<<<<
@@ -3642,7 +5025,7 @@ static void __pyx_f_18spatial_minimiser1_calc_map_chi(double **__pyx_v_spectrum,
  */
           goto __pyx_L7_continue;
 
-          /* "spatial_minimiser1.pyx":101
+          /* "spatial_minimiser1.pyx":294
  * 			k=0
  * 			for i in range(num_freqs):
  * 				if spectrum_1d[i]<0:             # <<<<<<<<<<<<<<
@@ -3651,30 +5034,30 @@ static void __pyx_f_18spatial_minimiser1_calc_map_chi(double **__pyx_v_spectrum,
  */
         }
 
-        /* "spatial_minimiser1.pyx":103
+        /* "spatial_minimiser1.pyx":296
  * 				if spectrum_1d[i]<0:
  * 					continue
  * 				error=sqrt(square(rms[i])+square(sys_error*spectrum_1d[i]))             # <<<<<<<<<<<<<<
  * 				sum1=sum1+square((model[ind+i]-spectrum_1d[i])/error)
  * 				k=k+1
  */
-        __pyx_t_11 = __Pyx_PyIndex_AsSsize_t(__pyx_v_i); if (unlikely((__pyx_t_11 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 103, __pyx_L1_error)
-        __pyx_t_13 = __Pyx_PyIndex_AsSsize_t(__pyx_v_i); if (unlikely((__pyx_t_13 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 103, __pyx_L1_error)
+        __pyx_t_11 = __Pyx_PyIndex_AsSsize_t(__pyx_v_i); if (unlikely((__pyx_t_11 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 296, __pyx_L1_error)
+        __pyx_t_13 = __Pyx_PyIndex_AsSsize_t(__pyx_v_i); if (unlikely((__pyx_t_13 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 296, __pyx_L1_error)
         __pyx_v_error = sqrt((__pyx_f_18spatial_minimiser1_square((__pyx_v_rms[__pyx_t_11])) + __pyx_f_18spatial_minimiser1_square((__pyx_v_sys_error * (__pyx_v_spectrum_1d[__pyx_t_13])))));
 
-        /* "spatial_minimiser1.pyx":104
+        /* "spatial_minimiser1.pyx":297
  * 					continue
  * 				error=sqrt(square(rms[i])+square(sys_error*spectrum_1d[i]))
  * 				sum1=sum1+square((model[ind+i]-spectrum_1d[i])/error)             # <<<<<<<<<<<<<<
  * 				k=k+1
  * 			ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
  */
-        __pyx_t_8 = __Pyx_PyInt_From_unsigned_int(__pyx_v_ind); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 104, __pyx_L1_error)
+        __pyx_t_8 = __Pyx_PyInt_From_unsigned_int(__pyx_v_ind); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 297, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_8);
-        __pyx_t_14 = PyNumber_Add(__pyx_t_8, __pyx_v_i); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 104, __pyx_L1_error)
+        __pyx_t_14 = PyNumber_Add(__pyx_t_8, __pyx_v_i); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 297, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_14);
         __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-        __pyx_t_13 = __Pyx_PyIndex_AsSsize_t(__pyx_t_14); if (unlikely((__pyx_t_13 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 104, __pyx_L1_error)
+        __pyx_t_13 = __Pyx_PyIndex_AsSsize_t(__pyx_t_14); if (unlikely((__pyx_t_13 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 297, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
         __pyx_t_15 = __pyx_t_13;
         __pyx_t_16 = -1;
@@ -3684,17 +5067,17 @@ static void __pyx_f_18spatial_minimiser1_calc_map_chi(double **__pyx_v_spectrum,
         } else if (unlikely(__pyx_t_15 >= __pyx_v_model.shape[0])) __pyx_t_16 = 0;
         if (unlikely(__pyx_t_16 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_16);
-          __PYX_ERR(0, 104, __pyx_L1_error)
+          __PYX_ERR(0, 297, __pyx_L1_error)
         }
-        __pyx_t_11 = __Pyx_PyIndex_AsSsize_t(__pyx_v_i); if (unlikely((__pyx_t_11 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 104, __pyx_L1_error)
+        __pyx_t_11 = __Pyx_PyIndex_AsSsize_t(__pyx_v_i); if (unlikely((__pyx_t_11 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 297, __pyx_L1_error)
         __pyx_t_17 = ((*((double *) ( /* dim=0 */ (__pyx_v_model.data + __pyx_t_15 * __pyx_v_model.strides[0]) ))) - (__pyx_v_spectrum_1d[__pyx_t_11]));
         if (unlikely(__pyx_v_error == 0)) {
           PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-          __PYX_ERR(0, 104, __pyx_L1_error)
+          __PYX_ERR(0, 297, __pyx_L1_error)
         }
         __pyx_v_sum1 = (__pyx_v_sum1 + __pyx_f_18spatial_minimiser1_square((__pyx_t_17 / __pyx_v_error)));
 
-        /* "spatial_minimiser1.pyx":105
+        /* "spatial_minimiser1.pyx":298
  * 				error=sqrt(square(rms[i])+square(sys_error*spectrum_1d[i]))
  * 				sum1=sum1+square((model[ind+i]-spectrum_1d[i])/error)
  * 				k=k+1             # <<<<<<<<<<<<<<
@@ -3703,7 +5086,7 @@ static void __pyx_f_18spatial_minimiser1_calc_map_chi(double **__pyx_v_spectrum,
  */
         __pyx_v_k = (__pyx_v_k + 1);
 
-        /* "spatial_minimiser1.pyx":100
+        /* "spatial_minimiser1.pyx":293
  * 			ind=find_model_ind(sub_fitted,x1,y1,param_lengths,num_params, num_x, num_y, num_freqs)
  * 			k=0
  * 			for i in range(num_freqs):             # <<<<<<<<<<<<<<
@@ -3714,7 +5097,7 @@ static void __pyx_f_18spatial_minimiser1_calc_map_chi(double **__pyx_v_spectrum,
       }
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-      /* "spatial_minimiser1.pyx":106
+      /* "spatial_minimiser1.pyx":299
  * 				sum1=sum1+square((model[ind+i]-spectrum_1d[i])/error)
  * 				k=k+1
  * 			ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params             # <<<<<<<<<<<<<<
@@ -3723,7 +5106,7 @@ static void __pyx_f_18spatial_minimiser1_calc_map_chi(double **__pyx_v_spectrum,
  */
       __pyx_v_ind = ((((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_num_params);
 
-      /* "spatial_minimiser1.pyx":107
+      /* "spatial_minimiser1.pyx":300
  * 				k=k+1
  * 			ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
  * 			if k>0:             # <<<<<<<<<<<<<<
@@ -3733,7 +5116,7 @@ static void __pyx_f_18spatial_minimiser1_calc_map_chi(double **__pyx_v_spectrum,
       __pyx_t_12 = ((__pyx_v_k > 0) != 0);
       if (__pyx_t_12) {
 
-        /* "spatial_minimiser1.pyx":108
+        /* "spatial_minimiser1.pyx":301
  * 			ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
  * 			if k>0:
  * 				sub_fitted[ind]=sum1             # <<<<<<<<<<<<<<
@@ -3745,11 +5128,11 @@ static void __pyx_f_18spatial_minimiser1_calc_map_chi(double **__pyx_v_spectrum,
         if (unlikely(__pyx_t_18 >= (size_t)__pyx_v_sub_fitted.shape[0])) __pyx_t_16 = 0;
         if (unlikely(__pyx_t_16 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_16);
-          __PYX_ERR(0, 108, __pyx_L1_error)
+          __PYX_ERR(0, 301, __pyx_L1_error)
         }
         *((double *) ( /* dim=0 */ (__pyx_v_sub_fitted.data + __pyx_t_18 * __pyx_v_sub_fitted.strides[0]) )) = __pyx_v_sum1;
 
-        /* "spatial_minimiser1.pyx":107
+        /* "spatial_minimiser1.pyx":300
  * 				k=k+1
  * 			ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
  * 			if k>0:             # <<<<<<<<<<<<<<
@@ -3760,7 +5143,7 @@ static void __pyx_f_18spatial_minimiser1_calc_map_chi(double **__pyx_v_spectrum,
     }
   }
 
-  /* "spatial_minimiser1.pyx":109
+  /* "spatial_minimiser1.pyx":302
  * 			if k>0:
  * 				sub_fitted[ind]=sum1
  * 	return             # <<<<<<<<<<<<<<
@@ -3769,7 +5152,7 @@ static void __pyx_f_18spatial_minimiser1_calc_map_chi(double **__pyx_v_spectrum,
  */
   goto __pyx_L0;
 
-  /* "spatial_minimiser1.pyx":79
+  /* "spatial_minimiser1.pyx":272
  * 	return ind
  * 
  * cdef void calc_map_chi(double **spectrum, double *rms, double [:] sub_fitted,\             # <<<<<<<<<<<<<<
@@ -3788,7 +5171,7 @@ static void __pyx_f_18spatial_minimiser1_calc_map_chi(double **__pyx_v_spectrum,
   __Pyx_RefNannyFinishContext();
 }
 
-/* "spatial_minimiser1.pyx":111
+/* "spatial_minimiser1.pyx":304
  * 	return
  * 
  * cdef void get_random_param_ind(int *rand_param_inds, int num_params, int **param_val_ind, int *param_val_lengths):             # <<<<<<<<<<<<<<
@@ -3813,7 +5196,7 @@ static void __pyx_f_18spatial_minimiser1_get_random_param_ind(int *__pyx_v_rand_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_random_param_ind", 0);
 
-  /* "spatial_minimiser1.pyx":113
+  /* "spatial_minimiser1.pyx":306
  * cdef void get_random_param_ind(int *rand_param_inds, int num_params, int **param_val_ind, int *param_val_lengths):
  * 	cdef double *seed
  * 	seed=<double *>PyMem_Malloc(num_params*sizeof(double))             # <<<<<<<<<<<<<<
@@ -3822,7 +5205,7 @@ static void __pyx_f_18spatial_minimiser1_get_random_param_ind(int *__pyx_v_rand_
  */
   __pyx_v_seed = ((double *)PyMem_Malloc((__pyx_v_num_params * (sizeof(double)))));
 
-  /* "spatial_minimiser1.pyx":115
+  /* "spatial_minimiser1.pyx":308
  * 	seed=<double *>PyMem_Malloc(num_params*sizeof(double))
  * 
  * 	gen_seed(seed, num_params)             # <<<<<<<<<<<<<<
@@ -3831,7 +5214,7 @@ static void __pyx_f_18spatial_minimiser1_get_random_param_ind(int *__pyx_v_rand_
  */
   __pyx_f_18spatial_minimiser1_gen_seed(__pyx_v_seed, __pyx_v_num_params);
 
-  /* "spatial_minimiser1.pyx":119
+  /* "spatial_minimiser1.pyx":312
  * 	cdef int i
  * 	cdef int rand_ind
  * 	for i in range(num_params):             # <<<<<<<<<<<<<<
@@ -3843,44 +5226,44 @@ static void __pyx_f_18spatial_minimiser1_get_random_param_ind(int *__pyx_v_rand_
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "spatial_minimiser1.pyx":120
+    /* "spatial_minimiser1.pyx":313
  * 	cdef int rand_ind
  * 	for i in range(num_params):
  * 		rand_int=int(seed[i]*param_val_lengths[i])  ### seed[i] should lie between 0 and 1             # <<<<<<<<<<<<<<
  * 		if rand_int<param_val_lengths[i]:
  * 			rand_param_inds[i]=param_val_ind[i][rand_int]
  */
-    __pyx_t_4 = __Pyx_PyInt_FromDouble(((__pyx_v_seed[__pyx_v_i]) * (__pyx_v_param_val_lengths[__pyx_v_i]))); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 120, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyInt_FromDouble(((__pyx_v_seed[__pyx_v_i]) * (__pyx_v_param_val_lengths[__pyx_v_i]))); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 313, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_XDECREF_SET(__pyx_v_rand_int, __pyx_t_4);
     __pyx_t_4 = 0;
 
-    /* "spatial_minimiser1.pyx":121
+    /* "spatial_minimiser1.pyx":314
  * 	for i in range(num_params):
  * 		rand_int=int(seed[i]*param_val_lengths[i])  ### seed[i] should lie between 0 and 1
  * 		if rand_int<param_val_lengths[i]:             # <<<<<<<<<<<<<<
  * 			rand_param_inds[i]=param_val_ind[i][rand_int]
  * 		else:
  */
-    __pyx_t_4 = __Pyx_PyInt_From_int((__pyx_v_param_val_lengths[__pyx_v_i])); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 121, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyInt_From_int((__pyx_v_param_val_lengths[__pyx_v_i])); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 314, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = PyObject_RichCompare(__pyx_v_rand_int, __pyx_t_4, Py_LT); __Pyx_XGOTREF(__pyx_t_5); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 121, __pyx_L1_error)
+    __pyx_t_5 = PyObject_RichCompare(__pyx_v_rand_int, __pyx_t_4, Py_LT); __Pyx_XGOTREF(__pyx_t_5); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 314, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 121, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 314, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     if (__pyx_t_6) {
 
-      /* "spatial_minimiser1.pyx":122
+      /* "spatial_minimiser1.pyx":315
  * 		rand_int=int(seed[i]*param_val_lengths[i])  ### seed[i] should lie between 0 and 1
  * 		if rand_int<param_val_lengths[i]:
  * 			rand_param_inds[i]=param_val_ind[i][rand_int]             # <<<<<<<<<<<<<<
  * 		else:
  * 			rand_param_inds[i]=0  #### fail-safe mechanism. This should not be triggered.
  */
-      __pyx_t_7 = __Pyx_PyIndex_AsSsize_t(__pyx_v_rand_int); if (unlikely((__pyx_t_7 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 122, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyIndex_AsSsize_t(__pyx_v_rand_int); if (unlikely((__pyx_t_7 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 315, __pyx_L1_error)
       (__pyx_v_rand_param_inds[__pyx_v_i]) = ((__pyx_v_param_val_ind[__pyx_v_i])[__pyx_t_7]);
 
-      /* "spatial_minimiser1.pyx":121
+      /* "spatial_minimiser1.pyx":314
  * 	for i in range(num_params):
  * 		rand_int=int(seed[i]*param_val_lengths[i])  ### seed[i] should lie between 0 and 1
  * 		if rand_int<param_val_lengths[i]:             # <<<<<<<<<<<<<<
@@ -3890,7 +5273,7 @@ static void __pyx_f_18spatial_minimiser1_get_random_param_ind(int *__pyx_v_rand_
       goto __pyx_L5;
     }
 
-    /* "spatial_minimiser1.pyx":124
+    /* "spatial_minimiser1.pyx":317
  * 			rand_param_inds[i]=param_val_ind[i][rand_int]
  * 		else:
  * 			rand_param_inds[i]=0  #### fail-safe mechanism. This should not be triggered.             # <<<<<<<<<<<<<<
@@ -3903,7 +5286,7 @@ static void __pyx_f_18spatial_minimiser1_get_random_param_ind(int *__pyx_v_rand_
     __pyx_L5:;
   }
 
-  /* "spatial_minimiser1.pyx":126
+  /* "spatial_minimiser1.pyx":319
  * 			rand_param_inds[i]=0  #### fail-safe mechanism. This should not be triggered.
  * 
  * 	PyMem_Free(seed)             # <<<<<<<<<<<<<<
@@ -3912,7 +5295,7 @@ static void __pyx_f_18spatial_minimiser1_get_random_param_ind(int *__pyx_v_rand_
  */
   PyMem_Free(__pyx_v_seed);
 
-  /* "spatial_minimiser1.pyx":127
+  /* "spatial_minimiser1.pyx":320
  * 
  * 	PyMem_Free(seed)
  * 	return             # <<<<<<<<<<<<<<
@@ -3921,7 +5304,7 @@ static void __pyx_f_18spatial_minimiser1_get_random_param_ind(int *__pyx_v_rand_
  */
   goto __pyx_L0;
 
-  /* "spatial_minimiser1.pyx":111
+  /* "spatial_minimiser1.pyx":304
  * 	return
  * 
  * cdef void get_random_param_ind(int *rand_param_inds, int num_params, int **param_val_ind, int *param_val_lengths):             # <<<<<<<<<<<<<<
@@ -3939,7 +5322,7 @@ static void __pyx_f_18spatial_minimiser1_get_random_param_ind(int *__pyx_v_rand_
   __Pyx_RefNannyFinishContext();
 }
 
-/* "spatial_minimiser1.pyx":130
+/* "spatial_minimiser1.pyx":323
  * 
  * 
  * cdef void do_bee_swarm_optimisation(double **spectrum, double *rms, double [:] model,\             # <<<<<<<<<<<<<<
@@ -4003,7 +5386,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("do_bee_swarm_optimisation", 0);
 
-  /* "spatial_minimiser1.pyx":141
+  /* "spatial_minimiser1.pyx":334
  * 	cdef int x1,y1,i,ind,t,m
  * 
  * 	cdef int num_val=(high_indx-low_indx+1)*(high_indy-low_indy+1)*(num_params+1)             # <<<<<<<<<<<<<<
@@ -4012,7 +5395,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
   __pyx_v_num_val = ((((__pyx_v_high_indx - __pyx_v_low_indx) + 1) * ((__pyx_v_high_indy - __pyx_v_low_indy) + 1)) * (__pyx_v_num_params + 1));
 
-  /* "spatial_minimiser1.pyx":146
+  /* "spatial_minimiser1.pyx":339
  * 	cdef double *current_subcube_fit
  * 
  * 	subcube_fit=<double*>PyMem_Malloc(num_val*sizeof(double))             # <<<<<<<<<<<<<<
@@ -4021,7 +5404,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
   __pyx_v_subcube_fit = ((double *)PyMem_Malloc((__pyx_v_num_val * (sizeof(double)))));
 
-  /* "spatial_minimiser1.pyx":147
+  /* "spatial_minimiser1.pyx":340
  * 
  * 	subcube_fit=<double*>PyMem_Malloc(num_val*sizeof(double))
  * 	current_subcube_fit=<double*>PyMem_Malloc(num_val*sizeof(double))             # <<<<<<<<<<<<<<
@@ -4030,7 +5413,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
   __pyx_v_current_subcube_fit = ((double *)PyMem_Malloc((__pyx_v_num_val * (sizeof(double)))));
 
-  /* "spatial_minimiser1.pyx":149
+  /* "spatial_minimiser1.pyx":342
  * 	current_subcube_fit=<double*>PyMem_Malloc(num_val*sizeof(double))
  * 
  * 	cdef double[:] sub_fitted=<double [:num_val]>subcube_fit             # <<<<<<<<<<<<<<
@@ -4039,24 +5422,24 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
   if (!__pyx_v_subcube_fit) {
     PyErr_SetString(PyExc_ValueError,"Cannot create cython.array from NULL pointer");
-    __PYX_ERR(0, 149, __pyx_L1_error)
+    __PYX_ERR(0, 342, __pyx_L1_error)
   }
-  __pyx_t_3 = __pyx_format_from_typeinfo(&__Pyx_TypeInfo_double); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 149, __pyx_L1_error)
+  __pyx_t_3 = __pyx_format_from_typeinfo(&__Pyx_TypeInfo_double); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 342, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_2 = Py_BuildValue((char*) "("  __PYX_BUILD_PY_SSIZE_T  ")", ((Py_ssize_t)__pyx_v_num_val)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 149, __pyx_L1_error)
+  __pyx_t_2 = Py_BuildValue((char*) "("  __PYX_BUILD_PY_SSIZE_T  ")", ((Py_ssize_t)__pyx_v_num_val)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 342, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_1 = __pyx_array_new(__pyx_t_2, sizeof(double), PyBytes_AS_STRING(__pyx_t_3), (char *) "c", (char *) __pyx_v_subcube_fit);
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 149, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 342, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_4 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(((PyObject *)__pyx_t_1), PyBUF_WRITABLE); if (unlikely(!__pyx_t_4.memview)) __PYX_ERR(0, 149, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(((PyObject *)__pyx_t_1), PyBUF_WRITABLE); if (unlikely(!__pyx_t_4.memview)) __PYX_ERR(0, 342, __pyx_L1_error)
   __Pyx_DECREF(((PyObject *)__pyx_t_1)); __pyx_t_1 = 0;
   __pyx_v_sub_fitted = __pyx_t_4;
   __pyx_t_4.memview = NULL;
   __pyx_t_4.data = NULL;
 
-  /* "spatial_minimiser1.pyx":151
+  /* "spatial_minimiser1.pyx":344
  * 	cdef double[:] sub_fitted=<double [:num_val]>subcube_fit
  * 
  * 	i=0             # <<<<<<<<<<<<<<
@@ -4065,7 +5448,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
   __pyx_v_i = 0;
 
-  /* "spatial_minimiser1.pyx":152
+  /* "spatial_minimiser1.pyx":345
  * 
  * 	i=0
  * 	t=0             # <<<<<<<<<<<<<<
@@ -4074,7 +5457,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
   __pyx_v_t = 0;
 
-  /* "spatial_minimiser1.pyx":153
+  /* "spatial_minimiser1.pyx":346
  * 	i=0
  * 	t=0
  * 	for y1 in range(low_indy,high_indy+1):             # <<<<<<<<<<<<<<
@@ -4086,7 +5469,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
   for (__pyx_t_7 = __pyx_v_low_indy; __pyx_t_7 < __pyx_t_6; __pyx_t_7+=1) {
     __pyx_v_y1 = __pyx_t_7;
 
-    /* "spatial_minimiser1.pyx":154
+    /* "spatial_minimiser1.pyx":347
  * 	t=0
  * 	for y1 in range(low_indy,high_indy+1):
  * 		for x1 in range(low_indx, high_indx+1):             # <<<<<<<<<<<<<<
@@ -4098,7 +5481,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
     for (__pyx_t_10 = __pyx_v_low_indx; __pyx_t_10 < __pyx_t_9; __pyx_t_10+=1) {
       __pyx_v_x1 = __pyx_t_10;
 
-      /* "spatial_minimiser1.pyx":155
+      /* "spatial_minimiser1.pyx":348
  * 	for y1 in range(low_indy,high_indy+1):
  * 		for x1 in range(low_indx, high_indx+1):
  * 			ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)             # <<<<<<<<<<<<<<
@@ -4107,7 +5490,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
       __pyx_v_ind = (((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1)));
 
-      /* "spatial_minimiser1.pyx":156
+      /* "spatial_minimiser1.pyx":349
  * 		for x1 in range(low_indx, high_indx+1):
  * 			ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)
  * 			for m in range(num_params+1):             # <<<<<<<<<<<<<<
@@ -4119,7 +5502,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
       for (__pyx_t_13 = 0; __pyx_t_13 < __pyx_t_12; __pyx_t_13+=1) {
         __pyx_v_m = __pyx_t_13;
 
-        /* "spatial_minimiser1.pyx":157
+        /* "spatial_minimiser1.pyx":350
  * 			ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)
  * 			for m in range(num_params+1):
  * 				sub_fitted[i]=fitted[ind+m]             # <<<<<<<<<<<<<<
@@ -4134,7 +5517,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
         } else if (unlikely(__pyx_t_14 >= __pyx_v_fitted.shape[0])) __pyx_t_15 = 0;
         if (unlikely(__pyx_t_15 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_15);
-          __PYX_ERR(0, 157, __pyx_L1_error)
+          __PYX_ERR(0, 350, __pyx_L1_error)
         }
         __pyx_t_16 = __pyx_v_i;
         __pyx_t_15 = -1;
@@ -4144,11 +5527,11 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
         } else if (unlikely(__pyx_t_16 >= __pyx_v_sub_fitted.shape[0])) __pyx_t_15 = 0;
         if (unlikely(__pyx_t_15 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_15);
-          __PYX_ERR(0, 157, __pyx_L1_error)
+          __PYX_ERR(0, 350, __pyx_L1_error)
         }
         *((double *) ( /* dim=0 */ (__pyx_v_sub_fitted.data + __pyx_t_16 * __pyx_v_sub_fitted.strides[0]) )) = (*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_14 * __pyx_v_fitted.strides[0]) )));
 
-        /* "spatial_minimiser1.pyx":158
+        /* "spatial_minimiser1.pyx":351
  * 			for m in range(num_params+1):
  * 				sub_fitted[i]=fitted[ind+m]
  * 				i=i+1             # <<<<<<<<<<<<<<
@@ -4160,7 +5543,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
     }
   }
 
-  /* "spatial_minimiser1.pyx":163
+  /* "spatial_minimiser1.pyx":356
  * 
  * 
  * 	for i in range(num_val):             # <<<<<<<<<<<<<<
@@ -4172,7 +5555,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
   for (__pyx_t_13 = 0; __pyx_t_13 < __pyx_t_10; __pyx_t_13+=1) {
     __pyx_v_i = __pyx_t_13;
 
-    /* "spatial_minimiser1.pyx":164
+    /* "spatial_minimiser1.pyx":357
  * 
  * 	for i in range(num_val):
  * 		current_subcube_fit[i]=sub_fitted[i]             # <<<<<<<<<<<<<<
@@ -4187,12 +5570,12 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
     } else if (unlikely(__pyx_t_14 >= __pyx_v_sub_fitted.shape[0])) __pyx_t_15 = 0;
     if (unlikely(__pyx_t_15 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_15);
-      __PYX_ERR(0, 164, __pyx_L1_error)
+      __PYX_ERR(0, 357, __pyx_L1_error)
     }
     (__pyx_v_current_subcube_fit[__pyx_v_i]) = (*((double *) ( /* dim=0 */ (__pyx_v_sub_fitted.data + __pyx_t_14 * __pyx_v_sub_fitted.strides[0]) )));
   }
 
-  /* "spatial_minimiser1.pyx":169
+  /* "spatial_minimiser1.pyx":362
  * 
  * 
  * 	num_times=1             # <<<<<<<<<<<<<<
@@ -4201,7 +5584,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
   __pyx_v_num_times = 1;
 
-  /* "spatial_minimiser1.pyx":170
+  /* "spatial_minimiser1.pyx":363
  * 
  * 	num_times=1
  * 	num_x1=high_indx-low_indx+1             # <<<<<<<<<<<<<<
@@ -4210,7 +5593,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
   __pyx_v_num_x1 = ((__pyx_v_high_indx - __pyx_v_low_indx) + 1);
 
-  /* "spatial_minimiser1.pyx":171
+  /* "spatial_minimiser1.pyx":364
  * 	num_times=1
  * 	num_x1=high_indx-low_indx+1
  * 	num_y1=high_indy-low_indy+1             # <<<<<<<<<<<<<<
@@ -4219,7 +5602,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
   __pyx_v_num_y1 = ((__pyx_v_high_indy - __pyx_v_low_indy) + 1);
 
-  /* "spatial_minimiser1.pyx":176
+  /* "spatial_minimiser1.pyx":369
  * 
  * 
  * 	cdef double grad_chi=calc_grad_chi(sub_fitted, param_val_actual, num_times, num_y1, num_x1, num_params, \             # <<<<<<<<<<<<<<
@@ -4232,7 +5615,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
   __pyx_t_17 = __pyx_f_18spatial_minimiser1_calc_grad_chi(__pyx_v_sub_fitted, __pyx_v_param_val_actual, __pyx_v_num_times, __pyx_v_num_y1, __pyx_v_num_x1, __pyx_v_num_params, &__pyx_t_18); 
   __pyx_v_grad_chi = __pyx_t_17;
 
-  /* "spatial_minimiser1.pyx":180
+  /* "spatial_minimiser1.pyx":373
  * 
  * 
  * 	cdef double init_grad_chi=grad_chi             # <<<<<<<<<<<<<<
@@ -4241,7 +5624,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
   __pyx_v_init_grad_chi = __pyx_v_grad_chi;
 
-  /* "spatial_minimiser1.pyx":181
+  /* "spatial_minimiser1.pyx":374
  * 
  * 	cdef double init_grad_chi=grad_chi
  * 	cdef int max_iter=1000             # <<<<<<<<<<<<<<
@@ -4250,7 +5633,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
   __pyx_v_max_iter = 0x3E8;
 
-  /* "spatial_minimiser1.pyx":182
+  /* "spatial_minimiser1.pyx":375
  * 	cdef double init_grad_chi=grad_chi
  * 	cdef int max_iter=1000
  * 	cdef double exit_drop=0.6             # <<<<<<<<<<<<<<
@@ -4259,7 +5642,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
   __pyx_v_exit_drop = 0.6;
 
-  /* "spatial_minimiser1.pyx":183
+  /* "spatial_minimiser1.pyx":376
  * 	cdef int max_iter=1000
  * 	cdef double exit_drop=0.6
  * 	cdef double good_drop=0.4             # <<<<<<<<<<<<<<
@@ -4268,7 +5651,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
   __pyx_v_good_drop = 0.4;
 
-  /* "spatial_minimiser1.pyx":184
+  /* "spatial_minimiser1.pyx":377
  * 	cdef double exit_drop=0.6
  * 	cdef double good_drop=0.4
  * 	cdef int max_iter_good_drop=max_iter//2             # <<<<<<<<<<<<<<
@@ -4277,7 +5660,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
   __pyx_v_max_iter_good_drop = __Pyx_div_long(__pyx_v_max_iter, 2);
 
-  /* "spatial_minimiser1.pyx":186
+  /* "spatial_minimiser1.pyx":379
  * 	cdef int max_iter_good_drop=max_iter//2
  * 
  * 	cdef int iter1=0             # <<<<<<<<<<<<<<
@@ -4286,7 +5669,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
   __pyx_v_iter1 = 0;
 
-  /* "spatial_minimiser1.pyx":187
+  /* "spatial_minimiser1.pyx":380
  * 
  * 	cdef int iter1=0
  * 	cdef double drop=0.0             # <<<<<<<<<<<<<<
@@ -4295,7 +5678,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
   __pyx_v_drop = 0.0;
 
-  /* "spatial_minimiser1.pyx":193
+  /* "spatial_minimiser1.pyx":386
  * 	cdef int *rand_param_inds
  * 
  * 	rand_param_inds=<int *>PyMem_Malloc(num_params*sizeof(int))             # <<<<<<<<<<<<<<
@@ -4304,7 +5687,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
   __pyx_v_rand_param_inds = ((int *)PyMem_Malloc((__pyx_v_num_params * (sizeof(int)))));
 
-  /* "spatial_minimiser1.pyx":195
+  /* "spatial_minimiser1.pyx":388
  * 	rand_param_inds=<int *>PyMem_Malloc(num_params*sizeof(int))
  * 
  * 	while iter1<max_iter:             # <<<<<<<<<<<<<<
@@ -4315,7 +5698,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
     __pyx_t_19 = ((__pyx_v_iter1 < __pyx_v_max_iter) != 0);
     if (!__pyx_t_19) break;
 
-    /* "spatial_minimiser1.pyx":196
+    /* "spatial_minimiser1.pyx":389
  * 
  * 	while iter1<max_iter:
  * 		i=0             # <<<<<<<<<<<<<<
@@ -4324,7 +5707,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
     __pyx_v_i = 0;
 
-    /* "spatial_minimiser1.pyx":197
+    /* "spatial_minimiser1.pyx":390
  * 	while iter1<max_iter:
  * 		i=0
  * 		t=0             # <<<<<<<<<<<<<<
@@ -4333,7 +5716,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
     __pyx_v_t = 0;
 
-    /* "spatial_minimiser1.pyx":198
+    /* "spatial_minimiser1.pyx":391
  * 		i=0
  * 		t=0
  * 		for y1 in range(low_indy,high_indy+1):             # <<<<<<<<<<<<<<
@@ -4345,7 +5728,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
     for (__pyx_t_7 = __pyx_v_low_indy; __pyx_t_7 < __pyx_t_6; __pyx_t_7+=1) {
       __pyx_v_y1 = __pyx_t_7;
 
-      /* "spatial_minimiser1.pyx":199
+      /* "spatial_minimiser1.pyx":392
  * 		t=0
  * 		for y1 in range(low_indy,high_indy+1):
  * 			for x1 in range(low_indx, high_indx+1):             # <<<<<<<<<<<<<<
@@ -4357,7 +5740,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
       for (__pyx_t_10 = __pyx_v_low_indx; __pyx_t_10 < __pyx_t_9; __pyx_t_10+=1) {
         __pyx_v_x1 = __pyx_t_10;
 
-        /* "spatial_minimiser1.pyx":200
+        /* "spatial_minimiser1.pyx":393
  * 		for y1 in range(low_indy,high_indy+1):
  * 			for x1 in range(low_indx, high_indx+1):
  * 				for m in range(num_params+1):             # <<<<<<<<<<<<<<
@@ -4369,7 +5752,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
         for (__pyx_t_13 = 0; __pyx_t_13 < __pyx_t_12; __pyx_t_13+=1) {
           __pyx_v_m = __pyx_t_13;
 
-          /* "spatial_minimiser1.pyx":201
+          /* "spatial_minimiser1.pyx":394
  * 			for x1 in range(low_indx, high_indx+1):
  * 				for m in range(num_params+1):
  * 					sub_fitted[i]=-1.0             # <<<<<<<<<<<<<<
@@ -4384,11 +5767,11 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
           } else if (unlikely(__pyx_t_14 >= __pyx_v_sub_fitted.shape[0])) __pyx_t_15 = 0;
           if (unlikely(__pyx_t_15 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_15);
-            __PYX_ERR(0, 201, __pyx_L1_error)
+            __PYX_ERR(0, 394, __pyx_L1_error)
           }
           *((double *) ( /* dim=0 */ (__pyx_v_sub_fitted.data + __pyx_t_14 * __pyx_v_sub_fitted.strides[0]) )) = -1.0;
 
-          /* "spatial_minimiser1.pyx":202
+          /* "spatial_minimiser1.pyx":395
  * 				for m in range(num_params+1):
  * 					sub_fitted[i]=-1.0
  * 					i=i+1             # <<<<<<<<<<<<<<
@@ -4400,7 +5783,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
       }
     }
 
-    /* "spatial_minimiser1.pyx":204
+    /* "spatial_minimiser1.pyx":397
  * 					i=i+1
  * 
  * 		i=0             # <<<<<<<<<<<<<<
@@ -4409,7 +5792,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
     __pyx_v_i = 0;
 
-    /* "spatial_minimiser1.pyx":205
+    /* "spatial_minimiser1.pyx":398
  * 
  * 		i=0
  * 		t=0             # <<<<<<<<<<<<<<
@@ -4418,7 +5801,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
     __pyx_v_t = 0;
 
-    /* "spatial_minimiser1.pyx":206
+    /* "spatial_minimiser1.pyx":399
  * 		i=0
  * 		t=0
  * 		for y1 in range(num_y1):             # <<<<<<<<<<<<<<
@@ -4430,7 +5813,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
     for (__pyx_t_13 = 0; __pyx_t_13 < __pyx_t_10; __pyx_t_13+=1) {
       __pyx_v_y1 = __pyx_t_13;
 
-      /* "spatial_minimiser1.pyx":207
+      /* "spatial_minimiser1.pyx":400
  * 		t=0
  * 		for y1 in range(num_y1):
  * 			for x1 in range(num_x1):             # <<<<<<<<<<<<<<
@@ -4442,7 +5825,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
       for (__pyx_t_21 = 0; __pyx_t_21 < __pyx_t_20; __pyx_t_21+=1) {
         __pyx_v_x1 = __pyx_t_21;
 
-        /* "spatial_minimiser1.pyx":208
+        /* "spatial_minimiser1.pyx":401
  * 		for y1 in range(num_y1):
  * 			for x1 in range(num_x1):
  * 				ind=t*num_y1*num_x1*(num_params+1)+y1*num_x1*(num_params+1)+x1*(num_params+1)             # <<<<<<<<<<<<<<
@@ -4451,7 +5834,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
         __pyx_v_ind = (((((__pyx_v_t * __pyx_v_num_y1) * __pyx_v_num_x1) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x1) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1)));
 
-        /* "spatial_minimiser1.pyx":209
+        /* "spatial_minimiser1.pyx":402
  * 			for x1 in range(num_x1):
  * 				ind=t*num_y1*num_x1*(num_params+1)+y1*num_x1*(num_params+1)+x1*(num_params+1)
  * 				get_random_param_ind(rand_param_inds,num_params,param_val_ind, param_val_lengths)             # <<<<<<<<<<<<<<
@@ -4460,7 +5843,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
         __pyx_f_18spatial_minimiser1_get_random_param_ind(__pyx_v_rand_param_inds, __pyx_v_num_params, __pyx_v_param_val_ind, __pyx_v_param_val_lengths);
 
-        /* "spatial_minimiser1.pyx":210
+        /* "spatial_minimiser1.pyx":403
  * 				ind=t*num_y1*num_x1*(num_params+1)+y1*num_x1*(num_params+1)+x1*(num_params+1)
  * 				get_random_param_ind(rand_param_inds,num_params,param_val_ind, param_val_lengths)
  * 				for m in range(num_params):             # <<<<<<<<<<<<<<
@@ -4472,7 +5855,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
         for (__pyx_t_24 = 0; __pyx_t_24 < __pyx_t_23; __pyx_t_24+=1) {
           __pyx_v_m = __pyx_t_24;
 
-          /* "spatial_minimiser1.pyx":211
+          /* "spatial_minimiser1.pyx":404
  * 				get_random_param_ind(rand_param_inds,num_params,param_val_ind, param_val_lengths)
  * 				for m in range(num_params):
  * 					sub_fitted[ind+m]=rand_param_inds[m]             # <<<<<<<<<<<<<<
@@ -4487,14 +5870,14 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
           } else if (unlikely(__pyx_t_14 >= __pyx_v_sub_fitted.shape[0])) __pyx_t_25 = 0;
           if (unlikely(__pyx_t_25 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_25);
-            __PYX_ERR(0, 211, __pyx_L1_error)
+            __PYX_ERR(0, 404, __pyx_L1_error)
           }
           *((double *) ( /* dim=0 */ (__pyx_v_sub_fitted.data + __pyx_t_14 * __pyx_v_sub_fitted.strides[0]) )) = (__pyx_v_rand_param_inds[__pyx_v_m]);
         }
       }
     }
 
-    /* "spatial_minimiser1.pyx":213
+    /* "spatial_minimiser1.pyx":406
  * 					sub_fitted[ind+m]=rand_param_inds[m]
  * 
  * 		calc_map_chi(spectrum, rms, sub_fitted,\             # <<<<<<<<<<<<<<
@@ -4503,7 +5886,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
     __pyx_f_18spatial_minimiser1_calc_map_chi(__pyx_v_spectrum, __pyx_v_rms, __pyx_v_sub_fitted, __pyx_v_model, __pyx_v_num_x1, __pyx_v_num_y1, __pyx_v_num_freqs, __pyx_v_num_params, __pyx_v_sys_error, __pyx_v_model_param_lengths);
 
-    /* "spatial_minimiser1.pyx":217
+    /* "spatial_minimiser1.pyx":410
  * 				num_params, sys_error,model_param_lengths)
  * 
  * 		current_grad_chi=calc_grad_chi(sub_fitted, param_val_actual, num_times, num_y1, num_x1, num_params, \             # <<<<<<<<<<<<<<
@@ -4516,7 +5899,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
     __pyx_t_17 = __pyx_f_18spatial_minimiser1_calc_grad_chi(__pyx_v_sub_fitted, __pyx_v_param_val_actual, __pyx_v_num_times, __pyx_v_num_y1, __pyx_v_num_x1, __pyx_v_num_params, &__pyx_t_18); 
     __pyx_v_current_grad_chi = __pyx_t_17;
 
-    /* "spatial_minimiser1.pyx":220
+    /* "spatial_minimiser1.pyx":413
  * 						 spatial_smoothness_enforcer, temporal_smoothness_enforcer)
  * 
  * 		if current_grad_chi<grad_chi:             # <<<<<<<<<<<<<<
@@ -4526,7 +5909,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
     __pyx_t_19 = ((__pyx_v_current_grad_chi < __pyx_v_grad_chi) != 0);
     if (__pyx_t_19) {
 
-      /* "spatial_minimiser1.pyx":221
+      /* "spatial_minimiser1.pyx":414
  * 
  * 		if current_grad_chi<grad_chi:
  * 			grad_chi=current_grad_chi             # <<<<<<<<<<<<<<
@@ -4535,18 +5918,18 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
       __pyx_v_grad_chi = __pyx_v_current_grad_chi;
 
-      /* "spatial_minimiser1.pyx":222
+      /* "spatial_minimiser1.pyx":415
  * 		if current_grad_chi<grad_chi:
  * 			grad_chi=current_grad_chi
  * 			print ("successfull")             # <<<<<<<<<<<<<<
  * 			for i in range(num_val):
  * 				current_subcube_fit[i]=sub_fitted[i]
  */
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple_, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 222, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 415, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-      /* "spatial_minimiser1.pyx":223
+      /* "spatial_minimiser1.pyx":416
  * 			grad_chi=current_grad_chi
  * 			print ("successfull")
  * 			for i in range(num_val):             # <<<<<<<<<<<<<<
@@ -4558,7 +5941,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
       for (__pyx_t_13 = 0; __pyx_t_13 < __pyx_t_10; __pyx_t_13+=1) {
         __pyx_v_i = __pyx_t_13;
 
-        /* "spatial_minimiser1.pyx":224
+        /* "spatial_minimiser1.pyx":417
  * 			print ("successfull")
  * 			for i in range(num_val):
  * 				current_subcube_fit[i]=sub_fitted[i]             # <<<<<<<<<<<<<<
@@ -4573,12 +5956,12 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
         } else if (unlikely(__pyx_t_14 >= __pyx_v_sub_fitted.shape[0])) __pyx_t_15 = 0;
         if (unlikely(__pyx_t_15 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_15);
-          __PYX_ERR(0, 224, __pyx_L1_error)
+          __PYX_ERR(0, 417, __pyx_L1_error)
         }
         (__pyx_v_current_subcube_fit[__pyx_v_i]) = (*((double *) ( /* dim=0 */ (__pyx_v_sub_fitted.data + __pyx_t_14 * __pyx_v_sub_fitted.strides[0]) )));
       }
 
-      /* "spatial_minimiser1.pyx":225
+      /* "spatial_minimiser1.pyx":418
  * 			for i in range(num_val):
  * 				current_subcube_fit[i]=sub_fitted[i]
  * 			drop=absolute((grad_chi-init_grad_chi)/init_grad_chi)             # <<<<<<<<<<<<<<
@@ -4588,11 +5971,11 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
       __pyx_t_17 = (__pyx_v_grad_chi - __pyx_v_init_grad_chi);
       if (unlikely(__pyx_v_init_grad_chi == 0)) {
         PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-        __PYX_ERR(0, 225, __pyx_L1_error)
+        __PYX_ERR(0, 418, __pyx_L1_error)
       }
       __pyx_v_drop = __pyx_f_18spatial_minimiser1_absolute((__pyx_t_17 / __pyx_v_init_grad_chi));
 
-      /* "spatial_minimiser1.pyx":226
+      /* "spatial_minimiser1.pyx":419
  * 				current_subcube_fit[i]=sub_fitted[i]
  * 			drop=absolute((grad_chi-init_grad_chi)/init_grad_chi)
  * 			if drop>exit_drop:             # <<<<<<<<<<<<<<
@@ -4602,7 +5985,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
       __pyx_t_19 = ((__pyx_v_drop > __pyx_v_exit_drop) != 0);
       if (__pyx_t_19) {
 
-        /* "spatial_minimiser1.pyx":227
+        /* "spatial_minimiser1.pyx":420
  * 			drop=absolute((grad_chi-init_grad_chi)/init_grad_chi)
  * 			if drop>exit_drop:
  * 				break             # <<<<<<<<<<<<<<
@@ -4611,7 +5994,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
         goto __pyx_L12_break;
 
-        /* "spatial_minimiser1.pyx":226
+        /* "spatial_minimiser1.pyx":419
  * 				current_subcube_fit[i]=sub_fitted[i]
  * 			drop=absolute((grad_chi-init_grad_chi)/init_grad_chi)
  * 			if drop>exit_drop:             # <<<<<<<<<<<<<<
@@ -4620,7 +6003,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
       }
 
-      /* "spatial_minimiser1.pyx":228
+      /* "spatial_minimiser1.pyx":421
  * 			if drop>exit_drop:
  * 				break
  * 			elif drop>good_drop and iter1>max_iter_good_drop:             # <<<<<<<<<<<<<<
@@ -4638,7 +6021,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
       __pyx_L29_bool_binop_done:;
       if (__pyx_t_19) {
 
-        /* "spatial_minimiser1.pyx":229
+        /* "spatial_minimiser1.pyx":422
  * 				break
  * 			elif drop>good_drop and iter1>max_iter_good_drop:
  * 				break             # <<<<<<<<<<<<<<
@@ -4647,7 +6030,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
         goto __pyx_L12_break;
 
-        /* "spatial_minimiser1.pyx":228
+        /* "spatial_minimiser1.pyx":421
  * 			if drop>exit_drop:
  * 				break
  * 			elif drop>good_drop and iter1>max_iter_good_drop:             # <<<<<<<<<<<<<<
@@ -4656,7 +6039,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
       }
 
-      /* "spatial_minimiser1.pyx":220
+      /* "spatial_minimiser1.pyx":413
  * 						 spatial_smoothness_enforcer, temporal_smoothness_enforcer)
  * 
  * 		if current_grad_chi<grad_chi:             # <<<<<<<<<<<<<<
@@ -4665,7 +6048,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
     }
 
-    /* "spatial_minimiser1.pyx":231
+    /* "spatial_minimiser1.pyx":424
  * 				break
  * 
  * 		iter1=iter1+1             # <<<<<<<<<<<<<<
@@ -4676,7 +6059,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
   }
   __pyx_L12_break:;
 
-  /* "spatial_minimiser1.pyx":233
+  /* "spatial_minimiser1.pyx":426
  * 		iter1=iter1+1
  * 
  * 	i=0             # <<<<<<<<<<<<<<
@@ -4685,7 +6068,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
   __pyx_v_i = 0;
 
-  /* "spatial_minimiser1.pyx":234
+  /* "spatial_minimiser1.pyx":427
  * 
  * 	i=0
  * 	t=0             # <<<<<<<<<<<<<<
@@ -4694,7 +6077,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
   __pyx_v_t = 0;
 
-  /* "spatial_minimiser1.pyx":235
+  /* "spatial_minimiser1.pyx":428
  * 	i=0
  * 	t=0
  * 	for y1 in range(low_indy,high_indy+1):             # <<<<<<<<<<<<<<
@@ -4706,7 +6089,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
   for (__pyx_t_7 = __pyx_v_low_indy; __pyx_t_7 < __pyx_t_6; __pyx_t_7+=1) {
     __pyx_v_y1 = __pyx_t_7;
 
-    /* "spatial_minimiser1.pyx":236
+    /* "spatial_minimiser1.pyx":429
  * 	t=0
  * 	for y1 in range(low_indy,high_indy+1):
  * 		for x1 in range(low_indx, high_indx+1):             # <<<<<<<<<<<<<<
@@ -4718,7 +6101,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
     for (__pyx_t_10 = __pyx_v_low_indx; __pyx_t_10 < __pyx_t_9; __pyx_t_10+=1) {
       __pyx_v_x1 = __pyx_t_10;
 
-      /* "spatial_minimiser1.pyx":237
+      /* "spatial_minimiser1.pyx":430
  * 	for y1 in range(low_indy,high_indy+1):
  * 		for x1 in range(low_indx, high_indx+1):
  * 			ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)             # <<<<<<<<<<<<<<
@@ -4727,7 +6110,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
       __pyx_v_ind = (((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1)));
 
-      /* "spatial_minimiser1.pyx":238
+      /* "spatial_minimiser1.pyx":431
  * 		for x1 in range(low_indx, high_indx+1):
  * 			ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)
  * 			for m in range(num_params+1):             # <<<<<<<<<<<<<<
@@ -4739,7 +6122,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
       for (__pyx_t_13 = 0; __pyx_t_13 < __pyx_t_12; __pyx_t_13+=1) {
         __pyx_v_m = __pyx_t_13;
 
-        /* "spatial_minimiser1.pyx":239
+        /* "spatial_minimiser1.pyx":432
  * 			ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)
  * 			for m in range(num_params+1):
  * 				fitted[ind+m]=current_subcube_fit[i]             # <<<<<<<<<<<<<<
@@ -4754,11 +6137,11 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
         } else if (unlikely(__pyx_t_14 >= __pyx_v_fitted.shape[0])) __pyx_t_15 = 0;
         if (unlikely(__pyx_t_15 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_15);
-          __PYX_ERR(0, 239, __pyx_L1_error)
+          __PYX_ERR(0, 432, __pyx_L1_error)
         }
         *((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_14 * __pyx_v_fitted.strides[0]) )) = (__pyx_v_current_subcube_fit[__pyx_v_i]);
 
-        /* "spatial_minimiser1.pyx":240
+        /* "spatial_minimiser1.pyx":433
  * 			for m in range(num_params+1):
  * 				fitted[ind+m]=current_subcube_fit[i]
  * 				i=i+1             # <<<<<<<<<<<<<<
@@ -4770,7 +6153,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
     }
   }
 
-  /* "spatial_minimiser1.pyx":242
+  /* "spatial_minimiser1.pyx":435
  * 				i=i+1
  * 
  * 	PyMem_Free(subcube_fit)             # <<<<<<<<<<<<<<
@@ -4779,7 +6162,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
   PyMem_Free(__pyx_v_subcube_fit);
 
-  /* "spatial_minimiser1.pyx":243
+  /* "spatial_minimiser1.pyx":436
  * 
  * 	PyMem_Free(subcube_fit)
  * 	PyMem_Free(rand_param_inds)             # <<<<<<<<<<<<<<
@@ -4788,7 +6171,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
   PyMem_Free(__pyx_v_rand_param_inds);
 
-  /* "spatial_minimiser1.pyx":244
+  /* "spatial_minimiser1.pyx":437
  * 	PyMem_Free(subcube_fit)
  * 	PyMem_Free(rand_param_inds)
  * 	PyMem_Free(current_subcube_fit)             # <<<<<<<<<<<<<<
@@ -4797,7 +6180,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
   PyMem_Free(__pyx_v_current_subcube_fit);
 
-  /* "spatial_minimiser1.pyx":245
+  /* "spatial_minimiser1.pyx":438
  * 	PyMem_Free(rand_param_inds)
  * 	PyMem_Free(current_subcube_fit)
  * 	return             # <<<<<<<<<<<<<<
@@ -4806,7 +6189,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
  */
   goto __pyx_L0;
 
-  /* "spatial_minimiser1.pyx":130
+  /* "spatial_minimiser1.pyx":323
  * 
  * 
  * cdef void do_bee_swarm_optimisation(double **spectrum, double *rms, double [:] model,\             # <<<<<<<<<<<<<<
@@ -4826,7 +6209,7 @@ static void __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(double **__py
   __Pyx_RefNannyFinishContext();
 }
 
-/* "spatial_minimiser1.pyx":249
+/* "spatial_minimiser1.pyx":442
  * 
  * 
  * cdef void make_data_ready_for_discont_removal(numpy.ndarray[numpy.double_t,ndim=4] cube,\             # <<<<<<<<<<<<<<
@@ -4889,16 +6272,16 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
   __pyx_pybuffernd_err_cube.rcbuffer = &__pyx_pybuffer_err_cube;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_cube.rcbuffer->pybuffer, (PyObject*)__pyx_v_cube, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 4, 0, __pyx_stack) == -1)) __PYX_ERR(0, 249, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_cube.rcbuffer->pybuffer, (PyObject*)__pyx_v_cube, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 4, 0, __pyx_stack) == -1)) __PYX_ERR(0, 442, __pyx_L1_error)
   }
   __pyx_pybuffernd_cube.diminfo[0].strides = __pyx_pybuffernd_cube.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_cube.diminfo[0].shape = __pyx_pybuffernd_cube.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_cube.diminfo[1].strides = __pyx_pybuffernd_cube.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_cube.diminfo[1].shape = __pyx_pybuffernd_cube.rcbuffer->pybuffer.shape[1]; __pyx_pybuffernd_cube.diminfo[2].strides = __pyx_pybuffernd_cube.rcbuffer->pybuffer.strides[2]; __pyx_pybuffernd_cube.diminfo[2].shape = __pyx_pybuffernd_cube.rcbuffer->pybuffer.shape[2]; __pyx_pybuffernd_cube.diminfo[3].strides = __pyx_pybuffernd_cube.rcbuffer->pybuffer.strides[3]; __pyx_pybuffernd_cube.diminfo[3].shape = __pyx_pybuffernd_cube.rcbuffer->pybuffer.shape[3];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_err_cube.rcbuffer->pybuffer, (PyObject*)__pyx_v_err_cube, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 249, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_err_cube.rcbuffer->pybuffer, (PyObject*)__pyx_v_err_cube, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 442, __pyx_L1_error)
   }
   __pyx_pybuffernd_err_cube.diminfo[0].strides = __pyx_pybuffernd_err_cube.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_err_cube.diminfo[0].shape = __pyx_pybuffernd_err_cube.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_err_cube.diminfo[1].strides = __pyx_pybuffernd_err_cube.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_err_cube.diminfo[1].shape = __pyx_pybuffernd_err_cube.rcbuffer->pybuffer.shape[1];
 
-  /* "spatial_minimiser1.pyx":263
+  /* "spatial_minimiser1.pyx":456
  * 
  * 
  * 	low_indx_val=x0-half_box_size             # <<<<<<<<<<<<<<
@@ -4907,7 +6290,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
  */
   __pyx_v_low_indx_val = (__pyx_v_x0 - __pyx_v_half_box_size);
 
-  /* "spatial_minimiser1.pyx":264
+  /* "spatial_minimiser1.pyx":457
  * 
  * 	low_indx_val=x0-half_box_size
  * 	low_indy_val=y0-half_box_size             # <<<<<<<<<<<<<<
@@ -4916,7 +6299,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
  */
   __pyx_v_low_indy_val = (__pyx_v_y0 - __pyx_v_half_box_size);
 
-  /* "spatial_minimiser1.pyx":266
+  /* "spatial_minimiser1.pyx":459
  * 	low_indy_val=y0-half_box_size
  * 
  * 	high_indx_val=x0+half_box_size             # <<<<<<<<<<<<<<
@@ -4925,7 +6308,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
  */
   __pyx_v_high_indx_val = (__pyx_v_x0 + __pyx_v_half_box_size);
 
-  /* "spatial_minimiser1.pyx":267
+  /* "spatial_minimiser1.pyx":460
  * 
  * 	high_indx_val=x0+half_box_size
  * 	high_indy_val=y0+half_box_size             # <<<<<<<<<<<<<<
@@ -4934,7 +6317,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
  */
   __pyx_v_high_indy_val = (__pyx_v_y0 + __pyx_v_half_box_size);
 
-  /* "spatial_minimiser1.pyx":269
+  /* "spatial_minimiser1.pyx":462
  * 	high_indy_val=y0+half_box_size
  * 
  * 	high_indx_val=find_high_indx(high_indx_val,num_x)             # <<<<<<<<<<<<<<
@@ -4943,7 +6326,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
  */
   __pyx_v_high_indx_val = __pyx_f_18spatial_minimiser1_find_high_indx(__pyx_v_high_indx_val, __pyx_v_num_x);
 
-  /* "spatial_minimiser1.pyx":270
+  /* "spatial_minimiser1.pyx":463
  * 
  * 	high_indx_val=find_high_indx(high_indx_val,num_x)
  * 	high_indy_val=find_high_indx(high_indy_val,num_y)             # <<<<<<<<<<<<<<
@@ -4952,7 +6335,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
  */
   __pyx_v_high_indy_val = __pyx_f_18spatial_minimiser1_find_high_indx(__pyx_v_high_indy_val, __pyx_v_num_y);
 
-  /* "spatial_minimiser1.pyx":271
+  /* "spatial_minimiser1.pyx":464
  * 	high_indx_val=find_high_indx(high_indx_val,num_x)
  * 	high_indy_val=find_high_indx(high_indy_val,num_y)
  * 	low_indx_val=find_low_indx(low_indx_val)             # <<<<<<<<<<<<<<
@@ -4961,7 +6344,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
  */
   __pyx_v_low_indx_val = __pyx_f_18spatial_minimiser1_find_low_indx(__pyx_v_low_indx_val);
 
-  /* "spatial_minimiser1.pyx":272
+  /* "spatial_minimiser1.pyx":465
  * 	high_indy_val=find_high_indx(high_indy_val,num_y)
  * 	low_indx_val=find_low_indx(low_indx_val)
  * 	low_indy_val=find_low_indx(low_indy_val)             # <<<<<<<<<<<<<<
@@ -4970,7 +6353,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
  */
   __pyx_v_low_indy_val = __pyx_f_18spatial_minimiser1_find_low_indx(__pyx_v_low_indy_val);
 
-  /* "spatial_minimiser1.pyx":274
+  /* "spatial_minimiser1.pyx":467
  * 	low_indy_val=find_low_indx(low_indy_val)
  * 
  * 	low_indx[0]=low_indx_val             # <<<<<<<<<<<<<<
@@ -4979,7 +6362,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
  */
   (__pyx_v_low_indx[0]) = __pyx_v_low_indx_val;
 
-  /* "spatial_minimiser1.pyx":275
+  /* "spatial_minimiser1.pyx":468
  * 
  * 	low_indx[0]=low_indx_val
  * 	low_indy[0]=low_indy_val             # <<<<<<<<<<<<<<
@@ -4988,7 +6371,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
  */
   (__pyx_v_low_indy[0]) = __pyx_v_low_indy_val;
 
-  /* "spatial_minimiser1.pyx":276
+  /* "spatial_minimiser1.pyx":469
  * 	low_indx[0]=low_indx_val
  * 	low_indy[0]=low_indy_val
  * 	low_indt[0]=0             # <<<<<<<<<<<<<<
@@ -4997,7 +6380,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
  */
   (__pyx_v_low_indt[0]) = 0;
 
-  /* "spatial_minimiser1.pyx":278
+  /* "spatial_minimiser1.pyx":471
  * 	low_indt[0]=0
  * 
  * 	high_indx[0]=high_indx_val             # <<<<<<<<<<<<<<
@@ -5006,7 +6389,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
  */
   (__pyx_v_high_indx[0]) = __pyx_v_high_indx_val;
 
-  /* "spatial_minimiser1.pyx":279
+  /* "spatial_minimiser1.pyx":472
  * 
  * 	high_indx[0]=high_indx_val
  * 	high_indy[0]=high_indy_val             # <<<<<<<<<<<<<<
@@ -5015,7 +6398,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
  */
   (__pyx_v_high_indy[0]) = __pyx_v_high_indy_val;
 
-  /* "spatial_minimiser1.pyx":280
+  /* "spatial_minimiser1.pyx":473
  * 	high_indx[0]=high_indx_val
  * 	high_indy[0]=high_indy_val
  * 	high_indt[0]=0             # <<<<<<<<<<<<<<
@@ -5024,7 +6407,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
  */
   (__pyx_v_high_indt[0]) = 0;
 
-  /* "spatial_minimiser1.pyx":287
+  /* "spatial_minimiser1.pyx":480
  * 
  * 
  * 	for i in range((2*half_box_size+1)*(2*half_box_size+1)):             # <<<<<<<<<<<<<<
@@ -5036,7 +6419,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "spatial_minimiser1.pyx":288
+    /* "spatial_minimiser1.pyx":481
  * 
  * 	for i in range((2*half_box_size+1)*(2*half_box_size+1)):
  * 		for j in range(num_freqs):             # <<<<<<<<<<<<<<
@@ -5048,7 +6431,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_j = __pyx_t_6;
 
-      /* "spatial_minimiser1.pyx":289
+      /* "spatial_minimiser1.pyx":482
  * 	for i in range((2*half_box_size+1)*(2*half_box_size+1)):
  * 		for j in range(num_freqs):
  * 			spectrum[i][j]=-1             # <<<<<<<<<<<<<<
@@ -5059,7 +6442,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
     }
   }
 
-  /* "spatial_minimiser1.pyx":290
+  /* "spatial_minimiser1.pyx":483
  * 		for j in range(num_freqs):
  * 			spectrum[i][j]=-1
  * 	t=t0             # <<<<<<<<<<<<<<
@@ -5068,7 +6451,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
  */
   __pyx_v_t = __pyx_v_t0;
 
-  /* "spatial_minimiser1.pyx":291
+  /* "spatial_minimiser1.pyx":484
  * 			spectrum[i][j]=-1
  * 	t=t0
  * 	for i in range(num_freqs):             # <<<<<<<<<<<<<<
@@ -5080,7 +6463,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
   for (__pyx_t_5 = 0; __pyx_t_5 < __pyx_t_4; __pyx_t_5+=1) {
     __pyx_v_i = __pyx_t_5;
 
-    /* "spatial_minimiser1.pyx":292
+    /* "spatial_minimiser1.pyx":485
  * 	t=t0
  * 	for i in range(num_freqs):
  * 		rms[i]=err_cube[t,i]             # <<<<<<<<<<<<<<
@@ -5100,12 +6483,12 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
     } else if (unlikely(__pyx_t_8 >= __pyx_pybuffernd_err_cube.diminfo[1].shape)) __pyx_t_6 = 1;
     if (unlikely(__pyx_t_6 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_6);
-      __PYX_ERR(0, 292, __pyx_L1_error)
+      __PYX_ERR(0, 485, __pyx_L1_error)
     }
     (__pyx_v_rms[__pyx_v_i]) = (*__Pyx_BufPtrStrided2d(__pyx_t_5numpy_double_t *, __pyx_pybuffernd_err_cube.rcbuffer->pybuffer.buf, __pyx_t_7, __pyx_pybuffernd_err_cube.diminfo[0].strides, __pyx_t_8, __pyx_pybuffernd_err_cube.diminfo[1].strides));
   }
 
-  /* "spatial_minimiser1.pyx":294
+  /* "spatial_minimiser1.pyx":487
  * 		rms[i]=err_cube[t,i]
  * 
  * 	t=t0             # <<<<<<<<<<<<<<
@@ -5114,7 +6497,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
  */
   __pyx_v_t = __pyx_v_t0;
 
-  /* "spatial_minimiser1.pyx":295
+  /* "spatial_minimiser1.pyx":488
  * 
  * 	t=t0
  * 	i=0             # <<<<<<<<<<<<<<
@@ -5123,7 +6506,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
  */
   __pyx_v_i = 0;
 
-  /* "spatial_minimiser1.pyx":296
+  /* "spatial_minimiser1.pyx":489
  * 	t=t0
  * 	i=0
  * 	k=0             # <<<<<<<<<<<<<<
@@ -5132,18 +6515,18 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
  */
   __pyx_v_k = 0;
 
-  /* "spatial_minimiser1.pyx":297
+  /* "spatial_minimiser1.pyx":490
  * 	i=0
  * 	k=0
  * 	for y1 in range(low_indy_val,high_indy_val+1):             # <<<<<<<<<<<<<<
  * 		for x1 in range(low_indx_val,high_indx_val+1):
  * 			ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
  */
-  __pyx_t_9 = __Pyx_PyInt_From_int(__pyx_v_low_indy_val); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 297, __pyx_L1_error)
+  __pyx_t_9 = __Pyx_PyInt_From_int(__pyx_v_low_indy_val); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 490, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_9);
-  __pyx_t_10 = __Pyx_PyInt_From_long((__pyx_v_high_indy_val + 1)); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 297, __pyx_L1_error)
+  __pyx_t_10 = __Pyx_PyInt_From_long((__pyx_v_high_indy_val + 1)); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 490, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_10);
-  __pyx_t_11 = PyTuple_New(2); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 297, __pyx_L1_error)
+  __pyx_t_11 = PyTuple_New(2); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 490, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_11);
   __Pyx_GIVEREF(__pyx_t_9);
   PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_t_9);
@@ -5151,16 +6534,16 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
   PyTuple_SET_ITEM(__pyx_t_11, 1, __pyx_t_10);
   __pyx_t_9 = 0;
   __pyx_t_10 = 0;
-  __pyx_t_10 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_11, NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 297, __pyx_L1_error)
+  __pyx_t_10 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_11, NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 490, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_10);
   __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
   if (likely(PyList_CheckExact(__pyx_t_10)) || PyTuple_CheckExact(__pyx_t_10)) {
     __pyx_t_11 = __pyx_t_10; __Pyx_INCREF(__pyx_t_11); __pyx_t_12 = 0;
     __pyx_t_13 = NULL;
   } else {
-    __pyx_t_12 = -1; __pyx_t_11 = PyObject_GetIter(__pyx_t_10); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 297, __pyx_L1_error)
+    __pyx_t_12 = -1; __pyx_t_11 = PyObject_GetIter(__pyx_t_10); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 490, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
-    __pyx_t_13 = Py_TYPE(__pyx_t_11)->tp_iternext; if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 297, __pyx_L1_error)
+    __pyx_t_13 = Py_TYPE(__pyx_t_11)->tp_iternext; if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 490, __pyx_L1_error)
   }
   __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
   for (;;) {
@@ -5168,17 +6551,17 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
       if (likely(PyList_CheckExact(__pyx_t_11))) {
         if (__pyx_t_12 >= PyList_GET_SIZE(__pyx_t_11)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_10 = PyList_GET_ITEM(__pyx_t_11, __pyx_t_12); __Pyx_INCREF(__pyx_t_10); __pyx_t_12++; if (unlikely(0 < 0)) __PYX_ERR(0, 297, __pyx_L1_error)
+        __pyx_t_10 = PyList_GET_ITEM(__pyx_t_11, __pyx_t_12); __Pyx_INCREF(__pyx_t_10); __pyx_t_12++; if (unlikely(0 < 0)) __PYX_ERR(0, 490, __pyx_L1_error)
         #else
-        __pyx_t_10 = PySequence_ITEM(__pyx_t_11, __pyx_t_12); __pyx_t_12++; if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 297, __pyx_L1_error)
+        __pyx_t_10 = PySequence_ITEM(__pyx_t_11, __pyx_t_12); __pyx_t_12++; if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 490, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
         #endif
       } else {
         if (__pyx_t_12 >= PyTuple_GET_SIZE(__pyx_t_11)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_10 = PyTuple_GET_ITEM(__pyx_t_11, __pyx_t_12); __Pyx_INCREF(__pyx_t_10); __pyx_t_12++; if (unlikely(0 < 0)) __PYX_ERR(0, 297, __pyx_L1_error)
+        __pyx_t_10 = PyTuple_GET_ITEM(__pyx_t_11, __pyx_t_12); __Pyx_INCREF(__pyx_t_10); __pyx_t_12++; if (unlikely(0 < 0)) __PYX_ERR(0, 490, __pyx_L1_error)
         #else
-        __pyx_t_10 = PySequence_ITEM(__pyx_t_11, __pyx_t_12); __pyx_t_12++; if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 297, __pyx_L1_error)
+        __pyx_t_10 = PySequence_ITEM(__pyx_t_11, __pyx_t_12); __pyx_t_12++; if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 490, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
         #endif
       }
@@ -5188,7 +6571,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 297, __pyx_L1_error)
+          else __PYX_ERR(0, 490, __pyx_L1_error)
         }
         break;
       }
@@ -5197,18 +6580,18 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
     __Pyx_XDECREF_SET(__pyx_v_y1, __pyx_t_10);
     __pyx_t_10 = 0;
 
-    /* "spatial_minimiser1.pyx":298
+    /* "spatial_minimiser1.pyx":491
  * 	k=0
  * 	for y1 in range(low_indy_val,high_indy_val+1):
  * 		for x1 in range(low_indx_val,high_indx_val+1):             # <<<<<<<<<<<<<<
  * 			ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
  * 			if fitted[ind]>0:
  */
-    __pyx_t_10 = __Pyx_PyInt_From_int(__pyx_v_low_indx_val); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 298, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_PyInt_From_int(__pyx_v_low_indx_val); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 491, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
-    __pyx_t_9 = __Pyx_PyInt_From_long((__pyx_v_high_indx_val + 1)); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 298, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyInt_From_long((__pyx_v_high_indx_val + 1)); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 491, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
-    __pyx_t_14 = PyTuple_New(2); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 298, __pyx_L1_error)
+    __pyx_t_14 = PyTuple_New(2); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 491, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_14);
     __Pyx_GIVEREF(__pyx_t_10);
     PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_t_10);
@@ -5216,16 +6599,16 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
     PyTuple_SET_ITEM(__pyx_t_14, 1, __pyx_t_9);
     __pyx_t_10 = 0;
     __pyx_t_9 = 0;
-    __pyx_t_9 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_14, NULL); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 298, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_14, NULL); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 491, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
     __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
     if (likely(PyList_CheckExact(__pyx_t_9)) || PyTuple_CheckExact(__pyx_t_9)) {
       __pyx_t_14 = __pyx_t_9; __Pyx_INCREF(__pyx_t_14); __pyx_t_15 = 0;
       __pyx_t_16 = NULL;
     } else {
-      __pyx_t_15 = -1; __pyx_t_14 = PyObject_GetIter(__pyx_t_9); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 298, __pyx_L1_error)
+      __pyx_t_15 = -1; __pyx_t_14 = PyObject_GetIter(__pyx_t_9); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 491, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_14);
-      __pyx_t_16 = Py_TYPE(__pyx_t_14)->tp_iternext; if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 298, __pyx_L1_error)
+      __pyx_t_16 = Py_TYPE(__pyx_t_14)->tp_iternext; if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 491, __pyx_L1_error)
     }
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
     for (;;) {
@@ -5233,17 +6616,17 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
         if (likely(PyList_CheckExact(__pyx_t_14))) {
           if (__pyx_t_15 >= PyList_GET_SIZE(__pyx_t_14)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_9 = PyList_GET_ITEM(__pyx_t_14, __pyx_t_15); __Pyx_INCREF(__pyx_t_9); __pyx_t_15++; if (unlikely(0 < 0)) __PYX_ERR(0, 298, __pyx_L1_error)
+          __pyx_t_9 = PyList_GET_ITEM(__pyx_t_14, __pyx_t_15); __Pyx_INCREF(__pyx_t_9); __pyx_t_15++; if (unlikely(0 < 0)) __PYX_ERR(0, 491, __pyx_L1_error)
           #else
-          __pyx_t_9 = PySequence_ITEM(__pyx_t_14, __pyx_t_15); __pyx_t_15++; if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 298, __pyx_L1_error)
+          __pyx_t_9 = PySequence_ITEM(__pyx_t_14, __pyx_t_15); __pyx_t_15++; if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 491, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_9);
           #endif
         } else {
           if (__pyx_t_15 >= PyTuple_GET_SIZE(__pyx_t_14)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_9 = PyTuple_GET_ITEM(__pyx_t_14, __pyx_t_15); __Pyx_INCREF(__pyx_t_9); __pyx_t_15++; if (unlikely(0 < 0)) __PYX_ERR(0, 298, __pyx_L1_error)
+          __pyx_t_9 = PyTuple_GET_ITEM(__pyx_t_14, __pyx_t_15); __Pyx_INCREF(__pyx_t_9); __pyx_t_15++; if (unlikely(0 < 0)) __PYX_ERR(0, 491, __pyx_L1_error)
           #else
-          __pyx_t_9 = PySequence_ITEM(__pyx_t_14, __pyx_t_15); __pyx_t_15++; if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 298, __pyx_L1_error)
+          __pyx_t_9 = PySequence_ITEM(__pyx_t_14, __pyx_t_15); __pyx_t_15++; if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 491, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_9);
           #endif
         }
@@ -5253,7 +6636,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
             if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-            else __PYX_ERR(0, 298, __pyx_L1_error)
+            else __PYX_ERR(0, 491, __pyx_L1_error)
           }
           break;
         }
@@ -5262,50 +6645,50 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
       __Pyx_XDECREF_SET(__pyx_v_x1, __pyx_t_9);
       __pyx_t_9 = 0;
 
-      /* "spatial_minimiser1.pyx":299
+      /* "spatial_minimiser1.pyx":492
  * 	for y1 in range(low_indy_val,high_indy_val+1):
  * 		for x1 in range(low_indx_val,high_indx_val+1):
  * 			ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params             # <<<<<<<<<<<<<<
  * 			if fitted[ind]>0:
  * 				for j in range(low_freq_ind[t][y1][x1],upper_freq_ind[t][y1][x1]+1):
  */
-      __pyx_t_9 = __Pyx_PyInt_From_long((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1))); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 299, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyInt_From_long((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1))); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 492, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
-      __pyx_t_10 = __Pyx_PyInt_From_int(__pyx_v_num_x); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 299, __pyx_L1_error)
+      __pyx_t_10 = __Pyx_PyInt_From_int(__pyx_v_num_x); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 492, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
-      __pyx_t_17 = PyNumber_Multiply(__pyx_v_y1, __pyx_t_10); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 299, __pyx_L1_error)
+      __pyx_t_17 = PyNumber_Multiply(__pyx_v_y1, __pyx_t_10); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 492, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_17);
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-      __pyx_t_10 = __Pyx_PyInt_From_long((__pyx_v_num_params + 1)); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 299, __pyx_L1_error)
+      __pyx_t_10 = __Pyx_PyInt_From_long((__pyx_v_num_params + 1)); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 492, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
-      __pyx_t_18 = PyNumber_Multiply(__pyx_t_17, __pyx_t_10); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 299, __pyx_L1_error)
+      __pyx_t_18 = PyNumber_Multiply(__pyx_t_17, __pyx_t_10); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 492, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_18);
       __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-      __pyx_t_10 = PyNumber_Add(__pyx_t_9, __pyx_t_18); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 299, __pyx_L1_error)
+      __pyx_t_10 = PyNumber_Add(__pyx_t_9, __pyx_t_18); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 492, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
       __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-      __pyx_t_18 = __Pyx_PyInt_From_long((__pyx_v_num_params + 1)); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 299, __pyx_L1_error)
+      __pyx_t_18 = __Pyx_PyInt_From_long((__pyx_v_num_params + 1)); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 492, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_18);
-      __pyx_t_9 = PyNumber_Multiply(__pyx_v_x1, __pyx_t_18); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 299, __pyx_L1_error)
+      __pyx_t_9 = PyNumber_Multiply(__pyx_v_x1, __pyx_t_18); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 492, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
       __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-      __pyx_t_18 = PyNumber_Add(__pyx_t_10, __pyx_t_9); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 299, __pyx_L1_error)
+      __pyx_t_18 = PyNumber_Add(__pyx_t_10, __pyx_t_9); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 492, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_18);
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-      __pyx_t_9 = __Pyx_PyInt_From_int(__pyx_v_num_params); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 299, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyInt_From_int(__pyx_v_num_params); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 492, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
-      __pyx_t_10 = PyNumber_Add(__pyx_t_18, __pyx_t_9); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 299, __pyx_L1_error)
+      __pyx_t_10 = PyNumber_Add(__pyx_t_18, __pyx_t_9); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 492, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
       __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-      __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_t_10); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 299, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_t_10); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 492, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       __pyx_v_ind = __pyx_t_3;
 
-      /* "spatial_minimiser1.pyx":300
+      /* "spatial_minimiser1.pyx":493
  * 		for x1 in range(low_indx_val,high_indx_val+1):
  * 			ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
  * 			if fitted[ind]>0:             # <<<<<<<<<<<<<<
@@ -5320,83 +6703,83 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
       } else if (unlikely(__pyx_t_8 >= __pyx_v_fitted.shape[0])) __pyx_t_3 = 0;
       if (unlikely(__pyx_t_3 != -1)) {
         __Pyx_RaiseBufferIndexError(__pyx_t_3);
-        __PYX_ERR(0, 300, __pyx_L1_error)
+        __PYX_ERR(0, 493, __pyx_L1_error)
       }
       __pyx_t_19 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_8 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
       if (__pyx_t_19) {
 
-        /* "spatial_minimiser1.pyx":301
+        /* "spatial_minimiser1.pyx":494
  * 			ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
  * 			if fitted[ind]>0:
  * 				for j in range(low_freq_ind[t][y1][x1],upper_freq_ind[t][y1][x1]+1):             # <<<<<<<<<<<<<<
  * 					if low_snr_loc[t*num_y*num_x*num_freqs+y1*num_x*num_freqs+x1*num_freqs+j]==0:  ### not a low SNR point
  * 						spectrum[i][j]=cube[t,j,y1,x1]
  */
-        __pyx_t_20 = __Pyx_PyIndex_AsSsize_t(__pyx_v_y1); if (unlikely((__pyx_t_20 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 301, __pyx_L1_error)
-        __pyx_t_21 = __Pyx_PyIndex_AsSsize_t(__pyx_v_x1); if (unlikely((__pyx_t_21 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 301, __pyx_L1_error)
+        __pyx_t_20 = __Pyx_PyIndex_AsSsize_t(__pyx_v_y1); if (unlikely((__pyx_t_20 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 494, __pyx_L1_error)
+        __pyx_t_21 = __Pyx_PyIndex_AsSsize_t(__pyx_v_x1); if (unlikely((__pyx_t_21 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 494, __pyx_L1_error)
         __pyx_t_1 = ((((__pyx_v_upper_freq_ind[__pyx_v_t])[__pyx_t_20])[__pyx_t_21]) + 1);
-        __pyx_t_21 = __Pyx_PyIndex_AsSsize_t(__pyx_v_y1); if (unlikely((__pyx_t_21 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 301, __pyx_L1_error)
-        __pyx_t_20 = __Pyx_PyIndex_AsSsize_t(__pyx_v_x1); if (unlikely((__pyx_t_20 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 301, __pyx_L1_error)
+        __pyx_t_21 = __Pyx_PyIndex_AsSsize_t(__pyx_v_y1); if (unlikely((__pyx_t_21 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 494, __pyx_L1_error)
+        __pyx_t_20 = __Pyx_PyIndex_AsSsize_t(__pyx_v_x1); if (unlikely((__pyx_t_20 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 494, __pyx_L1_error)
         __pyx_t_2 = __pyx_t_1;
         for (__pyx_t_3 = (((__pyx_v_low_freq_ind[__pyx_v_t])[__pyx_t_21])[__pyx_t_20]); __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
           __pyx_v_j = __pyx_t_3;
 
-          /* "spatial_minimiser1.pyx":302
+          /* "spatial_minimiser1.pyx":495
  * 			if fitted[ind]>0:
  * 				for j in range(low_freq_ind[t][y1][x1],upper_freq_ind[t][y1][x1]+1):
  * 					if low_snr_loc[t*num_y*num_x*num_freqs+y1*num_x*num_freqs+x1*num_freqs+j]==0:  ### not a low SNR point             # <<<<<<<<<<<<<<
  * 						spectrum[i][j]=cube[t,j,y1,x1]
  * 
  */
-          __pyx_t_10 = __Pyx_PyInt_From_int((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * __pyx_v_num_freqs)); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 302, __pyx_L1_error)
+          __pyx_t_10 = __Pyx_PyInt_From_int((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * __pyx_v_num_freqs)); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 495, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_10);
-          __pyx_t_9 = __Pyx_PyInt_From_int(__pyx_v_num_x); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 302, __pyx_L1_error)
+          __pyx_t_9 = __Pyx_PyInt_From_int(__pyx_v_num_x); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 495, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_9);
-          __pyx_t_18 = PyNumber_Multiply(__pyx_v_y1, __pyx_t_9); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 302, __pyx_L1_error)
+          __pyx_t_18 = PyNumber_Multiply(__pyx_v_y1, __pyx_t_9); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 495, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_18);
           __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-          __pyx_t_9 = __Pyx_PyInt_From_int(__pyx_v_num_freqs); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 302, __pyx_L1_error)
+          __pyx_t_9 = __Pyx_PyInt_From_int(__pyx_v_num_freqs); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 495, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_9);
-          __pyx_t_17 = PyNumber_Multiply(__pyx_t_18, __pyx_t_9); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 302, __pyx_L1_error)
+          __pyx_t_17 = PyNumber_Multiply(__pyx_t_18, __pyx_t_9); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 495, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_17);
           __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
           __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-          __pyx_t_9 = PyNumber_Add(__pyx_t_10, __pyx_t_17); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 302, __pyx_L1_error)
+          __pyx_t_9 = PyNumber_Add(__pyx_t_10, __pyx_t_17); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 495, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_9);
           __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
           __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
-          __pyx_t_17 = __Pyx_PyInt_From_int(__pyx_v_num_freqs); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 302, __pyx_L1_error)
+          __pyx_t_17 = __Pyx_PyInt_From_int(__pyx_v_num_freqs); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 495, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_17);
-          __pyx_t_10 = PyNumber_Multiply(__pyx_v_x1, __pyx_t_17); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 302, __pyx_L1_error)
+          __pyx_t_10 = PyNumber_Multiply(__pyx_v_x1, __pyx_t_17); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 495, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_10);
           __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
-          __pyx_t_17 = PyNumber_Add(__pyx_t_9, __pyx_t_10); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 302, __pyx_L1_error)
+          __pyx_t_17 = PyNumber_Add(__pyx_t_9, __pyx_t_10); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 495, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_17);
           __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
           __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          __pyx_t_10 = __Pyx_PyInt_From_int(__pyx_v_j); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 302, __pyx_L1_error)
+          __pyx_t_10 = __Pyx_PyInt_From_int(__pyx_v_j); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 495, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_10);
-          __pyx_t_9 = PyNumber_Add(__pyx_t_17, __pyx_t_10); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 302, __pyx_L1_error)
+          __pyx_t_9 = PyNumber_Add(__pyx_t_17, __pyx_t_10); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 495, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_9);
           __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
           __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          __pyx_t_22 = __Pyx_PyIndex_AsSsize_t(__pyx_t_9); if (unlikely((__pyx_t_22 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 302, __pyx_L1_error)
+          __pyx_t_22 = __Pyx_PyIndex_AsSsize_t(__pyx_t_9); if (unlikely((__pyx_t_22 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 495, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
           __pyx_t_19 = (((__pyx_v_low_snr_loc[__pyx_t_22]) == 0) != 0);
           if (__pyx_t_19) {
 
-            /* "spatial_minimiser1.pyx":303
+            /* "spatial_minimiser1.pyx":496
  * 				for j in range(low_freq_ind[t][y1][x1],upper_freq_ind[t][y1][x1]+1):
  * 					if low_snr_loc[t*num_y*num_x*num_freqs+y1*num_x*num_freqs+x1*num_freqs+j]==0:  ### not a low SNR point
  * 						spectrum[i][j]=cube[t,j,y1,x1]             # <<<<<<<<<<<<<<
  * 
  * 				for j in range(num_params):
  */
-            __pyx_t_9 = __Pyx_PyInt_From_int(__pyx_v_t); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 303, __pyx_L1_error)
+            __pyx_t_9 = __Pyx_PyInt_From_int(__pyx_v_t); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 496, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_9);
-            __pyx_t_10 = __Pyx_PyInt_From_int(__pyx_v_j); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 303, __pyx_L1_error)
+            __pyx_t_10 = __Pyx_PyInt_From_int(__pyx_v_j); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 496, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_10);
-            __pyx_t_17 = PyTuple_New(4); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 303, __pyx_L1_error)
+            __pyx_t_17 = PyTuple_New(4); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 496, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_17);
             __Pyx_GIVEREF(__pyx_t_9);
             PyTuple_SET_ITEM(__pyx_t_17, 0, __pyx_t_9);
@@ -5410,14 +6793,14 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
             PyTuple_SET_ITEM(__pyx_t_17, 3, __pyx_v_x1);
             __pyx_t_9 = 0;
             __pyx_t_10 = 0;
-            __pyx_t_10 = __Pyx_PyObject_GetItem(((PyObject *)__pyx_v_cube), __pyx_t_17); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 303, __pyx_L1_error)
+            __pyx_t_10 = __Pyx_PyObject_GetItem(((PyObject *)__pyx_v_cube), __pyx_t_17); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 496, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_10);
             __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
-            __pyx_t_23 = __pyx_PyFloat_AsDouble(__pyx_t_10); if (unlikely((__pyx_t_23 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 303, __pyx_L1_error)
+            __pyx_t_23 = __pyx_PyFloat_AsDouble(__pyx_t_10); if (unlikely((__pyx_t_23 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 496, __pyx_L1_error)
             __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
             ((__pyx_v_spectrum[__pyx_v_i])[__pyx_v_j]) = __pyx_t_23;
 
-            /* "spatial_minimiser1.pyx":302
+            /* "spatial_minimiser1.pyx":495
  * 			if fitted[ind]>0:
  * 				for j in range(low_freq_ind[t][y1][x1],upper_freq_ind[t][y1][x1]+1):
  * 					if low_snr_loc[t*num_y*num_x*num_freqs+y1*num_x*num_freqs+x1*num_freqs+j]==0:  ### not a low SNR point             # <<<<<<<<<<<<<<
@@ -5427,7 +6810,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
           }
         }
 
-        /* "spatial_minimiser1.pyx":305
+        /* "spatial_minimiser1.pyx":498
  * 						spectrum[i][j]=cube[t,j,y1,x1]
  * 
  * 				for j in range(num_params):             # <<<<<<<<<<<<<<
@@ -5439,50 +6822,50 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
         for (__pyx_t_5 = 0; __pyx_t_5 < __pyx_t_4; __pyx_t_5+=1) {
           __pyx_v_j = __pyx_t_5;
 
-          /* "spatial_minimiser1.pyx":306
+          /* "spatial_minimiser1.pyx":499
  * 
  * 				for j in range(num_params):
  * 					ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+j             # <<<<<<<<<<<<<<
  * 					if fitted[ind]>0:
  * 						insert_position=check_present_already(param_val_ind[j],int(fitted[ind]), (2*half_box_size+1)*(2*half_box_size+1))
  */
-          __pyx_t_10 = __Pyx_PyInt_From_long((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1))); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 306, __pyx_L1_error)
+          __pyx_t_10 = __Pyx_PyInt_From_long((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1))); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 499, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_10);
-          __pyx_t_17 = __Pyx_PyInt_From_int(__pyx_v_num_x); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 306, __pyx_L1_error)
+          __pyx_t_17 = __Pyx_PyInt_From_int(__pyx_v_num_x); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 499, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_17);
-          __pyx_t_9 = PyNumber_Multiply(__pyx_v_y1, __pyx_t_17); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 306, __pyx_L1_error)
+          __pyx_t_9 = PyNumber_Multiply(__pyx_v_y1, __pyx_t_17); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 499, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_9);
           __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
-          __pyx_t_17 = __Pyx_PyInt_From_long((__pyx_v_num_params + 1)); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 306, __pyx_L1_error)
+          __pyx_t_17 = __Pyx_PyInt_From_long((__pyx_v_num_params + 1)); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 499, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_17);
-          __pyx_t_18 = PyNumber_Multiply(__pyx_t_9, __pyx_t_17); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 306, __pyx_L1_error)
+          __pyx_t_18 = PyNumber_Multiply(__pyx_t_9, __pyx_t_17); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 499, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_18);
           __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
           __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
-          __pyx_t_17 = PyNumber_Add(__pyx_t_10, __pyx_t_18); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 306, __pyx_L1_error)
+          __pyx_t_17 = PyNumber_Add(__pyx_t_10, __pyx_t_18); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 499, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_17);
           __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
           __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-          __pyx_t_18 = __Pyx_PyInt_From_long((__pyx_v_num_params + 1)); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 306, __pyx_L1_error)
+          __pyx_t_18 = __Pyx_PyInt_From_long((__pyx_v_num_params + 1)); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 499, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_18);
-          __pyx_t_10 = PyNumber_Multiply(__pyx_v_x1, __pyx_t_18); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 306, __pyx_L1_error)
+          __pyx_t_10 = PyNumber_Multiply(__pyx_v_x1, __pyx_t_18); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 499, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_10);
           __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-          __pyx_t_18 = PyNumber_Add(__pyx_t_17, __pyx_t_10); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 306, __pyx_L1_error)
+          __pyx_t_18 = PyNumber_Add(__pyx_t_17, __pyx_t_10); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 499, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_18);
           __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
           __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          __pyx_t_10 = __Pyx_PyInt_From_int(__pyx_v_j); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 306, __pyx_L1_error)
+          __pyx_t_10 = __Pyx_PyInt_From_int(__pyx_v_j); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 499, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_10);
-          __pyx_t_17 = PyNumber_Add(__pyx_t_18, __pyx_t_10); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 306, __pyx_L1_error)
+          __pyx_t_17 = PyNumber_Add(__pyx_t_18, __pyx_t_10); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 499, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_17);
           __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
           __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          __pyx_t_6 = __Pyx_PyInt_As_int(__pyx_t_17); if (unlikely((__pyx_t_6 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 306, __pyx_L1_error)
+          __pyx_t_6 = __Pyx_PyInt_As_int(__pyx_t_17); if (unlikely((__pyx_t_6 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 499, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
           __pyx_v_ind = __pyx_t_6;
 
-          /* "spatial_minimiser1.pyx":307
+          /* "spatial_minimiser1.pyx":500
  * 				for j in range(num_params):
  * 					ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+j
  * 					if fitted[ind]>0:             # <<<<<<<<<<<<<<
@@ -5497,12 +6880,12 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
           } else if (unlikely(__pyx_t_8 >= __pyx_v_fitted.shape[0])) __pyx_t_6 = 0;
           if (unlikely(__pyx_t_6 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_6);
-            __PYX_ERR(0, 307, __pyx_L1_error)
+            __PYX_ERR(0, 500, __pyx_L1_error)
           }
           __pyx_t_19 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_8 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
           if (__pyx_t_19) {
 
-            /* "spatial_minimiser1.pyx":308
+            /* "spatial_minimiser1.pyx":501
  * 					ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+j
  * 					if fitted[ind]>0:
  * 						insert_position=check_present_already(param_val_ind[j],int(fitted[ind]), (2*half_box_size+1)*(2*half_box_size+1))             # <<<<<<<<<<<<<<
@@ -5517,11 +6900,11 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
             } else if (unlikely(__pyx_t_8 >= __pyx_v_fitted.shape[0])) __pyx_t_6 = 0;
             if (unlikely(__pyx_t_6 != -1)) {
               __Pyx_RaiseBufferIndexError(__pyx_t_6);
-              __PYX_ERR(0, 308, __pyx_L1_error)
+              __PYX_ERR(0, 501, __pyx_L1_error)
             }
             __pyx_v_insert_position = __pyx_f_18spatial_minimiser1_check_present_already((__pyx_v_param_val_ind[__pyx_v_j]), ((int)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_8 * __pyx_v_fitted.strides[0]) )))), (((2 * __pyx_v_half_box_size) + 1) * ((2 * __pyx_v_half_box_size) + 1)));
 
-            /* "spatial_minimiser1.pyx":309
+            /* "spatial_minimiser1.pyx":502
  * 					if fitted[ind]>0:
  * 						insert_position=check_present_already(param_val_ind[j],int(fitted[ind]), (2*half_box_size+1)*(2*half_box_size+1))
  * 						if insert_position>=0:             # <<<<<<<<<<<<<<
@@ -5531,7 +6914,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
             __pyx_t_19 = ((__pyx_v_insert_position >= 0) != 0);
             if (__pyx_t_19) {
 
-              /* "spatial_minimiser1.pyx":310
+              /* "spatial_minimiser1.pyx":503
  * 						insert_position=check_present_already(param_val_ind[j],int(fitted[ind]), (2*half_box_size+1)*(2*half_box_size+1))
  * 						if insert_position>=0:
  * 							param_val_ind[j][insert_position]=int(fitted[ind])             # <<<<<<<<<<<<<<
@@ -5546,11 +6929,11 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
               } else if (unlikely(__pyx_t_8 >= __pyx_v_fitted.shape[0])) __pyx_t_6 = 0;
               if (unlikely(__pyx_t_6 != -1)) {
                 __Pyx_RaiseBufferIndexError(__pyx_t_6);
-                __PYX_ERR(0, 310, __pyx_L1_error)
+                __PYX_ERR(0, 503, __pyx_L1_error)
               }
               ((__pyx_v_param_val_ind[__pyx_v_j])[__pyx_v_insert_position]) = ((int)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_8 * __pyx_v_fitted.strides[0]) ))));
 
-              /* "spatial_minimiser1.pyx":309
+              /* "spatial_minimiser1.pyx":502
  * 					if fitted[ind]>0:
  * 						insert_position=check_present_already(param_val_ind[j],int(fitted[ind]), (2*half_box_size+1)*(2*half_box_size+1))
  * 						if insert_position>=0:             # <<<<<<<<<<<<<<
@@ -5559,7 +6942,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
  */
             }
 
-            /* "spatial_minimiser1.pyx":307
+            /* "spatial_minimiser1.pyx":500
  * 				for j in range(num_params):
  * 					ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+j
  * 					if fitted[ind]>0:             # <<<<<<<<<<<<<<
@@ -5569,7 +6952,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
           }
         }
 
-        /* "spatial_minimiser1.pyx":300
+        /* "spatial_minimiser1.pyx":493
  * 		for x1 in range(low_indx_val,high_indx_val+1):
  * 			ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
  * 			if fitted[ind]>0:             # <<<<<<<<<<<<<<
@@ -5578,7 +6961,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
  */
       }
 
-      /* "spatial_minimiser1.pyx":312
+      /* "spatial_minimiser1.pyx":505
  * 							param_val_ind[j][insert_position]=int(fitted[ind])
  * 
  * 			i=i+1             # <<<<<<<<<<<<<<
@@ -5587,7 +6970,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
  */
       __pyx_v_i = (__pyx_v_i + 1);
 
-      /* "spatial_minimiser1.pyx":298
+      /* "spatial_minimiser1.pyx":491
  * 	k=0
  * 	for y1 in range(low_indy_val,high_indy_val+1):
  * 		for x1 in range(low_indx_val,high_indx_val+1):             # <<<<<<<<<<<<<<
@@ -5597,7 +6980,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
     }
     __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
 
-    /* "spatial_minimiser1.pyx":297
+    /* "spatial_minimiser1.pyx":490
  * 	i=0
  * 	k=0
  * 	for y1 in range(low_indy_val,high_indy_val+1):             # <<<<<<<<<<<<<<
@@ -5607,7 +6990,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
   }
   __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
-  /* "spatial_minimiser1.pyx":314
+  /* "spatial_minimiser1.pyx":507
  * 			i=i+1
  * 
  * 	t=t0             # <<<<<<<<<<<<<<
@@ -5616,7 +6999,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
  */
   __pyx_v_t = __pyx_v_t0;
 
-  /* "spatial_minimiser1.pyx":315
+  /* "spatial_minimiser1.pyx":508
  * 
  * 	t=t0
  * 	i=0             # <<<<<<<<<<<<<<
@@ -5625,7 +7008,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
  */
   __pyx_v_i = 0;
 
-  /* "spatial_minimiser1.pyx":316
+  /* "spatial_minimiser1.pyx":509
  * 	t=t0
  * 	i=0
  * 	k=0             # <<<<<<<<<<<<<<
@@ -5634,18 +7017,18 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
  */
   __pyx_v_k = 0;
 
-  /* "spatial_minimiser1.pyx":317
+  /* "spatial_minimiser1.pyx":510
  * 	i=0
  * 	k=0
  * 	for y1 in range(low_indy_val,high_indy_val+1):             # <<<<<<<<<<<<<<
  * 		for x1 in range(low_indx_val,high_indx_val+1):
  * 			ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)
  */
-  __pyx_t_11 = __Pyx_PyInt_From_int(__pyx_v_low_indy_val); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 317, __pyx_L1_error)
+  __pyx_t_11 = __Pyx_PyInt_From_int(__pyx_v_low_indy_val); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 510, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_11);
-  __pyx_t_14 = __Pyx_PyInt_From_long((__pyx_v_high_indy_val + 1)); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 317, __pyx_L1_error)
+  __pyx_t_14 = __Pyx_PyInt_From_long((__pyx_v_high_indy_val + 1)); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 510, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_14);
-  __pyx_t_17 = PyTuple_New(2); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 317, __pyx_L1_error)
+  __pyx_t_17 = PyTuple_New(2); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 510, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_17);
   __Pyx_GIVEREF(__pyx_t_11);
   PyTuple_SET_ITEM(__pyx_t_17, 0, __pyx_t_11);
@@ -5653,16 +7036,16 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
   PyTuple_SET_ITEM(__pyx_t_17, 1, __pyx_t_14);
   __pyx_t_11 = 0;
   __pyx_t_14 = 0;
-  __pyx_t_14 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_17, NULL); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 317, __pyx_L1_error)
+  __pyx_t_14 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_17, NULL); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 510, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_14);
   __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
   if (likely(PyList_CheckExact(__pyx_t_14)) || PyTuple_CheckExact(__pyx_t_14)) {
     __pyx_t_17 = __pyx_t_14; __Pyx_INCREF(__pyx_t_17); __pyx_t_12 = 0;
     __pyx_t_13 = NULL;
   } else {
-    __pyx_t_12 = -1; __pyx_t_17 = PyObject_GetIter(__pyx_t_14); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 317, __pyx_L1_error)
+    __pyx_t_12 = -1; __pyx_t_17 = PyObject_GetIter(__pyx_t_14); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 510, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_17);
-    __pyx_t_13 = Py_TYPE(__pyx_t_17)->tp_iternext; if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 317, __pyx_L1_error)
+    __pyx_t_13 = Py_TYPE(__pyx_t_17)->tp_iternext; if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 510, __pyx_L1_error)
   }
   __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
   for (;;) {
@@ -5670,17 +7053,17 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
       if (likely(PyList_CheckExact(__pyx_t_17))) {
         if (__pyx_t_12 >= PyList_GET_SIZE(__pyx_t_17)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_14 = PyList_GET_ITEM(__pyx_t_17, __pyx_t_12); __Pyx_INCREF(__pyx_t_14); __pyx_t_12++; if (unlikely(0 < 0)) __PYX_ERR(0, 317, __pyx_L1_error)
+        __pyx_t_14 = PyList_GET_ITEM(__pyx_t_17, __pyx_t_12); __Pyx_INCREF(__pyx_t_14); __pyx_t_12++; if (unlikely(0 < 0)) __PYX_ERR(0, 510, __pyx_L1_error)
         #else
-        __pyx_t_14 = PySequence_ITEM(__pyx_t_17, __pyx_t_12); __pyx_t_12++; if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 317, __pyx_L1_error)
+        __pyx_t_14 = PySequence_ITEM(__pyx_t_17, __pyx_t_12); __pyx_t_12++; if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 510, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_14);
         #endif
       } else {
         if (__pyx_t_12 >= PyTuple_GET_SIZE(__pyx_t_17)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_14 = PyTuple_GET_ITEM(__pyx_t_17, __pyx_t_12); __Pyx_INCREF(__pyx_t_14); __pyx_t_12++; if (unlikely(0 < 0)) __PYX_ERR(0, 317, __pyx_L1_error)
+        __pyx_t_14 = PyTuple_GET_ITEM(__pyx_t_17, __pyx_t_12); __Pyx_INCREF(__pyx_t_14); __pyx_t_12++; if (unlikely(0 < 0)) __PYX_ERR(0, 510, __pyx_L1_error)
         #else
-        __pyx_t_14 = PySequence_ITEM(__pyx_t_17, __pyx_t_12); __pyx_t_12++; if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 317, __pyx_L1_error)
+        __pyx_t_14 = PySequence_ITEM(__pyx_t_17, __pyx_t_12); __pyx_t_12++; if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 510, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_14);
         #endif
       }
@@ -5690,7 +7073,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 317, __pyx_L1_error)
+          else __PYX_ERR(0, 510, __pyx_L1_error)
         }
         break;
       }
@@ -5699,18 +7082,18 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
     __Pyx_XDECREF_SET(__pyx_v_y1, __pyx_t_14);
     __pyx_t_14 = 0;
 
-    /* "spatial_minimiser1.pyx":318
+    /* "spatial_minimiser1.pyx":511
  * 	k=0
  * 	for y1 in range(low_indy_val,high_indy_val+1):
  * 		for x1 in range(low_indx_val,high_indx_val+1):             # <<<<<<<<<<<<<<
  * 			ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)
  * 			for j in range(num_params+1):
  */
-    __pyx_t_14 = __Pyx_PyInt_From_int(__pyx_v_low_indx_val); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 318, __pyx_L1_error)
+    __pyx_t_14 = __Pyx_PyInt_From_int(__pyx_v_low_indx_val); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 511, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_14);
-    __pyx_t_11 = __Pyx_PyInt_From_long((__pyx_v_high_indx_val + 1)); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 318, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_PyInt_From_long((__pyx_v_high_indx_val + 1)); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 511, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
-    __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 318, __pyx_L1_error)
+    __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 511, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
     __Pyx_GIVEREF(__pyx_t_14);
     PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_14);
@@ -5718,16 +7101,16 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
     PyTuple_SET_ITEM(__pyx_t_10, 1, __pyx_t_11);
     __pyx_t_14 = 0;
     __pyx_t_11 = 0;
-    __pyx_t_11 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_10, NULL); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 318, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_10, NULL); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 511, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
     __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
     if (likely(PyList_CheckExact(__pyx_t_11)) || PyTuple_CheckExact(__pyx_t_11)) {
       __pyx_t_10 = __pyx_t_11; __Pyx_INCREF(__pyx_t_10); __pyx_t_15 = 0;
       __pyx_t_16 = NULL;
     } else {
-      __pyx_t_15 = -1; __pyx_t_10 = PyObject_GetIter(__pyx_t_11); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 318, __pyx_L1_error)
+      __pyx_t_15 = -1; __pyx_t_10 = PyObject_GetIter(__pyx_t_11); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 511, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
-      __pyx_t_16 = Py_TYPE(__pyx_t_10)->tp_iternext; if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 318, __pyx_L1_error)
+      __pyx_t_16 = Py_TYPE(__pyx_t_10)->tp_iternext; if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 511, __pyx_L1_error)
     }
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
     for (;;) {
@@ -5735,17 +7118,17 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
         if (likely(PyList_CheckExact(__pyx_t_10))) {
           if (__pyx_t_15 >= PyList_GET_SIZE(__pyx_t_10)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_11 = PyList_GET_ITEM(__pyx_t_10, __pyx_t_15); __Pyx_INCREF(__pyx_t_11); __pyx_t_15++; if (unlikely(0 < 0)) __PYX_ERR(0, 318, __pyx_L1_error)
+          __pyx_t_11 = PyList_GET_ITEM(__pyx_t_10, __pyx_t_15); __Pyx_INCREF(__pyx_t_11); __pyx_t_15++; if (unlikely(0 < 0)) __PYX_ERR(0, 511, __pyx_L1_error)
           #else
-          __pyx_t_11 = PySequence_ITEM(__pyx_t_10, __pyx_t_15); __pyx_t_15++; if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 318, __pyx_L1_error)
+          __pyx_t_11 = PySequence_ITEM(__pyx_t_10, __pyx_t_15); __pyx_t_15++; if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 511, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_11);
           #endif
         } else {
           if (__pyx_t_15 >= PyTuple_GET_SIZE(__pyx_t_10)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_11 = PyTuple_GET_ITEM(__pyx_t_10, __pyx_t_15); __Pyx_INCREF(__pyx_t_11); __pyx_t_15++; if (unlikely(0 < 0)) __PYX_ERR(0, 318, __pyx_L1_error)
+          __pyx_t_11 = PyTuple_GET_ITEM(__pyx_t_10, __pyx_t_15); __Pyx_INCREF(__pyx_t_11); __pyx_t_15++; if (unlikely(0 < 0)) __PYX_ERR(0, 511, __pyx_L1_error)
           #else
-          __pyx_t_11 = PySequence_ITEM(__pyx_t_10, __pyx_t_15); __pyx_t_15++; if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 318, __pyx_L1_error)
+          __pyx_t_11 = PySequence_ITEM(__pyx_t_10, __pyx_t_15); __pyx_t_15++; if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 511, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_11);
           #endif
         }
@@ -5755,7 +7138,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
             if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-            else __PYX_ERR(0, 318, __pyx_L1_error)
+            else __PYX_ERR(0, 511, __pyx_L1_error)
           }
           break;
         }
@@ -5764,44 +7147,44 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
       __Pyx_XDECREF_SET(__pyx_v_x1, __pyx_t_11);
       __pyx_t_11 = 0;
 
-      /* "spatial_minimiser1.pyx":319
+      /* "spatial_minimiser1.pyx":512
  * 	for y1 in range(low_indy_val,high_indy_val+1):
  * 		for x1 in range(low_indx_val,high_indx_val+1):
  * 			ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)             # <<<<<<<<<<<<<<
  * 			for j in range(num_params+1):
  * 				previous_param_inds[i]=fitted[ind+j]
  */
-      __pyx_t_11 = __Pyx_PyInt_From_long((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1))); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 319, __pyx_L1_error)
+      __pyx_t_11 = __Pyx_PyInt_From_long((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1))); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 512, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
-      __pyx_t_14 = __Pyx_PyInt_From_int(__pyx_v_num_x); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 319, __pyx_L1_error)
+      __pyx_t_14 = __Pyx_PyInt_From_int(__pyx_v_num_x); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 512, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_14);
-      __pyx_t_18 = PyNumber_Multiply(__pyx_v_y1, __pyx_t_14); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 319, __pyx_L1_error)
+      __pyx_t_18 = PyNumber_Multiply(__pyx_v_y1, __pyx_t_14); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 512, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_18);
       __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-      __pyx_t_14 = __Pyx_PyInt_From_long((__pyx_v_num_params + 1)); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 319, __pyx_L1_error)
+      __pyx_t_14 = __Pyx_PyInt_From_long((__pyx_v_num_params + 1)); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 512, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_14);
-      __pyx_t_9 = PyNumber_Multiply(__pyx_t_18, __pyx_t_14); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 319, __pyx_L1_error)
+      __pyx_t_9 = PyNumber_Multiply(__pyx_t_18, __pyx_t_14); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 512, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
       __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
       __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-      __pyx_t_14 = PyNumber_Add(__pyx_t_11, __pyx_t_9); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 319, __pyx_L1_error)
+      __pyx_t_14 = PyNumber_Add(__pyx_t_11, __pyx_t_9); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 512, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_14);
       __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-      __pyx_t_9 = __Pyx_PyInt_From_long((__pyx_v_num_params + 1)); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 319, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyInt_From_long((__pyx_v_num_params + 1)); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 512, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
-      __pyx_t_11 = PyNumber_Multiply(__pyx_v_x1, __pyx_t_9); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 319, __pyx_L1_error)
+      __pyx_t_11 = PyNumber_Multiply(__pyx_v_x1, __pyx_t_9); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 512, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-      __pyx_t_9 = PyNumber_Add(__pyx_t_14, __pyx_t_11); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 319, __pyx_L1_error)
+      __pyx_t_9 = PyNumber_Add(__pyx_t_14, __pyx_t_11); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 512, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
       __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
       __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-      __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_t_9); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 319, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_t_9); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 512, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
       __pyx_v_ind = __pyx_t_3;
 
-      /* "spatial_minimiser1.pyx":320
+      /* "spatial_minimiser1.pyx":513
  * 		for x1 in range(low_indx_val,high_indx_val+1):
  * 			ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)
  * 			for j in range(num_params+1):             # <<<<<<<<<<<<<<
@@ -5813,7 +7196,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
       for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
         __pyx_v_j = __pyx_t_3;
 
-        /* "spatial_minimiser1.pyx":321
+        /* "spatial_minimiser1.pyx":514
  * 			ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)
  * 			for j in range(num_params+1):
  * 				previous_param_inds[i]=fitted[ind+j]             # <<<<<<<<<<<<<<
@@ -5828,11 +7211,11 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
         } else if (unlikely(__pyx_t_8 >= __pyx_v_fitted.shape[0])) __pyx_t_4 = 0;
         if (unlikely(__pyx_t_4 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_4);
-          __PYX_ERR(0, 321, __pyx_L1_error)
+          __PYX_ERR(0, 514, __pyx_L1_error)
         }
         (__pyx_v_previous_param_inds[__pyx_v_i]) = (*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_8 * __pyx_v_fitted.strides[0]) )));
 
-        /* "spatial_minimiser1.pyx":322
+        /* "spatial_minimiser1.pyx":515
  * 			for j in range(num_params+1):
  * 				previous_param_inds[i]=fitted[ind+j]
  * 				i=i+1             # <<<<<<<<<<<<<<
@@ -5842,7 +7225,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
         __pyx_v_i = (__pyx_v_i + 1);
       }
 
-      /* "spatial_minimiser1.pyx":318
+      /* "spatial_minimiser1.pyx":511
  * 	k=0
  * 	for y1 in range(low_indy_val,high_indy_val+1):
  * 		for x1 in range(low_indx_val,high_indx_val+1):             # <<<<<<<<<<<<<<
@@ -5852,7 +7235,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
     }
     __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
 
-    /* "spatial_minimiser1.pyx":317
+    /* "spatial_minimiser1.pyx":510
  * 	i=0
  * 	k=0
  * 	for y1 in range(low_indy_val,high_indy_val+1):             # <<<<<<<<<<<<<<
@@ -5862,7 +7245,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
   }
   __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
 
-  /* "spatial_minimiser1.pyx":325
+  /* "spatial_minimiser1.pyx":518
  * 
  * 
  * 	return             # <<<<<<<<<<<<<<
@@ -5871,7 +7254,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
  */
   goto __pyx_L0;
 
-  /* "spatial_minimiser1.pyx":249
+  /* "spatial_minimiser1.pyx":442
  * 
  * 
  * cdef void make_data_ready_for_discont_removal(numpy.ndarray[numpy.double_t,ndim=4] cube,\             # <<<<<<<<<<<<<<
@@ -5905,7 +7288,7 @@ static void __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(PyA
   __Pyx_RefNannyFinishContext();
 }
 
-/* "spatial_minimiser1.pyx":327
+/* "spatial_minimiser1.pyx":520
  * 	return
  * 
  * cdef void count_unique_param_vals(int **param_val_ind, int *param_val_lengths, int num_params, int box_size):             # <<<<<<<<<<<<<<
@@ -5927,7 +7310,7 @@ static void __pyx_f_18spatial_minimiser1_count_unique_param_vals(int **__pyx_v_p
   int __pyx_t_7;
   __Pyx_RefNannySetupContext("count_unique_param_vals", 0);
 
-  /* "spatial_minimiser1.pyx":329
+  /* "spatial_minimiser1.pyx":522
  * cdef void count_unique_param_vals(int **param_val_ind, int *param_val_lengths, int num_params, int box_size):
  * 	cdef int i,j
  * 	cdef int full_box=1             # <<<<<<<<<<<<<<
@@ -5936,7 +7319,7 @@ static void __pyx_f_18spatial_minimiser1_count_unique_param_vals(int **__pyx_v_p
  */
   __pyx_v_full_box = 1;
 
-  /* "spatial_minimiser1.pyx":330
+  /* "spatial_minimiser1.pyx":523
  * 	cdef int i,j
  * 	cdef int full_box=1
  * 	for i in range(num_params):             # <<<<<<<<<<<<<<
@@ -5948,7 +7331,7 @@ static void __pyx_f_18spatial_minimiser1_count_unique_param_vals(int **__pyx_v_p
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "spatial_minimiser1.pyx":331
+    /* "spatial_minimiser1.pyx":524
  * 	cdef int full_box=1
  * 	for i in range(num_params):
  * 		full_box=1             # <<<<<<<<<<<<<<
@@ -5957,7 +7340,7 @@ static void __pyx_f_18spatial_minimiser1_count_unique_param_vals(int **__pyx_v_p
  */
     __pyx_v_full_box = 1;
 
-    /* "spatial_minimiser1.pyx":332
+    /* "spatial_minimiser1.pyx":525
  * 	for i in range(num_params):
  * 		full_box=1
  * 		for j in range(box_size):             # <<<<<<<<<<<<<<
@@ -5969,7 +7352,7 @@ static void __pyx_f_18spatial_minimiser1_count_unique_param_vals(int **__pyx_v_p
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_j = __pyx_t_6;
 
-      /* "spatial_minimiser1.pyx":333
+      /* "spatial_minimiser1.pyx":526
  * 		full_box=1
  * 		for j in range(box_size):
  * 			if param_val_ind[i][j]<0:             # <<<<<<<<<<<<<<
@@ -5979,7 +7362,7 @@ static void __pyx_f_18spatial_minimiser1_count_unique_param_vals(int **__pyx_v_p
       __pyx_t_7 = ((((__pyx_v_param_val_ind[__pyx_v_i])[__pyx_v_j]) < 0) != 0);
       if (__pyx_t_7) {
 
-        /* "spatial_minimiser1.pyx":334
+        /* "spatial_minimiser1.pyx":527
  * 		for j in range(box_size):
  * 			if param_val_ind[i][j]<0:
  * 				param_val_lengths[i]=j             # <<<<<<<<<<<<<<
@@ -5988,7 +7371,7 @@ static void __pyx_f_18spatial_minimiser1_count_unique_param_vals(int **__pyx_v_p
  */
         (__pyx_v_param_val_lengths[__pyx_v_i]) = __pyx_v_j;
 
-        /* "spatial_minimiser1.pyx":335
+        /* "spatial_minimiser1.pyx":528
  * 			if param_val_ind[i][j]<0:
  * 				param_val_lengths[i]=j
  * 				full_box=0             # <<<<<<<<<<<<<<
@@ -5997,7 +7380,7 @@ static void __pyx_f_18spatial_minimiser1_count_unique_param_vals(int **__pyx_v_p
  */
         __pyx_v_full_box = 0;
 
-        /* "spatial_minimiser1.pyx":336
+        /* "spatial_minimiser1.pyx":529
  * 				param_val_lengths[i]=j
  * 				full_box=0
  * 				break             # <<<<<<<<<<<<<<
@@ -6006,7 +7389,7 @@ static void __pyx_f_18spatial_minimiser1_count_unique_param_vals(int **__pyx_v_p
  */
         goto __pyx_L6_break;
 
-        /* "spatial_minimiser1.pyx":333
+        /* "spatial_minimiser1.pyx":526
  * 		full_box=1
  * 		for j in range(box_size):
  * 			if param_val_ind[i][j]<0:             # <<<<<<<<<<<<<<
@@ -6017,7 +7400,7 @@ static void __pyx_f_18spatial_minimiser1_count_unique_param_vals(int **__pyx_v_p
     }
     __pyx_L6_break:;
 
-    /* "spatial_minimiser1.pyx":337
+    /* "spatial_minimiser1.pyx":530
  * 				full_box=0
  * 				break
  * 		if full_box==1:             # <<<<<<<<<<<<<<
@@ -6027,7 +7410,7 @@ static void __pyx_f_18spatial_minimiser1_count_unique_param_vals(int **__pyx_v_p
     __pyx_t_7 = ((__pyx_v_full_box == 1) != 0);
     if (__pyx_t_7) {
 
-      /* "spatial_minimiser1.pyx":338
+      /* "spatial_minimiser1.pyx":531
  * 				break
  * 		if full_box==1:
  * 			param_val_lengths[i]=box_size             # <<<<<<<<<<<<<<
@@ -6036,7 +7419,7 @@ static void __pyx_f_18spatial_minimiser1_count_unique_param_vals(int **__pyx_v_p
  */
       (__pyx_v_param_val_lengths[__pyx_v_i]) = __pyx_v_box_size;
 
-      /* "spatial_minimiser1.pyx":337
+      /* "spatial_minimiser1.pyx":530
  * 				full_box=0
  * 				break
  * 		if full_box==1:             # <<<<<<<<<<<<<<
@@ -6046,7 +7429,7 @@ static void __pyx_f_18spatial_minimiser1_count_unique_param_vals(int **__pyx_v_p
     }
   }
 
-  /* "spatial_minimiser1.pyx":339
+  /* "spatial_minimiser1.pyx":532
  * 		if full_box==1:
  * 			param_val_lengths[i]=box_size
  * 	return             # <<<<<<<<<<<<<<
@@ -6055,7 +7438,7 @@ static void __pyx_f_18spatial_minimiser1_count_unique_param_vals(int **__pyx_v_p
  */
   goto __pyx_L0;
 
-  /* "spatial_minimiser1.pyx":327
+  /* "spatial_minimiser1.pyx":520
  * 	return
  * 
  * cdef void count_unique_param_vals(int **param_val_ind, int *param_val_lengths, int num_params, int box_size):             # <<<<<<<<<<<<<<
@@ -6068,7 +7451,7 @@ static void __pyx_f_18spatial_minimiser1_count_unique_param_vals(int **__pyx_v_p
   __Pyx_RefNannyFinishContext();
 }
 
-/* "spatial_minimiser1.pyx":341
+/* "spatial_minimiser1.pyx":534
  * 	return
  * 
  * cdef void remove_duplicate_findings(int **discont, int discont_num, int low_indx, int low_indy, int low_indt,\             # <<<<<<<<<<<<<<
@@ -6088,7 +7471,7 @@ static void __pyx_f_18spatial_minimiser1_remove_duplicate_findings(int **__pyx_v
   int __pyx_t_6;
   __Pyx_RefNannySetupContext("remove_duplicate_findings", 0);
 
-  /* "spatial_minimiser1.pyx":345
+  /* "spatial_minimiser1.pyx":538
  * 
  * 	cdef int i,j
  * 	for i in range(discont_num):             # <<<<<<<<<<<<<<
@@ -6100,7 +7483,7 @@ static void __pyx_f_18spatial_minimiser1_remove_duplicate_findings(int **__pyx_v
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "spatial_minimiser1.pyx":346
+    /* "spatial_minimiser1.pyx":539
  * 	cdef int i,j
  * 	for i in range(discont_num):
  * 		if discont[0][i]>=low_indt and discont[0][i]<=high_indt and \             # <<<<<<<<<<<<<<
@@ -6120,7 +7503,7 @@ static void __pyx_f_18spatial_minimiser1_remove_duplicate_findings(int **__pyx_v
       goto __pyx_L6_bool_binop_done;
     }
 
-    /* "spatial_minimiser1.pyx":347
+    /* "spatial_minimiser1.pyx":540
  * 	for i in range(discont_num):
  * 		if discont[0][i]>=low_indt and discont[0][i]<=high_indt and \
  * 		   discont[1][i]>=low_indy and discont[1][i]<=high_indy and \             # <<<<<<<<<<<<<<
@@ -6140,7 +7523,7 @@ static void __pyx_f_18spatial_minimiser1_remove_duplicate_findings(int **__pyx_v
       goto __pyx_L6_bool_binop_done;
     }
 
-    /* "spatial_minimiser1.pyx":348
+    /* "spatial_minimiser1.pyx":541
  * 		if discont[0][i]>=low_indt and discont[0][i]<=high_indt and \
  * 		   discont[1][i]>=low_indy and discont[1][i]<=high_indy and \
  * 		   discont[2][i]>=low_indx and discont[2][i]<=high_indx :             # <<<<<<<<<<<<<<
@@ -6157,7 +7540,7 @@ static void __pyx_f_18spatial_minimiser1_remove_duplicate_findings(int **__pyx_v
     __pyx_t_4 = __pyx_t_5;
     __pyx_L6_bool_binop_done:;
 
-    /* "spatial_minimiser1.pyx":346
+    /* "spatial_minimiser1.pyx":539
  * 	cdef int i,j
  * 	for i in range(discont_num):
  * 		if discont[0][i]>=low_indt and discont[0][i]<=high_indt and \             # <<<<<<<<<<<<<<
@@ -6166,7 +7549,7 @@ static void __pyx_f_18spatial_minimiser1_remove_duplicate_findings(int **__pyx_v
  */
     if (__pyx_t_4) {
 
-      /* "spatial_minimiser1.pyx":350
+      /* "spatial_minimiser1.pyx":543
  * 		   discont[2][i]>=low_indx and discont[2][i]<=high_indx :
  * 
  * 			for j in range(3):             # <<<<<<<<<<<<<<
@@ -6176,7 +7559,7 @@ static void __pyx_f_18spatial_minimiser1_remove_duplicate_findings(int **__pyx_v
       for (__pyx_t_6 = 0; __pyx_t_6 < 3; __pyx_t_6+=1) {
         __pyx_v_j = __pyx_t_6;
 
-        /* "spatial_minimiser1.pyx":351
+        /* "spatial_minimiser1.pyx":544
  * 
  * 			for j in range(3):
  * 				discont[j][i]=-1             # <<<<<<<<<<<<<<
@@ -6186,7 +7569,7 @@ static void __pyx_f_18spatial_minimiser1_remove_duplicate_findings(int **__pyx_v
         ((__pyx_v_discont[__pyx_v_j])[__pyx_v_i]) = -1;
       }
 
-      /* "spatial_minimiser1.pyx":346
+      /* "spatial_minimiser1.pyx":539
  * 	cdef int i,j
  * 	for i in range(discont_num):
  * 		if discont[0][i]>=low_indt and discont[0][i]<=high_indt and \             # <<<<<<<<<<<<<<
@@ -6196,16 +7579,16 @@ static void __pyx_f_18spatial_minimiser1_remove_duplicate_findings(int **__pyx_v
     }
   }
 
-  /* "spatial_minimiser1.pyx":352
+  /* "spatial_minimiser1.pyx":545
  * 			for j in range(3):
  * 				discont[j][i]=-1
  * 	return             # <<<<<<<<<<<<<<
  * 
- * 
+ * cdef double find_distance(fof_struct *temp2, fof_struct *member_struct, int num_params):
  */
   goto __pyx_L0;
 
-  /* "spatial_minimiser1.pyx":341
+  /* "spatial_minimiser1.pyx":534
  * 	return
  * 
  * cdef void remove_duplicate_findings(int **discont, int discont_num, int low_indx, int low_indy, int low_indt,\             # <<<<<<<<<<<<<<
@@ -6218,7 +7601,386 @@ static void __pyx_f_18spatial_minimiser1_remove_duplicate_findings(int **__pyx_v
   __Pyx_RefNannyFinishContext();
 }
 
-/* "spatial_minimiser1.pyx":356
+/* "spatial_minimiser1.pyx":547
+ * 	return
+ * 
+ * cdef double find_distance(fof_struct *temp2, fof_struct *member_struct, int num_params):             # <<<<<<<<<<<<<<
+ * 	cdef int i
+ * 	cdef double dist=0.0
+ */
+
+static double __pyx_f_18spatial_minimiser1_find_distance(struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_v_temp2, struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_v_member_struct, int __pyx_v_num_params) {
+  int __pyx_v_i;
+  double __pyx_v_dist;
+  double __pyx_r;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  int __pyx_t_2;
+  int __pyx_t_3;
+  __Pyx_RefNannySetupContext("find_distance", 0);
+
+  /* "spatial_minimiser1.pyx":549
+ * cdef double find_distance(fof_struct *temp2, fof_struct *member_struct, int num_params):
+ * 	cdef int i
+ * 	cdef double dist=0.0             # <<<<<<<<<<<<<<
+ * 	for i in range(num_params):
+ * 		dist=dist+square(temp2.fof_params[i]-member_struct.fof_params[i])
+ */
+  __pyx_v_dist = 0.0;
+
+  /* "spatial_minimiser1.pyx":550
+ * 	cdef int i
+ * 	cdef double dist=0.0
+ * 	for i in range(num_params):             # <<<<<<<<<<<<<<
+ * 		dist=dist+square(temp2.fof_params[i]-member_struct.fof_params[i])
+ * 	dist=sqrt(dist)
+ */
+  __pyx_t_1 = __pyx_v_num_params;
+  __pyx_t_2 = __pyx_t_1;
+  for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
+    __pyx_v_i = __pyx_t_3;
+
+    /* "spatial_minimiser1.pyx":551
+ * 	cdef double dist=0.0
+ * 	for i in range(num_params):
+ * 		dist=dist+square(temp2.fof_params[i]-member_struct.fof_params[i])             # <<<<<<<<<<<<<<
+ * 	dist=sqrt(dist)
+ * 	return dist
+ */
+    __pyx_v_dist = (__pyx_v_dist + __pyx_f_18spatial_minimiser1_square(((__pyx_v_temp2->fof_params[__pyx_v_i]) - (__pyx_v_member_struct->fof_params[__pyx_v_i]))));
+  }
+
+  /* "spatial_minimiser1.pyx":552
+ * 	for i in range(num_params):
+ * 		dist=dist+square(temp2.fof_params[i]-member_struct.fof_params[i])
+ * 	dist=sqrt(dist)             # <<<<<<<<<<<<<<
+ * 	return dist
+ * 
+ */
+  __pyx_v_dist = sqrt(__pyx_v_dist);
+
+  /* "spatial_minimiser1.pyx":553
+ * 		dist=dist+square(temp2.fof_params[i]-member_struct.fof_params[i])
+ * 	dist=sqrt(dist)
+ * 	return dist             # <<<<<<<<<<<<<<
+ * 
+ * cdef void do_clustering_analysis(int **cluster_coords, int num_times, int num_y, int num_x,int num_params, int low_indx,\
+ */
+  __pyx_r = __pyx_v_dist;
+  goto __pyx_L0;
+
+  /* "spatial_minimiser1.pyx":547
+ * 	return
+ * 
+ * cdef double find_distance(fof_struct *temp2, fof_struct *member_struct, int num_params):             # <<<<<<<<<<<<<<
+ * 	cdef int i
+ * 	cdef double dist=0.0
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "spatial_minimiser1.pyx":555
+ * 	return dist
+ * 
+ * cdef void do_clustering_analysis(int **cluster_coords, int num_times, int num_y, int num_x,int num_params, int low_indx,\             # <<<<<<<<<<<<<<
+ * 				int low_indy, int low_indt, int high_indx, int high_indy,\
+ * 				int high_indt, double **param_vals, double [:] fitted, double max_dist):
+ */
+
+static void __pyx_f_18spatial_minimiser1_do_clustering_analysis(CYTHON_UNUSED int **__pyx_v_cluster_coords, int __pyx_v_num_times, int __pyx_v_num_y, int __pyx_v_num_x, int __pyx_v_num_params, int __pyx_v_low_indx, int __pyx_v_low_indy, CYTHON_UNUSED int __pyx_v_low_indt, int __pyx_v_high_indx, int __pyx_v_high_indy, CYTHON_UNUSED int __pyx_v_high_indt, double **__pyx_v_param_vals, __Pyx_memviewslice __pyx_v_fitted, double __pyx_v_max_dist) {
+  int __pyx_v_x1;
+  int __pyx_v_y1;
+  int __pyx_v_t1;
+  struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_v_fof;
+  struct __pyx_t_18spatial_minimiser1_fof_struct *__pyx_v_fof_list;
+  int __pyx_v_i;
+  int __pyx_v_cluster_numbers[2];
+  CYTHON_UNUSED int __pyx_v_num_cluster;
+  __Pyx_RefNannyDeclarations
+  long __pyx_t_1;
+  long __pyx_t_2;
+  int __pyx_t_3;
+  long __pyx_t_4;
+  long __pyx_t_5;
+  int __pyx_t_6;
+  int __pyx_t_7;
+  __Pyx_RefNannySetupContext("do_clustering_analysis", 0);
+
+  /* "spatial_minimiser1.pyx":565
+ * 
+ * 	cdef int cluster_numbers[2]
+ * 	cluster_numbers[0]=-1             # <<<<<<<<<<<<<<
+ * 	cluster_numbers[1]=-1
+ * 
+ */
+  (__pyx_v_cluster_numbers[0]) = -1;
+
+  /* "spatial_minimiser1.pyx":566
+ * 	cdef int cluster_numbers[2]
+ * 	cluster_numbers[0]=-1
+ * 	cluster_numbers[1]=-1             # <<<<<<<<<<<<<<
+ * 
+ * 	t1=0
+ */
+  (__pyx_v_cluster_numbers[1]) = -1;
+
+  /* "spatial_minimiser1.pyx":568
+ * 	cluster_numbers[1]=-1
+ * 
+ * 	t1=0             # <<<<<<<<<<<<<<
+ * 	i=0
+ * 
+ */
+  __pyx_v_t1 = 0;
+
+  /* "spatial_minimiser1.pyx":569
+ * 
+ * 	t1=0
+ * 	i=0             # <<<<<<<<<<<<<<
+ * 
+ * 	for y1 in range(low_indy,high_indy+1):
+ */
+  __pyx_v_i = 0;
+
+  /* "spatial_minimiser1.pyx":571
+ * 	i=0
+ * 
+ * 	for y1 in range(low_indy,high_indy+1):             # <<<<<<<<<<<<<<
+ * 		for x1 in range(low_indx,high_indx+1):
+ * 			fof=<fof_struct *>PyMem_Malloc(sizeof(fof_struct))
+ */
+  __pyx_t_1 = (__pyx_v_high_indy + 1);
+  __pyx_t_2 = __pyx_t_1;
+  for (__pyx_t_3 = __pyx_v_low_indy; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
+    __pyx_v_y1 = __pyx_t_3;
+
+    /* "spatial_minimiser1.pyx":572
+ * 
+ * 	for y1 in range(low_indy,high_indy+1):
+ * 		for x1 in range(low_indx,high_indx+1):             # <<<<<<<<<<<<<<
+ * 			fof=<fof_struct *>PyMem_Malloc(sizeof(fof_struct))
+ * 			make_fof_struct(x1, y1, t1, num_times, num_y, \
+ */
+    __pyx_t_4 = (__pyx_v_high_indx + 1);
+    __pyx_t_5 = __pyx_t_4;
+    for (__pyx_t_6 = __pyx_v_low_indx; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
+      __pyx_v_x1 = __pyx_t_6;
+
+      /* "spatial_minimiser1.pyx":573
+ * 	for y1 in range(low_indy,high_indy+1):
+ * 		for x1 in range(low_indx,high_indx+1):
+ * 			fof=<fof_struct *>PyMem_Malloc(sizeof(fof_struct))             # <<<<<<<<<<<<<<
+ * 			make_fof_struct(x1, y1, t1, num_times, num_y, \
+ * 					num_x, num_params, fitted, param_vals,\
+ */
+      __pyx_v_fof = ((struct __pyx_t_18spatial_minimiser1_fof_struct *)PyMem_Malloc((sizeof(struct __pyx_t_18spatial_minimiser1_fof_struct))));
+
+      /* "spatial_minimiser1.pyx":574
+ * 		for x1 in range(low_indx,high_indx+1):
+ * 			fof=<fof_struct *>PyMem_Malloc(sizeof(fof_struct))
+ * 			make_fof_struct(x1, y1, t1, num_times, num_y, \             # <<<<<<<<<<<<<<
+ * 					num_x, num_params, fitted, param_vals,\
+ * 			 		fof)
+ */
+      __pyx_f_18spatial_minimiser1_make_fof_struct(__pyx_v_x1, __pyx_v_y1, __pyx_v_t1, __pyx_v_num_times, __pyx_v_num_y, __pyx_v_num_x, __pyx_v_num_params, __pyx_v_fitted, __pyx_v_param_vals, __pyx_v_fof);
+
+      /* "spatial_minimiser1.pyx":577
+ * 					num_x, num_params, fitted, param_vals,\
+ * 			 		fof)
+ * 			if i==0:             # <<<<<<<<<<<<<<
+ * 				fof_list=fof
+ * 			else:
+ */
+      __pyx_t_7 = ((__pyx_v_i == 0) != 0);
+      if (__pyx_t_7) {
+
+        /* "spatial_minimiser1.pyx":578
+ * 			 		fof)
+ * 			if i==0:
+ * 				fof_list=fof             # <<<<<<<<<<<<<<
+ * 			else:
+ * 				cluster_numbers[0]=-1
+ */
+        __pyx_v_fof_list = __pyx_v_fof;
+
+        /* "spatial_minimiser1.pyx":577
+ * 					num_x, num_params, fitted, param_vals,\
+ * 			 		fof)
+ * 			if i==0:             # <<<<<<<<<<<<<<
+ * 				fof_list=fof
+ * 			else:
+ */
+        goto __pyx_L7;
+      }
+
+      /* "spatial_minimiser1.pyx":580
+ * 				fof_list=fof
+ * 			else:
+ * 				cluster_numbers[0]=-1             # <<<<<<<<<<<<<<
+ * 				cluster_numbers[1]=-1
+ * 				cluster_to_add(fof_list, fof, max_dist, cluster_numbers, num_params)
+ */
+      /*else*/ {
+        (__pyx_v_cluster_numbers[0]) = -1;
+
+        /* "spatial_minimiser1.pyx":581
+ * 			else:
+ * 				cluster_numbers[0]=-1
+ * 				cluster_numbers[1]=-1             # <<<<<<<<<<<<<<
+ * 				cluster_to_add(fof_list, fof, max_dist, cluster_numbers, num_params)
+ * 				if cluster_numbers[1]<0:
+ */
+        (__pyx_v_cluster_numbers[1]) = -1;
+
+        /* "spatial_minimiser1.pyx":582
+ * 				cluster_numbers[0]=-1
+ * 				cluster_numbers[1]=-1
+ * 				cluster_to_add(fof_list, fof, max_dist, cluster_numbers, num_params)             # <<<<<<<<<<<<<<
+ * 				if cluster_numbers[1]<0:
+ * 					if cluster_numbers[0]>=0:
+ */
+        __pyx_f_18spatial_minimiser1_cluster_to_add(__pyx_v_fof_list, __pyx_v_fof, __pyx_v_max_dist, __pyx_v_cluster_numbers, __pyx_v_num_params);
+
+        /* "spatial_minimiser1.pyx":583
+ * 				cluster_numbers[1]=-1
+ * 				cluster_to_add(fof_list, fof, max_dist, cluster_numbers, num_params)
+ * 				if cluster_numbers[1]<0:             # <<<<<<<<<<<<<<
+ * 					if cluster_numbers[0]>=0:
+ * 						add_member(fof_list, cluster_numbers[0],fof)
+ */
+        __pyx_t_7 = (((__pyx_v_cluster_numbers[1]) < 0) != 0);
+        if (__pyx_t_7) {
+
+          /* "spatial_minimiser1.pyx":584
+ * 				cluster_to_add(fof_list, fof, max_dist, cluster_numbers, num_params)
+ * 				if cluster_numbers[1]<0:
+ * 					if cluster_numbers[0]>=0:             # <<<<<<<<<<<<<<
+ * 						add_member(fof_list, cluster_numbers[0],fof)
+ * 					else:
+ */
+          __pyx_t_7 = (((__pyx_v_cluster_numbers[0]) >= 0) != 0);
+          if (__pyx_t_7) {
+
+            /* "spatial_minimiser1.pyx":585
+ * 				if cluster_numbers[1]<0:
+ * 					if cluster_numbers[0]>=0:
+ * 						add_member(fof_list, cluster_numbers[0],fof)             # <<<<<<<<<<<<<<
+ * 					else:
+ * 						add_clusters(fof_list, fof)
+ */
+            __pyx_f_18spatial_minimiser1_add_member(__pyx_v_fof_list, (__pyx_v_cluster_numbers[0]), __pyx_v_fof);
+
+            /* "spatial_minimiser1.pyx":584
+ * 				cluster_to_add(fof_list, fof, max_dist, cluster_numbers, num_params)
+ * 				if cluster_numbers[1]<0:
+ * 					if cluster_numbers[0]>=0:             # <<<<<<<<<<<<<<
+ * 						add_member(fof_list, cluster_numbers[0],fof)
+ * 					else:
+ */
+            goto __pyx_L9;
+          }
+
+          /* "spatial_minimiser1.pyx":587
+ * 						add_member(fof_list, cluster_numbers[0],fof)
+ * 					else:
+ * 						add_clusters(fof_list, fof)             # <<<<<<<<<<<<<<
+ * 				else:
+ * 					add_member(fof_list, cluster_numbers[0],fof)
+ */
+          /*else*/ {
+            __pyx_f_18spatial_minimiser1_add_clusters(__pyx_v_fof_list, __pyx_v_fof);
+          }
+          __pyx_L9:;
+
+          /* "spatial_minimiser1.pyx":583
+ * 				cluster_numbers[1]=-1
+ * 				cluster_to_add(fof_list, fof, max_dist, cluster_numbers, num_params)
+ * 				if cluster_numbers[1]<0:             # <<<<<<<<<<<<<<
+ * 					if cluster_numbers[0]>=0:
+ * 						add_member(fof_list, cluster_numbers[0],fof)
+ */
+          goto __pyx_L8;
+        }
+
+        /* "spatial_minimiser1.pyx":589
+ * 						add_clusters(fof_list, fof)
+ * 				else:
+ * 					add_member(fof_list, cluster_numbers[0],fof)             # <<<<<<<<<<<<<<
+ * 					join_clusters(fof_list, cluster_numbers[0], cluster_numbers[1])
+ * 			i=i+1
+ */
+        /*else*/ {
+          __pyx_f_18spatial_minimiser1_add_member(__pyx_v_fof_list, (__pyx_v_cluster_numbers[0]), __pyx_v_fof);
+
+          /* "spatial_minimiser1.pyx":590
+ * 				else:
+ * 					add_member(fof_list, cluster_numbers[0],fof)
+ * 					join_clusters(fof_list, cluster_numbers[0], cluster_numbers[1])             # <<<<<<<<<<<<<<
+ * 			i=i+1
+ * 
+ */
+          __pyx_f_18spatial_minimiser1_join_clusters(__pyx_v_fof_list, (__pyx_v_cluster_numbers[0]), (__pyx_v_cluster_numbers[1]));
+        }
+        __pyx_L8:;
+      }
+      __pyx_L7:;
+
+      /* "spatial_minimiser1.pyx":591
+ * 					add_member(fof_list, cluster_numbers[0],fof)
+ * 					join_clusters(fof_list, cluster_numbers[0], cluster_numbers[1])
+ * 			i=i+1             # <<<<<<<<<<<<<<
+ * 
+ * 	cdef int num_cluster=print_cluster(fof_list)
+ */
+      __pyx_v_i = (__pyx_v_i + 1);
+    }
+  }
+
+  /* "spatial_minimiser1.pyx":593
+ * 			i=i+1
+ * 
+ * 	cdef int num_cluster=print_cluster(fof_list)             # <<<<<<<<<<<<<<
+ * 	#find_cluster_params(fof_list)
+ * 	free_cluster(fof_list)
+ */
+  __pyx_v_num_cluster = __pyx_f_18spatial_minimiser1_print_cluster(__pyx_v_fof_list);
+
+  /* "spatial_minimiser1.pyx":595
+ * 	cdef int num_cluster=print_cluster(fof_list)
+ * 	#find_cluster_params(fof_list)
+ * 	free_cluster(fof_list)             # <<<<<<<<<<<<<<
+ * 	return
+ * 
+ */
+  __pyx_f_18spatial_minimiser1_free_cluster(__pyx_v_fof_list);
+
+  /* "spatial_minimiser1.pyx":596
+ * 	#find_cluster_params(fof_list)
+ * 	free_cluster(fof_list)
+ * 	return             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  goto __pyx_L0;
+
+  /* "spatial_minimiser1.pyx":555
+ * 	return dist
+ * 
+ * cdef void do_clustering_analysis(int **cluster_coords, int num_times, int num_y, int num_x,int num_params, int low_indx,\             # <<<<<<<<<<<<<<
+ * 				int low_indy, int low_indt, int high_indx, int high_indy,\
+ * 				int high_indt, double **param_vals, double [:] fitted, double max_dist):
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+}
+
+/* "spatial_minimiser1.pyx":599
  * 
  * 
  * cdef double remove_discontinuities(numpy.ndarray[numpy.double_t, ndim=4] cube,\             # <<<<<<<<<<<<<<
@@ -6226,7 +7988,7 @@ static void __pyx_f_18spatial_minimiser1_remove_duplicate_findings(int **__pyx_v
  * 				numpy.ndarray[numpy.double_t,ndim=1] model, \
  */
 
-static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject *__pyx_v_cube, PyArrayObject *__pyx_v_err_cube, PyArrayObject *__pyx_v_model, int *__pyx_v_low_snr_loc, int ***__pyx_v_low_freq_ind, int ***__pyx_v_upper_freq_ind, __Pyx_memviewslice __pyx_v_fitted, double **__pyx_v_param_val, int __pyx_v_num_times, int __pyx_v_num_x, int __pyx_v_num_y, int __pyx_v_num_params, int __pyx_v_num_freqs, int __pyx_v_search_length, double __pyx_v_thresh, double **__pyx_v_param_val_actual, double __pyx_v_sys_error, double __pyx_v_spatial_smoothness_enforcer, double __pyx_v_temporal_smoothness_enforcer, int *__pyx_v_model_param_lengths) {
+static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject *__pyx_v_cube, PyArrayObject *__pyx_v_err_cube, CYTHON_UNUSED PyArrayObject *__pyx_v_model, int *__pyx_v_low_snr_loc, int ***__pyx_v_low_freq_ind, int ***__pyx_v_upper_freq_ind, __Pyx_memviewslice __pyx_v_fitted, double **__pyx_v_param_val, int __pyx_v_num_times, int __pyx_v_num_x, int __pyx_v_num_y, int __pyx_v_num_params, int __pyx_v_num_freqs, int __pyx_v_search_length, double __pyx_v_thresh, double **__pyx_v_param_val_actual, CYTHON_UNUSED double __pyx_v_sys_error, double __pyx_v_spatial_smoothness_enforcer, double __pyx_v_temporal_smoothness_enforcer, CYTHON_UNUSED int *__pyx_v_model_param_lengths, double __pyx_v_max_dist) {
   int __pyx_v_tot_pix;
   int __pyx_v_i;
   int __pyx_v_j;
@@ -6249,6 +8011,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
   int __pyx_v_high_indy;
   int __pyx_v_high_indt;
   double **__pyx_v_previous_param_inds;
+  int *__pyx_v_cluster_coords[3];
   __Pyx_LocalBuf_ND __pyx_pybuffernd_cube;
   __Pyx_Buffer __pyx_pybuffer_cube;
   __Pyx_LocalBuf_ND __pyx_pybuffernd_err_cube;
@@ -6275,7 +8038,6 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
   int __pyx_t_16;
   int __pyx_t_17;
   int __pyx_t_18;
-  PyObject *__pyx_t_19 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -6294,21 +8056,21 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
   __pyx_pybuffernd_model.rcbuffer = &__pyx_pybuffer_model;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_cube.rcbuffer->pybuffer, (PyObject*)__pyx_v_cube, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 4, 0, __pyx_stack) == -1)) __PYX_ERR(0, 356, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_cube.rcbuffer->pybuffer, (PyObject*)__pyx_v_cube, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 4, 0, __pyx_stack) == -1)) __PYX_ERR(0, 599, __pyx_L1_error)
   }
   __pyx_pybuffernd_cube.diminfo[0].strides = __pyx_pybuffernd_cube.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_cube.diminfo[0].shape = __pyx_pybuffernd_cube.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_cube.diminfo[1].strides = __pyx_pybuffernd_cube.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_cube.diminfo[1].shape = __pyx_pybuffernd_cube.rcbuffer->pybuffer.shape[1]; __pyx_pybuffernd_cube.diminfo[2].strides = __pyx_pybuffernd_cube.rcbuffer->pybuffer.strides[2]; __pyx_pybuffernd_cube.diminfo[2].shape = __pyx_pybuffernd_cube.rcbuffer->pybuffer.shape[2]; __pyx_pybuffernd_cube.diminfo[3].strides = __pyx_pybuffernd_cube.rcbuffer->pybuffer.strides[3]; __pyx_pybuffernd_cube.diminfo[3].shape = __pyx_pybuffernd_cube.rcbuffer->pybuffer.shape[3];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_err_cube.rcbuffer->pybuffer, (PyObject*)__pyx_v_err_cube, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 356, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_err_cube.rcbuffer->pybuffer, (PyObject*)__pyx_v_err_cube, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 599, __pyx_L1_error)
   }
   __pyx_pybuffernd_err_cube.diminfo[0].strides = __pyx_pybuffernd_err_cube.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_err_cube.diminfo[0].shape = __pyx_pybuffernd_err_cube.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_err_cube.diminfo[1].strides = __pyx_pybuffernd_err_cube.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_err_cube.diminfo[1].shape = __pyx_pybuffernd_err_cube.rcbuffer->pybuffer.shape[1];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_model.rcbuffer->pybuffer, (PyObject*)__pyx_v_model, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 356, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_model.rcbuffer->pybuffer, (PyObject*)__pyx_v_model, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 599, __pyx_L1_error)
   }
   __pyx_pybuffernd_model.diminfo[0].strides = __pyx_pybuffernd_model.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_model.diminfo[0].shape = __pyx_pybuffernd_model.rcbuffer->pybuffer.shape[0];
 
-  /* "spatial_minimiser1.pyx":370
+  /* "spatial_minimiser1.pyx":614
  * 	cdef int tot_pix,i,j
  * 
  * 	tot_pix=num_times*num_y*num_x             # <<<<<<<<<<<<<<
@@ -6317,7 +8079,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
  */
   __pyx_v_tot_pix = ((__pyx_v_num_times * __pyx_v_num_y) * __pyx_v_num_x);
 
-  /* "spatial_minimiser1.pyx":372
+  /* "spatial_minimiser1.pyx":616
  * 	tot_pix=num_times*num_y*num_x
  * 
  * 	cdef unsigned int num_val=num_times*num_y*num_x*(num_params+1)             # <<<<<<<<<<<<<<
@@ -6326,7 +8088,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
  */
   __pyx_v_num_val = (((__pyx_v_num_times * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1));
 
-  /* "spatial_minimiser1.pyx":374
+  /* "spatial_minimiser1.pyx":618
  * 	cdef unsigned int num_val=num_times*num_y*num_x*(num_params+1)
  * 
  * 	cdef double grad_chi=calc_grad_chi(fitted,param_val,num_times,num_y,num_x,num_params, \             # <<<<<<<<<<<<<<
@@ -6339,7 +8101,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
   __pyx_t_1 = __pyx_f_18spatial_minimiser1_calc_grad_chi(__pyx_v_fitted, __pyx_v_param_val, __pyx_v_num_times, __pyx_v_num_y, __pyx_v_num_x, __pyx_v_num_params, &__pyx_t_2); 
   __pyx_v_grad_chi = __pyx_t_1;
 
-  /* "spatial_minimiser1.pyx":377
+  /* "spatial_minimiser1.pyx":621
  * 						spatial_smoothness_enforcer,\
  * 						temporal_smoothness_enforcer)
  * 	cdef double current_grad_chi=1e9             # <<<<<<<<<<<<<<
@@ -6348,7 +8110,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
  */
   __pyx_v_current_grad_chi = 1e9;
 
-  /* "spatial_minimiser1.pyx":379
+  /* "spatial_minimiser1.pyx":623
  * 	cdef double current_grad_chi=1e9
  * 	cdef double *fitted_pointer
  * 	fitted_pointer=<double *>PyMem_Malloc(num_val*sizeof(double))             # <<<<<<<<<<<<<<
@@ -6357,7 +8119,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
  */
   __pyx_v_fitted_pointer = ((double *)PyMem_Malloc((__pyx_v_num_val * (sizeof(double)))));
 
-  /* "spatial_minimiser1.pyx":380
+  /* "spatial_minimiser1.pyx":624
  * 	cdef double *fitted_pointer
  * 	fitted_pointer=<double *>PyMem_Malloc(num_val*sizeof(double))
  * 	cdef double [:] fitted_copy=<double [:num_val]>fitted_pointer             # <<<<<<<<<<<<<<
@@ -6366,24 +8128,24 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
  */
   if (!__pyx_v_fitted_pointer) {
     PyErr_SetString(PyExc_ValueError,"Cannot create cython.array from NULL pointer");
-    __PYX_ERR(0, 380, __pyx_L1_error)
+    __PYX_ERR(0, 624, __pyx_L1_error)
   }
-  __pyx_t_5 = __pyx_format_from_typeinfo(&__Pyx_TypeInfo_double); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 380, __pyx_L1_error)
+  __pyx_t_5 = __pyx_format_from_typeinfo(&__Pyx_TypeInfo_double); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 624, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_4 = Py_BuildValue((char*) "("  __PYX_BUILD_PY_SSIZE_T  ")", ((Py_ssize_t)__pyx_v_num_val)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 380, __pyx_L1_error)
+  __pyx_t_4 = Py_BuildValue((char*) "("  __PYX_BUILD_PY_SSIZE_T  ")", ((Py_ssize_t)__pyx_v_num_val)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 624, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_3 = __pyx_array_new(__pyx_t_4, sizeof(double), PyBytes_AS_STRING(__pyx_t_5), (char *) "c", (char *) __pyx_v_fitted_pointer);
-  if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 380, __pyx_L1_error)
+  if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 624, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_6 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(((PyObject *)__pyx_t_3), PyBUF_WRITABLE); if (unlikely(!__pyx_t_6.memview)) __PYX_ERR(0, 380, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(((PyObject *)__pyx_t_3), PyBUF_WRITABLE); if (unlikely(!__pyx_t_6.memview)) __PYX_ERR(0, 624, __pyx_L1_error)
   __Pyx_DECREF(((PyObject *)__pyx_t_3)); __pyx_t_3 = 0;
   __pyx_v_fitted_copy = __pyx_t_6;
   __pyx_t_6.memview = NULL;
   __pyx_t_6.data = NULL;
 
-  /* "spatial_minimiser1.pyx":382
+  /* "spatial_minimiser1.pyx":626
  * 	cdef double [:] fitted_copy=<double [:num_val]>fitted_pointer
  * 
  * 	for i in range(num_val):             # <<<<<<<<<<<<<<
@@ -6395,7 +8157,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
   for (__pyx_t_9 = 0; __pyx_t_9 < __pyx_t_8; __pyx_t_9+=1) {
     __pyx_v_i = __pyx_t_9;
 
-    /* "spatial_minimiser1.pyx":383
+    /* "spatial_minimiser1.pyx":627
  * 
  * 	for i in range(num_val):
  * 		fitted_copy[i]=fitted[i]             # <<<<<<<<<<<<<<
@@ -6410,7 +8172,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
     } else if (unlikely(__pyx_t_10 >= __pyx_v_fitted.shape[0])) __pyx_t_11 = 0;
     if (unlikely(__pyx_t_11 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_11);
-      __PYX_ERR(0, 383, __pyx_L1_error)
+      __PYX_ERR(0, 627, __pyx_L1_error)
     }
     __pyx_t_12 = __pyx_v_i;
     __pyx_t_11 = -1;
@@ -6420,26 +8182,26 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
     } else if (unlikely(__pyx_t_12 >= __pyx_v_fitted_copy.shape[0])) __pyx_t_11 = 0;
     if (unlikely(__pyx_t_11 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_11);
-      __PYX_ERR(0, 383, __pyx_L1_error)
+      __PYX_ERR(0, 627, __pyx_L1_error)
     }
     *((double *) ( /* dim=0 */ (__pyx_v_fitted_copy.data + __pyx_t_12 * __pyx_v_fitted_copy.strides[0]) )) = (*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_10 * __pyx_v_fitted.strides[0]) )));
   }
 
-  /* "spatial_minimiser1.pyx":385
+  /* "spatial_minimiser1.pyx":629
  * 		fitted_copy[i]=fitted[i]
  * 
  * 	print (grad_chi)             # <<<<<<<<<<<<<<
  * 
  * 	cdef int *discont[3]
  */
-  __pyx_t_5 = PyFloat_FromDouble(__pyx_v_grad_chi); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 385, __pyx_L1_error)
+  __pyx_t_5 = PyFloat_FromDouble(__pyx_v_grad_chi); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 629, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_4 = __Pyx_PyObject_CallOneArg(__pyx_builtin_print, __pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 385, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_CallOneArg(__pyx_builtin_print, __pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 629, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "spatial_minimiser1.pyx":390
+  /* "spatial_minimiser1.pyx":634
  * 	#cdef double
  * 
  * 	for i in range(3):             # <<<<<<<<<<<<<<
@@ -6449,7 +8211,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
   for (__pyx_t_9 = 0; __pyx_t_9 < 3; __pyx_t_9+=1) {
     __pyx_v_i = __pyx_t_9;
 
-    /* "spatial_minimiser1.pyx":391
+    /* "spatial_minimiser1.pyx":635
  * 
  * 	for i in range(3):
  * 		discont[i]=<int *>PyMem_Malloc(tot_pix*sizeof(int))             # <<<<<<<<<<<<<<
@@ -6458,7 +8220,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
  */
     (__pyx_v_discont[__pyx_v_i]) = ((int *)PyMem_Malloc((__pyx_v_tot_pix * (sizeof(int)))));
 
-    /* "spatial_minimiser1.pyx":392
+    /* "spatial_minimiser1.pyx":636
  * 	for i in range(3):
  * 		discont[i]=<int *>PyMem_Malloc(tot_pix*sizeof(int))
  * 		for j in range(tot_pix):             # <<<<<<<<<<<<<<
@@ -6470,7 +8232,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
     for (__pyx_t_14 = 0; __pyx_t_14 < __pyx_t_13; __pyx_t_14+=1) {
       __pyx_v_j = __pyx_t_14;
 
-      /* "spatial_minimiser1.pyx":393
+      /* "spatial_minimiser1.pyx":637
  * 		discont[i]=<int *>PyMem_Malloc(tot_pix*sizeof(int))
  * 		for j in range(tot_pix):
  * 			discont[i][j]=-1             # <<<<<<<<<<<<<<
@@ -6481,7 +8243,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
     }
   }
 
-  /* "spatial_minimiser1.pyx":395
+  /* "spatial_minimiser1.pyx":639
  * 			discont[i][j]=-1
  * 
  * 	cdef int discont_num=list_discont(fitted, param_val, num_x,num_y, num_times, num_params,\             # <<<<<<<<<<<<<<
@@ -6490,8 +8252,8 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
  */
   __pyx_v_discont_num = __pyx_f_18spatial_minimiser1_list_discont(__pyx_v_fitted, __pyx_v_param_val, __pyx_v_num_x, __pyx_v_num_y, __pyx_v_num_times, __pyx_v_num_params, __pyx_v_discont, __pyx_v_search_length, __pyx_v_thresh);
 
-  /* "spatial_minimiser1.pyx":398
- * 			discont, search_length, thresh)
+  /* "spatial_minimiser1.pyx":644
+ * 
  * 
  * 	cdef int box_size=2*search_length+1             # <<<<<<<<<<<<<<
  * 	box_size=box_size*box_size
@@ -6499,7 +8261,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
  */
   __pyx_v_box_size = ((2 * __pyx_v_search_length) + 1);
 
-  /* "spatial_minimiser1.pyx":399
+  /* "spatial_minimiser1.pyx":645
  * 
  * 	cdef int box_size=2*search_length+1
  * 	box_size=box_size*box_size             # <<<<<<<<<<<<<<
@@ -6508,7 +8270,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
  */
   __pyx_v_box_size = (__pyx_v_box_size * __pyx_v_box_size);
 
-  /* "spatial_minimiser1.pyx":405
+  /* "spatial_minimiser1.pyx":651
  * 	cdef int *param_val_lengths
  * 
  * 	spectrum=<double **>PyMem_Malloc(box_size*sizeof(double *))             # <<<<<<<<<<<<<<
@@ -6517,7 +8279,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
  */
   __pyx_v_spectrum = ((double **)PyMem_Malloc((__pyx_v_box_size * (sizeof(double *)))));
 
-  /* "spatial_minimiser1.pyx":406
+  /* "spatial_minimiser1.pyx":652
  * 
  * 	spectrum=<double **>PyMem_Malloc(box_size*sizeof(double *))
  * 	rms=<double *>PyMem_Malloc(num_freqs*sizeof(double *))             # <<<<<<<<<<<<<<
@@ -6526,7 +8288,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
  */
   __pyx_v_rms = ((double *)PyMem_Malloc((__pyx_v_num_freqs * (sizeof(double *)))));
 
-  /* "spatial_minimiser1.pyx":407
+  /* "spatial_minimiser1.pyx":653
  * 	spectrum=<double **>PyMem_Malloc(box_size*sizeof(double *))
  * 	rms=<double *>PyMem_Malloc(num_freqs*sizeof(double *))
  * 	param_val_ind=<int **>PyMem_Malloc(num_params*sizeof(int *))             # <<<<<<<<<<<<<<
@@ -6535,7 +8297,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
  */
   __pyx_v_param_val_ind = ((int **)PyMem_Malloc((__pyx_v_num_params * (sizeof(int *)))));
 
-  /* "spatial_minimiser1.pyx":408
+  /* "spatial_minimiser1.pyx":654
  * 	rms=<double *>PyMem_Malloc(num_freqs*sizeof(double *))
  * 	param_val_ind=<int **>PyMem_Malloc(num_params*sizeof(int *))
  * 	param_val_lengths=<int *>PyMem_Malloc(num_params*sizeof(int ))             # <<<<<<<<<<<<<<
@@ -6544,7 +8306,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
  */
   __pyx_v_param_val_lengths = ((int *)PyMem_Malloc((__pyx_v_num_params * (sizeof(int)))));
 
-  /* "spatial_minimiser1.pyx":411
+  /* "spatial_minimiser1.pyx":657
  * 
  * 
  * 	for i in range(box_size):             # <<<<<<<<<<<<<<
@@ -6556,7 +8318,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
   for (__pyx_t_13 = 0; __pyx_t_13 < __pyx_t_11; __pyx_t_13+=1) {
     __pyx_v_i = __pyx_t_13;
 
-    /* "spatial_minimiser1.pyx":412
+    /* "spatial_minimiser1.pyx":658
  * 
  * 	for i in range(box_size):
  * 		spectrum[i]=<double *>PyMem_Malloc(num_freqs*sizeof(double))             # <<<<<<<<<<<<<<
@@ -6565,7 +8327,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
  */
     (__pyx_v_spectrum[__pyx_v_i]) = ((double *)PyMem_Malloc((__pyx_v_num_freqs * (sizeof(double)))));
 
-    /* "spatial_minimiser1.pyx":413
+    /* "spatial_minimiser1.pyx":659
  * 	for i in range(box_size):
  * 		spectrum[i]=<double *>PyMem_Malloc(num_freqs*sizeof(double))
  * 		for j in range(num_freqs):             # <<<<<<<<<<<<<<
@@ -6577,7 +8339,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
     for (__pyx_t_16 = 0; __pyx_t_16 < __pyx_t_15; __pyx_t_16+=1) {
       __pyx_v_j = __pyx_t_16;
 
-      /* "spatial_minimiser1.pyx":414
+      /* "spatial_minimiser1.pyx":660
  * 		spectrum[i]=<double *>PyMem_Malloc(num_freqs*sizeof(double))
  * 		for j in range(num_freqs):
  * 			spectrum[i][j]=-1.0             # <<<<<<<<<<<<<<
@@ -6588,7 +8350,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
     }
   }
 
-  /* "spatial_minimiser1.pyx":415
+  /* "spatial_minimiser1.pyx":661
  * 		for j in range(num_freqs):
  * 			spectrum[i][j]=-1.0
  * 	for i in range(num_freqs):             # <<<<<<<<<<<<<<
@@ -6600,7 +8362,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
   for (__pyx_t_13 = 0; __pyx_t_13 < __pyx_t_11; __pyx_t_13+=1) {
     __pyx_v_i = __pyx_t_13;
 
-    /* "spatial_minimiser1.pyx":416
+    /* "spatial_minimiser1.pyx":662
  * 			spectrum[i][j]=-1.0
  * 	for i in range(num_freqs):
  * 		rms[i]=-1.0             # <<<<<<<<<<<<<<
@@ -6610,7 +8372,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
     (__pyx_v_rms[__pyx_v_i]) = -1.0;
   }
 
-  /* "spatial_minimiser1.pyx":418
+  /* "spatial_minimiser1.pyx":664
  * 		rms[i]=-1.0
  * 
  * 	for i in range(num_params):             # <<<<<<<<<<<<<<
@@ -6622,7 +8384,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
   for (__pyx_t_13 = 0; __pyx_t_13 < __pyx_t_11; __pyx_t_13+=1) {
     __pyx_v_i = __pyx_t_13;
 
-    /* "spatial_minimiser1.pyx":419
+    /* "spatial_minimiser1.pyx":665
  * 
  * 	for i in range(num_params):
  * 		param_val_ind[i]=<int *>PyMem_Malloc(box_size*sizeof(int))             # <<<<<<<<<<<<<<
@@ -6631,7 +8393,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
  */
     (__pyx_v_param_val_ind[__pyx_v_i]) = ((int *)PyMem_Malloc((__pyx_v_box_size * (sizeof(int)))));
 
-    /* "spatial_minimiser1.pyx":420
+    /* "spatial_minimiser1.pyx":666
  * 	for i in range(num_params):
  * 		param_val_ind[i]=<int *>PyMem_Malloc(box_size*sizeof(int))
  * 		param_val_lengths[i]=-1             # <<<<<<<<<<<<<<
@@ -6640,7 +8402,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
  */
     (__pyx_v_param_val_lengths[__pyx_v_i]) = -1;
 
-    /* "spatial_minimiser1.pyx":421
+    /* "spatial_minimiser1.pyx":667
  * 		param_val_ind[i]=<int *>PyMem_Malloc(box_size*sizeof(int))
  * 		param_val_lengths[i]=-1
  * 		for  j in range(box_size):             # <<<<<<<<<<<<<<
@@ -6652,7 +8414,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
     for (__pyx_t_16 = 0; __pyx_t_16 < __pyx_t_15; __pyx_t_16+=1) {
       __pyx_v_j = __pyx_t_16;
 
-      /* "spatial_minimiser1.pyx":422
+      /* "spatial_minimiser1.pyx":668
  * 		param_val_lengths[i]=-1
  * 		for  j in range(box_size):
  * 			param_val_ind[i][j]=-1             # <<<<<<<<<<<<<<
@@ -6663,39 +8425,94 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
     }
   }
 
-  /* "spatial_minimiser1.pyx":429
+  /* "spatial_minimiser1.pyx":675
  * 	cdef double **previous_param_inds
  * 
  * 	previous_param_inds=<double **>PyMem_Malloc(discont_num*sizeof(double*))             # <<<<<<<<<<<<<<
  * 
- * 
+ * 	cdef int *cluster_coords[3]
  */
   __pyx_v_previous_param_inds = ((double **)PyMem_Malloc((__pyx_v_discont_num * (sizeof(double *)))));
 
-  /* "spatial_minimiser1.pyx":432
+  /* "spatial_minimiser1.pyx":679
+ * 	cdef int *cluster_coords[3]
+ * 
+ * 	for i in range(3):             # <<<<<<<<<<<<<<
+ * 		cluster_coords[i]=<int *>PyMem_Malloc(box_size*sizeof(int))
+ * 		for j in range(box_size):
+ */
+  for (__pyx_t_9 = 0; __pyx_t_9 < 3; __pyx_t_9+=1) {
+    __pyx_v_i = __pyx_t_9;
+
+    /* "spatial_minimiser1.pyx":680
+ * 
+ * 	for i in range(3):
+ * 		cluster_coords[i]=<int *>PyMem_Malloc(box_size*sizeof(int))             # <<<<<<<<<<<<<<
+ * 		for j in range(box_size):
+ * 			cluster_coords[i][j]=-1
+ */
+    (__pyx_v_cluster_coords[__pyx_v_i]) = ((int *)PyMem_Malloc((__pyx_v_box_size * (sizeof(int)))));
+
+    /* "spatial_minimiser1.pyx":681
+ * 	for i in range(3):
+ * 		cluster_coords[i]=<int *>PyMem_Malloc(box_size*sizeof(int))
+ * 		for j in range(box_size):             # <<<<<<<<<<<<<<
+ * 			cluster_coords[i][j]=-1
+ * 
+ */
+    __pyx_t_11 = __pyx_v_box_size;
+    __pyx_t_13 = __pyx_t_11;
+    for (__pyx_t_14 = 0; __pyx_t_14 < __pyx_t_13; __pyx_t_14+=1) {
+      __pyx_v_j = __pyx_t_14;
+
+      /* "spatial_minimiser1.pyx":682
+ * 		cluster_coords[i]=<int *>PyMem_Malloc(box_size*sizeof(int))
+ * 		for j in range(box_size):
+ * 			cluster_coords[i][j]=-1             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+      ((__pyx_v_cluster_coords[__pyx_v_i])[__pyx_v_j]) = -1;
+    }
+  }
+
+  /* "spatial_minimiser1.pyx":685
  * 
  * 
  * 	for i in range(discont_num):             # <<<<<<<<<<<<<<
  * 		previous_param_inds[i]=<double *>PyMem_Malloc(box_size*(num_params+1)*sizeof(double))
- * 		if discont[0][i]<0 and discont[1][i]<0 and discont[2][i]<0:
+ * 
  */
   __pyx_t_9 = __pyx_v_discont_num;
   __pyx_t_11 = __pyx_t_9;
   for (__pyx_t_13 = 0; __pyx_t_13 < __pyx_t_11; __pyx_t_13+=1) {
     __pyx_v_i = __pyx_t_13;
 
-    /* "spatial_minimiser1.pyx":433
+    /* "spatial_minimiser1.pyx":686
  * 
  * 	for i in range(discont_num):
  * 		previous_param_inds[i]=<double *>PyMem_Malloc(box_size*(num_params+1)*sizeof(double))             # <<<<<<<<<<<<<<
+ * 
+ * 	for i in range(21,discont_num):
+ */
+    (__pyx_v_previous_param_inds[__pyx_v_i]) = ((double *)PyMem_Malloc(((__pyx_v_box_size * (__pyx_v_num_params + 1)) * (sizeof(double)))));
+  }
+
+  /* "spatial_minimiser1.pyx":688
+ * 		previous_param_inds[i]=<double *>PyMem_Malloc(box_size*(num_params+1)*sizeof(double))
+ * 
+ * 	for i in range(21,discont_num):             # <<<<<<<<<<<<<<
  * 		if discont[0][i]<0 and discont[1][i]<0 and discont[2][i]<0:
  * 			continue
  */
-    (__pyx_v_previous_param_inds[__pyx_v_i]) = ((double *)PyMem_Malloc(((__pyx_v_box_size * (__pyx_v_num_params + 1)) * (sizeof(double)))));
+  __pyx_t_9 = __pyx_v_discont_num;
+  __pyx_t_11 = __pyx_t_9;
+  for (__pyx_t_13 = 21; __pyx_t_13 < __pyx_t_11; __pyx_t_13+=1) {
+    __pyx_v_i = __pyx_t_13;
 
-    /* "spatial_minimiser1.pyx":434
- * 	for i in range(discont_num):
- * 		previous_param_inds[i]=<double *>PyMem_Malloc(box_size*(num_params+1)*sizeof(double))
+    /* "spatial_minimiser1.pyx":689
+ * 
+ * 	for i in range(21,discont_num):
  * 		if discont[0][i]<0 and discont[1][i]<0 and discont[2][i]<0:             # <<<<<<<<<<<<<<
  * 			continue
  * 		make_data_ready_for_discont_removal(cube,err_cube,low_snr_loc,\
@@ -6704,38 +8521,38 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
     if (__pyx_t_18) {
     } else {
       __pyx_t_17 = __pyx_t_18;
-      goto __pyx_L22_bool_binop_done;
+      goto __pyx_L28_bool_binop_done;
     }
     __pyx_t_18 = ((((__pyx_v_discont[1])[__pyx_v_i]) < 0) != 0);
     if (__pyx_t_18) {
     } else {
       __pyx_t_17 = __pyx_t_18;
-      goto __pyx_L22_bool_binop_done;
+      goto __pyx_L28_bool_binop_done;
     }
     __pyx_t_18 = ((((__pyx_v_discont[2])[__pyx_v_i]) < 0) != 0);
     __pyx_t_17 = __pyx_t_18;
-    __pyx_L22_bool_binop_done:;
+    __pyx_L28_bool_binop_done:;
     if (__pyx_t_17) {
 
-      /* "spatial_minimiser1.pyx":435
- * 		previous_param_inds[i]=<double *>PyMem_Malloc(box_size*(num_params+1)*sizeof(double))
+      /* "spatial_minimiser1.pyx":690
+ * 	for i in range(21,discont_num):
  * 		if discont[0][i]<0 and discont[1][i]<0 and discont[2][i]<0:
  * 			continue             # <<<<<<<<<<<<<<
  * 		make_data_ready_for_discont_removal(cube,err_cube,low_snr_loc,\
  * 					low_freq_ind,upper_freq_ind,\
  */
-      goto __pyx_L19_continue;
+      goto __pyx_L25_continue;
 
-      /* "spatial_minimiser1.pyx":434
- * 	for i in range(discont_num):
- * 		previous_param_inds[i]=<double *>PyMem_Malloc(box_size*(num_params+1)*sizeof(double))
+      /* "spatial_minimiser1.pyx":689
+ * 
+ * 	for i in range(21,discont_num):
  * 		if discont[0][i]<0 and discont[1][i]<0 and discont[2][i]<0:             # <<<<<<<<<<<<<<
  * 			continue
  * 		make_data_ready_for_discont_removal(cube,err_cube,low_snr_loc,\
  */
     }
 
-    /* "spatial_minimiser1.pyx":436
+    /* "spatial_minimiser1.pyx":691
  * 		if discont[0][i]<0 and discont[1][i]<0 and discont[2][i]<0:
  * 			continue
  * 		make_data_ready_for_discont_removal(cube,err_cube,low_snr_loc,\             # <<<<<<<<<<<<<<
@@ -6744,69 +8561,76 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
  */
     __pyx_f_18spatial_minimiser1_make_data_ready_for_discont_removal(((PyArrayObject *)__pyx_v_cube), ((PyArrayObject *)__pyx_v_err_cube), __pyx_v_low_snr_loc, __pyx_v_low_freq_ind, __pyx_v_upper_freq_ind, __pyx_v_num_times, __pyx_v_num_y, __pyx_v_num_x, __pyx_v_num_freqs, __pyx_v_num_params, __pyx_v_spectrum, __pyx_v_rms, ((__pyx_v_discont[0])[__pyx_v_i]), ((__pyx_v_discont[1])[__pyx_v_i]), ((__pyx_v_discont[2])[__pyx_v_i]), (&__pyx_v_low_indx), (&__pyx_v_low_indy), (&__pyx_v_low_indt), (&__pyx_v_high_indx), (&__pyx_v_high_indy), (&__pyx_v_high_indt), __pyx_v_search_length, __pyx_v_param_val_ind, __pyx_v_fitted, (__pyx_v_previous_param_inds[__pyx_v_i]));
 
-    /* "spatial_minimiser1.pyx":444
- * 					&high_indt,search_length, param_val_ind, fitted,\
+    /* "spatial_minimiser1.pyx":700
  * 					previous_param_inds[i])
+ * 
  * 		count_unique_param_vals(param_val_ind,param_val_lengths, num_params, box_size)             # <<<<<<<<<<<<<<
  * 
- * 		do_bee_swarm_optimisation(spectrum, rms, model,num_freqs, param_val_ind, param_val_lengths,\
+ * 		do_clustering_analysis(cluster_coords, num_times, num_y, num_x,num_params, low_indx,low_indy,low_indt,\
  */
     __pyx_f_18spatial_minimiser1_count_unique_param_vals(__pyx_v_param_val_ind, __pyx_v_param_val_lengths, __pyx_v_num_params, __pyx_v_box_size);
 
-    /* "spatial_minimiser1.pyx":446
+    /* "spatial_minimiser1.pyx":702
  * 		count_unique_param_vals(param_val_ind,param_val_lengths, num_params, box_size)
  * 
- * 		do_bee_swarm_optimisation(spectrum, rms, model,num_freqs, param_val_ind, param_val_lengths,\             # <<<<<<<<<<<<<<
- * 					 num_params, low_indx,low_indy,low_indt,high_indx,high_indy,high_indt,\
- * 					 fitted, param_val_actual, sys_error,spatial_smoothness_enforcer,\
- */
-    __pyx_t_6 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(((PyObject *)__pyx_v_model), PyBUF_WRITABLE); if (unlikely(!__pyx_t_6.memview)) __PYX_ERR(0, 446, __pyx_L1_error)
-
-    /* "spatial_minimiser1.pyx":449
- * 					 num_params, low_indx,low_indy,low_indt,high_indx,high_indy,high_indt,\
- * 					 fitted, param_val_actual, sys_error,spatial_smoothness_enforcer,\
- * 						temporal_smoothness_enforcer, num_x, num_y,model_param_lengths)             # <<<<<<<<<<<<<<
- * 		remove_duplicate_findings(discont, discont_num,low_indx, low_indy, low_indt, high_indx, high_indy,high_indt)
+ * 		do_clustering_analysis(cluster_coords, num_times, num_y, num_x,num_params, low_indx,low_indy,low_indt,\             # <<<<<<<<<<<<<<
+ * 					high_indx, high_indy, high_indt, param_val_actual, fitted, max_dist)
  * 
  */
-    __pyx_f_18spatial_minimiser1_do_bee_swarm_optimisation(__pyx_v_spectrum, __pyx_v_rms, __pyx_t_6, __pyx_v_num_freqs, __pyx_v_param_val_ind, __pyx_v_param_val_lengths, __pyx_v_num_params, __pyx_v_low_indx, __pyx_v_low_indy, __pyx_v_low_indt, __pyx_v_high_indx, __pyx_v_high_indy, __pyx_v_high_indt, __pyx_v_fitted, __pyx_v_param_val_actual, __pyx_v_sys_error, __pyx_v_spatial_smoothness_enforcer, __pyx_v_temporal_smoothness_enforcer, __pyx_v_num_x, __pyx_v_num_y, __pyx_v_model_param_lengths);
-    __PYX_XDEC_MEMVIEW(&__pyx_t_6, 1);
-    __pyx_t_6.memview = NULL;
-    __pyx_t_6.data = NULL;
+    __pyx_f_18spatial_minimiser1_do_clustering_analysis(__pyx_v_cluster_coords, __pyx_v_num_times, __pyx_v_num_y, __pyx_v_num_x, __pyx_v_num_params, __pyx_v_low_indx, __pyx_v_low_indy, __pyx_v_low_indt, __pyx_v_high_indx, __pyx_v_high_indy, __pyx_v_high_indt, __pyx_v_param_val_actual, __pyx_v_fitted, __pyx_v_max_dist);
 
-    /* "spatial_minimiser1.pyx":450
- * 					 fitted, param_val_actual, sys_error,spatial_smoothness_enforcer,\
- * 						temporal_smoothness_enforcer, num_x, num_y,model_param_lengths)
+    /* "spatial_minimiser1.pyx":709
+ * 		#			 fitted, param_val_actual, sys_error,spatial_smoothness_enforcer,\
+ * 		#				temporal_smoothness_enforcer, num_x, num_y,model_param_lengths)
  * 		remove_duplicate_findings(discont, discont_num,low_indx, low_indy, low_indt, high_indx, high_indy,high_indt)             # <<<<<<<<<<<<<<
- * 
+ * 		break
  * 
  */
     __pyx_f_18spatial_minimiser1_remove_duplicate_findings(__pyx_v_discont, __pyx_v_discont_num, __pyx_v_low_indx, __pyx_v_low_indy, __pyx_v_low_indt, __pyx_v_high_indx, __pyx_v_high_indy, __pyx_v_high_indt);
-    __pyx_L19_continue:;
-  }
 
-  /* "spatial_minimiser1.pyx":454
+    /* "spatial_minimiser1.pyx":710
+ * 		#				temporal_smoothness_enforcer, num_x, num_y,model_param_lengths)
+ * 		remove_duplicate_findings(discont, discont_num,low_indx, low_indy, low_indt, high_indx, high_indy,high_indt)
+ * 		break             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+    goto __pyx_L26_break;
+    __pyx_L25_continue:;
+  }
+  __pyx_L26_break:;
+
+  /* "spatial_minimiser1.pyx":715
  * 
  * 
  * 	for i in range(3):             # <<<<<<<<<<<<<<
  * 		PyMem_Free(discont[i])
- * 
+ * 		PyMem_Free(cluster_coords[i])
  */
   for (__pyx_t_9 = 0; __pyx_t_9 < 3; __pyx_t_9+=1) {
     __pyx_v_i = __pyx_t_9;
 
-    /* "spatial_minimiser1.pyx":455
+    /* "spatial_minimiser1.pyx":716
  * 
  * 	for i in range(3):
  * 		PyMem_Free(discont[i])             # <<<<<<<<<<<<<<
+ * 		PyMem_Free(cluster_coords[i])
  * 
- * 	for i in range(box_size):
  */
     PyMem_Free((__pyx_v_discont[__pyx_v_i]));
+
+    /* "spatial_minimiser1.pyx":717
+ * 	for i in range(3):
+ * 		PyMem_Free(discont[i])
+ * 		PyMem_Free(cluster_coords[i])             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+    PyMem_Free((__pyx_v_cluster_coords[__pyx_v_i]));
   }
 
-  /* "spatial_minimiser1.pyx":457
- * 		PyMem_Free(discont[i])
+  /* "spatial_minimiser1.pyx":720
+ * 
  * 
  * 	for i in range(box_size):             # <<<<<<<<<<<<<<
  * 		PyMem_Free(spectrum[i])
@@ -6817,18 +8641,18 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
   for (__pyx_t_13 = 0; __pyx_t_13 < __pyx_t_11; __pyx_t_13+=1) {
     __pyx_v_i = __pyx_t_13;
 
-    /* "spatial_minimiser1.pyx":458
+    /* "spatial_minimiser1.pyx":721
  * 
  * 	for i in range(box_size):
  * 		PyMem_Free(spectrum[i])             # <<<<<<<<<<<<<<
  * 
- * 	for i in range(num_params):
+ * 
  */
     PyMem_Free((__pyx_v_spectrum[__pyx_v_i]));
   }
 
-  /* "spatial_minimiser1.pyx":460
- * 		PyMem_Free(spectrum[i])
+  /* "spatial_minimiser1.pyx":724
+ * 
  * 
  * 	for i in range(num_params):             # <<<<<<<<<<<<<<
  * 		PyMem_Free(param_val_ind[i])
@@ -6839,18 +8663,18 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
   for (__pyx_t_13 = 0; __pyx_t_13 < __pyx_t_11; __pyx_t_13+=1) {
     __pyx_v_i = __pyx_t_13;
 
-    /* "spatial_minimiser1.pyx":461
+    /* "spatial_minimiser1.pyx":725
  * 
  * 	for i in range(num_params):
  * 		PyMem_Free(param_val_ind[i])             # <<<<<<<<<<<<<<
  * 
- * 	for i in range(discont_num):
+ * 
  */
     PyMem_Free((__pyx_v_param_val_ind[__pyx_v_i]));
   }
 
-  /* "spatial_minimiser1.pyx":463
- * 		PyMem_Free(param_val_ind[i])
+  /* "spatial_minimiser1.pyx":728
+ * 
  * 
  * 	for i in range(discont_num):             # <<<<<<<<<<<<<<
  * 		PyMem_Free(previous_param_inds[i])
@@ -6861,18 +8685,18 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
   for (__pyx_t_13 = 0; __pyx_t_13 < __pyx_t_11; __pyx_t_13+=1) {
     __pyx_v_i = __pyx_t_13;
 
-    /* "spatial_minimiser1.pyx":464
+    /* "spatial_minimiser1.pyx":729
  * 
  * 	for i in range(discont_num):
  * 		PyMem_Free(previous_param_inds[i])             # <<<<<<<<<<<<<<
  * 
- * 	current_grad_chi=calc_grad_chi(fitted,param_val,num_times,num_y,num_x,num_params, \
+ * 
  */
     PyMem_Free((__pyx_v_previous_param_inds[__pyx_v_i]));
   }
 
-  /* "spatial_minimiser1.pyx":466
- * 		PyMem_Free(previous_param_inds[i])
+  /* "spatial_minimiser1.pyx":733
+ * 
  * 
  * 	current_grad_chi=calc_grad_chi(fitted,param_val,num_times,num_y,num_x,num_params, \             # <<<<<<<<<<<<<<
  * 						spatial_smoothness_enforcer,\
@@ -6884,33 +8708,9 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
   __pyx_t_1 = __pyx_f_18spatial_minimiser1_calc_grad_chi(__pyx_v_fitted, __pyx_v_param_val, __pyx_v_num_times, __pyx_v_num_y, __pyx_v_num_x, __pyx_v_num_params, &__pyx_t_2); 
   __pyx_v_current_grad_chi = __pyx_t_1;
 
-  /* "spatial_minimiser1.pyx":471
+  /* "spatial_minimiser1.pyx":739
  * 
  * 
- * 	print (grad_chi,current_grad_chi)             # <<<<<<<<<<<<<<
- * 	if grad_chi<=current_grad_chi:
- * 			fitted[i]=fitted_copy[i]
- */
-  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_grad_chi); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 471, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_5 = PyFloat_FromDouble(__pyx_v_current_grad_chi); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 471, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_19 = PyTuple_New(2); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 471, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_19);
-  __Pyx_GIVEREF(__pyx_t_4);
-  PyTuple_SET_ITEM(__pyx_t_19, 0, __pyx_t_4);
-  __Pyx_GIVEREF(__pyx_t_5);
-  PyTuple_SET_ITEM(__pyx_t_19, 1, __pyx_t_5);
-  __pyx_t_4 = 0;
-  __pyx_t_5 = 0;
-  __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_19, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 471, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_5);
-  __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
-  __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-
-  /* "spatial_minimiser1.pyx":472
- * 
- * 	print (grad_chi,current_grad_chi)
  * 	if grad_chi<=current_grad_chi:             # <<<<<<<<<<<<<<
  * 			fitted[i]=fitted_copy[i]
  * 	else:
@@ -6918,8 +8718,8 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
   __pyx_t_17 = ((__pyx_v_grad_chi <= __pyx_v_current_grad_chi) != 0);
   if (__pyx_t_17) {
 
-    /* "spatial_minimiser1.pyx":473
- * 	print (grad_chi,current_grad_chi)
+    /* "spatial_minimiser1.pyx":740
+ * 
  * 	if grad_chi<=current_grad_chi:
  * 			fitted[i]=fitted_copy[i]             # <<<<<<<<<<<<<<
  * 	else:
@@ -6933,7 +8733,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
     } else if (unlikely(__pyx_t_10 >= __pyx_v_fitted_copy.shape[0])) __pyx_t_9 = 0;
     if (unlikely(__pyx_t_9 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_9);
-      __PYX_ERR(0, 473, __pyx_L1_error)
+      __PYX_ERR(0, 740, __pyx_L1_error)
     }
     __pyx_t_12 = __pyx_v_i;
     __pyx_t_9 = -1;
@@ -6943,21 +8743,21 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
     } else if (unlikely(__pyx_t_12 >= __pyx_v_fitted.shape[0])) __pyx_t_9 = 0;
     if (unlikely(__pyx_t_9 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_9);
-      __PYX_ERR(0, 473, __pyx_L1_error)
+      __PYX_ERR(0, 740, __pyx_L1_error)
     }
     *((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_12 * __pyx_v_fitted.strides[0]) )) = (*((double *) ( /* dim=0 */ (__pyx_v_fitted_copy.data + __pyx_t_10 * __pyx_v_fitted_copy.strides[0]) )));
 
-    /* "spatial_minimiser1.pyx":472
+    /* "spatial_minimiser1.pyx":739
  * 
- * 	print (grad_chi,current_grad_chi)
+ * 
  * 	if grad_chi<=current_grad_chi:             # <<<<<<<<<<<<<<
  * 			fitted[i]=fitted_copy[i]
  * 	else:
  */
-    goto __pyx_L33;
+    goto __pyx_L39;
   }
 
-  /* "spatial_minimiser1.pyx":475
+  /* "spatial_minimiser1.pyx":742
  * 			fitted[i]=fitted_copy[i]
  * 	else:
  * 		grad_chi=current_grad_chi             # <<<<<<<<<<<<<<
@@ -6967,9 +8767,9 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
   /*else*/ {
     __pyx_v_grad_chi = __pyx_v_current_grad_chi;
   }
-  __pyx_L33:;
+  __pyx_L39:;
 
-  /* "spatial_minimiser1.pyx":480
+  /* "spatial_minimiser1.pyx":747
  * 
  * 
  * 	PyMem_Free(spectrum)             # <<<<<<<<<<<<<<
@@ -6978,7 +8778,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
  */
   PyMem_Free(__pyx_v_spectrum);
 
-  /* "spatial_minimiser1.pyx":481
+  /* "spatial_minimiser1.pyx":748
  * 
  * 	PyMem_Free(spectrum)
  * 	PyMem_Free(rms)             # <<<<<<<<<<<<<<
@@ -6987,7 +8787,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
  */
   PyMem_Free(__pyx_v_rms);
 
-  /* "spatial_minimiser1.pyx":482
+  /* "spatial_minimiser1.pyx":749
  * 	PyMem_Free(spectrum)
  * 	PyMem_Free(rms)
  * 	PyMem_Free(param_val_ind)             # <<<<<<<<<<<<<<
@@ -6996,7 +8796,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
  */
   PyMem_Free(__pyx_v_param_val_ind);
 
-  /* "spatial_minimiser1.pyx":483
+  /* "spatial_minimiser1.pyx":750
  * 	PyMem_Free(rms)
  * 	PyMem_Free(param_val_ind)
  * 	PyMem_Free(param_val_lengths)             # <<<<<<<<<<<<<<
@@ -7005,7 +8805,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
  */
   PyMem_Free(__pyx_v_param_val_lengths);
 
-  /* "spatial_minimiser1.pyx":484
+  /* "spatial_minimiser1.pyx":751
  * 	PyMem_Free(param_val_ind)
  * 	PyMem_Free(param_val_lengths)
  * 	PyMem_Free(previous_param_inds)             # <<<<<<<<<<<<<<
@@ -7014,7 +8814,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
  */
   PyMem_Free(__pyx_v_previous_param_inds);
 
-  /* "spatial_minimiser1.pyx":485
+  /* "spatial_minimiser1.pyx":752
  * 	PyMem_Free(param_val_lengths)
  * 	PyMem_Free(previous_param_inds)
  * 	PyMem_Free(fitted_pointer)             # <<<<<<<<<<<<<<
@@ -7023,7 +8823,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
  */
   PyMem_Free(__pyx_v_fitted_pointer);
 
-  /* "spatial_minimiser1.pyx":486
+  /* "spatial_minimiser1.pyx":753
  * 	PyMem_Free(previous_param_inds)
  * 	PyMem_Free(fitted_pointer)
  * 	return grad_chi             # <<<<<<<<<<<<<<
@@ -7033,7 +8833,7 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
   __pyx_r = __pyx_v_grad_chi;
   goto __pyx_L0;
 
-  /* "spatial_minimiser1.pyx":356
+  /* "spatial_minimiser1.pyx":599
  * 
  * 
  * cdef double remove_discontinuities(numpy.ndarray[numpy.double_t, ndim=4] cube,\             # <<<<<<<<<<<<<<
@@ -7047,14 +8847,12 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
   __PYX_XDEC_MEMVIEW(&__pyx_t_6, 1);
-  __Pyx_XDECREF(__pyx_t_19);
   { PyObject *__pyx_type, *__pyx_value, *__pyx_tb;
     __Pyx_PyThreadState_declare
     __Pyx_PyThreadState_assign
     __Pyx_ErrFetch(&__pyx_type, &__pyx_value, &__pyx_tb);
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_cube.rcbuffer->pybuffer);
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_err_cube.rcbuffer->pybuffer);
-    __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_model.rcbuffer->pybuffer);
   __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
   __Pyx_WriteUnraisable("spatial_minimiser1.remove_discontinuities", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
   __pyx_r = 0;
@@ -7062,14 +8860,13 @@ static double __pyx_f_18spatial_minimiser1_remove_discontinuities(PyArrayObject 
   __pyx_L0:;
   __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_cube.rcbuffer->pybuffer);
   __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_err_cube.rcbuffer->pybuffer);
-  __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_model.rcbuffer->pybuffer);
   __pyx_L2:;
   __PYX_XDEC_MEMVIEW(&__pyx_v_fitted_copy, 1);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "spatial_minimiser1.pyx":488
+/* "spatial_minimiser1.pyx":755
  * 	return grad_chi
  * 
  * cdef int detect_discont(double[:] fitted, double **param_val,int t0, int y, int x, int param,int num_x, \             # <<<<<<<<<<<<<<
@@ -7109,7 +8906,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("detect_discont", 0);
 
-  /* "spatial_minimiser1.pyx":495
+  /* "spatial_minimiser1.pyx":762
  * 	cdef double sum1, sum2, mean,std, all_mean, ratio
  * 
  * 	sum1=0.0             # <<<<<<<<<<<<<<
@@ -7118,7 +8915,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
   __pyx_v_sum1 = 0.0;
 
-  /* "spatial_minimiser1.pyx":496
+  /* "spatial_minimiser1.pyx":763
  * 
  * 	sum1=0.0
  * 	sum2=0.0             # <<<<<<<<<<<<<<
@@ -7127,7 +8924,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
   __pyx_v_sum2 = 0.0;
 
-  /* "spatial_minimiser1.pyx":498
+  /* "spatial_minimiser1.pyx":765
  * 	sum2=0.0
  * 
  * 	ind5=t0*num_y*num_x*(num_params+1)+y*num_x*(num_params+1)+x*(num_params+1)+num_params             # <<<<<<<<<<<<<<
@@ -7136,7 +8933,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
   __pyx_v_ind5 = ((((((__pyx_v_t0 * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x * (__pyx_v_num_params + 1))) + __pyx_v_num_params);
 
-  /* "spatial_minimiser1.pyx":499
+  /* "spatial_minimiser1.pyx":766
  * 
  * 	ind5=t0*num_y*num_x*(num_params+1)+y*num_x*(num_params+1)+x*(num_params+1)+num_params
  * 	if fitted[ind5]<-0.2:             # <<<<<<<<<<<<<<
@@ -7151,12 +8948,12 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
   } else if (unlikely(__pyx_t_1 >= __pyx_v_fitted.shape[0])) __pyx_t_2 = 0;
   if (unlikely(__pyx_t_2 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_2);
-    __PYX_ERR(0, 499, __pyx_L1_error)
+    __PYX_ERR(0, 766, __pyx_L1_error)
   }
   __pyx_t_3 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_1 * __pyx_v_fitted.strides[0]) ))) < -0.2) != 0);
   if (__pyx_t_3) {
 
-    /* "spatial_minimiser1.pyx":500
+    /* "spatial_minimiser1.pyx":767
  * 	ind5=t0*num_y*num_x*(num_params+1)+y*num_x*(num_params+1)+x*(num_params+1)+num_params
  * 	if fitted[ind5]<-0.2:
  * 		return 0             # <<<<<<<<<<<<<<
@@ -7166,7 +8963,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
     __pyx_r = 0;
     goto __pyx_L0;
 
-    /* "spatial_minimiser1.pyx":499
+    /* "spatial_minimiser1.pyx":766
  * 
  * 	ind5=t0*num_y*num_x*(num_params+1)+y*num_x*(num_params+1)+x*(num_params+1)+num_params
  * 	if fitted[ind5]<-0.2:             # <<<<<<<<<<<<<<
@@ -7175,7 +8972,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
   }
 
-  /* "spatial_minimiser1.pyx":504
+  /* "spatial_minimiser1.pyx":771
  * 	cdef double param_value
  * 
  * 	param_value=param_val[param][int(fitted[ind5-num_params+param])]             # <<<<<<<<<<<<<<
@@ -7190,11 +8987,11 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
   } else if (unlikely(__pyx_t_1 >= __pyx_v_fitted.shape[0])) __pyx_t_2 = 0;
   if (unlikely(__pyx_t_2 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_2);
-    __PYX_ERR(0, 504, __pyx_L1_error)
+    __PYX_ERR(0, 771, __pyx_L1_error)
   }
   __pyx_v_param_value = ((__pyx_v_param_val[__pyx_v_param])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_1 * __pyx_v_fitted.strides[0]) ))))]);
 
-  /* "spatial_minimiser1.pyx":508
+  /* "spatial_minimiser1.pyx":775
  * 
  * 	cdef int num
  * 	if axis==0:             # <<<<<<<<<<<<<<
@@ -7204,7 +9001,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
   switch (__pyx_v_axis) {
     case 0:
 
-    /* "spatial_minimiser1.pyx":509
+    /* "spatial_minimiser1.pyx":776
  * 	cdef int num
  * 	if axis==0:
  * 		num=num_x             # <<<<<<<<<<<<<<
@@ -7213,7 +9010,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
     __pyx_v_num = __pyx_v_num_x;
 
-    /* "spatial_minimiser1.pyx":510
+    /* "spatial_minimiser1.pyx":777
  * 	if axis==0:
  * 		num=num_x
  * 		ind=x             # <<<<<<<<<<<<<<
@@ -7222,7 +9019,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
     __pyx_v_ind = __pyx_v_x;
 
-    /* "spatial_minimiser1.pyx":508
+    /* "spatial_minimiser1.pyx":775
  * 
  * 	cdef int num
  * 	if axis==0:             # <<<<<<<<<<<<<<
@@ -7232,7 +9029,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
     break;
     case 1:
 
-    /* "spatial_minimiser1.pyx":513
+    /* "spatial_minimiser1.pyx":780
  * 
  * 	elif axis==1:
  * 		num=num_y             # <<<<<<<<<<<<<<
@@ -7241,7 +9038,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
     __pyx_v_num = __pyx_v_num_y;
 
-    /* "spatial_minimiser1.pyx":514
+    /* "spatial_minimiser1.pyx":781
  * 	elif axis==1:
  * 		num=num_y
  * 		ind=y             # <<<<<<<<<<<<<<
@@ -7250,7 +9047,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
     __pyx_v_ind = __pyx_v_y;
 
-    /* "spatial_minimiser1.pyx":512
+    /* "spatial_minimiser1.pyx":779
  * 		ind=x
  * 
  * 	elif axis==1:             # <<<<<<<<<<<<<<
@@ -7260,7 +9057,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
     break;
     default:
 
-    /* "spatial_minimiser1.pyx":516
+    /* "spatial_minimiser1.pyx":783
  * 		ind=y
  * 	else:
  * 		num=num_times             # <<<<<<<<<<<<<<
@@ -7269,7 +9066,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
     __pyx_v_num = __pyx_v_num_times;
 
-    /* "spatial_minimiser1.pyx":517
+    /* "spatial_minimiser1.pyx":784
  * 	else:
  * 		num=num_times
  * 		ind=t0             # <<<<<<<<<<<<<<
@@ -7280,7 +9077,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
     break;
   }
 
-  /* "spatial_minimiser1.pyx":519
+  /* "spatial_minimiser1.pyx":786
  * 		ind=t0
  * 
  * 	ind1=ind             # <<<<<<<<<<<<<<
@@ -7289,7 +9086,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
   __pyx_v_ind1 = __pyx_v_ind;
 
-  /* "spatial_minimiser1.pyx":523
+  /* "spatial_minimiser1.pyx":790
  * 	cdef int low_ind, high_ind
  * 
  * 	if reverse==0:             # <<<<<<<<<<<<<<
@@ -7299,7 +9096,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
   switch (__pyx_v_reverse) {
     case 0:
 
-    /* "spatial_minimiser1.pyx":524
+    /* "spatial_minimiser1.pyx":791
  * 
  * 	if reverse==0:
  * 		low_ind=ind-search_length             # <<<<<<<<<<<<<<
@@ -7308,7 +9105,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
     __pyx_v_low_ind = (__pyx_v_ind - __pyx_v_search_length);
 
-    /* "spatial_minimiser1.pyx":525
+    /* "spatial_minimiser1.pyx":792
  * 	if reverse==0:
  * 		low_ind=ind-search_length
  * 		high_ind=ind             # <<<<<<<<<<<<<<
@@ -7317,7 +9114,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
     __pyx_v_high_ind = __pyx_v_ind;
 
-    /* "spatial_minimiser1.pyx":523
+    /* "spatial_minimiser1.pyx":790
  * 	cdef int low_ind, high_ind
  * 
  * 	if reverse==0:             # <<<<<<<<<<<<<<
@@ -7327,7 +9124,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
     break;
     case 1:
 
-    /* "spatial_minimiser1.pyx":527
+    /* "spatial_minimiser1.pyx":794
  * 		high_ind=ind
  * 	elif reverse==1:
  * 		low_ind=ind             # <<<<<<<<<<<<<<
@@ -7336,7 +9133,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
     __pyx_v_low_ind = __pyx_v_ind;
 
-    /* "spatial_minimiser1.pyx":528
+    /* "spatial_minimiser1.pyx":795
  * 	elif reverse==1:
  * 		low_ind=ind
  * 		high_ind=ind+search_length             # <<<<<<<<<<<<<<
@@ -7345,7 +9142,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
     __pyx_v_high_ind = (__pyx_v_ind + __pyx_v_search_length);
 
-    /* "spatial_minimiser1.pyx":526
+    /* "spatial_minimiser1.pyx":793
  * 		low_ind=ind-search_length
  * 		high_ind=ind
  * 	elif reverse==1:             # <<<<<<<<<<<<<<
@@ -7356,7 +9153,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
     default: break;
   }
 
-  /* "spatial_minimiser1.pyx":530
+  /* "spatial_minimiser1.pyx":797
  * 		high_ind=ind+search_length
  * 
  * 	if reverse==0:             # <<<<<<<<<<<<<<
@@ -7366,7 +9163,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
   switch (__pyx_v_reverse) {
     case 0:
 
-    /* "spatial_minimiser1.pyx":531
+    /* "spatial_minimiser1.pyx":798
  * 
  * 	if reverse==0:
  * 		while low_ind<0 and high_ind<num-1:             # <<<<<<<<<<<<<<
@@ -7385,7 +9182,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
       __pyx_L6_bool_binop_done:;
       if (!__pyx_t_3) break;
 
-      /* "spatial_minimiser1.pyx":532
+      /* "spatial_minimiser1.pyx":799
  * 	if reverse==0:
  * 		while low_ind<0 and high_ind<num-1:
  * 			low_ind=low_ind+1             # <<<<<<<<<<<<<<
@@ -7394,7 +9191,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
       __pyx_v_low_ind = (__pyx_v_low_ind + 1);
 
-      /* "spatial_minimiser1.pyx":533
+      /* "spatial_minimiser1.pyx":800
  * 		while low_ind<0 and high_ind<num-1:
  * 			low_ind=low_ind+1
  * 			high_ind=high_ind+1             # <<<<<<<<<<<<<<
@@ -7404,7 +9201,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
       __pyx_v_high_ind = (__pyx_v_high_ind + 1);
     }
 
-    /* "spatial_minimiser1.pyx":530
+    /* "spatial_minimiser1.pyx":797
  * 		high_ind=ind+search_length
  * 
  * 	if reverse==0:             # <<<<<<<<<<<<<<
@@ -7414,7 +9211,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
     break;
     case 1:
 
-    /* "spatial_minimiser1.pyx":535
+    /* "spatial_minimiser1.pyx":802
  * 			high_ind=high_ind+1
  * 	elif reverse==1:
  * 		while high_ind>num-1 and low_ind>0:             # <<<<<<<<<<<<<<
@@ -7433,7 +9230,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
       __pyx_L10_bool_binop_done:;
       if (!__pyx_t_3) break;
 
-      /* "spatial_minimiser1.pyx":536
+      /* "spatial_minimiser1.pyx":803
  * 	elif reverse==1:
  * 		while high_ind>num-1 and low_ind>0:
  * 			high_ind=high_ind-1             # <<<<<<<<<<<<<<
@@ -7442,7 +9239,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
       __pyx_v_high_ind = (__pyx_v_high_ind - 1);
 
-      /* "spatial_minimiser1.pyx":537
+      /* "spatial_minimiser1.pyx":804
  * 		while high_ind>num-1 and low_ind>0:
  * 			high_ind=high_ind-1
  * 			low_ind=low_ind-1             # <<<<<<<<<<<<<<
@@ -7452,7 +9249,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
       __pyx_v_low_ind = (__pyx_v_low_ind - 1);
     }
 
-    /* "spatial_minimiser1.pyx":534
+    /* "spatial_minimiser1.pyx":801
  * 			low_ind=low_ind+1
  * 			high_ind=high_ind+1
  * 	elif reverse==1:             # <<<<<<<<<<<<<<
@@ -7463,7 +9260,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
     default: break;
   }
 
-  /* "spatial_minimiser1.pyx":539
+  /* "spatial_minimiser1.pyx":806
  * 			low_ind=low_ind-1
  * 
  * 	ind=high_ind-low_ind             # <<<<<<<<<<<<<<
@@ -7472,7 +9269,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
   __pyx_v_ind = (__pyx_v_high_ind - __pyx_v_low_ind);
 
-  /* "spatial_minimiser1.pyx":540
+  /* "spatial_minimiser1.pyx":807
  * 
  * 	ind=high_ind-low_ind
  * 	if ind<search_length:             # <<<<<<<<<<<<<<
@@ -7482,7 +9279,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
   __pyx_t_3 = ((__pyx_v_ind < __pyx_v_search_length) != 0);
   if (__pyx_t_3) {
 
-    /* "spatial_minimiser1.pyx":541
+    /* "spatial_minimiser1.pyx":808
  * 	ind=high_ind-low_ind
  * 	if ind<search_length:
  * 		return 0             # <<<<<<<<<<<<<<
@@ -7492,7 +9289,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
     __pyx_r = 0;
     goto __pyx_L0;
 
-    /* "spatial_minimiser1.pyx":540
+    /* "spatial_minimiser1.pyx":807
  * 
  * 	ind=high_ind-low_ind
  * 	if ind<search_length:             # <<<<<<<<<<<<<<
@@ -7501,7 +9298,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
   }
 
-  /* "spatial_minimiser1.pyx":543
+  /* "spatial_minimiser1.pyx":810
  * 		return 0
  * 
  * 	if axis==0:             # <<<<<<<<<<<<<<
@@ -7511,7 +9308,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
   switch (__pyx_v_axis) {
     case 0:
 
-    /* "spatial_minimiser1.pyx":544
+    /* "spatial_minimiser1.pyx":811
  * 
  * 	if axis==0:
  * 		j=0             # <<<<<<<<<<<<<<
@@ -7520,7 +9317,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
     __pyx_v_j = 0;
 
-    /* "spatial_minimiser1.pyx":546
+    /* "spatial_minimiser1.pyx":813
  * 		j=0
  * 
  * 		for x1 in range(low_ind,high_ind+1):             # <<<<<<<<<<<<<<
@@ -7532,7 +9329,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
     for (__pyx_t_2 = __pyx_v_low_ind; __pyx_t_2 < __pyx_t_6; __pyx_t_2+=1) {
       __pyx_v_x1 = __pyx_t_2;
 
-      /* "spatial_minimiser1.pyx":547
+      /* "spatial_minimiser1.pyx":814
  * 
  * 		for x1 in range(low_ind,high_ind+1):
  * 			if x1==ind1:             # <<<<<<<<<<<<<<
@@ -7542,7 +9339,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
       __pyx_t_3 = ((__pyx_v_x1 == __pyx_v_ind1) != 0);
       if (__pyx_t_3) {
 
-        /* "spatial_minimiser1.pyx":548
+        /* "spatial_minimiser1.pyx":815
  * 		for x1 in range(low_ind,high_ind+1):
  * 			if x1==ind1:
  * 				continue             # <<<<<<<<<<<<<<
@@ -7551,7 +9348,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
         goto __pyx_L13_continue;
 
-        /* "spatial_minimiser1.pyx":547
+        /* "spatial_minimiser1.pyx":814
  * 
  * 		for x1 in range(low_ind,high_ind+1):
  * 			if x1==ind1:             # <<<<<<<<<<<<<<
@@ -7560,7 +9357,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
       }
 
-      /* "spatial_minimiser1.pyx":549
+      /* "spatial_minimiser1.pyx":816
  * 			if x1==ind1:
  * 				continue
  * 			ind5=t0*num_y*num_x*(num_params+1)+y*num_x*(num_params+1)+x1*(num_params+1)+num_params             # <<<<<<<<<<<<<<
@@ -7569,7 +9366,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
       __pyx_v_ind5 = ((((((__pyx_v_t0 * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_num_params);
 
-      /* "spatial_minimiser1.pyx":550
+      /* "spatial_minimiser1.pyx":817
  * 				continue
  * 			ind5=t0*num_y*num_x*(num_params+1)+y*num_x*(num_params+1)+x1*(num_params+1)+num_params
  * 			if fitted[ind5]>0.0:             # <<<<<<<<<<<<<<
@@ -7584,12 +9381,12 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
       } else if (unlikely(__pyx_t_1 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
       if (unlikely(__pyx_t_7 != -1)) {
         __Pyx_RaiseBufferIndexError(__pyx_t_7);
-        __PYX_ERR(0, 550, __pyx_L1_error)
+        __PYX_ERR(0, 817, __pyx_L1_error)
       }
       __pyx_t_3 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_1 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
       if (__pyx_t_3) {
 
-        /* "spatial_minimiser1.pyx":551
+        /* "spatial_minimiser1.pyx":818
  * 			ind5=t0*num_y*num_x*(num_params+1)+y*num_x*(num_params+1)+x1*(num_params+1)+num_params
  * 			if fitted[ind5]>0.0:
  * 				ind=t0*num_y*num_x*(num_params+1)+y*num_x*(num_params+1)+x1*(num_params+1)+param             # <<<<<<<<<<<<<<
@@ -7598,7 +9395,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
         __pyx_v_ind = ((((((__pyx_v_t0 * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_param);
 
-        /* "spatial_minimiser1.pyx":552
+        /* "spatial_minimiser1.pyx":819
  * 			if fitted[ind5]>0.0:
  * 				ind=t0*num_y*num_x*(num_params+1)+y*num_x*(num_params+1)+x1*(num_params+1)+param
  * 				sum1=sum1+square(param_val[param][int(fitted[ind])])             # <<<<<<<<<<<<<<
@@ -7613,11 +9410,11 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
         } else if (unlikely(__pyx_t_1 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
         if (unlikely(__pyx_t_7 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_7);
-          __PYX_ERR(0, 552, __pyx_L1_error)
+          __PYX_ERR(0, 819, __pyx_L1_error)
         }
         __pyx_v_sum1 = (__pyx_v_sum1 + __pyx_f_18spatial_minimiser1_square(((__pyx_v_param_val[__pyx_v_param])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_1 * __pyx_v_fitted.strides[0]) ))))])));
 
-        /* "spatial_minimiser1.pyx":553
+        /* "spatial_minimiser1.pyx":820
  * 				ind=t0*num_y*num_x*(num_params+1)+y*num_x*(num_params+1)+x1*(num_params+1)+param
  * 				sum1=sum1+square(param_val[param][int(fitted[ind])])
  * 				sum2=sum2+param_val[param][int(fitted[ind])]             # <<<<<<<<<<<<<<
@@ -7632,11 +9429,11 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
         } else if (unlikely(__pyx_t_1 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
         if (unlikely(__pyx_t_7 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_7);
-          __PYX_ERR(0, 553, __pyx_L1_error)
+          __PYX_ERR(0, 820, __pyx_L1_error)
         }
         __pyx_v_sum2 = (__pyx_v_sum2 + ((__pyx_v_param_val[__pyx_v_param])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_1 * __pyx_v_fitted.strides[0]) ))))]));
 
-        /* "spatial_minimiser1.pyx":554
+        /* "spatial_minimiser1.pyx":821
  * 				sum1=sum1+square(param_val[param][int(fitted[ind])])
  * 				sum2=sum2+param_val[param][int(fitted[ind])]
  * 				j=j+1             # <<<<<<<<<<<<<<
@@ -7645,7 +9442,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
         __pyx_v_j = (__pyx_v_j + 1);
 
-        /* "spatial_minimiser1.pyx":550
+        /* "spatial_minimiser1.pyx":817
  * 				continue
  * 			ind5=t0*num_y*num_x*(num_params+1)+y*num_x*(num_params+1)+x1*(num_params+1)+num_params
  * 			if fitted[ind5]>0.0:             # <<<<<<<<<<<<<<
@@ -7656,7 +9453,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
       __pyx_L13_continue:;
     }
 
-    /* "spatial_minimiser1.pyx":556
+    /* "spatial_minimiser1.pyx":823
  * 				j=j+1
  * 
  * 		if j<search_length//2:             # <<<<<<<<<<<<<<
@@ -7666,7 +9463,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
     __pyx_t_3 = ((__pyx_v_j < __Pyx_div_long(__pyx_v_search_length, 2)) != 0);
     if (__pyx_t_3) {
 
-      /* "spatial_minimiser1.pyx":557
+      /* "spatial_minimiser1.pyx":824
  * 
  * 		if j<search_length//2:
  * 			return 0             # <<<<<<<<<<<<<<
@@ -7676,7 +9473,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
       __pyx_r = 0;
       goto __pyx_L0;
 
-      /* "spatial_minimiser1.pyx":556
+      /* "spatial_minimiser1.pyx":823
  * 				j=j+1
  * 
  * 		if j<search_length//2:             # <<<<<<<<<<<<<<
@@ -7685,7 +9482,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
     }
 
-    /* "spatial_minimiser1.pyx":558
+    /* "spatial_minimiser1.pyx":825
  * 		if j<search_length//2:
  * 			return 0
  * 		mean=sum2/(search_length-1)             # <<<<<<<<<<<<<<
@@ -7695,11 +9492,11 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
     __pyx_t_5 = (__pyx_v_search_length - 1);
     if (unlikely(__pyx_t_5 == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-      __PYX_ERR(0, 558, __pyx_L1_error)
+      __PYX_ERR(0, 825, __pyx_L1_error)
     }
     __pyx_v_mean = (__pyx_v_sum2 / ((double)__pyx_t_5));
 
-    /* "spatial_minimiser1.pyx":559
+    /* "spatial_minimiser1.pyx":826
  * 			return 0
  * 		mean=sum2/(search_length-1)
  * 		std=sqrt(sum1/(search_length-1)-square(mean))             # <<<<<<<<<<<<<<
@@ -7709,11 +9506,11 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
     __pyx_t_5 = (__pyx_v_search_length - 1);
     if (unlikely(__pyx_t_5 == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-      __PYX_ERR(0, 559, __pyx_L1_error)
+      __PYX_ERR(0, 826, __pyx_L1_error)
     }
     __pyx_v_std = sqrt(((__pyx_v_sum1 / ((double)__pyx_t_5)) - __pyx_f_18spatial_minimiser1_square(__pyx_v_mean)));
 
-    /* "spatial_minimiser1.pyx":560
+    /* "spatial_minimiser1.pyx":827
  * 		mean=sum2/(search_length-1)
  * 		std=sqrt(sum1/(search_length-1)-square(mean))
  * 		all_mean=(sum2+param_value)/search_length             # <<<<<<<<<<<<<<
@@ -7723,11 +9520,11 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
     __pyx_t_8 = (__pyx_v_sum2 + __pyx_v_param_value);
     if (unlikely(__pyx_v_search_length == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-      __PYX_ERR(0, 560, __pyx_L1_error)
+      __PYX_ERR(0, 827, __pyx_L1_error)
     }
     __pyx_v_all_mean = (__pyx_t_8 / ((double)__pyx_v_search_length));
 
-    /* "spatial_minimiser1.pyx":561
+    /* "spatial_minimiser1.pyx":828
  * 		std=sqrt(sum1/(search_length-1)-square(mean))
  * 		all_mean=(sum2+param_value)/search_length
  * 		if std<1e-4 and absolute(all_mean-mean)<1e-4:             # <<<<<<<<<<<<<<
@@ -7745,7 +9542,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
     __pyx_L19_bool_binop_done:;
     if (__pyx_t_3) {
 
-      /* "spatial_minimiser1.pyx":562
+      /* "spatial_minimiser1.pyx":829
  * 		all_mean=(sum2+param_value)/search_length
  * 		if std<1e-4 and absolute(all_mean-mean)<1e-4:
  * 			return 0             # <<<<<<<<<<<<<<
@@ -7755,7 +9552,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
       __pyx_r = 0;
       goto __pyx_L0;
 
-      /* "spatial_minimiser1.pyx":561
+      /* "spatial_minimiser1.pyx":828
  * 		std=sqrt(sum1/(search_length-1)-square(mean))
  * 		all_mean=(sum2+param_value)/search_length
  * 		if std<1e-4 and absolute(all_mean-mean)<1e-4:             # <<<<<<<<<<<<<<
@@ -7764,7 +9561,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
     }
 
-    /* "spatial_minimiser1.pyx":563
+    /* "spatial_minimiser1.pyx":830
  * 		if std<1e-4 and absolute(all_mean-mean)<1e-4:
  * 			return 0
  * 		elif std<1e-4 and absolute(all_mean-mean)>1e-4:             # <<<<<<<<<<<<<<
@@ -7782,7 +9579,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
     __pyx_L21_bool_binop_done:;
     if (__pyx_t_3) {
 
-      /* "spatial_minimiser1.pyx":564
+      /* "spatial_minimiser1.pyx":831
  * 			return 0
  * 		elif std<1e-4 and absolute(all_mean-mean)>1e-4:
  * 			return 1             # <<<<<<<<<<<<<<
@@ -7792,7 +9589,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
       __pyx_r = 1;
       goto __pyx_L0;
 
-      /* "spatial_minimiser1.pyx":563
+      /* "spatial_minimiser1.pyx":830
  * 		if std<1e-4 and absolute(all_mean-mean)<1e-4:
  * 			return 0
  * 		elif std<1e-4 and absolute(all_mean-mean)>1e-4:             # <<<<<<<<<<<<<<
@@ -7801,7 +9598,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
     }
 
-    /* "spatial_minimiser1.pyx":565
+    /* "spatial_minimiser1.pyx":832
  * 		elif std<1e-4 and absolute(all_mean-mean)>1e-4:
  * 			return 1
  * 		ratio=(absolute((all_mean-mean)/std))             # <<<<<<<<<<<<<<
@@ -7811,11 +9608,11 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
     __pyx_t_8 = (__pyx_v_all_mean - __pyx_v_mean);
     if (unlikely(__pyx_v_std == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-      __PYX_ERR(0, 565, __pyx_L1_error)
+      __PYX_ERR(0, 832, __pyx_L1_error)
     }
     __pyx_v_ratio = __pyx_f_18spatial_minimiser1_absolute((__pyx_t_8 / __pyx_v_std));
 
-    /* "spatial_minimiser1.pyx":566
+    /* "spatial_minimiser1.pyx":833
  * 			return 1
  * 		ratio=(absolute((all_mean-mean)/std))
  * 		if ratio>thresh:             # <<<<<<<<<<<<<<
@@ -7825,7 +9622,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
     __pyx_t_3 = ((__pyx_v_ratio > __pyx_v_thresh) != 0);
     if (__pyx_t_3) {
 
-      /* "spatial_minimiser1.pyx":567
+      /* "spatial_minimiser1.pyx":834
  * 		ratio=(absolute((all_mean-mean)/std))
  * 		if ratio>thresh:
  * 			return 1             # <<<<<<<<<<<<<<
@@ -7835,7 +9632,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
       __pyx_r = 1;
       goto __pyx_L0;
 
-      /* "spatial_minimiser1.pyx":566
+      /* "spatial_minimiser1.pyx":833
  * 			return 1
  * 		ratio=(absolute((all_mean-mean)/std))
  * 		if ratio>thresh:             # <<<<<<<<<<<<<<
@@ -7844,7 +9641,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
     }
 
-    /* "spatial_minimiser1.pyx":543
+    /* "spatial_minimiser1.pyx":810
  * 		return 0
  * 
  * 	if axis==0:             # <<<<<<<<<<<<<<
@@ -7854,7 +9651,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
     break;
     case 1:
 
-    /* "spatial_minimiser1.pyx":570
+    /* "spatial_minimiser1.pyx":837
  * 
  * 	elif axis==1:
  * 		j=0             # <<<<<<<<<<<<<<
@@ -7863,7 +9660,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
     __pyx_v_j = 0;
 
-    /* "spatial_minimiser1.pyx":571
+    /* "spatial_minimiser1.pyx":838
  * 	elif axis==1:
  * 		j=0
  * 		for y1 in range(low_ind,high_ind+1):             # <<<<<<<<<<<<<<
@@ -7875,7 +9672,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
     for (__pyx_t_2 = __pyx_v_low_ind; __pyx_t_2 < __pyx_t_6; __pyx_t_2+=1) {
       __pyx_v_y1 = __pyx_t_2;
 
-      /* "spatial_minimiser1.pyx":572
+      /* "spatial_minimiser1.pyx":839
  * 		j=0
  * 		for y1 in range(low_ind,high_ind+1):
  * 			if y1==ind1:             # <<<<<<<<<<<<<<
@@ -7885,7 +9682,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
       __pyx_t_3 = ((__pyx_v_y1 == __pyx_v_ind1) != 0);
       if (__pyx_t_3) {
 
-        /* "spatial_minimiser1.pyx":573
+        /* "spatial_minimiser1.pyx":840
  * 		for y1 in range(low_ind,high_ind+1):
  * 			if y1==ind1:
  * 				continue             # <<<<<<<<<<<<<<
@@ -7894,7 +9691,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
         goto __pyx_L24_continue;
 
-        /* "spatial_minimiser1.pyx":572
+        /* "spatial_minimiser1.pyx":839
  * 		j=0
  * 		for y1 in range(low_ind,high_ind+1):
  * 			if y1==ind1:             # <<<<<<<<<<<<<<
@@ -7903,7 +9700,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
       }
 
-      /* "spatial_minimiser1.pyx":574
+      /* "spatial_minimiser1.pyx":841
  * 			if y1==ind1:
  * 				continue
  * 			ind5=t0*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x*(num_params+1)+num_params             # <<<<<<<<<<<<<<
@@ -7912,7 +9709,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
       __pyx_v_ind5 = ((((((__pyx_v_t0 * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x * (__pyx_v_num_params + 1))) + __pyx_v_num_params);
 
-      /* "spatial_minimiser1.pyx":575
+      /* "spatial_minimiser1.pyx":842
  * 				continue
  * 			ind5=t0*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x*(num_params+1)+num_params
  * 			if fitted[ind5]>0.0:             # <<<<<<<<<<<<<<
@@ -7927,12 +9724,12 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
       } else if (unlikely(__pyx_t_1 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
       if (unlikely(__pyx_t_7 != -1)) {
         __Pyx_RaiseBufferIndexError(__pyx_t_7);
-        __PYX_ERR(0, 575, __pyx_L1_error)
+        __PYX_ERR(0, 842, __pyx_L1_error)
       }
       __pyx_t_3 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_1 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
       if (__pyx_t_3) {
 
-        /* "spatial_minimiser1.pyx":576
+        /* "spatial_minimiser1.pyx":843
  * 			ind5=t0*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x*(num_params+1)+num_params
  * 			if fitted[ind5]>0.0:
  * 				ind=t0*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x*(num_params+1)+param             # <<<<<<<<<<<<<<
@@ -7941,7 +9738,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
         __pyx_v_ind = ((((((__pyx_v_t0 * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x * (__pyx_v_num_params + 1))) + __pyx_v_param);
 
-        /* "spatial_minimiser1.pyx":577
+        /* "spatial_minimiser1.pyx":844
  * 			if fitted[ind5]>0.0:
  * 				ind=t0*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x*(num_params+1)+param
  * 				sum1=sum1+square(param_val[param][int(fitted[ind])])             # <<<<<<<<<<<<<<
@@ -7956,11 +9753,11 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
         } else if (unlikely(__pyx_t_1 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
         if (unlikely(__pyx_t_7 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_7);
-          __PYX_ERR(0, 577, __pyx_L1_error)
+          __PYX_ERR(0, 844, __pyx_L1_error)
         }
         __pyx_v_sum1 = (__pyx_v_sum1 + __pyx_f_18spatial_minimiser1_square(((__pyx_v_param_val[__pyx_v_param])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_1 * __pyx_v_fitted.strides[0]) ))))])));
 
-        /* "spatial_minimiser1.pyx":578
+        /* "spatial_minimiser1.pyx":845
  * 				ind=t0*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x*(num_params+1)+param
  * 				sum1=sum1+square(param_val[param][int(fitted[ind])])
  * 				sum2=sum2+param_val[param][int(fitted[ind])]             # <<<<<<<<<<<<<<
@@ -7975,11 +9772,11 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
         } else if (unlikely(__pyx_t_1 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
         if (unlikely(__pyx_t_7 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_7);
-          __PYX_ERR(0, 578, __pyx_L1_error)
+          __PYX_ERR(0, 845, __pyx_L1_error)
         }
         __pyx_v_sum2 = (__pyx_v_sum2 + ((__pyx_v_param_val[__pyx_v_param])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_1 * __pyx_v_fitted.strides[0]) ))))]));
 
-        /* "spatial_minimiser1.pyx":579
+        /* "spatial_minimiser1.pyx":846
  * 				sum1=sum1+square(param_val[param][int(fitted[ind])])
  * 				sum2=sum2+param_val[param][int(fitted[ind])]
  * 				j=j+1             # <<<<<<<<<<<<<<
@@ -7988,7 +9785,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
         __pyx_v_j = (__pyx_v_j + 1);
 
-        /* "spatial_minimiser1.pyx":575
+        /* "spatial_minimiser1.pyx":842
  * 				continue
  * 			ind5=t0*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x*(num_params+1)+num_params
  * 			if fitted[ind5]>0.0:             # <<<<<<<<<<<<<<
@@ -7999,7 +9796,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
       __pyx_L24_continue:;
     }
 
-    /* "spatial_minimiser1.pyx":580
+    /* "spatial_minimiser1.pyx":847
  * 				sum2=sum2+param_val[param][int(fitted[ind])]
  * 				j=j+1
  * 		if j<search_length//2:             # <<<<<<<<<<<<<<
@@ -8009,7 +9806,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
     __pyx_t_3 = ((__pyx_v_j < __Pyx_div_long(__pyx_v_search_length, 2)) != 0);
     if (__pyx_t_3) {
 
-      /* "spatial_minimiser1.pyx":581
+      /* "spatial_minimiser1.pyx":848
  * 				j=j+1
  * 		if j<search_length//2:
  * 			return 0             # <<<<<<<<<<<<<<
@@ -8019,7 +9816,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
       __pyx_r = 0;
       goto __pyx_L0;
 
-      /* "spatial_minimiser1.pyx":580
+      /* "spatial_minimiser1.pyx":847
  * 				sum2=sum2+param_val[param][int(fitted[ind])]
  * 				j=j+1
  * 		if j<search_length//2:             # <<<<<<<<<<<<<<
@@ -8028,7 +9825,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
     }
 
-    /* "spatial_minimiser1.pyx":582
+    /* "spatial_minimiser1.pyx":849
  * 		if j<search_length//2:
  * 			return 0
  * 		mean=sum2/(search_length-1)             # <<<<<<<<<<<<<<
@@ -8038,11 +9835,11 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
     __pyx_t_5 = (__pyx_v_search_length - 1);
     if (unlikely(__pyx_t_5 == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-      __PYX_ERR(0, 582, __pyx_L1_error)
+      __PYX_ERR(0, 849, __pyx_L1_error)
     }
     __pyx_v_mean = (__pyx_v_sum2 / ((double)__pyx_t_5));
 
-    /* "spatial_minimiser1.pyx":583
+    /* "spatial_minimiser1.pyx":850
  * 			return 0
  * 		mean=sum2/(search_length-1)
  * 		std=sqrt(sum1/(search_length-1)-square(mean))             # <<<<<<<<<<<<<<
@@ -8052,11 +9849,11 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
     __pyx_t_5 = (__pyx_v_search_length - 1);
     if (unlikely(__pyx_t_5 == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-      __PYX_ERR(0, 583, __pyx_L1_error)
+      __PYX_ERR(0, 850, __pyx_L1_error)
     }
     __pyx_v_std = sqrt(((__pyx_v_sum1 / ((double)__pyx_t_5)) - __pyx_f_18spatial_minimiser1_square(__pyx_v_mean)));
 
-    /* "spatial_minimiser1.pyx":584
+    /* "spatial_minimiser1.pyx":851
  * 		mean=sum2/(search_length-1)
  * 		std=sqrt(sum1/(search_length-1)-square(mean))
  * 		all_mean=(sum2+param_value)/search_length             # <<<<<<<<<<<<<<
@@ -8066,11 +9863,11 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
     __pyx_t_8 = (__pyx_v_sum2 + __pyx_v_param_value);
     if (unlikely(__pyx_v_search_length == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-      __PYX_ERR(0, 584, __pyx_L1_error)
+      __PYX_ERR(0, 851, __pyx_L1_error)
     }
     __pyx_v_all_mean = (__pyx_t_8 / ((double)__pyx_v_search_length));
 
-    /* "spatial_minimiser1.pyx":585
+    /* "spatial_minimiser1.pyx":852
  * 		std=sqrt(sum1/(search_length-1)-square(mean))
  * 		all_mean=(sum2+param_value)/search_length
  * 		if std<1e-4 and absolute(all_mean-mean)<1e-4:             # <<<<<<<<<<<<<<
@@ -8088,7 +9885,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
     __pyx_L30_bool_binop_done:;
     if (__pyx_t_3) {
 
-      /* "spatial_minimiser1.pyx":586
+      /* "spatial_minimiser1.pyx":853
  * 		all_mean=(sum2+param_value)/search_length
  * 		if std<1e-4 and absolute(all_mean-mean)<1e-4:
  * 			return 0             # <<<<<<<<<<<<<<
@@ -8098,7 +9895,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
       __pyx_r = 0;
       goto __pyx_L0;
 
-      /* "spatial_minimiser1.pyx":585
+      /* "spatial_minimiser1.pyx":852
  * 		std=sqrt(sum1/(search_length-1)-square(mean))
  * 		all_mean=(sum2+param_value)/search_length
  * 		if std<1e-4 and absolute(all_mean-mean)<1e-4:             # <<<<<<<<<<<<<<
@@ -8107,7 +9904,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
     }
 
-    /* "spatial_minimiser1.pyx":587
+    /* "spatial_minimiser1.pyx":854
  * 		if std<1e-4 and absolute(all_mean-mean)<1e-4:
  * 			return 0
  * 		elif std<1e-4 and absolute(all_mean-mean)>1e-4:             # <<<<<<<<<<<<<<
@@ -8125,7 +9922,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
     __pyx_L32_bool_binop_done:;
     if (__pyx_t_3) {
 
-      /* "spatial_minimiser1.pyx":588
+      /* "spatial_minimiser1.pyx":855
  * 			return 0
  * 		elif std<1e-4 and absolute(all_mean-mean)>1e-4:
  * 			return 1             # <<<<<<<<<<<<<<
@@ -8135,7 +9932,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
       __pyx_r = 1;
       goto __pyx_L0;
 
-      /* "spatial_minimiser1.pyx":587
+      /* "spatial_minimiser1.pyx":854
  * 		if std<1e-4 and absolute(all_mean-mean)<1e-4:
  * 			return 0
  * 		elif std<1e-4 and absolute(all_mean-mean)>1e-4:             # <<<<<<<<<<<<<<
@@ -8144,7 +9941,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
     }
 
-    /* "spatial_minimiser1.pyx":589
+    /* "spatial_minimiser1.pyx":856
  * 		elif std<1e-4 and absolute(all_mean-mean)>1e-4:
  * 			return 1
  * 		ratio=(absolute((all_mean-mean)/std))             # <<<<<<<<<<<<<<
@@ -8154,11 +9951,11 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
     __pyx_t_8 = (__pyx_v_all_mean - __pyx_v_mean);
     if (unlikely(__pyx_v_std == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-      __PYX_ERR(0, 589, __pyx_L1_error)
+      __PYX_ERR(0, 856, __pyx_L1_error)
     }
     __pyx_v_ratio = __pyx_f_18spatial_minimiser1_absolute((__pyx_t_8 / __pyx_v_std));
 
-    /* "spatial_minimiser1.pyx":590
+    /* "spatial_minimiser1.pyx":857
  * 			return 1
  * 		ratio=(absolute((all_mean-mean)/std))
  * 		if ratio>thresh:             # <<<<<<<<<<<<<<
@@ -8168,7 +9965,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
     __pyx_t_3 = ((__pyx_v_ratio > __pyx_v_thresh) != 0);
     if (__pyx_t_3) {
 
-      /* "spatial_minimiser1.pyx":591
+      /* "spatial_minimiser1.pyx":858
  * 		ratio=(absolute((all_mean-mean)/std))
  * 		if ratio>thresh:
  * 			return 1             # <<<<<<<<<<<<<<
@@ -8178,7 +9975,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
       __pyx_r = 1;
       goto __pyx_L0;
 
-      /* "spatial_minimiser1.pyx":590
+      /* "spatial_minimiser1.pyx":857
  * 			return 1
  * 		ratio=(absolute((all_mean-mean)/std))
  * 		if ratio>thresh:             # <<<<<<<<<<<<<<
@@ -8187,7 +9984,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
  */
     }
 
-    /* "spatial_minimiser1.pyx":569
+    /* "spatial_minimiser1.pyx":836
  * 			return 1
  * 
  * 	elif axis==1:             # <<<<<<<<<<<<<<
@@ -8197,7 +9994,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
     break;
     default:
 
-    /* "spatial_minimiser1.pyx":594
+    /* "spatial_minimiser1.pyx":861
  * 
  * 	else:
  * 		return 0  ### temporal discontinuity detection not implemented             # <<<<<<<<<<<<<<
@@ -8209,7 +10006,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
     break;
   }
 
-  /* "spatial_minimiser1.pyx":596
+  /* "spatial_minimiser1.pyx":863
  * 		return 0  ### temporal discontinuity detection not implemented
  * 
  * 	return 0             # <<<<<<<<<<<<<<
@@ -8219,7 +10016,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
   __pyx_r = 0;
   goto __pyx_L0;
 
-  /* "spatial_minimiser1.pyx":488
+  /* "spatial_minimiser1.pyx":755
  * 	return grad_chi
  * 
  * cdef int detect_discont(double[:] fitted, double **param_val,int t0, int y, int x, int param,int num_x, \             # <<<<<<<<<<<<<<
@@ -8236,7 +10033,7 @@ static int __pyx_f_18spatial_minimiser1_detect_discont(__Pyx_memviewslice __pyx_
   return __pyx_r;
 }
 
-/* "spatial_minimiser1.pyx":600
+/* "spatial_minimiser1.pyx":867
  * 
  * 
  * cdef int list_discont(double[:] fitted, double **param_val, int num_x, int num_y,\             # <<<<<<<<<<<<<<
@@ -8269,7 +10066,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
   int __pyx_t_13;
   __Pyx_RefNannySetupContext("list_discont", 0);
 
-  /* "spatial_minimiser1.pyx":606
+  /* "spatial_minimiser1.pyx":873
  * 	cdef int t, x1,y1,param,j
  * 
  * 	cdef int detected=0             # <<<<<<<<<<<<<<
@@ -8278,7 +10075,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
  */
   __pyx_v_detected = 0;
 
-  /* "spatial_minimiser1.pyx":608
+  /* "spatial_minimiser1.pyx":875
  * 	cdef int detected=0
  * 
  * 	cdef int present_already=0             # <<<<<<<<<<<<<<
@@ -8287,7 +10084,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
  */
   __pyx_v_present_already = 0;
 
-  /* "spatial_minimiser1.pyx":611
+  /* "spatial_minimiser1.pyx":878
  * 
  * 	#### remember that grad is a array with size num_times*num_y*num_x*num_params
  * 	j=0             # <<<<<<<<<<<<<<
@@ -8296,7 +10093,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
  */
   __pyx_v_j = 0;
 
-  /* "spatial_minimiser1.pyx":612
+  /* "spatial_minimiser1.pyx":879
  * 	#### remember that grad is a array with size num_times*num_y*num_x*num_params
  * 	j=0
  * 	for t in range(num_times):             # <<<<<<<<<<<<<<
@@ -8308,7 +10105,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_t = __pyx_t_3;
 
-    /* "spatial_minimiser1.pyx":613
+    /* "spatial_minimiser1.pyx":880
  * 	j=0
  * 	for t in range(num_times):
  * 		for y1 in range(num_y):             # <<<<<<<<<<<<<<
@@ -8320,7 +10117,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_y1 = __pyx_t_6;
 
-      /* "spatial_minimiser1.pyx":614
+      /* "spatial_minimiser1.pyx":881
  * 	for t in range(num_times):
  * 		for y1 in range(num_y):
  * 			for x1 in range(num_x):             # <<<<<<<<<<<<<<
@@ -8332,7 +10129,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
       for (__pyx_t_9 = 0; __pyx_t_9 < __pyx_t_8; __pyx_t_9+=1) {
         __pyx_v_x1 = __pyx_t_9;
 
-        /* "spatial_minimiser1.pyx":615
+        /* "spatial_minimiser1.pyx":882
  * 		for y1 in range(num_y):
  * 			for x1 in range(num_x):
  * 				detected=0             # <<<<<<<<<<<<<<
@@ -8341,7 +10138,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
  */
         __pyx_v_detected = 0;
 
-        /* "spatial_minimiser1.pyx":616
+        /* "spatial_minimiser1.pyx":883
  * 			for x1 in range(num_x):
  * 				detected=0
  * 				for param in range(num_params):             # <<<<<<<<<<<<<<
@@ -8353,7 +10150,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
         for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12+=1) {
           __pyx_v_param = __pyx_t_12;
 
-          /* "spatial_minimiser1.pyx":617
+          /* "spatial_minimiser1.pyx":884
  * 				detected=0
  * 				for param in range(num_params):
  * 					detected=detect_discont(fitted,param_val,t,y1,x1,param,num_x,num_y,num_times,\             # <<<<<<<<<<<<<<
@@ -8362,7 +10159,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
  */
           __pyx_v_detected = __pyx_f_18spatial_minimiser1_detect_discont(__pyx_v_fitted, __pyx_v_param_val, __pyx_v_t, __pyx_v_y1, __pyx_v_x1, __pyx_v_param, __pyx_v_num_x, __pyx_v_num_y, __pyx_v_num_times, __pyx_v_num_params, __pyx_v_search_length, 0, __pyx_v_thresh, 0);
 
-          /* "spatial_minimiser1.pyx":619
+          /* "spatial_minimiser1.pyx":886
  * 					detected=detect_discont(fitted,param_val,t,y1,x1,param,num_x,num_y,num_times,\
  * 							 	num_params, search_length=search_length,thresh=thresh,axis=0,reverse=0)
  * 					if detected==1:             # <<<<<<<<<<<<<<
@@ -8372,7 +10169,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
           __pyx_t_13 = ((__pyx_v_detected == 1) != 0);
           if (__pyx_t_13) {
 
-            /* "spatial_minimiser1.pyx":620
+            /* "spatial_minimiser1.pyx":887
  * 							 	num_params, search_length=search_length,thresh=thresh,axis=0,reverse=0)
  * 					if detected==1:
  * 						break             # <<<<<<<<<<<<<<
@@ -8381,7 +10178,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
  */
             goto __pyx_L10_break;
 
-            /* "spatial_minimiser1.pyx":619
+            /* "spatial_minimiser1.pyx":886
  * 					detected=detect_discont(fitted,param_val,t,y1,x1,param,num_x,num_y,num_times,\
  * 							 	num_params, search_length=search_length,thresh=thresh,axis=0,reverse=0)
  * 					if detected==1:             # <<<<<<<<<<<<<<
@@ -8390,7 +10187,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
  */
           }
 
-          /* "spatial_minimiser1.pyx":622
+          /* "spatial_minimiser1.pyx":889
  * 						break
  * 
  * 					detected=detect_discont(fitted,param_val,t,y1,x1,param,num_x,num_y,num_times,\             # <<<<<<<<<<<<<<
@@ -8399,7 +10196,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
  */
           __pyx_v_detected = __pyx_f_18spatial_minimiser1_detect_discont(__pyx_v_fitted, __pyx_v_param_val, __pyx_v_t, __pyx_v_y1, __pyx_v_x1, __pyx_v_param, __pyx_v_num_x, __pyx_v_num_y, __pyx_v_num_times, __pyx_v_num_params, __pyx_v_search_length, 1, __pyx_v_thresh, 0);
 
-          /* "spatial_minimiser1.pyx":624
+          /* "spatial_minimiser1.pyx":891
  * 					detected=detect_discont(fitted,param_val,t,y1,x1,param,num_x,num_y,num_times,\
  * 							 	num_params, search_length=search_length,thresh=thresh,axis=1,reverse=0)
  * 					if detected==1:             # <<<<<<<<<<<<<<
@@ -8409,7 +10206,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
           __pyx_t_13 = ((__pyx_v_detected == 1) != 0);
           if (__pyx_t_13) {
 
-            /* "spatial_minimiser1.pyx":625
+            /* "spatial_minimiser1.pyx":892
  * 							 	num_params, search_length=search_length,thresh=thresh,axis=1,reverse=0)
  * 					if detected==1:
  * 						break             # <<<<<<<<<<<<<<
@@ -8418,7 +10215,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
  */
             goto __pyx_L10_break;
 
-            /* "spatial_minimiser1.pyx":624
+            /* "spatial_minimiser1.pyx":891
  * 					detected=detect_discont(fitted,param_val,t,y1,x1,param,num_x,num_y,num_times,\
  * 							 	num_params, search_length=search_length,thresh=thresh,axis=1,reverse=0)
  * 					if detected==1:             # <<<<<<<<<<<<<<
@@ -8427,7 +10224,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
  */
           }
 
-          /* "spatial_minimiser1.pyx":627
+          /* "spatial_minimiser1.pyx":894
  * 						break
  * 
  * 					detected=detect_discont(fitted,param_val,t,y1,x1,param,num_x,num_y,num_times,\             # <<<<<<<<<<<<<<
@@ -8436,7 +10233,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
  */
           __pyx_v_detected = __pyx_f_18spatial_minimiser1_detect_discont(__pyx_v_fitted, __pyx_v_param_val, __pyx_v_t, __pyx_v_y1, __pyx_v_x1, __pyx_v_param, __pyx_v_num_x, __pyx_v_num_y, __pyx_v_num_times, __pyx_v_num_params, __pyx_v_search_length, 2, __pyx_v_thresh, 0);
 
-          /* "spatial_minimiser1.pyx":629
+          /* "spatial_minimiser1.pyx":896
  * 					detected=detect_discont(fitted,param_val,t,y1,x1,param,num_x,num_y,num_times,\
  * 							 	num_params, search_length=search_length,thresh=thresh,axis=2,reverse=0)
  * 					if detected==1:             # <<<<<<<<<<<<<<
@@ -8446,7 +10243,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
           __pyx_t_13 = ((__pyx_v_detected == 1) != 0);
           if (__pyx_t_13) {
 
-            /* "spatial_minimiser1.pyx":630
+            /* "spatial_minimiser1.pyx":897
  * 							 	num_params, search_length=search_length,thresh=thresh,axis=2,reverse=0)
  * 					if detected==1:
  * 						break             # <<<<<<<<<<<<<<
@@ -8455,7 +10252,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
  */
             goto __pyx_L10_break;
 
-            /* "spatial_minimiser1.pyx":629
+            /* "spatial_minimiser1.pyx":896
  * 					detected=detect_discont(fitted,param_val,t,y1,x1,param,num_x,num_y,num_times,\
  * 							 	num_params, search_length=search_length,thresh=thresh,axis=2,reverse=0)
  * 					if detected==1:             # <<<<<<<<<<<<<<
@@ -8466,7 +10263,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
         }
         __pyx_L10_break:;
 
-        /* "spatial_minimiser1.pyx":631
+        /* "spatial_minimiser1.pyx":898
  * 					if detected==1:
  * 						break
  * 				if detected==0:             # <<<<<<<<<<<<<<
@@ -8476,7 +10273,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
         __pyx_t_13 = ((__pyx_v_detected == 0) != 0);
         if (__pyx_t_13) {
 
-          /* "spatial_minimiser1.pyx":632
+          /* "spatial_minimiser1.pyx":899
  * 						break
  * 				if detected==0:
  * 					for param in range(num_params):             # <<<<<<<<<<<<<<
@@ -8488,7 +10285,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
           for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12+=1) {
             __pyx_v_param = __pyx_t_12;
 
-            /* "spatial_minimiser1.pyx":633
+            /* "spatial_minimiser1.pyx":900
  * 				if detected==0:
  * 					for param in range(num_params):
  * 						detected=detect_discont(fitted,param_val,t,y1,x1,param,num_x,num_y,num_times,\             # <<<<<<<<<<<<<<
@@ -8497,7 +10294,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
  */
             __pyx_v_detected = __pyx_f_18spatial_minimiser1_detect_discont(__pyx_v_fitted, __pyx_v_param_val, __pyx_v_t, __pyx_v_y1, __pyx_v_x1, __pyx_v_param, __pyx_v_num_x, __pyx_v_num_y, __pyx_v_num_times, __pyx_v_num_params, __pyx_v_search_length, 0, __pyx_v_thresh, 1);
 
-            /* "spatial_minimiser1.pyx":635
+            /* "spatial_minimiser1.pyx":902
  * 						detected=detect_discont(fitted,param_val,t,y1,x1,param,num_x,num_y,num_times,\
  * 								 	num_params, search_length=search_length,axis=0,thresh=thresh,reverse=1)
  * 						if detected==1:             # <<<<<<<<<<<<<<
@@ -8507,7 +10304,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
             __pyx_t_13 = ((__pyx_v_detected == 1) != 0);
             if (__pyx_t_13) {
 
-              /* "spatial_minimiser1.pyx":636
+              /* "spatial_minimiser1.pyx":903
  * 								 	num_params, search_length=search_length,axis=0,thresh=thresh,reverse=1)
  * 						if detected==1:
  * 							break             # <<<<<<<<<<<<<<
@@ -8516,7 +10313,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
  */
               goto __pyx_L16_break;
 
-              /* "spatial_minimiser1.pyx":635
+              /* "spatial_minimiser1.pyx":902
  * 						detected=detect_discont(fitted,param_val,t,y1,x1,param,num_x,num_y,num_times,\
  * 								 	num_params, search_length=search_length,axis=0,thresh=thresh,reverse=1)
  * 						if detected==1:             # <<<<<<<<<<<<<<
@@ -8525,7 +10322,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
  */
             }
 
-            /* "spatial_minimiser1.pyx":638
+            /* "spatial_minimiser1.pyx":905
  * 							break
  * 
  * 						detected=detect_discont(fitted,param_val,t,y1,x1,param,num_x,num_y,num_times,\             # <<<<<<<<<<<<<<
@@ -8534,7 +10331,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
  */
             __pyx_v_detected = __pyx_f_18spatial_minimiser1_detect_discont(__pyx_v_fitted, __pyx_v_param_val, __pyx_v_t, __pyx_v_y1, __pyx_v_x1, __pyx_v_param, __pyx_v_num_x, __pyx_v_num_y, __pyx_v_num_times, __pyx_v_num_params, __pyx_v_search_length, 1, __pyx_v_thresh, 1);
 
-            /* "spatial_minimiser1.pyx":640
+            /* "spatial_minimiser1.pyx":907
  * 						detected=detect_discont(fitted,param_val,t,y1,x1,param,num_x,num_y,num_times,\
  * 								 	num_params, search_length=search_length,axis=1,thresh=thresh,reverse=1)
  * 						if detected==1:             # <<<<<<<<<<<<<<
@@ -8544,7 +10341,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
             __pyx_t_13 = ((__pyx_v_detected == 1) != 0);
             if (__pyx_t_13) {
 
-              /* "spatial_minimiser1.pyx":641
+              /* "spatial_minimiser1.pyx":908
  * 								 	num_params, search_length=search_length,axis=1,thresh=thresh,reverse=1)
  * 						if detected==1:
  * 							break             # <<<<<<<<<<<<<<
@@ -8553,7 +10350,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
  */
               goto __pyx_L16_break;
 
-              /* "spatial_minimiser1.pyx":640
+              /* "spatial_minimiser1.pyx":907
  * 						detected=detect_discont(fitted,param_val,t,y1,x1,param,num_x,num_y,num_times,\
  * 								 	num_params, search_length=search_length,axis=1,thresh=thresh,reverse=1)
  * 						if detected==1:             # <<<<<<<<<<<<<<
@@ -8562,7 +10359,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
  */
             }
 
-            /* "spatial_minimiser1.pyx":643
+            /* "spatial_minimiser1.pyx":910
  * 							break
  * 
  * 						detected=detect_discont(fitted,param_val,t,y1,x1,param,num_x,num_y,num_times,\             # <<<<<<<<<<<<<<
@@ -8571,7 +10368,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
  */
             __pyx_v_detected = __pyx_f_18spatial_minimiser1_detect_discont(__pyx_v_fitted, __pyx_v_param_val, __pyx_v_t, __pyx_v_y1, __pyx_v_x1, __pyx_v_param, __pyx_v_num_x, __pyx_v_num_y, __pyx_v_num_times, __pyx_v_num_params, __pyx_v_search_length, 2, __pyx_v_thresh, 1);
 
-            /* "spatial_minimiser1.pyx":645
+            /* "spatial_minimiser1.pyx":912
  * 						detected=detect_discont(fitted,param_val,t,y1,x1,param,num_x,num_y,num_times,\
  * 								 	num_params, search_length=search_length,axis=2,thresh=thresh,reverse=1)
  * 						if detected==1:             # <<<<<<<<<<<<<<
@@ -8581,7 +10378,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
             __pyx_t_13 = ((__pyx_v_detected == 1) != 0);
             if (__pyx_t_13) {
 
-              /* "spatial_minimiser1.pyx":646
+              /* "spatial_minimiser1.pyx":913
  * 								 	num_params, search_length=search_length,axis=2,thresh=thresh,reverse=1)
  * 						if detected==1:
  * 							break             # <<<<<<<<<<<<<<
@@ -8590,7 +10387,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
  */
               goto __pyx_L16_break;
 
-              /* "spatial_minimiser1.pyx":645
+              /* "spatial_minimiser1.pyx":912
  * 						detected=detect_discont(fitted,param_val,t,y1,x1,param,num_x,num_y,num_times,\
  * 								 	num_params, search_length=search_length,axis=2,thresh=thresh,reverse=1)
  * 						if detected==1:             # <<<<<<<<<<<<<<
@@ -8601,7 +10398,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
           }
           __pyx_L16_break:;
 
-          /* "spatial_minimiser1.pyx":631
+          /* "spatial_minimiser1.pyx":898
  * 					if detected==1:
  * 						break
  * 				if detected==0:             # <<<<<<<<<<<<<<
@@ -8610,7 +10407,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
  */
         }
 
-        /* "spatial_minimiser1.pyx":647
+        /* "spatial_minimiser1.pyx":914
  * 						if detected==1:
  * 							break
  * 				if detected==1:             # <<<<<<<<<<<<<<
@@ -8620,7 +10417,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
         __pyx_t_13 = ((__pyx_v_detected == 1) != 0);
         if (__pyx_t_13) {
 
-          /* "spatial_minimiser1.pyx":648
+          /* "spatial_minimiser1.pyx":915
  * 							break
  * 				if detected==1:
  * 					discont[0][j]=t             # <<<<<<<<<<<<<<
@@ -8629,7 +10426,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
  */
           ((__pyx_v_discont[0])[__pyx_v_j]) = __pyx_v_t;
 
-          /* "spatial_minimiser1.pyx":649
+          /* "spatial_minimiser1.pyx":916
  * 				if detected==1:
  * 					discont[0][j]=t
  * 					discont[1][j]=y1             # <<<<<<<<<<<<<<
@@ -8638,7 +10435,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
  */
           ((__pyx_v_discont[1])[__pyx_v_j]) = __pyx_v_y1;
 
-          /* "spatial_minimiser1.pyx":650
+          /* "spatial_minimiser1.pyx":917
  * 					discont[0][j]=t
  * 					discont[1][j]=y1
  * 					discont[2][j]=x1             # <<<<<<<<<<<<<<
@@ -8647,7 +10444,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
  */
           ((__pyx_v_discont[2])[__pyx_v_j]) = __pyx_v_x1;
 
-          /* "spatial_minimiser1.pyx":651
+          /* "spatial_minimiser1.pyx":918
  * 					discont[1][j]=y1
  * 					discont[2][j]=x1
  * 					j=j+1             # <<<<<<<<<<<<<<
@@ -8656,7 +10453,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
  */
           __pyx_v_j = (__pyx_v_j + 1);
 
-          /* "spatial_minimiser1.pyx":647
+          /* "spatial_minimiser1.pyx":914
  * 						if detected==1:
  * 							break
  * 				if detected==1:             # <<<<<<<<<<<<<<
@@ -8668,7 +10465,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
     }
   }
 
-  /* "spatial_minimiser1.pyx":654
+  /* "spatial_minimiser1.pyx":921
  * 
  * 
  * 	return j             # <<<<<<<<<<<<<<
@@ -8678,7 +10475,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
   __pyx_r = __pyx_v_j;
   goto __pyx_L0;
 
-  /* "spatial_minimiser1.pyx":600
+  /* "spatial_minimiser1.pyx":867
  * 
  * 
  * cdef int list_discont(double[:] fitted, double **param_val, int num_x, int num_y,\             # <<<<<<<<<<<<<<
@@ -8692,7 +10489,7 @@ static int __pyx_f_18spatial_minimiser1_list_discont(__Pyx_memviewslice __pyx_v_
   return __pyx_r;
 }
 
-/* "spatial_minimiser1.pyx":658
+/* "spatial_minimiser1.pyx":925
  * 
  * 
  * cdef int find_min_freq(double * freqs,double lower_freq,int num_freqs):             # <<<<<<<<<<<<<<
@@ -8711,7 +10508,7 @@ static int __pyx_f_18spatial_minimiser1_find_min_freq(double *__pyx_v_freqs, dou
   int __pyx_t_5;
   __Pyx_RefNannySetupContext("find_min_freq", 0);
 
-  /* "spatial_minimiser1.pyx":660
+  /* "spatial_minimiser1.pyx":927
  * cdef int find_min_freq(double * freqs,double lower_freq,int num_freqs):
  * 	cdef int i
  * 	if freqs[0]>=lower_freq:             # <<<<<<<<<<<<<<
@@ -8721,7 +10518,7 @@ static int __pyx_f_18spatial_minimiser1_find_min_freq(double *__pyx_v_freqs, dou
   __pyx_t_1 = (((__pyx_v_freqs[0]) >= __pyx_v_lower_freq) != 0);
   if (__pyx_t_1) {
 
-    /* "spatial_minimiser1.pyx":661
+    /* "spatial_minimiser1.pyx":928
  * 	cdef int i
  * 	if freqs[0]>=lower_freq:
  * 		return 0             # <<<<<<<<<<<<<<
@@ -8731,7 +10528,7 @@ static int __pyx_f_18spatial_minimiser1_find_min_freq(double *__pyx_v_freqs, dou
     __pyx_r = 0;
     goto __pyx_L0;
 
-    /* "spatial_minimiser1.pyx":660
+    /* "spatial_minimiser1.pyx":927
  * cdef int find_min_freq(double * freqs,double lower_freq,int num_freqs):
  * 	cdef int i
  * 	if freqs[0]>=lower_freq:             # <<<<<<<<<<<<<<
@@ -8740,7 +10537,7 @@ static int __pyx_f_18spatial_minimiser1_find_min_freq(double *__pyx_v_freqs, dou
  */
   }
 
-  /* "spatial_minimiser1.pyx":662
+  /* "spatial_minimiser1.pyx":929
  * 	if freqs[0]>=lower_freq:
  * 		return 0
  * 	for i in range(1,num_freqs):             # <<<<<<<<<<<<<<
@@ -8752,7 +10549,7 @@ static int __pyx_f_18spatial_minimiser1_find_min_freq(double *__pyx_v_freqs, dou
   for (__pyx_t_4 = 1; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
     __pyx_v_i = __pyx_t_4;
 
-    /* "spatial_minimiser1.pyx":663
+    /* "spatial_minimiser1.pyx":930
  * 		return 0
  * 	for i in range(1,num_freqs):
  * 		if freqs[i]==lower_freq:             # <<<<<<<<<<<<<<
@@ -8762,7 +10559,7 @@ static int __pyx_f_18spatial_minimiser1_find_min_freq(double *__pyx_v_freqs, dou
     __pyx_t_1 = (((__pyx_v_freqs[__pyx_v_i]) == __pyx_v_lower_freq) != 0);
     if (__pyx_t_1) {
 
-      /* "spatial_minimiser1.pyx":664
+      /* "spatial_minimiser1.pyx":931
  * 	for i in range(1,num_freqs):
  * 		if freqs[i]==lower_freq:
  * 			return i             # <<<<<<<<<<<<<<
@@ -8772,7 +10569,7 @@ static int __pyx_f_18spatial_minimiser1_find_min_freq(double *__pyx_v_freqs, dou
       __pyx_r = __pyx_v_i;
       goto __pyx_L0;
 
-      /* "spatial_minimiser1.pyx":663
+      /* "spatial_minimiser1.pyx":930
  * 		return 0
  * 	for i in range(1,num_freqs):
  * 		if freqs[i]==lower_freq:             # <<<<<<<<<<<<<<
@@ -8781,7 +10578,7 @@ static int __pyx_f_18spatial_minimiser1_find_min_freq(double *__pyx_v_freqs, dou
  */
     }
 
-    /* "spatial_minimiser1.pyx":665
+    /* "spatial_minimiser1.pyx":932
  * 		if freqs[i]==lower_freq:
  * 			return i
  * 		if freqs[i]>lower_freq and freqs[i-1]<lower_freq:             # <<<<<<<<<<<<<<
@@ -8799,7 +10596,7 @@ static int __pyx_f_18spatial_minimiser1_find_min_freq(double *__pyx_v_freqs, dou
     __pyx_L8_bool_binop_done:;
     if (__pyx_t_1) {
 
-      /* "spatial_minimiser1.pyx":666
+      /* "spatial_minimiser1.pyx":933
  * 			return i
  * 		if freqs[i]>lower_freq and freqs[i-1]<lower_freq:
  * 			return i             # <<<<<<<<<<<<<<
@@ -8809,7 +10606,7 @@ static int __pyx_f_18spatial_minimiser1_find_min_freq(double *__pyx_v_freqs, dou
       __pyx_r = __pyx_v_i;
       goto __pyx_L0;
 
-      /* "spatial_minimiser1.pyx":665
+      /* "spatial_minimiser1.pyx":932
  * 		if freqs[i]==lower_freq:
  * 			return i
  * 		if freqs[i]>lower_freq and freqs[i-1]<lower_freq:             # <<<<<<<<<<<<<<
@@ -8819,7 +10616,7 @@ static int __pyx_f_18spatial_minimiser1_find_min_freq(double *__pyx_v_freqs, dou
     }
   }
 
-  /* "spatial_minimiser1.pyx":658
+  /* "spatial_minimiser1.pyx":925
  * 
  * 
  * cdef int find_min_freq(double * freqs,double lower_freq,int num_freqs):             # <<<<<<<<<<<<<<
@@ -8834,7 +10631,7 @@ static int __pyx_f_18spatial_minimiser1_find_min_freq(double *__pyx_v_freqs, dou
   return __pyx_r;
 }
 
-/* "spatial_minimiser1.pyx":668
+/* "spatial_minimiser1.pyx":935
  * 			return i
  * 
  * cdef int find_max_freq(double * freqs,double upper_freq,int num_freqs):             # <<<<<<<<<<<<<<
@@ -8853,7 +10650,7 @@ static int __pyx_f_18spatial_minimiser1_find_max_freq(double *__pyx_v_freqs, dou
   int __pyx_t_5;
   __Pyx_RefNannySetupContext("find_max_freq", 0);
 
-  /* "spatial_minimiser1.pyx":670
+  /* "spatial_minimiser1.pyx":937
  * cdef int find_max_freq(double * freqs,double upper_freq,int num_freqs):
  * 	cdef int i
  * 	for i in range(num_freqs-1):             # <<<<<<<<<<<<<<
@@ -8865,7 +10662,7 @@ static int __pyx_f_18spatial_minimiser1_find_max_freq(double *__pyx_v_freqs, dou
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "spatial_minimiser1.pyx":671
+    /* "spatial_minimiser1.pyx":938
  * 	cdef int i
  * 	for i in range(num_freqs-1):
  * 		if freqs[i]==upper_freq:             # <<<<<<<<<<<<<<
@@ -8875,7 +10672,7 @@ static int __pyx_f_18spatial_minimiser1_find_max_freq(double *__pyx_v_freqs, dou
     __pyx_t_4 = (((__pyx_v_freqs[__pyx_v_i]) == __pyx_v_upper_freq) != 0);
     if (__pyx_t_4) {
 
-      /* "spatial_minimiser1.pyx":672
+      /* "spatial_minimiser1.pyx":939
  * 	for i in range(num_freqs-1):
  * 		if freqs[i]==upper_freq:
  * 			return i             # <<<<<<<<<<<<<<
@@ -8885,7 +10682,7 @@ static int __pyx_f_18spatial_minimiser1_find_max_freq(double *__pyx_v_freqs, dou
       __pyx_r = __pyx_v_i;
       goto __pyx_L0;
 
-      /* "spatial_minimiser1.pyx":671
+      /* "spatial_minimiser1.pyx":938
  * 	cdef int i
  * 	for i in range(num_freqs-1):
  * 		if freqs[i]==upper_freq:             # <<<<<<<<<<<<<<
@@ -8894,7 +10691,7 @@ static int __pyx_f_18spatial_minimiser1_find_max_freq(double *__pyx_v_freqs, dou
  */
     }
 
-    /* "spatial_minimiser1.pyx":673
+    /* "spatial_minimiser1.pyx":940
  * 		if freqs[i]==upper_freq:
  * 			return i
  * 		if freqs[i]<upper_freq and freqs[i+1]>upper_freq:             # <<<<<<<<<<<<<<
@@ -8912,7 +10709,7 @@ static int __pyx_f_18spatial_minimiser1_find_max_freq(double *__pyx_v_freqs, dou
     __pyx_L7_bool_binop_done:;
     if (__pyx_t_4) {
 
-      /* "spatial_minimiser1.pyx":674
+      /* "spatial_minimiser1.pyx":941
  * 			return i
  * 		if freqs[i]<upper_freq and freqs[i+1]>upper_freq:
  * 			return i             # <<<<<<<<<<<<<<
@@ -8922,7 +10719,7 @@ static int __pyx_f_18spatial_minimiser1_find_max_freq(double *__pyx_v_freqs, dou
       __pyx_r = __pyx_v_i;
       goto __pyx_L0;
 
-      /* "spatial_minimiser1.pyx":673
+      /* "spatial_minimiser1.pyx":940
  * 		if freqs[i]==upper_freq:
  * 			return i
  * 		if freqs[i]<upper_freq and freqs[i+1]>upper_freq:             # <<<<<<<<<<<<<<
@@ -8932,7 +10729,7 @@ static int __pyx_f_18spatial_minimiser1_find_max_freq(double *__pyx_v_freqs, dou
     }
   }
 
-  /* "spatial_minimiser1.pyx":675
+  /* "spatial_minimiser1.pyx":942
  * 		if freqs[i]<upper_freq and freqs[i+1]>upper_freq:
  * 			return i
  * 	if freqs[num_freqs-1]<=upper_freq:             # <<<<<<<<<<<<<<
@@ -8942,7 +10739,7 @@ static int __pyx_f_18spatial_minimiser1_find_max_freq(double *__pyx_v_freqs, dou
   __pyx_t_4 = (((__pyx_v_freqs[(__pyx_v_num_freqs - 1)]) <= __pyx_v_upper_freq) != 0);
   if (__pyx_t_4) {
 
-    /* "spatial_minimiser1.pyx":676
+    /* "spatial_minimiser1.pyx":943
  * 			return i
  * 	if freqs[num_freqs-1]<=upper_freq:
  * 		return num_freqs-1             # <<<<<<<<<<<<<<
@@ -8952,7 +10749,7 @@ static int __pyx_f_18spatial_minimiser1_find_max_freq(double *__pyx_v_freqs, dou
     __pyx_r = (__pyx_v_num_freqs - 1);
     goto __pyx_L0;
 
-    /* "spatial_minimiser1.pyx":675
+    /* "spatial_minimiser1.pyx":942
  * 		if freqs[i]<upper_freq and freqs[i+1]>upper_freq:
  * 			return i
  * 	if freqs[num_freqs-1]<=upper_freq:             # <<<<<<<<<<<<<<
@@ -8961,7 +10758,7 @@ static int __pyx_f_18spatial_minimiser1_find_max_freq(double *__pyx_v_freqs, dou
  */
   }
 
-  /* "spatial_minimiser1.pyx":668
+  /* "spatial_minimiser1.pyx":935
  * 			return i
  * 
  * cdef int find_max_freq(double * freqs,double upper_freq,int num_freqs):             # <<<<<<<<<<<<<<
@@ -8976,12 +10773,12 @@ static int __pyx_f_18spatial_minimiser1_find_max_freq(double *__pyx_v_freqs, dou
   return __pyx_r;
 }
 
-/* "spatial_minimiser1.pyx":678
+/* "spatial_minimiser1.pyx":945
  * 		return num_freqs-1
  * 
  * cdef int detect_low_snr_freqs(double *spectrum,double *rms, double rms_thresh, int *pos, int low_ind, int high_ind,int num_freqs):             # <<<<<<<<<<<<<<
- * 	cdef int i
- * 	cdef int j
+ * 	'''
+ * 	counts the number of high SNR freqs
  */
 
 static int __pyx_f_18spatial_minimiser1_detect_low_snr_freqs(double *__pyx_v_spectrum, double *__pyx_v_rms, double __pyx_v_rms_thresh, int *__pyx_v_pos, int __pyx_v_low_ind, int __pyx_v_high_ind, int __pyx_v_num_freqs) {
@@ -8996,7 +10793,7 @@ static int __pyx_f_18spatial_minimiser1_detect_low_snr_freqs(double *__pyx_v_spe
   int __pyx_t_5;
   __Pyx_RefNannySetupContext("detect_low_snr_freqs", 0);
 
-  /* "spatial_minimiser1.pyx":681
+  /* "spatial_minimiser1.pyx":951
  * 	cdef int i
  * 	cdef int j
  * 	j=0             # <<<<<<<<<<<<<<
@@ -9005,7 +10802,7 @@ static int __pyx_f_18spatial_minimiser1_detect_low_snr_freqs(double *__pyx_v_spe
  */
   __pyx_v_j = 0;
 
-  /* "spatial_minimiser1.pyx":682
+  /* "spatial_minimiser1.pyx":952
  * 	cdef int j
  * 	j=0
  * 	for i in range(num_freqs):             # <<<<<<<<<<<<<<
@@ -9017,7 +10814,7 @@ static int __pyx_f_18spatial_minimiser1_detect_low_snr_freqs(double *__pyx_v_spe
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "spatial_minimiser1.pyx":683
+    /* "spatial_minimiser1.pyx":953
  * 	j=0
  * 	for i in range(num_freqs):
  * 		if rms[i]<1e-5:             # <<<<<<<<<<<<<<
@@ -9027,7 +10824,7 @@ static int __pyx_f_18spatial_minimiser1_detect_low_snr_freqs(double *__pyx_v_spe
     __pyx_t_4 = (((__pyx_v_rms[__pyx_v_i]) < 1e-5) != 0);
     if (__pyx_t_4) {
 
-      /* "spatial_minimiser1.pyx":684
+      /* "spatial_minimiser1.pyx":954
  * 	for i in range(num_freqs):
  * 		if rms[i]<1e-5:
  * 			pos[i]=1             # <<<<<<<<<<<<<<
@@ -9036,7 +10833,7 @@ static int __pyx_f_18spatial_minimiser1_detect_low_snr_freqs(double *__pyx_v_spe
  */
       (__pyx_v_pos[__pyx_v_i]) = 1;
 
-      /* "spatial_minimiser1.pyx":683
+      /* "spatial_minimiser1.pyx":953
  * 	j=0
  * 	for i in range(num_freqs):
  * 		if rms[i]<1e-5:             # <<<<<<<<<<<<<<
@@ -9046,7 +10843,7 @@ static int __pyx_f_18spatial_minimiser1_detect_low_snr_freqs(double *__pyx_v_spe
       goto __pyx_L5;
     }
 
-    /* "spatial_minimiser1.pyx":686
+    /* "spatial_minimiser1.pyx":956
  * 			pos[i]=1
  * 
  * 		elif spectrum[i]<rms_thresh*rms[i]:             # <<<<<<<<<<<<<<
@@ -9056,7 +10853,7 @@ static int __pyx_f_18spatial_minimiser1_detect_low_snr_freqs(double *__pyx_v_spe
     __pyx_t_4 = (((__pyx_v_spectrum[__pyx_v_i]) < (__pyx_v_rms_thresh * (__pyx_v_rms[__pyx_v_i]))) != 0);
     if (__pyx_t_4) {
 
-      /* "spatial_minimiser1.pyx":687
+      /* "spatial_minimiser1.pyx":957
  * 
  * 		elif spectrum[i]<rms_thresh*rms[i]:
  * 			pos[i]=1             # <<<<<<<<<<<<<<
@@ -9065,7 +10862,7 @@ static int __pyx_f_18spatial_minimiser1_detect_low_snr_freqs(double *__pyx_v_spe
  */
       (__pyx_v_pos[__pyx_v_i]) = 1;
 
-      /* "spatial_minimiser1.pyx":686
+      /* "spatial_minimiser1.pyx":956
  * 			pos[i]=1
  * 
  * 		elif spectrum[i]<rms_thresh*rms[i]:             # <<<<<<<<<<<<<<
@@ -9075,7 +10872,7 @@ static int __pyx_f_18spatial_minimiser1_detect_low_snr_freqs(double *__pyx_v_spe
       goto __pyx_L5;
     }
 
-    /* "spatial_minimiser1.pyx":689
+    /* "spatial_minimiser1.pyx":959
  * 			pos[i]=1
  * 		else:
  * 			pos[i]=0             # <<<<<<<<<<<<<<
@@ -9085,7 +10882,7 @@ static int __pyx_f_18spatial_minimiser1_detect_low_snr_freqs(double *__pyx_v_spe
     /*else*/ {
       (__pyx_v_pos[__pyx_v_i]) = 0;
 
-      /* "spatial_minimiser1.pyx":690
+      /* "spatial_minimiser1.pyx":960
  * 		else:
  * 			pos[i]=0
  * 			if i>=low_ind and i<=high_ind:             # <<<<<<<<<<<<<<
@@ -9103,7 +10900,7 @@ static int __pyx_f_18spatial_minimiser1_detect_low_snr_freqs(double *__pyx_v_spe
       __pyx_L7_bool_binop_done:;
       if (__pyx_t_4) {
 
-        /* "spatial_minimiser1.pyx":691
+        /* "spatial_minimiser1.pyx":961
  * 			pos[i]=0
  * 			if i>=low_ind and i<=high_ind:
  * 				j=j+1             # <<<<<<<<<<<<<<
@@ -9112,7 +10909,7 @@ static int __pyx_f_18spatial_minimiser1_detect_low_snr_freqs(double *__pyx_v_spe
  */
         __pyx_v_j = (__pyx_v_j + 1);
 
-        /* "spatial_minimiser1.pyx":690
+        /* "spatial_minimiser1.pyx":960
  * 		else:
  * 			pos[i]=0
  * 			if i>=low_ind and i<=high_ind:             # <<<<<<<<<<<<<<
@@ -9124,7 +10921,7 @@ static int __pyx_f_18spatial_minimiser1_detect_low_snr_freqs(double *__pyx_v_spe
     __pyx_L5:;
   }
 
-  /* "spatial_minimiser1.pyx":692
+  /* "spatial_minimiser1.pyx":962
  * 			if i>=low_ind and i<=high_ind:
  * 				j=j+1
  * 	return j             # <<<<<<<<<<<<<<
@@ -9134,12 +10931,12 @@ static int __pyx_f_18spatial_minimiser1_detect_low_snr_freqs(double *__pyx_v_spe
   __pyx_r = __pyx_v_j;
   goto __pyx_L0;
 
-  /* "spatial_minimiser1.pyx":678
+  /* "spatial_minimiser1.pyx":945
  * 		return num_freqs-1
  * 
  * cdef int detect_low_snr_freqs(double *spectrum,double *rms, double rms_thresh, int *pos, int low_ind, int high_ind,int num_freqs):             # <<<<<<<<<<<<<<
- * 	cdef int i
- * 	cdef int j
+ * 	'''
+ * 	counts the number of high SNR freqs
  */
 
   /* function exit code */
@@ -9148,7 +10945,7 @@ static int __pyx_f_18spatial_minimiser1_detect_low_snr_freqs(double *__pyx_v_spe
   return __pyx_r;
 }
 
-/* "spatial_minimiser1.pyx":694
+/* "spatial_minimiser1.pyx":964
  * 	return j
  * 
  * cdef double square(double x):             # <<<<<<<<<<<<<<
@@ -9161,7 +10958,7 @@ static double __pyx_f_18spatial_minimiser1_square(double __pyx_v_x) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("square", 0);
 
-  /* "spatial_minimiser1.pyx":695
+  /* "spatial_minimiser1.pyx":965
  * 
  * cdef double square(double x):
  * 	return x*x             # <<<<<<<<<<<<<<
@@ -9171,7 +10968,7 @@ static double __pyx_f_18spatial_minimiser1_square(double __pyx_v_x) {
   __pyx_r = (__pyx_v_x * __pyx_v_x);
   goto __pyx_L0;
 
-  /* "spatial_minimiser1.pyx":694
+  /* "spatial_minimiser1.pyx":964
  * 	return j
  * 
  * cdef double square(double x):             # <<<<<<<<<<<<<<
@@ -9185,7 +10982,7 @@ static double __pyx_f_18spatial_minimiser1_square(double __pyx_v_x) {
   return __pyx_r;
 }
 
-/* "spatial_minimiser1.pyx":697
+/* "spatial_minimiser1.pyx":967
  * 	return x*x
  * 
  * cdef void fill_value(double [:] model, double * model_comb, int num_freqs):             # <<<<<<<<<<<<<<
@@ -9206,7 +11003,7 @@ static void __pyx_f_18spatial_minimiser1_fill_value(__Pyx_memviewslice __pyx_v_m
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("fill_value", 0);
 
-  /* "spatial_minimiser1.pyx":699
+  /* "spatial_minimiser1.pyx":969
  * cdef void fill_value(double [:] model, double * model_comb, int num_freqs):
  * 	cdef int i
  * 	for i in range(num_freqs):             # <<<<<<<<<<<<<<
@@ -9218,7 +11015,7 @@ static void __pyx_f_18spatial_minimiser1_fill_value(__Pyx_memviewslice __pyx_v_m
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "spatial_minimiser1.pyx":700
+    /* "spatial_minimiser1.pyx":970
  * 	cdef int i
  * 	for i in range(num_freqs):
  * 		model_comb[i]=model[i]             # <<<<<<<<<<<<<<
@@ -9233,12 +11030,12 @@ static void __pyx_f_18spatial_minimiser1_fill_value(__Pyx_memviewslice __pyx_v_m
     } else if (unlikely(__pyx_t_4 >= __pyx_v_model.shape[0])) __pyx_t_5 = 0;
     if (unlikely(__pyx_t_5 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_5);
-      __PYX_ERR(0, 700, __pyx_L1_error)
+      __PYX_ERR(0, 970, __pyx_L1_error)
     }
     (__pyx_v_model_comb[__pyx_v_i]) = (*((double *) ( /* dim=0 */ (__pyx_v_model.data + __pyx_t_4 * __pyx_v_model.strides[0]) )));
   }
 
-  /* "spatial_minimiser1.pyx":702
+  /* "spatial_minimiser1.pyx":972
  * 		model_comb[i]=model[i]
  * 
  * 	return             # <<<<<<<<<<<<<<
@@ -9247,7 +11044,7 @@ static void __pyx_f_18spatial_minimiser1_fill_value(__Pyx_memviewslice __pyx_v_m
  */
   goto __pyx_L0;
 
-  /* "spatial_minimiser1.pyx":697
+  /* "spatial_minimiser1.pyx":967
  * 	return x*x
  * 
  * cdef void fill_value(double [:] model, double * model_comb, int num_freqs):             # <<<<<<<<<<<<<<
@@ -9262,7 +11059,7 @@ static void __pyx_f_18spatial_minimiser1_fill_value(__Pyx_memviewslice __pyx_v_m
   __Pyx_RefNannyFinishContext();
 }
 
-/* "spatial_minimiser1.pyx":704
+/* "spatial_minimiser1.pyx":974
  * 	return
  * 
  * cdef double min_chi_square(double [:]  model,\             # <<<<<<<<<<<<<<
@@ -9299,7 +11096,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("min_chi_square", 0);
 
-  /* "spatial_minimiser1.pyx":710
+  /* "spatial_minimiser1.pyx":980
  * 		double sys_error, int * param_inds):
  * 
  * 	cdef double min_chi=1e100             # <<<<<<<<<<<<<<
@@ -9308,7 +11105,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
  */
   __pyx_v_min_chi = 1e100;
 
-  /* "spatial_minimiser1.pyx":712
+  /* "spatial_minimiser1.pyx":982
  * 	cdef double min_chi=1e100
  * 	cdef unsigned int i,j,min_ind
  * 	cdef double chi=0.0             # <<<<<<<<<<<<<<
@@ -9317,7 +11114,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
  */
   __pyx_v_chi = 0.0;
 
-  /* "spatial_minimiser1.pyx":713
+  /* "spatial_minimiser1.pyx":983
  * 	cdef unsigned int i,j,min_ind
  * 	cdef double chi=0.0
  * 	cdef int k=0             # <<<<<<<<<<<<<<
@@ -9326,7 +11123,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
  */
   __pyx_v_k = 0;
 
-  /* "spatial_minimiser1.pyx":717
+  /* "spatial_minimiser1.pyx":987
  * 	cdef double ratio
  * 
  * 	cdef unsigned int num_elem_model,num_param_comb=1             # <<<<<<<<<<<<<<
@@ -9335,7 +11132,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
  */
   __pyx_v_num_param_comb = 1;
 
-  /* "spatial_minimiser1.pyx":719
+  /* "spatial_minimiser1.pyx":989
  * 	cdef unsigned int num_elem_model,num_param_comb=1
  * 
  * 	for i in range(num_params):             # <<<<<<<<<<<<<<
@@ -9347,7 +11144,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "spatial_minimiser1.pyx":720
+    /* "spatial_minimiser1.pyx":990
  * 
  * 	for i in range(num_params):
  * 		num_param_comb=num_param_comb*param_lengths[i]             # <<<<<<<<<<<<<<
@@ -9357,7 +11154,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
     __pyx_v_num_param_comb = (__pyx_v_num_param_comb * (__pyx_v_param_lengths[__pyx_v_i]));
   }
 
-  /* "spatial_minimiser1.pyx":721
+  /* "spatial_minimiser1.pyx":991
  * 	for i in range(num_params):
  * 		num_param_comb=num_param_comb*param_lengths[i]
  * 	num_elem_model=num_param_comb*num_freqs             # <<<<<<<<<<<<<<
@@ -9366,7 +11163,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
  */
   __pyx_v_num_elem_model = (__pyx_v_num_param_comb * __pyx_v_num_freqs);
 
-  /* "spatial_minimiser1.pyx":722
+  /* "spatial_minimiser1.pyx":992
  * 		num_param_comb=num_param_comb*param_lengths[i]
  * 	num_elem_model=num_param_comb*num_freqs
  * 	cdef int param1=0             # <<<<<<<<<<<<<<
@@ -9375,7 +11172,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
  */
   __pyx_v_param1 = 0;
 
-  /* "spatial_minimiser1.pyx":724
+  /* "spatial_minimiser1.pyx":994
  * 	cdef int param1=0
  * 
  * 	i=0             # <<<<<<<<<<<<<<
@@ -9384,7 +11181,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
  */
   __pyx_v_i = 0;
 
-  /* "spatial_minimiser1.pyx":725
+  /* "spatial_minimiser1.pyx":995
  * 
  * 	i=0
  * 	while i<num_elem_model:             # <<<<<<<<<<<<<<
@@ -9395,7 +11192,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
     __pyx_t_4 = ((__pyx_v_i < __pyx_v_num_elem_model) != 0);
     if (!__pyx_t_4) break;
 
-    /* "spatial_minimiser1.pyx":727
+    /* "spatial_minimiser1.pyx":997
  * 	while i<num_elem_model:
  * 	#for i in range(0,num_elem_model,num_freqs):
  * 		chi=0.0             # <<<<<<<<<<<<<<
@@ -9404,7 +11201,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
  */
     __pyx_v_chi = 0.0;
 
-    /* "spatial_minimiser1.pyx":728
+    /* "spatial_minimiser1.pyx":998
  * 	#for i in range(0,num_elem_model,num_freqs):
  * 		chi=0.0
  * 		mid_ind=(low_ind+high_ind)//2             # <<<<<<<<<<<<<<
@@ -9413,7 +11210,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
  */
     __pyx_v_mid_ind = __Pyx_div_long((__pyx_v_low_ind + __pyx_v_high_ind), 2);
 
-    /* "spatial_minimiser1.pyx":729
+    /* "spatial_minimiser1.pyx":999
  * 		chi=0.0
  * 		mid_ind=(low_ind+high_ind)//2
  * 		ratio=spectrum[mid_ind]/model[i+mid_ind]             # <<<<<<<<<<<<<<
@@ -9425,16 +11222,16 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
     if (unlikely(__pyx_t_5 >= (size_t)__pyx_v_model.shape[0])) __pyx_t_1 = 0;
     if (unlikely(__pyx_t_1 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_1);
-      __PYX_ERR(0, 729, __pyx_L1_error)
+      __PYX_ERR(0, 999, __pyx_L1_error)
     }
     __pyx_t_6 = (*((double *) ( /* dim=0 */ (__pyx_v_model.data + __pyx_t_5 * __pyx_v_model.strides[0]) )));
     if (unlikely(__pyx_t_6 == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-      __PYX_ERR(0, 729, __pyx_L1_error)
+      __PYX_ERR(0, 999, __pyx_L1_error)
     }
     __pyx_v_ratio = ((__pyx_v_spectrum[__pyx_v_mid_ind]) / __pyx_t_6);
 
-    /* "spatial_minimiser1.pyx":730
+    /* "spatial_minimiser1.pyx":1000
  * 		mid_ind=(low_ind+high_ind)//2
  * 		ratio=spectrum[mid_ind]/model[i+mid_ind]
  * 		if ratio>3 or ratio<0.3:  ## I added this line to make the code faster.             # <<<<<<<<<<<<<<
@@ -9452,7 +11249,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
     __pyx_L8_bool_binop_done:;
     if (__pyx_t_4) {
 
-      /* "spatial_minimiser1.pyx":733
+      /* "spatial_minimiser1.pyx":1003
  * 					   ### The argument is that of at the mid-freq, the
  * 					   ### spectrum is unlikely to be fit well by the model.
  * 			k=k+1             # <<<<<<<<<<<<<<
@@ -9461,7 +11258,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
  */
       __pyx_v_k = (__pyx_v_k + 1);
 
-      /* "spatial_minimiser1.pyx":734
+      /* "spatial_minimiser1.pyx":1004
  * 					   ### spectrum is unlikely to be fit well by the model.
  * 			k=k+1
  * 			i=i+num_freqs             # <<<<<<<<<<<<<<
@@ -9470,7 +11267,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
  */
       __pyx_v_i = (__pyx_v_i + __pyx_v_num_freqs);
 
-      /* "spatial_minimiser1.pyx":735
+      /* "spatial_minimiser1.pyx":1005
  * 			k=k+1
  * 			i=i+num_freqs
  * 			continue             # <<<<<<<<<<<<<<
@@ -9479,7 +11276,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
  */
       goto __pyx_L5_continue;
 
-      /* "spatial_minimiser1.pyx":730
+      /* "spatial_minimiser1.pyx":1000
  * 		mid_ind=(low_ind+high_ind)//2
  * 		ratio=spectrum[mid_ind]/model[i+mid_ind]
  * 		if ratio>3 or ratio<0.3:  ## I added this line to make the code faster.             # <<<<<<<<<<<<<<
@@ -9488,7 +11285,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
  */
     }
 
-    /* "spatial_minimiser1.pyx":736
+    /* "spatial_minimiser1.pyx":1006
  * 			i=i+num_freqs
  * 			continue
  * 		for j in range(low_ind,high_ind+1):             # <<<<<<<<<<<<<<
@@ -9500,7 +11297,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
     for (__pyx_t_3 = __pyx_v_low_ind; __pyx_t_3 < __pyx_t_9; __pyx_t_3+=1) {
       __pyx_v_j = __pyx_t_3;
 
-      /* "spatial_minimiser1.pyx":737
+      /* "spatial_minimiser1.pyx":1007
  * 			continue
  * 		for j in range(low_ind,high_ind+1):
  * 			if low_snr_freqs[j]==0:             # <<<<<<<<<<<<<<
@@ -9510,7 +11307,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
       __pyx_t_4 = (((__pyx_v_low_snr_freqs[__pyx_v_j]) == 0) != 0);
       if (__pyx_t_4) {
 
-        /* "spatial_minimiser1.pyx":738
+        /* "spatial_minimiser1.pyx":1008
  * 		for j in range(low_ind,high_ind+1):
  * 			if low_snr_freqs[j]==0:
  * 				chi=chi+square((spectrum[j]-model[i+j])/error[j])             # <<<<<<<<<<<<<<
@@ -9522,16 +11319,16 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
         if (unlikely(__pyx_t_5 >= (size_t)__pyx_v_model.shape[0])) __pyx_t_1 = 0;
         if (unlikely(__pyx_t_1 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_1);
-          __PYX_ERR(0, 738, __pyx_L1_error)
+          __PYX_ERR(0, 1008, __pyx_L1_error)
         }
         __pyx_t_6 = ((__pyx_v_spectrum[__pyx_v_j]) - (*((double *) ( /* dim=0 */ (__pyx_v_model.data + __pyx_t_5 * __pyx_v_model.strides[0]) ))));
         if (unlikely((__pyx_v_error[__pyx_v_j]) == 0)) {
           PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-          __PYX_ERR(0, 738, __pyx_L1_error)
+          __PYX_ERR(0, 1008, __pyx_L1_error)
         }
         __pyx_v_chi = (__pyx_v_chi + __pyx_f_18spatial_minimiser1_square((__pyx_t_6 / (__pyx_v_error[__pyx_v_j]))));
 
-        /* "spatial_minimiser1.pyx":737
+        /* "spatial_minimiser1.pyx":1007
  * 			continue
  * 		for j in range(low_ind,high_ind+1):
  * 			if low_snr_freqs[j]==0:             # <<<<<<<<<<<<<<
@@ -9541,7 +11338,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
         goto __pyx_L12;
       }
 
-      /* "spatial_minimiser1.pyx":740
+      /* "spatial_minimiser1.pyx":1010
  * 				chi=chi+square((spectrum[j]-model[i+j])/error[j])
  * 			else:
  * 				if model[i+j]>(1+sys_error)*rms_thresh*rms[j]:             # <<<<<<<<<<<<<<
@@ -9554,12 +11351,12 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
         if (unlikely(__pyx_t_5 >= (size_t)__pyx_v_model.shape[0])) __pyx_t_1 = 0;
         if (unlikely(__pyx_t_1 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_1);
-          __PYX_ERR(0, 740, __pyx_L1_error)
+          __PYX_ERR(0, 1010, __pyx_L1_error)
         }
         __pyx_t_4 = (((*((double *) ( /* dim=0 */ (__pyx_v_model.data + __pyx_t_5 * __pyx_v_model.strides[0]) ))) > (((1.0 + __pyx_v_sys_error) * __pyx_v_rms_thresh) * (__pyx_v_rms[__pyx_v_j]))) != 0);
         if (__pyx_t_4) {
 
-          /* "spatial_minimiser1.pyx":741
+          /* "spatial_minimiser1.pyx":1011
  * 			else:
  * 				if model[i+j]>(1+sys_error)*rms_thresh*rms[j]:
  * 					chi=chi+1000   ### above the upper limit. Hence a high value to the chi square             # <<<<<<<<<<<<<<
@@ -9568,7 +11365,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
  */
           __pyx_v_chi = (__pyx_v_chi + 1000.0);
 
-          /* "spatial_minimiser1.pyx":740
+          /* "spatial_minimiser1.pyx":1010
  * 				chi=chi+square((spectrum[j]-model[i+j])/error[j])
  * 			else:
  * 				if model[i+j]>(1+sys_error)*rms_thresh*rms[j]:             # <<<<<<<<<<<<<<
@@ -9578,7 +11375,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
           goto __pyx_L13;
         }
 
-        /* "spatial_minimiser1.pyx":743
+        /* "spatial_minimiser1.pyx":1013
  * 					chi=chi+1000   ### above the upper limit. Hence a high value to the chi square
  * 				else:
  * 					chi=chi+0.0             # <<<<<<<<<<<<<<
@@ -9593,7 +11390,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
       __pyx_L12:;
     }
 
-    /* "spatial_minimiser1.pyx":745
+    /* "spatial_minimiser1.pyx":1015
  * 					chi=chi+0.0
  * 
  * 		if chi<min_chi:             # <<<<<<<<<<<<<<
@@ -9603,7 +11400,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
     __pyx_t_4 = ((__pyx_v_chi < __pyx_v_min_chi) != 0);
     if (__pyx_t_4) {
 
-      /* "spatial_minimiser1.pyx":746
+      /* "spatial_minimiser1.pyx":1016
  * 
  * 		if chi<min_chi:
  * 			min_chi=chi             # <<<<<<<<<<<<<<
@@ -9612,7 +11409,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
  */
       __pyx_v_min_chi = __pyx_v_chi;
 
-      /* "spatial_minimiser1.pyx":747
+      /* "spatial_minimiser1.pyx":1017
  * 		if chi<min_chi:
  * 			min_chi=chi
  * 			min_ind=k             # <<<<<<<<<<<<<<
@@ -9621,7 +11418,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
  */
       __pyx_v_min_ind = __pyx_v_k;
 
-      /* "spatial_minimiser1.pyx":745
+      /* "spatial_minimiser1.pyx":1015
  * 					chi=chi+0.0
  * 
  * 		if chi<min_chi:             # <<<<<<<<<<<<<<
@@ -9630,7 +11427,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
  */
     }
 
-    /* "spatial_minimiser1.pyx":748
+    /* "spatial_minimiser1.pyx":1018
  * 			min_chi=chi
  * 			min_ind=k
  * 		k=k+1             # <<<<<<<<<<<<<<
@@ -9639,7 +11436,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
  */
     __pyx_v_k = (__pyx_v_k + 1);
 
-    /* "spatial_minimiser1.pyx":749
+    /* "spatial_minimiser1.pyx":1019
  * 			min_ind=k
  * 		k=k+1
  * 		i=i+num_freqs             # <<<<<<<<<<<<<<
@@ -9650,7 +11447,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
     __pyx_L5_continue:;
   }
 
-  /* "spatial_minimiser1.pyx":752
+  /* "spatial_minimiser1.pyx":1022
  * 
  * 
  * 	for i in range(num_params-1,-1,-1):             # <<<<<<<<<<<<<<
@@ -9660,7 +11457,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
   for (__pyx_t_3 = (__pyx_v_num_params - 1) + 1; __pyx_t_3 > -1 + 1; ) { __pyx_t_3-=1;
     __pyx_v_i = __pyx_t_3;
 
-    /* "spatial_minimiser1.pyx":753
+    /* "spatial_minimiser1.pyx":1023
  * 
  * 	for i in range(num_params-1,-1,-1):
  * 		param_inds[i]=min_ind%param_lengths[i]             # <<<<<<<<<<<<<<
@@ -9669,11 +11466,11 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
  */
     if (unlikely((__pyx_v_param_lengths[__pyx_v_i]) == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "integer division or modulo by zero");
-      __PYX_ERR(0, 753, __pyx_L1_error)
+      __PYX_ERR(0, 1023, __pyx_L1_error)
     }
     (__pyx_v_param_inds[__pyx_v_i]) = (__pyx_v_min_ind % (__pyx_v_param_lengths[__pyx_v_i]));
 
-    /* "spatial_minimiser1.pyx":754
+    /* "spatial_minimiser1.pyx":1024
  * 	for i in range(num_params-1,-1,-1):
  * 		param_inds[i]=min_ind%param_lengths[i]
  * 		min_ind=(min_ind-param_inds[i])//param_lengths[i]             # <<<<<<<<<<<<<<
@@ -9683,12 +11480,12 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
     __pyx_t_10 = (__pyx_v_min_ind - (__pyx_v_param_inds[__pyx_v_i]));
     if (unlikely((__pyx_v_param_lengths[__pyx_v_i]) == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "integer division or modulo by zero");
-      __PYX_ERR(0, 754, __pyx_L1_error)
+      __PYX_ERR(0, 1024, __pyx_L1_error)
     }
     __pyx_v_min_ind = (__pyx_t_10 / (__pyx_v_param_lengths[__pyx_v_i]));
   }
 
-  /* "spatial_minimiser1.pyx":756
+  /* "spatial_minimiser1.pyx":1026
  * 		min_ind=(min_ind-param_inds[i])//param_lengths[i]
  * 
  * 	return min_chi             # <<<<<<<<<<<<<<
@@ -9698,7 +11495,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
   __pyx_r = __pyx_v_min_chi;
   goto __pyx_L0;
 
-  /* "spatial_minimiser1.pyx":704
+  /* "spatial_minimiser1.pyx":974
  * 	return
  * 
  * cdef double min_chi_square(double [:]  model,\             # <<<<<<<<<<<<<<
@@ -9715,7 +11512,7 @@ static double __pyx_f_18spatial_minimiser1_min_chi_square(__Pyx_memviewslice __p
   return __pyx_r;
 }
 
-/* "spatial_minimiser1.pyx":758
+/* "spatial_minimiser1.pyx":1028
  * 	return min_chi
  * 
  * cdef int find_max_pos(double *spectrum, int *lower_freq_ind, int *upper_freq_ind, int num_freqs):             # <<<<<<<<<<<<<<
@@ -9735,7 +11532,7 @@ static int __pyx_f_18spatial_minimiser1_find_max_pos(double *__pyx_v_spectrum, i
   int __pyx_t_4;
   __Pyx_RefNannySetupContext("find_max_pos", 0);
 
-  /* "spatial_minimiser1.pyx":760
+  /* "spatial_minimiser1.pyx":1030
  * cdef int find_max_pos(double *spectrum, int *lower_freq_ind, int *upper_freq_ind, int num_freqs):
  * 	cdef int i, max_loc
  * 	cdef double max_val=-1.0             # <<<<<<<<<<<<<<
@@ -9744,7 +11541,7 @@ static int __pyx_f_18spatial_minimiser1_find_max_pos(double *__pyx_v_spectrum, i
  */
   __pyx_v_max_val = -1.0;
 
-  /* "spatial_minimiser1.pyx":761
+  /* "spatial_minimiser1.pyx":1031
  * 	cdef int i, max_loc
  * 	cdef double max_val=-1.0
  * 	for i in range(lower_freq_ind[0],upper_freq_ind[0]+1):             # <<<<<<<<<<<<<<
@@ -9756,7 +11553,7 @@ static int __pyx_f_18spatial_minimiser1_find_max_pos(double *__pyx_v_spectrum, i
   for (__pyx_t_3 = (__pyx_v_lower_freq_ind[0]); __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "spatial_minimiser1.pyx":762
+    /* "spatial_minimiser1.pyx":1032
  * 	cdef double max_val=-1.0
  * 	for i in range(lower_freq_ind[0],upper_freq_ind[0]+1):
  * 		if spectrum[i]>max_val:             # <<<<<<<<<<<<<<
@@ -9766,7 +11563,7 @@ static int __pyx_f_18spatial_minimiser1_find_max_pos(double *__pyx_v_spectrum, i
     __pyx_t_4 = (((__pyx_v_spectrum[__pyx_v_i]) > __pyx_v_max_val) != 0);
     if (__pyx_t_4) {
 
-      /* "spatial_minimiser1.pyx":763
+      /* "spatial_minimiser1.pyx":1033
  * 	for i in range(lower_freq_ind[0],upper_freq_ind[0]+1):
  * 		if spectrum[i]>max_val:
  * 			max_loc=i             # <<<<<<<<<<<<<<
@@ -9775,7 +11572,7 @@ static int __pyx_f_18spatial_minimiser1_find_max_pos(double *__pyx_v_spectrum, i
  */
       __pyx_v_max_loc = __pyx_v_i;
 
-      /* "spatial_minimiser1.pyx":764
+      /* "spatial_minimiser1.pyx":1034
  * 		if spectrum[i]>max_val:
  * 			max_loc=i
  * 			max_val=spectrum[i]             # <<<<<<<<<<<<<<
@@ -9784,7 +11581,7 @@ static int __pyx_f_18spatial_minimiser1_find_max_pos(double *__pyx_v_spectrum, i
  */
       __pyx_v_max_val = (__pyx_v_spectrum[__pyx_v_i]);
 
-      /* "spatial_minimiser1.pyx":762
+      /* "spatial_minimiser1.pyx":1032
  * 	cdef double max_val=-1.0
  * 	for i in range(lower_freq_ind[0],upper_freq_ind[0]+1):
  * 		if spectrum[i]>max_val:             # <<<<<<<<<<<<<<
@@ -9794,7 +11591,7 @@ static int __pyx_f_18spatial_minimiser1_find_max_pos(double *__pyx_v_spectrum, i
     }
   }
 
-  /* "spatial_minimiser1.pyx":765
+  /* "spatial_minimiser1.pyx":1035
  * 			max_loc=i
  * 			max_val=spectrum[i]
  * 	return max_loc             # <<<<<<<<<<<<<<
@@ -9804,7 +11601,7 @@ static int __pyx_f_18spatial_minimiser1_find_max_pos(double *__pyx_v_spectrum, i
   __pyx_r = __pyx_v_max_loc;
   goto __pyx_L0;
 
-  /* "spatial_minimiser1.pyx":758
+  /* "spatial_minimiser1.pyx":1028
  * 	return min_chi
  * 
  * cdef int find_max_pos(double *spectrum, int *lower_freq_ind, int *upper_freq_ind, int num_freqs):             # <<<<<<<<<<<<<<
@@ -9818,7 +11615,7 @@ static int __pyx_f_18spatial_minimiser1_find_max_pos(double *__pyx_v_spectrum, i
   return __pyx_r;
 }
 
-/* "spatial_minimiser1.pyx":768
+/* "spatial_minimiser1.pyx":1038
  * 
  * 
  * cdef void calc_fitrange_homogenous(double *spectrum, int *lower_freq_ind, int *upper_freq_ind,int num_freqs):             # <<<<<<<<<<<<<<
@@ -9845,7 +11642,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("calc_fitrange_homogenous", 0);
 
-  /* "spatial_minimiser1.pyx":769
+  /* "spatial_minimiser1.pyx":1039
  * 
  * cdef void calc_fitrange_homogenous(double *spectrum, int *lower_freq_ind, int *upper_freq_ind,int num_freqs):
  * 	cdef int max_loc=find_max_pos(spectrum,lower_freq_ind, upper_freq_ind, num_freqs)             # <<<<<<<<<<<<<<
@@ -9854,7 +11651,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
  */
   __pyx_v_max_loc = __pyx_f_18spatial_minimiser1_find_max_pos(__pyx_v_spectrum, __pyx_v_lower_freq_ind, __pyx_v_upper_freq_ind, __pyx_v_num_freqs);
 
-  /* "spatial_minimiser1.pyx":772
+  /* "spatial_minimiser1.pyx":1042
  * 
  * 	cdef double *smoothed_spectrum
  * 	smoothed_spectrum=<double *>PyMem_Malloc(num_freqs*sizeof(double))             # <<<<<<<<<<<<<<
@@ -9863,7 +11660,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
  */
   __pyx_v_smoothed_spectrum = ((double *)PyMem_Malloc((__pyx_v_num_freqs * (sizeof(double)))));
 
-  /* "spatial_minimiser1.pyx":776
+  /* "spatial_minimiser1.pyx":1046
  * 
  * 
  * 	cdef int smooth_length=3             # <<<<<<<<<<<<<<
@@ -9872,7 +11669,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
  */
   __pyx_v_smooth_length = 3;
 
-  /* "spatial_minimiser1.pyx":778
+  /* "spatial_minimiser1.pyx":1048
  * 	cdef int smooth_length=3
  * 	cdef int i,j
  * 	cdef int smooth_interval=smooth_length//2             # <<<<<<<<<<<<<<
@@ -9881,7 +11678,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
  */
   __pyx_v_smooth_interval = __Pyx_div_long(__pyx_v_smooth_length, 2);
 
-  /* "spatial_minimiser1.pyx":781
+  /* "spatial_minimiser1.pyx":1051
  * 	cdef double sum1
  * 
  * 	for i in range(num_freqs):             # <<<<<<<<<<<<<<
@@ -9893,7 +11690,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "spatial_minimiser1.pyx":782
+    /* "spatial_minimiser1.pyx":1052
  * 
  * 	for i in range(num_freqs):
  * 		smoothed_spectrum[i]=0.0             # <<<<<<<<<<<<<<
@@ -9903,7 +11700,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
     (__pyx_v_smoothed_spectrum[__pyx_v_i]) = 0.0;
   }
 
-  /* "spatial_minimiser1.pyx":784
+  /* "spatial_minimiser1.pyx":1054
  * 		smoothed_spectrum[i]=0.0
  * 
  * 	for i in range(lower_freq_ind[0],upper_freq_ind[0]):             # <<<<<<<<<<<<<<
@@ -9915,7 +11712,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
   for (__pyx_t_3 = (__pyx_v_lower_freq_ind[0]); __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "spatial_minimiser1.pyx":785
+    /* "spatial_minimiser1.pyx":1055
  * 
  * 	for i in range(lower_freq_ind[0],upper_freq_ind[0]):
  * 		if i<smooth_interval:             # <<<<<<<<<<<<<<
@@ -9925,7 +11722,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
     __pyx_t_4 = ((__pyx_v_i < __pyx_v_smooth_interval) != 0);
     if (__pyx_t_4) {
 
-      /* "spatial_minimiser1.pyx":786
+      /* "spatial_minimiser1.pyx":1056
  * 	for i in range(lower_freq_ind[0],upper_freq_ind[0]):
  * 		if i<smooth_interval:
  * 			smoothed_spectrum[i]=0.0             # <<<<<<<<<<<<<<
@@ -9934,7 +11731,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
  */
       (__pyx_v_smoothed_spectrum[__pyx_v_i]) = 0.0;
 
-      /* "spatial_minimiser1.pyx":787
+      /* "spatial_minimiser1.pyx":1057
  * 		if i<smooth_interval:
  * 			smoothed_spectrum[i]=0.0
  * 			continue             # <<<<<<<<<<<<<<
@@ -9943,7 +11740,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
  */
       goto __pyx_L5_continue;
 
-      /* "spatial_minimiser1.pyx":785
+      /* "spatial_minimiser1.pyx":1055
  * 
  * 	for i in range(lower_freq_ind[0],upper_freq_ind[0]):
  * 		if i<smooth_interval:             # <<<<<<<<<<<<<<
@@ -9952,7 +11749,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
  */
     }
 
-    /* "spatial_minimiser1.pyx":788
+    /* "spatial_minimiser1.pyx":1058
  * 			smoothed_spectrum[i]=0.0
  * 			continue
  * 		elif i>num_freqs-1-smooth_interval:             # <<<<<<<<<<<<<<
@@ -9962,7 +11759,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
     __pyx_t_4 = ((__pyx_v_i > ((__pyx_v_num_freqs - 1) - __pyx_v_smooth_interval)) != 0);
     if (__pyx_t_4) {
 
-      /* "spatial_minimiser1.pyx":789
+      /* "spatial_minimiser1.pyx":1059
  * 			continue
  * 		elif i>num_freqs-1-smooth_interval:
  * 			smoothed_spectrum[i]=0.0             # <<<<<<<<<<<<<<
@@ -9971,7 +11768,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
  */
       (__pyx_v_smoothed_spectrum[__pyx_v_i]) = 0.0;
 
-      /* "spatial_minimiser1.pyx":790
+      /* "spatial_minimiser1.pyx":1060
  * 		elif i>num_freqs-1-smooth_interval:
  * 			smoothed_spectrum[i]=0.0
  * 			continue             # <<<<<<<<<<<<<<
@@ -9980,7 +11777,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
  */
       goto __pyx_L5_continue;
 
-      /* "spatial_minimiser1.pyx":788
+      /* "spatial_minimiser1.pyx":1058
  * 			smoothed_spectrum[i]=0.0
  * 			continue
  * 		elif i>num_freqs-1-smooth_interval:             # <<<<<<<<<<<<<<
@@ -9989,7 +11786,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
  */
     }
 
-    /* "spatial_minimiser1.pyx":791
+    /* "spatial_minimiser1.pyx":1061
  * 			smoothed_spectrum[i]=0.0
  * 			continue
  * 		j=-smooth_interval             # <<<<<<<<<<<<<<
@@ -9998,7 +11795,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
  */
     __pyx_v_j = (-__pyx_v_smooth_interval);
 
-    /* "spatial_minimiser1.pyx":792
+    /* "spatial_minimiser1.pyx":1062
  * 			continue
  * 		j=-smooth_interval
  * 		sum1=0.0             # <<<<<<<<<<<<<<
@@ -10007,7 +11804,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
  */
     __pyx_v_sum1 = 0.0;
 
-    /* "spatial_minimiser1.pyx":793
+    /* "spatial_minimiser1.pyx":1063
  * 		j=-smooth_interval
  * 		sum1=0.0
  * 		while j<=smooth_interval:             # <<<<<<<<<<<<<<
@@ -10018,7 +11815,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
       __pyx_t_4 = ((__pyx_v_j <= __pyx_v_smooth_interval) != 0);
       if (!__pyx_t_4) break;
 
-      /* "spatial_minimiser1.pyx":794
+      /* "spatial_minimiser1.pyx":1064
  * 		sum1=0.0
  * 		while j<=smooth_interval:
  * 			sum1=sum1+spectrum[i+j]             # <<<<<<<<<<<<<<
@@ -10027,7 +11824,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
  */
       __pyx_v_sum1 = (__pyx_v_sum1 + (__pyx_v_spectrum[(__pyx_v_i + __pyx_v_j)]));
 
-      /* "spatial_minimiser1.pyx":795
+      /* "spatial_minimiser1.pyx":1065
  * 		while j<=smooth_interval:
  * 			sum1=sum1+spectrum[i+j]
  * 			j=j+1             # <<<<<<<<<<<<<<
@@ -10037,7 +11834,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
       __pyx_v_j = (__pyx_v_j + 1);
     }
 
-    /* "spatial_minimiser1.pyx":796
+    /* "spatial_minimiser1.pyx":1066
  * 			sum1=sum1+spectrum[i+j]
  * 			j=j+1
  * 		sum1=sum1/smooth_length             # <<<<<<<<<<<<<<
@@ -10046,11 +11843,11 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
  */
     if (unlikely(__pyx_v_smooth_length == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-      __PYX_ERR(0, 796, __pyx_L1_error)
+      __PYX_ERR(0, 1066, __pyx_L1_error)
     }
     __pyx_v_sum1 = (__pyx_v_sum1 / ((double)__pyx_v_smooth_length));
 
-    /* "spatial_minimiser1.pyx":797
+    /* "spatial_minimiser1.pyx":1067
  * 			j=j+1
  * 		sum1=sum1/smooth_length
  * 		smoothed_spectrum[i]=sum1             # <<<<<<<<<<<<<<
@@ -10061,7 +11858,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
     __pyx_L5_continue:;
   }
 
-  /* "spatial_minimiser1.pyx":800
+  /* "spatial_minimiser1.pyx":1070
  * 
  * 
  * 	j=max_loc-smooth_interval             # <<<<<<<<<<<<<<
@@ -10070,7 +11867,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
  */
   __pyx_v_j = (__pyx_v_max_loc - __pyx_v_smooth_interval);
 
-  /* "spatial_minimiser1.pyx":803
+  /* "spatial_minimiser1.pyx":1073
  * 
  * 
  * 	while j>smooth_interval:             # <<<<<<<<<<<<<<
@@ -10081,7 +11878,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
     __pyx_t_4 = ((__pyx_v_j > __pyx_v_smooth_interval) != 0);
     if (!__pyx_t_4) break;
 
-    /* "spatial_minimiser1.pyx":804
+    /* "spatial_minimiser1.pyx":1074
  * 
  * 	while j>smooth_interval:
  * 		if smoothed_spectrum[j]<1e-7:             # <<<<<<<<<<<<<<
@@ -10091,7 +11888,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
     __pyx_t_4 = (((__pyx_v_smoothed_spectrum[__pyx_v_j]) < 1e-7) != 0);
     if (__pyx_t_4) {
 
-      /* "spatial_minimiser1.pyx":805
+      /* "spatial_minimiser1.pyx":1075
  * 	while j>smooth_interval:
  * 		if smoothed_spectrum[j]<1e-7:
  * 			lower_freq_ind[0]=j             # <<<<<<<<<<<<<<
@@ -10100,7 +11897,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
  */
       (__pyx_v_lower_freq_ind[0]) = __pyx_v_j;
 
-      /* "spatial_minimiser1.pyx":806
+      /* "spatial_minimiser1.pyx":1076
  * 		if smoothed_spectrum[j]<1e-7:
  * 			lower_freq_ind[0]=j
  * 			break             # <<<<<<<<<<<<<<
@@ -10109,7 +11906,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
  */
       goto __pyx_L11_break;
 
-      /* "spatial_minimiser1.pyx":804
+      /* "spatial_minimiser1.pyx":1074
  * 
  * 	while j>smooth_interval:
  * 		if smoothed_spectrum[j]<1e-7:             # <<<<<<<<<<<<<<
@@ -10118,7 +11915,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
  */
     }
 
-    /* "spatial_minimiser1.pyx":807
+    /* "spatial_minimiser1.pyx":1077
  * 			lower_freq_ind[0]=j
  * 			break
  * 		if (smoothed_spectrum[j-1]-smoothed_spectrum[j])/smoothed_spectrum[j]>0.05:             # <<<<<<<<<<<<<<
@@ -10128,12 +11925,12 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
     __pyx_t_5 = ((__pyx_v_smoothed_spectrum[(__pyx_v_j - 1)]) - (__pyx_v_smoothed_spectrum[__pyx_v_j]));
     if (unlikely((__pyx_v_smoothed_spectrum[__pyx_v_j]) == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-      __PYX_ERR(0, 807, __pyx_L1_error)
+      __PYX_ERR(0, 1077, __pyx_L1_error)
     }
     __pyx_t_4 = (((__pyx_t_5 / (__pyx_v_smoothed_spectrum[__pyx_v_j])) > 0.05) != 0);
     if (__pyx_t_4) {
 
-      /* "spatial_minimiser1.pyx":808
+      /* "spatial_minimiser1.pyx":1078
  * 			break
  * 		if (smoothed_spectrum[j-1]-smoothed_spectrum[j])/smoothed_spectrum[j]>0.05:
  * 			lower_freq_ind[0]=j             # <<<<<<<<<<<<<<
@@ -10142,7 +11939,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
  */
       (__pyx_v_lower_freq_ind[0]) = __pyx_v_j;
 
-      /* "spatial_minimiser1.pyx":809
+      /* "spatial_minimiser1.pyx":1079
  * 		if (smoothed_spectrum[j-1]-smoothed_spectrum[j])/smoothed_spectrum[j]>0.05:
  * 			lower_freq_ind[0]=j
  * 			break             # <<<<<<<<<<<<<<
@@ -10151,7 +11948,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
  */
       goto __pyx_L11_break;
 
-      /* "spatial_minimiser1.pyx":807
+      /* "spatial_minimiser1.pyx":1077
  * 			lower_freq_ind[0]=j
  * 			break
  * 		if (smoothed_spectrum[j-1]-smoothed_spectrum[j])/smoothed_spectrum[j]>0.05:             # <<<<<<<<<<<<<<
@@ -10160,7 +11957,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
  */
     }
 
-    /* "spatial_minimiser1.pyx":810
+    /* "spatial_minimiser1.pyx":1080
  * 			lower_freq_ind[0]=j
  * 			break
  * 		j=j-1             # <<<<<<<<<<<<<<
@@ -10171,7 +11968,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
   }
   __pyx_L11_break:;
 
-  /* "spatial_minimiser1.pyx":812
+  /* "spatial_minimiser1.pyx":1082
  * 		j=j-1
  * 
  * 	j=max_loc+1+smooth_interval             # <<<<<<<<<<<<<<
@@ -10180,7 +11977,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
  */
   __pyx_v_j = ((__pyx_v_max_loc + 1) + __pyx_v_smooth_interval);
 
-  /* "spatial_minimiser1.pyx":813
+  /* "spatial_minimiser1.pyx":1083
  * 
  * 	j=max_loc+1+smooth_interval
  * 	upper_freq_ind[0]=j             # <<<<<<<<<<<<<<
@@ -10189,7 +11986,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
  */
   (__pyx_v_upper_freq_ind[0]) = __pyx_v_j;
 
-  /* "spatial_minimiser1.pyx":815
+  /* "spatial_minimiser1.pyx":1085
  * 	upper_freq_ind[0]=j
  * 
  * 	while j<num_freqs-2-smooth_interval:             # <<<<<<<<<<<<<<
@@ -10200,7 +11997,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
     __pyx_t_4 = ((__pyx_v_j < ((__pyx_v_num_freqs - 2) - __pyx_v_smooth_interval)) != 0);
     if (!__pyx_t_4) break;
 
-    /* "spatial_minimiser1.pyx":816
+    /* "spatial_minimiser1.pyx":1086
  * 
  * 	while j<num_freqs-2-smooth_interval:
  * 		if smoothed_spectrum[j]<1e-7:             # <<<<<<<<<<<<<<
@@ -10210,7 +12007,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
     __pyx_t_4 = (((__pyx_v_smoothed_spectrum[__pyx_v_j]) < 1e-7) != 0);
     if (__pyx_t_4) {
 
-      /* "spatial_minimiser1.pyx":817
+      /* "spatial_minimiser1.pyx":1087
  * 	while j<num_freqs-2-smooth_interval:
  * 		if smoothed_spectrum[j]<1e-7:
  * 			upper_freq_ind[0]=j             # <<<<<<<<<<<<<<
@@ -10219,7 +12016,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
  */
       (__pyx_v_upper_freq_ind[0]) = __pyx_v_j;
 
-      /* "spatial_minimiser1.pyx":818
+      /* "spatial_minimiser1.pyx":1088
  * 		if smoothed_spectrum[j]<1e-7:
  * 			upper_freq_ind[0]=j
  * 			break             # <<<<<<<<<<<<<<
@@ -10228,7 +12025,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
  */
       goto __pyx_L15_break;
 
-      /* "spatial_minimiser1.pyx":816
+      /* "spatial_minimiser1.pyx":1086
  * 
  * 	while j<num_freqs-2-smooth_interval:
  * 		if smoothed_spectrum[j]<1e-7:             # <<<<<<<<<<<<<<
@@ -10237,7 +12034,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
  */
     }
 
-    /* "spatial_minimiser1.pyx":819
+    /* "spatial_minimiser1.pyx":1089
  * 			upper_freq_ind[0]=j
  * 			break
  * 		if (smoothed_spectrum[j+1]-smoothed_spectrum[j])/smoothed_spectrum[j]>0.05:             # <<<<<<<<<<<<<<
@@ -10247,12 +12044,12 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
     __pyx_t_5 = ((__pyx_v_smoothed_spectrum[(__pyx_v_j + 1)]) - (__pyx_v_smoothed_spectrum[__pyx_v_j]));
     if (unlikely((__pyx_v_smoothed_spectrum[__pyx_v_j]) == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-      __PYX_ERR(0, 819, __pyx_L1_error)
+      __PYX_ERR(0, 1089, __pyx_L1_error)
     }
     __pyx_t_4 = (((__pyx_t_5 / (__pyx_v_smoothed_spectrum[__pyx_v_j])) > 0.05) != 0);
     if (__pyx_t_4) {
 
-      /* "spatial_minimiser1.pyx":820
+      /* "spatial_minimiser1.pyx":1090
  * 			break
  * 		if (smoothed_spectrum[j+1]-smoothed_spectrum[j])/smoothed_spectrum[j]>0.05:
  * 			upper_freq_ind[0]=j             # <<<<<<<<<<<<<<
@@ -10261,7 +12058,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
  */
       (__pyx_v_upper_freq_ind[0]) = __pyx_v_j;
 
-      /* "spatial_minimiser1.pyx":821
+      /* "spatial_minimiser1.pyx":1091
  * 		if (smoothed_spectrum[j+1]-smoothed_spectrum[j])/smoothed_spectrum[j]>0.05:
  * 			upper_freq_ind[0]=j
  * 			break             # <<<<<<<<<<<<<<
@@ -10270,7 +12067,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
  */
       goto __pyx_L15_break;
 
-      /* "spatial_minimiser1.pyx":819
+      /* "spatial_minimiser1.pyx":1089
  * 			upper_freq_ind[0]=j
  * 			break
  * 		if (smoothed_spectrum[j+1]-smoothed_spectrum[j])/smoothed_spectrum[j]>0.05:             # <<<<<<<<<<<<<<
@@ -10279,7 +12076,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
  */
     }
 
-    /* "spatial_minimiser1.pyx":822
+    /* "spatial_minimiser1.pyx":1092
  * 			upper_freq_ind[0]=j
  * 			break
  * 		j=j+1             # <<<<<<<<<<<<<<
@@ -10290,7 +12087,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
   }
   __pyx_L15_break:;
 
-  /* "spatial_minimiser1.pyx":824
+  /* "spatial_minimiser1.pyx":1094
  * 		j=j+1
  * 
  * 	PyMem_Free(smoothed_spectrum)             # <<<<<<<<<<<<<<
@@ -10299,7 +12096,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
  */
   PyMem_Free(__pyx_v_smoothed_spectrum);
 
-  /* "spatial_minimiser1.pyx":825
+  /* "spatial_minimiser1.pyx":1095
  * 
  * 	PyMem_Free(smoothed_spectrum)
  * 	return             # <<<<<<<<<<<<<<
@@ -10308,7 +12105,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
  */
   goto __pyx_L0;
 
-  /* "spatial_minimiser1.pyx":768
+  /* "spatial_minimiser1.pyx":1038
  * 
  * 
  * cdef void calc_fitrange_homogenous(double *spectrum, int *lower_freq_ind, int *upper_freq_ind,int num_freqs):             # <<<<<<<<<<<<<<
@@ -10323,7 +12120,7 @@ static void __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(double *__pyx_
   __Pyx_RefNannyFinishContext();
 }
 
-/* "spatial_minimiser1.pyx":827
+/* "spatial_minimiser1.pyx":1097
  * 	return
  * 
  * cdef void calc_grad(double [:]fitted,double **param_val, int num_times, int num_y, int num_x, int t, int y1, int x1, int num_params,\             # <<<<<<<<<<<<<<
@@ -10345,12 +12142,14 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
   Py_ssize_t __pyx_t_6;
   int __pyx_t_7;
   Py_ssize_t __pyx_t_8;
+  Py_ssize_t __pyx_t_9;
+  Py_ssize_t __pyx_t_10;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("calc_grad", 0);
 
-  /* "spatial_minimiser1.pyx":833
+  /* "spatial_minimiser1.pyx":1103
  * 	cdef int ind,ind1, ind2,param1
  * 
  * 	if num_x>1:             # <<<<<<<<<<<<<<
@@ -10360,7 +12159,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
   __pyx_t_1 = ((__pyx_v_num_x > 1) != 0);
   if (__pyx_t_1) {
 
-    /* "spatial_minimiser1.pyx":834
+    /* "spatial_minimiser1.pyx":1104
  * 
  * 	if num_x>1:
  * 		if x1>=1 and x1<=num_x-2:             # <<<<<<<<<<<<<<
@@ -10378,7 +12177,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
     __pyx_L5_bool_binop_done:;
     if (__pyx_t_1) {
 
-      /* "spatial_minimiser1.pyx":835
+      /* "spatial_minimiser1.pyx":1105
  * 	if num_x>1:
  * 		if x1>=1 and x1<=num_x-2:
  * 			for param1 in range(num_params):             # <<<<<<<<<<<<<<
@@ -10390,7 +12189,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
       for (__pyx_t_5 = 0; __pyx_t_5 < __pyx_t_4; __pyx_t_5+=1) {
         __pyx_v_param1 = __pyx_t_5;
 
-        /* "spatial_minimiser1.pyx":836
+        /* "spatial_minimiser1.pyx":1106
  * 		if x1>=1 and x1<=num_x-2:
  * 			for param1 in range(num_params):
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1             # <<<<<<<<<<<<<<
@@ -10399,7 +12198,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
  */
         __pyx_v_ind = ((((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_param1);
 
-        /* "spatial_minimiser1.pyx":837
+        /* "spatial_minimiser1.pyx":1107
  * 			for param1 in range(num_params):
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				ind1=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+(x1-1)*(num_params+1)+param1             # <<<<<<<<<<<<<<
@@ -10408,21 +12207,21 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
  */
         __pyx_v_ind1 = ((((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + ((__pyx_v_x1 - 1) * (__pyx_v_num_params + 1))) + __pyx_v_param1);
 
-        /* "spatial_minimiser1.pyx":838
+        /* "spatial_minimiser1.pyx":1108
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				ind1=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+(x1-1)*(num_params+1)+param1
  * 				ind2=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+(x1+1)*(num_params+1)+param1             # <<<<<<<<<<<<<<
  * 				if fitted[ind1-param1+num_params]>0 and fitted[ind2-param1+num_params]>0:
- * 					grad_x[param1]=(param_val[param1][int(fitted[ind2])]-\
+ * 					grad_x[param1]=(absolute(param_val[param1][int(fitted[ind])]-\
  */
         __pyx_v_ind2 = ((((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + ((__pyx_v_x1 + 1) * (__pyx_v_num_params + 1))) + __pyx_v_param1);
 
-        /* "spatial_minimiser1.pyx":839
+        /* "spatial_minimiser1.pyx":1109
  * 				ind1=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+(x1-1)*(num_params+1)+param1
  * 				ind2=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+(x1+1)*(num_params+1)+param1
  * 				if fitted[ind1-param1+num_params]>0 and fitted[ind2-param1+num_params]>0:             # <<<<<<<<<<<<<<
- * 					grad_x[param1]=(param_val[param1][int(fitted[ind2])]-\
- * 							param_val[param1][int(fitted[ind1])])/2
+ * 					grad_x[param1]=(absolute(param_val[param1][int(fitted[ind])]-\
+ * 							param_val[param1][int(fitted[ind1])])+\
  */
         __pyx_t_6 = ((__pyx_v_ind1 - __pyx_v_param1) + __pyx_v_num_params);
         __pyx_t_7 = -1;
@@ -10432,7 +12231,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
         } else if (unlikely(__pyx_t_6 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
         if (unlikely(__pyx_t_7 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_7);
-          __PYX_ERR(0, 839, __pyx_L1_error)
+          __PYX_ERR(0, 1109, __pyx_L1_error)
         }
         __pyx_t_2 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_6 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
         if (__pyx_t_2) {
@@ -10448,21 +12247,21 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
         } else if (unlikely(__pyx_t_6 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
         if (unlikely(__pyx_t_7 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_7);
-          __PYX_ERR(0, 839, __pyx_L1_error)
+          __PYX_ERR(0, 1109, __pyx_L1_error)
         }
         __pyx_t_2 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_6 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
         __pyx_t_1 = __pyx_t_2;
         __pyx_L10_bool_binop_done:;
         if (__pyx_t_1) {
 
-          /* "spatial_minimiser1.pyx":840
+          /* "spatial_minimiser1.pyx":1110
  * 				ind2=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+(x1+1)*(num_params+1)+param1
  * 				if fitted[ind1-param1+num_params]>0 and fitted[ind2-param1+num_params]>0:
- * 					grad_x[param1]=(param_val[param1][int(fitted[ind2])]-\             # <<<<<<<<<<<<<<
- * 							param_val[param1][int(fitted[ind1])])/2
- * 				elif fitted[ind1-param1+num_params]>0:
+ * 					grad_x[param1]=(absolute(param_val[param1][int(fitted[ind])]-\             # <<<<<<<<<<<<<<
+ * 							param_val[param1][int(fitted[ind1])])+\
+ * 							absolute(param_val[param1][int(fitted[ind2])]-\
  */
-          __pyx_t_6 = __pyx_v_ind2;
+          __pyx_t_6 = __pyx_v_ind;
           __pyx_t_7 = -1;
           if (__pyx_t_6 < 0) {
             __pyx_t_6 += __pyx_v_fitted.shape[0];
@@ -10470,15 +12269,15 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
           } else if (unlikely(__pyx_t_6 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
           if (unlikely(__pyx_t_7 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_7);
-            __PYX_ERR(0, 840, __pyx_L1_error)
+            __PYX_ERR(0, 1110, __pyx_L1_error)
           }
 
-          /* "spatial_minimiser1.pyx":841
+          /* "spatial_minimiser1.pyx":1111
  * 				if fitted[ind1-param1+num_params]>0 and fitted[ind2-param1+num_params]>0:
- * 					grad_x[param1]=(param_val[param1][int(fitted[ind2])]-\
- * 							param_val[param1][int(fitted[ind1])])/2             # <<<<<<<<<<<<<<
- * 				elif fitted[ind1-param1+num_params]>0:
- * 					grad_x[param1]=(param_val[param1][int(fitted[ind])]-\
+ * 					grad_x[param1]=(absolute(param_val[param1][int(fitted[ind])]-\
+ * 							param_val[param1][int(fitted[ind1])])+\             # <<<<<<<<<<<<<<
+ * 							absolute(param_val[param1][int(fitted[ind2])]-\
+ * 							param_val[param1][int(fitted[ind])]))/2
  */
           __pyx_t_8 = __pyx_v_ind1;
           __pyx_t_7 = -1;
@@ -10488,96 +12287,132 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
           } else if (unlikely(__pyx_t_8 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
           if (unlikely(__pyx_t_7 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_7);
-            __PYX_ERR(0, 841, __pyx_L1_error)
+            __PYX_ERR(0, 1111, __pyx_L1_error)
           }
 
-          /* "spatial_minimiser1.pyx":840
- * 				ind2=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+(x1+1)*(num_params+1)+param1
- * 				if fitted[ind1-param1+num_params]>0 and fitted[ind2-param1+num_params]>0:
- * 					grad_x[param1]=(param_val[param1][int(fitted[ind2])]-\             # <<<<<<<<<<<<<<
- * 							param_val[param1][int(fitted[ind1])])/2
+          /* "spatial_minimiser1.pyx":1112
+ * 					grad_x[param1]=(absolute(param_val[param1][int(fitted[ind])]-\
+ * 							param_val[param1][int(fitted[ind1])])+\
+ * 							absolute(param_val[param1][int(fitted[ind2])]-\             # <<<<<<<<<<<<<<
+ * 							param_val[param1][int(fitted[ind])]))/2
  * 				elif fitted[ind1-param1+num_params]>0:
  */
-          (__pyx_v_grad_x[__pyx_v_param1]) = ((((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_6 * __pyx_v_fitted.strides[0]) ))))]) - ((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_8 * __pyx_v_fitted.strides[0]) ))))])) / 2.0);
+          __pyx_t_9 = __pyx_v_ind2;
+          __pyx_t_7 = -1;
+          if (__pyx_t_9 < 0) {
+            __pyx_t_9 += __pyx_v_fitted.shape[0];
+            if (unlikely(__pyx_t_9 < 0)) __pyx_t_7 = 0;
+          } else if (unlikely(__pyx_t_9 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+          if (unlikely(__pyx_t_7 != -1)) {
+            __Pyx_RaiseBufferIndexError(__pyx_t_7);
+            __PYX_ERR(0, 1112, __pyx_L1_error)
+          }
 
-          /* "spatial_minimiser1.pyx":839
+          /* "spatial_minimiser1.pyx":1113
+ * 							param_val[param1][int(fitted[ind1])])+\
+ * 							absolute(param_val[param1][int(fitted[ind2])]-\
+ * 							param_val[param1][int(fitted[ind])]))/2             # <<<<<<<<<<<<<<
+ * 				elif fitted[ind1-param1+num_params]>0:
+ * 					grad_x[param1]=(param_val[param1][int(fitted[ind])]-\
+ */
+          __pyx_t_10 = __pyx_v_ind;
+          __pyx_t_7 = -1;
+          if (__pyx_t_10 < 0) {
+            __pyx_t_10 += __pyx_v_fitted.shape[0];
+            if (unlikely(__pyx_t_10 < 0)) __pyx_t_7 = 0;
+          } else if (unlikely(__pyx_t_10 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+          if (unlikely(__pyx_t_7 != -1)) {
+            __Pyx_RaiseBufferIndexError(__pyx_t_7);
+            __PYX_ERR(0, 1113, __pyx_L1_error)
+          }
+
+          /* "spatial_minimiser1.pyx":1110
+ * 				ind2=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+(x1+1)*(num_params+1)+param1
+ * 				if fitted[ind1-param1+num_params]>0 and fitted[ind2-param1+num_params]>0:
+ * 					grad_x[param1]=(absolute(param_val[param1][int(fitted[ind])]-\             # <<<<<<<<<<<<<<
+ * 							param_val[param1][int(fitted[ind1])])+\
+ * 							absolute(param_val[param1][int(fitted[ind2])]-\
+ */
+          (__pyx_v_grad_x[__pyx_v_param1]) = ((__pyx_f_18spatial_minimiser1_absolute((((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_6 * __pyx_v_fitted.strides[0]) ))))]) - ((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_8 * __pyx_v_fitted.strides[0]) ))))]))) + __pyx_f_18spatial_minimiser1_absolute((((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_9 * __pyx_v_fitted.strides[0]) ))))]) - ((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_10 * __pyx_v_fitted.strides[0]) ))))])))) / 2.0);
+
+          /* "spatial_minimiser1.pyx":1109
  * 				ind1=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+(x1-1)*(num_params+1)+param1
  * 				ind2=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+(x1+1)*(num_params+1)+param1
  * 				if fitted[ind1-param1+num_params]>0 and fitted[ind2-param1+num_params]>0:             # <<<<<<<<<<<<<<
- * 					grad_x[param1]=(param_val[param1][int(fitted[ind2])]-\
- * 							param_val[param1][int(fitted[ind1])])/2
+ * 					grad_x[param1]=(absolute(param_val[param1][int(fitted[ind])]-\
+ * 							param_val[param1][int(fitted[ind1])])+\
  */
           goto __pyx_L9;
         }
 
-        /* "spatial_minimiser1.pyx":842
- * 					grad_x[param1]=(param_val[param1][int(fitted[ind2])]-\
- * 							param_val[param1][int(fitted[ind1])])/2
+        /* "spatial_minimiser1.pyx":1114
+ * 							absolute(param_val[param1][int(fitted[ind2])]-\
+ * 							param_val[param1][int(fitted[ind])]))/2
  * 				elif fitted[ind1-param1+num_params]>0:             # <<<<<<<<<<<<<<
  * 					grad_x[param1]=(param_val[param1][int(fitted[ind])]-\
  * 							param_val[param1][int(fitted[ind1])])
  */
-        __pyx_t_8 = ((__pyx_v_ind1 - __pyx_v_param1) + __pyx_v_num_params);
+        __pyx_t_10 = ((__pyx_v_ind1 - __pyx_v_param1) + __pyx_v_num_params);
         __pyx_t_7 = -1;
-        if (__pyx_t_8 < 0) {
-          __pyx_t_8 += __pyx_v_fitted.shape[0];
-          if (unlikely(__pyx_t_8 < 0)) __pyx_t_7 = 0;
-        } else if (unlikely(__pyx_t_8 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+        if (__pyx_t_10 < 0) {
+          __pyx_t_10 += __pyx_v_fitted.shape[0];
+          if (unlikely(__pyx_t_10 < 0)) __pyx_t_7 = 0;
+        } else if (unlikely(__pyx_t_10 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
         if (unlikely(__pyx_t_7 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_7);
-          __PYX_ERR(0, 842, __pyx_L1_error)
+          __PYX_ERR(0, 1114, __pyx_L1_error)
         }
-        __pyx_t_1 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_8 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
+        __pyx_t_1 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_10 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
         if (__pyx_t_1) {
 
-          /* "spatial_minimiser1.pyx":843
- * 							param_val[param1][int(fitted[ind1])])/2
+          /* "spatial_minimiser1.pyx":1115
+ * 							param_val[param1][int(fitted[ind])]))/2
  * 				elif fitted[ind1-param1+num_params]>0:
  * 					grad_x[param1]=(param_val[param1][int(fitted[ind])]-\             # <<<<<<<<<<<<<<
  * 							param_val[param1][int(fitted[ind1])])
  * 				elif fitted[ind2-param1+num_params]>0:
  */
-          __pyx_t_8 = __pyx_v_ind;
+          __pyx_t_10 = __pyx_v_ind;
           __pyx_t_7 = -1;
-          if (__pyx_t_8 < 0) {
-            __pyx_t_8 += __pyx_v_fitted.shape[0];
-            if (unlikely(__pyx_t_8 < 0)) __pyx_t_7 = 0;
-          } else if (unlikely(__pyx_t_8 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+          if (__pyx_t_10 < 0) {
+            __pyx_t_10 += __pyx_v_fitted.shape[0];
+            if (unlikely(__pyx_t_10 < 0)) __pyx_t_7 = 0;
+          } else if (unlikely(__pyx_t_10 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
           if (unlikely(__pyx_t_7 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_7);
-            __PYX_ERR(0, 843, __pyx_L1_error)
+            __PYX_ERR(0, 1115, __pyx_L1_error)
           }
 
-          /* "spatial_minimiser1.pyx":844
+          /* "spatial_minimiser1.pyx":1116
  * 				elif fitted[ind1-param1+num_params]>0:
  * 					grad_x[param1]=(param_val[param1][int(fitted[ind])]-\
  * 							param_val[param1][int(fitted[ind1])])             # <<<<<<<<<<<<<<
  * 				elif fitted[ind2-param1+num_params]>0:
  * 					grad_x[param1]=(param_val[param1][int(fitted[ind2])]-\
  */
-          __pyx_t_6 = __pyx_v_ind1;
+          __pyx_t_9 = __pyx_v_ind1;
           __pyx_t_7 = -1;
-          if (__pyx_t_6 < 0) {
-            __pyx_t_6 += __pyx_v_fitted.shape[0];
-            if (unlikely(__pyx_t_6 < 0)) __pyx_t_7 = 0;
-          } else if (unlikely(__pyx_t_6 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+          if (__pyx_t_9 < 0) {
+            __pyx_t_9 += __pyx_v_fitted.shape[0];
+            if (unlikely(__pyx_t_9 < 0)) __pyx_t_7 = 0;
+          } else if (unlikely(__pyx_t_9 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
           if (unlikely(__pyx_t_7 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_7);
-            __PYX_ERR(0, 844, __pyx_L1_error)
+            __PYX_ERR(0, 1116, __pyx_L1_error)
           }
 
-          /* "spatial_minimiser1.pyx":843
- * 							param_val[param1][int(fitted[ind1])])/2
+          /* "spatial_minimiser1.pyx":1115
+ * 							param_val[param1][int(fitted[ind])]))/2
  * 				elif fitted[ind1-param1+num_params]>0:
  * 					grad_x[param1]=(param_val[param1][int(fitted[ind])]-\             # <<<<<<<<<<<<<<
  * 							param_val[param1][int(fitted[ind1])])
  * 				elif fitted[ind2-param1+num_params]>0:
  */
-          (__pyx_v_grad_x[__pyx_v_param1]) = (((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_8 * __pyx_v_fitted.strides[0]) ))))]) - ((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_6 * __pyx_v_fitted.strides[0]) ))))]));
+          (__pyx_v_grad_x[__pyx_v_param1]) = (((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_10 * __pyx_v_fitted.strides[0]) ))))]) - ((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_9 * __pyx_v_fitted.strides[0]) ))))]));
 
-          /* "spatial_minimiser1.pyx":842
- * 					grad_x[param1]=(param_val[param1][int(fitted[ind2])]-\
- * 							param_val[param1][int(fitted[ind1])])/2
+          /* "spatial_minimiser1.pyx":1114
+ * 							absolute(param_val[param1][int(fitted[ind2])]-\
+ * 							param_val[param1][int(fitted[ind])]))/2
  * 				elif fitted[ind1-param1+num_params]>0:             # <<<<<<<<<<<<<<
  * 					grad_x[param1]=(param_val[param1][int(fitted[ind])]-\
  * 							param_val[param1][int(fitted[ind1])])
@@ -10585,72 +12420,72 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
           goto __pyx_L9;
         }
 
-        /* "spatial_minimiser1.pyx":845
+        /* "spatial_minimiser1.pyx":1117
  * 					grad_x[param1]=(param_val[param1][int(fitted[ind])]-\
  * 							param_val[param1][int(fitted[ind1])])
  * 				elif fitted[ind2-param1+num_params]>0:             # <<<<<<<<<<<<<<
  * 					grad_x[param1]=(param_val[param1][int(fitted[ind2])]-\
  * 							param_val[param1][int(fitted[ind])])
  */
-        __pyx_t_6 = ((__pyx_v_ind2 - __pyx_v_param1) + __pyx_v_num_params);
+        __pyx_t_9 = ((__pyx_v_ind2 - __pyx_v_param1) + __pyx_v_num_params);
         __pyx_t_7 = -1;
-        if (__pyx_t_6 < 0) {
-          __pyx_t_6 += __pyx_v_fitted.shape[0];
-          if (unlikely(__pyx_t_6 < 0)) __pyx_t_7 = 0;
-        } else if (unlikely(__pyx_t_6 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+        if (__pyx_t_9 < 0) {
+          __pyx_t_9 += __pyx_v_fitted.shape[0];
+          if (unlikely(__pyx_t_9 < 0)) __pyx_t_7 = 0;
+        } else if (unlikely(__pyx_t_9 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
         if (unlikely(__pyx_t_7 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_7);
-          __PYX_ERR(0, 845, __pyx_L1_error)
+          __PYX_ERR(0, 1117, __pyx_L1_error)
         }
-        __pyx_t_1 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_6 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
+        __pyx_t_1 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_9 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
         if (__pyx_t_1) {
 
-          /* "spatial_minimiser1.pyx":846
+          /* "spatial_minimiser1.pyx":1118
  * 							param_val[param1][int(fitted[ind1])])
  * 				elif fitted[ind2-param1+num_params]>0:
  * 					grad_x[param1]=(param_val[param1][int(fitted[ind2])]-\             # <<<<<<<<<<<<<<
  * 							param_val[param1][int(fitted[ind])])
  * 				else:
  */
-          __pyx_t_6 = __pyx_v_ind2;
+          __pyx_t_9 = __pyx_v_ind2;
           __pyx_t_7 = -1;
-          if (__pyx_t_6 < 0) {
-            __pyx_t_6 += __pyx_v_fitted.shape[0];
-            if (unlikely(__pyx_t_6 < 0)) __pyx_t_7 = 0;
-          } else if (unlikely(__pyx_t_6 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+          if (__pyx_t_9 < 0) {
+            __pyx_t_9 += __pyx_v_fitted.shape[0];
+            if (unlikely(__pyx_t_9 < 0)) __pyx_t_7 = 0;
+          } else if (unlikely(__pyx_t_9 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
           if (unlikely(__pyx_t_7 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_7);
-            __PYX_ERR(0, 846, __pyx_L1_error)
+            __PYX_ERR(0, 1118, __pyx_L1_error)
           }
 
-          /* "spatial_minimiser1.pyx":847
+          /* "spatial_minimiser1.pyx":1119
  * 				elif fitted[ind2-param1+num_params]>0:
  * 					grad_x[param1]=(param_val[param1][int(fitted[ind2])]-\
  * 							param_val[param1][int(fitted[ind])])             # <<<<<<<<<<<<<<
  * 				else:
  * 					grad_x[param1]=0.0
  */
-          __pyx_t_8 = __pyx_v_ind;
+          __pyx_t_10 = __pyx_v_ind;
           __pyx_t_7 = -1;
-          if (__pyx_t_8 < 0) {
-            __pyx_t_8 += __pyx_v_fitted.shape[0];
-            if (unlikely(__pyx_t_8 < 0)) __pyx_t_7 = 0;
-          } else if (unlikely(__pyx_t_8 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+          if (__pyx_t_10 < 0) {
+            __pyx_t_10 += __pyx_v_fitted.shape[0];
+            if (unlikely(__pyx_t_10 < 0)) __pyx_t_7 = 0;
+          } else if (unlikely(__pyx_t_10 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
           if (unlikely(__pyx_t_7 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_7);
-            __PYX_ERR(0, 847, __pyx_L1_error)
+            __PYX_ERR(0, 1119, __pyx_L1_error)
           }
 
-          /* "spatial_minimiser1.pyx":846
+          /* "spatial_minimiser1.pyx":1118
  * 							param_val[param1][int(fitted[ind1])])
  * 				elif fitted[ind2-param1+num_params]>0:
  * 					grad_x[param1]=(param_val[param1][int(fitted[ind2])]-\             # <<<<<<<<<<<<<<
  * 							param_val[param1][int(fitted[ind])])
  * 				else:
  */
-          (__pyx_v_grad_x[__pyx_v_param1]) = (((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_6 * __pyx_v_fitted.strides[0]) ))))]) - ((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_8 * __pyx_v_fitted.strides[0]) ))))]));
+          (__pyx_v_grad_x[__pyx_v_param1]) = (((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_9 * __pyx_v_fitted.strides[0]) ))))]) - ((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_10 * __pyx_v_fitted.strides[0]) ))))]));
 
-          /* "spatial_minimiser1.pyx":845
+          /* "spatial_minimiser1.pyx":1117
  * 					grad_x[param1]=(param_val[param1][int(fitted[ind])]-\
  * 							param_val[param1][int(fitted[ind1])])
  * 				elif fitted[ind2-param1+num_params]>0:             # <<<<<<<<<<<<<<
@@ -10660,7 +12495,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
           goto __pyx_L9;
         }
 
-        /* "spatial_minimiser1.pyx":849
+        /* "spatial_minimiser1.pyx":1121
  * 							param_val[param1][int(fitted[ind])])
  * 				else:
  * 					grad_x[param1]=0.0             # <<<<<<<<<<<<<<
@@ -10673,7 +12508,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
         __pyx_L9:;
       }
 
-      /* "spatial_minimiser1.pyx":834
+      /* "spatial_minimiser1.pyx":1104
  * 
  * 	if num_x>1:
  * 		if x1>=1 and x1<=num_x-2:             # <<<<<<<<<<<<<<
@@ -10683,7 +12518,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
       goto __pyx_L4;
     }
 
-    /* "spatial_minimiser1.pyx":850
+    /* "spatial_minimiser1.pyx":1122
  * 				else:
  * 					grad_x[param1]=0.0
  * 		elif x1==0:             # <<<<<<<<<<<<<<
@@ -10693,7 +12528,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
     __pyx_t_1 = ((__pyx_v_x1 == 0) != 0);
     if (__pyx_t_1) {
 
-      /* "spatial_minimiser1.pyx":851
+      /* "spatial_minimiser1.pyx":1123
  * 					grad_x[param1]=0.0
  * 		elif x1==0:
  * 			for param1 in range(num_params):             # <<<<<<<<<<<<<<
@@ -10705,7 +12540,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
       for (__pyx_t_5 = 0; __pyx_t_5 < __pyx_t_4; __pyx_t_5+=1) {
         __pyx_v_param1 = __pyx_t_5;
 
-        /* "spatial_minimiser1.pyx":852
+        /* "spatial_minimiser1.pyx":1124
  * 		elif x1==0:
  * 			for param1 in range(num_params):
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1             # <<<<<<<<<<<<<<
@@ -10714,7 +12549,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
  */
         __pyx_v_ind = ((((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_param1);
 
-        /* "spatial_minimiser1.pyx":853
+        /* "spatial_minimiser1.pyx":1125
  * 			for param1 in range(num_params):
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				ind2=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+(x1+1)*(num_params+1)+param1             # <<<<<<<<<<<<<<
@@ -10723,72 +12558,72 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
  */
         __pyx_v_ind2 = ((((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + ((__pyx_v_x1 + 1) * (__pyx_v_num_params + 1))) + __pyx_v_param1);
 
-        /* "spatial_minimiser1.pyx":854
+        /* "spatial_minimiser1.pyx":1126
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				ind2=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+(x1+1)*(num_params+1)+param1
  * 				if fitted[ind2-param1+num_params]>0:             # <<<<<<<<<<<<<<
  * 					grad_x[param1]=(param_val[param1][int(fitted[ind2])]-\
  * 							param_val[param1][int(fitted[ind])])
  */
-        __pyx_t_8 = ((__pyx_v_ind2 - __pyx_v_param1) + __pyx_v_num_params);
+        __pyx_t_10 = ((__pyx_v_ind2 - __pyx_v_param1) + __pyx_v_num_params);
         __pyx_t_7 = -1;
-        if (__pyx_t_8 < 0) {
-          __pyx_t_8 += __pyx_v_fitted.shape[0];
-          if (unlikely(__pyx_t_8 < 0)) __pyx_t_7 = 0;
-        } else if (unlikely(__pyx_t_8 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+        if (__pyx_t_10 < 0) {
+          __pyx_t_10 += __pyx_v_fitted.shape[0];
+          if (unlikely(__pyx_t_10 < 0)) __pyx_t_7 = 0;
+        } else if (unlikely(__pyx_t_10 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
         if (unlikely(__pyx_t_7 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_7);
-          __PYX_ERR(0, 854, __pyx_L1_error)
+          __PYX_ERR(0, 1126, __pyx_L1_error)
         }
-        __pyx_t_1 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_8 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
+        __pyx_t_1 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_10 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
         if (__pyx_t_1) {
 
-          /* "spatial_minimiser1.pyx":855
+          /* "spatial_minimiser1.pyx":1127
  * 				ind2=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+(x1+1)*(num_params+1)+param1
  * 				if fitted[ind2-param1+num_params]>0:
  * 					grad_x[param1]=(param_val[param1][int(fitted[ind2])]-\             # <<<<<<<<<<<<<<
  * 							param_val[param1][int(fitted[ind])])
  * 				else:
  */
-          __pyx_t_8 = __pyx_v_ind2;
+          __pyx_t_10 = __pyx_v_ind2;
           __pyx_t_7 = -1;
-          if (__pyx_t_8 < 0) {
-            __pyx_t_8 += __pyx_v_fitted.shape[0];
-            if (unlikely(__pyx_t_8 < 0)) __pyx_t_7 = 0;
-          } else if (unlikely(__pyx_t_8 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+          if (__pyx_t_10 < 0) {
+            __pyx_t_10 += __pyx_v_fitted.shape[0];
+            if (unlikely(__pyx_t_10 < 0)) __pyx_t_7 = 0;
+          } else if (unlikely(__pyx_t_10 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
           if (unlikely(__pyx_t_7 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_7);
-            __PYX_ERR(0, 855, __pyx_L1_error)
+            __PYX_ERR(0, 1127, __pyx_L1_error)
           }
 
-          /* "spatial_minimiser1.pyx":856
+          /* "spatial_minimiser1.pyx":1128
  * 				if fitted[ind2-param1+num_params]>0:
  * 					grad_x[param1]=(param_val[param1][int(fitted[ind2])]-\
  * 							param_val[param1][int(fitted[ind])])             # <<<<<<<<<<<<<<
  * 				else:
  * 					grad_x[param1]=0.0
  */
-          __pyx_t_6 = __pyx_v_ind;
+          __pyx_t_9 = __pyx_v_ind;
           __pyx_t_7 = -1;
-          if (__pyx_t_6 < 0) {
-            __pyx_t_6 += __pyx_v_fitted.shape[0];
-            if (unlikely(__pyx_t_6 < 0)) __pyx_t_7 = 0;
-          } else if (unlikely(__pyx_t_6 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+          if (__pyx_t_9 < 0) {
+            __pyx_t_9 += __pyx_v_fitted.shape[0];
+            if (unlikely(__pyx_t_9 < 0)) __pyx_t_7 = 0;
+          } else if (unlikely(__pyx_t_9 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
           if (unlikely(__pyx_t_7 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_7);
-            __PYX_ERR(0, 856, __pyx_L1_error)
+            __PYX_ERR(0, 1128, __pyx_L1_error)
           }
 
-          /* "spatial_minimiser1.pyx":855
+          /* "spatial_minimiser1.pyx":1127
  * 				ind2=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+(x1+1)*(num_params+1)+param1
  * 				if fitted[ind2-param1+num_params]>0:
  * 					grad_x[param1]=(param_val[param1][int(fitted[ind2])]-\             # <<<<<<<<<<<<<<
  * 							param_val[param1][int(fitted[ind])])
  * 				else:
  */
-          (__pyx_v_grad_x[__pyx_v_param1]) = (((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_8 * __pyx_v_fitted.strides[0]) ))))]) - ((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_6 * __pyx_v_fitted.strides[0]) ))))]));
+          (__pyx_v_grad_x[__pyx_v_param1]) = (((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_10 * __pyx_v_fitted.strides[0]) ))))]) - ((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_9 * __pyx_v_fitted.strides[0]) ))))]));
 
-          /* "spatial_minimiser1.pyx":854
+          /* "spatial_minimiser1.pyx":1126
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				ind2=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+(x1+1)*(num_params+1)+param1
  * 				if fitted[ind2-param1+num_params]>0:             # <<<<<<<<<<<<<<
@@ -10798,7 +12633,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
           goto __pyx_L14;
         }
 
-        /* "spatial_minimiser1.pyx":858
+        /* "spatial_minimiser1.pyx":1130
  * 							param_val[param1][int(fitted[ind])])
  * 				else:
  * 					grad_x[param1]=0.0             # <<<<<<<<<<<<<<
@@ -10811,7 +12646,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
         __pyx_L14:;
       }
 
-      /* "spatial_minimiser1.pyx":850
+      /* "spatial_minimiser1.pyx":1122
  * 				else:
  * 					grad_x[param1]=0.0
  * 		elif x1==0:             # <<<<<<<<<<<<<<
@@ -10821,7 +12656,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
       goto __pyx_L4;
     }
 
-    /* "spatial_minimiser1.pyx":859
+    /* "spatial_minimiser1.pyx":1131
  * 				else:
  * 					grad_x[param1]=0.0
  * 		elif x1==num_x-1:             # <<<<<<<<<<<<<<
@@ -10831,7 +12666,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
     __pyx_t_1 = ((__pyx_v_x1 == (__pyx_v_num_x - 1)) != 0);
     if (__pyx_t_1) {
 
-      /* "spatial_minimiser1.pyx":860
+      /* "spatial_minimiser1.pyx":1132
  * 					grad_x[param1]=0.0
  * 		elif x1==num_x-1:
  * 			for param1 in range(num_params):             # <<<<<<<<<<<<<<
@@ -10843,7 +12678,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
       for (__pyx_t_5 = 0; __pyx_t_5 < __pyx_t_4; __pyx_t_5+=1) {
         __pyx_v_param1 = __pyx_t_5;
 
-        /* "spatial_minimiser1.pyx":861
+        /* "spatial_minimiser1.pyx":1133
  * 		elif x1==num_x-1:
  * 			for param1 in range(num_params):
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1             # <<<<<<<<<<<<<<
@@ -10852,7 +12687,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
  */
         __pyx_v_ind = ((((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_param1);
 
-        /* "spatial_minimiser1.pyx":862
+        /* "spatial_minimiser1.pyx":1134
  * 			for param1 in range(num_params):
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				ind1=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+(x1-1)*(num_params+1)+param1             # <<<<<<<<<<<<<<
@@ -10861,72 +12696,72 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
  */
         __pyx_v_ind1 = ((((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + ((__pyx_v_x1 - 1) * (__pyx_v_num_params + 1))) + __pyx_v_param1);
 
-        /* "spatial_minimiser1.pyx":863
+        /* "spatial_minimiser1.pyx":1135
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				ind1=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+(x1-1)*(num_params+1)+param1
  * 				if fitted[ind1-param1+num_params]>0:             # <<<<<<<<<<<<<<
  * 					grad_x[param1]=(param_val[param1][int(fitted[ind])]-\
  * 							param_val[param1][int(fitted[ind1])])
  */
-        __pyx_t_6 = ((__pyx_v_ind1 - __pyx_v_param1) + __pyx_v_num_params);
+        __pyx_t_9 = ((__pyx_v_ind1 - __pyx_v_param1) + __pyx_v_num_params);
         __pyx_t_7 = -1;
-        if (__pyx_t_6 < 0) {
-          __pyx_t_6 += __pyx_v_fitted.shape[0];
-          if (unlikely(__pyx_t_6 < 0)) __pyx_t_7 = 0;
-        } else if (unlikely(__pyx_t_6 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+        if (__pyx_t_9 < 0) {
+          __pyx_t_9 += __pyx_v_fitted.shape[0];
+          if (unlikely(__pyx_t_9 < 0)) __pyx_t_7 = 0;
+        } else if (unlikely(__pyx_t_9 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
         if (unlikely(__pyx_t_7 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_7);
-          __PYX_ERR(0, 863, __pyx_L1_error)
+          __PYX_ERR(0, 1135, __pyx_L1_error)
         }
-        __pyx_t_1 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_6 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
+        __pyx_t_1 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_9 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
         if (__pyx_t_1) {
 
-          /* "spatial_minimiser1.pyx":864
+          /* "spatial_minimiser1.pyx":1136
  * 				ind1=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+(x1-1)*(num_params+1)+param1
  * 				if fitted[ind1-param1+num_params]>0:
  * 					grad_x[param1]=(param_val[param1][int(fitted[ind])]-\             # <<<<<<<<<<<<<<
  * 							param_val[param1][int(fitted[ind1])])
  * 				else:
  */
-          __pyx_t_6 = __pyx_v_ind;
+          __pyx_t_9 = __pyx_v_ind;
           __pyx_t_7 = -1;
-          if (__pyx_t_6 < 0) {
-            __pyx_t_6 += __pyx_v_fitted.shape[0];
-            if (unlikely(__pyx_t_6 < 0)) __pyx_t_7 = 0;
-          } else if (unlikely(__pyx_t_6 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+          if (__pyx_t_9 < 0) {
+            __pyx_t_9 += __pyx_v_fitted.shape[0];
+            if (unlikely(__pyx_t_9 < 0)) __pyx_t_7 = 0;
+          } else if (unlikely(__pyx_t_9 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
           if (unlikely(__pyx_t_7 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_7);
-            __PYX_ERR(0, 864, __pyx_L1_error)
+            __PYX_ERR(0, 1136, __pyx_L1_error)
           }
 
-          /* "spatial_minimiser1.pyx":865
+          /* "spatial_minimiser1.pyx":1137
  * 				if fitted[ind1-param1+num_params]>0:
  * 					grad_x[param1]=(param_val[param1][int(fitted[ind])]-\
  * 							param_val[param1][int(fitted[ind1])])             # <<<<<<<<<<<<<<
  * 				else:
  * 					grad_x[param1]=0.0
  */
-          __pyx_t_8 = __pyx_v_ind1;
+          __pyx_t_10 = __pyx_v_ind1;
           __pyx_t_7 = -1;
-          if (__pyx_t_8 < 0) {
-            __pyx_t_8 += __pyx_v_fitted.shape[0];
-            if (unlikely(__pyx_t_8 < 0)) __pyx_t_7 = 0;
-          } else if (unlikely(__pyx_t_8 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+          if (__pyx_t_10 < 0) {
+            __pyx_t_10 += __pyx_v_fitted.shape[0];
+            if (unlikely(__pyx_t_10 < 0)) __pyx_t_7 = 0;
+          } else if (unlikely(__pyx_t_10 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
           if (unlikely(__pyx_t_7 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_7);
-            __PYX_ERR(0, 865, __pyx_L1_error)
+            __PYX_ERR(0, 1137, __pyx_L1_error)
           }
 
-          /* "spatial_minimiser1.pyx":864
+          /* "spatial_minimiser1.pyx":1136
  * 				ind1=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+(x1-1)*(num_params+1)+param1
  * 				if fitted[ind1-param1+num_params]>0:
  * 					grad_x[param1]=(param_val[param1][int(fitted[ind])]-\             # <<<<<<<<<<<<<<
  * 							param_val[param1][int(fitted[ind1])])
  * 				else:
  */
-          (__pyx_v_grad_x[__pyx_v_param1]) = (((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_6 * __pyx_v_fitted.strides[0]) ))))]) - ((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_8 * __pyx_v_fitted.strides[0]) ))))]));
+          (__pyx_v_grad_x[__pyx_v_param1]) = (((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_9 * __pyx_v_fitted.strides[0]) ))))]) - ((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_10 * __pyx_v_fitted.strides[0]) ))))]));
 
-          /* "spatial_minimiser1.pyx":863
+          /* "spatial_minimiser1.pyx":1135
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				ind1=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+(x1-1)*(num_params+1)+param1
  * 				if fitted[ind1-param1+num_params]>0:             # <<<<<<<<<<<<<<
@@ -10936,7 +12771,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
           goto __pyx_L17;
         }
 
-        /* "spatial_minimiser1.pyx":867
+        /* "spatial_minimiser1.pyx":1139
  * 							param_val[param1][int(fitted[ind1])])
  * 				else:
  * 					grad_x[param1]=0.0             # <<<<<<<<<<<<<<
@@ -10949,7 +12784,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
         __pyx_L17:;
       }
 
-      /* "spatial_minimiser1.pyx":859
+      /* "spatial_minimiser1.pyx":1131
  * 				else:
  * 					grad_x[param1]=0.0
  * 		elif x1==num_x-1:             # <<<<<<<<<<<<<<
@@ -10959,7 +12794,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
     }
     __pyx_L4:;
 
-    /* "spatial_minimiser1.pyx":833
+    /* "spatial_minimiser1.pyx":1103
  * 	cdef int ind,ind1, ind2,param1
  * 
  * 	if num_x>1:             # <<<<<<<<<<<<<<
@@ -10968,7 +12803,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
  */
   }
 
-  /* "spatial_minimiser1.pyx":868
+  /* "spatial_minimiser1.pyx":1140
  * 				else:
  * 					grad_x[param1]=0.0
  * 	if num_y>1:             # <<<<<<<<<<<<<<
@@ -10978,7 +12813,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
   __pyx_t_1 = ((__pyx_v_num_y > 1) != 0);
   if (__pyx_t_1) {
 
-    /* "spatial_minimiser1.pyx":869
+    /* "spatial_minimiser1.pyx":1141
  * 					grad_x[param1]=0.0
  * 	if num_y>1:
  * 		if y1>=1 and y1<=num_y-2:             # <<<<<<<<<<<<<<
@@ -10996,7 +12831,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
     __pyx_L20_bool_binop_done:;
     if (__pyx_t_1) {
 
-      /* "spatial_minimiser1.pyx":870
+      /* "spatial_minimiser1.pyx":1142
  * 	if num_y>1:
  * 		if y1>=1 and y1<=num_y-2:
  * 			for param1 in range(num_params):             # <<<<<<<<<<<<<<
@@ -11008,7 +12843,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
       for (__pyx_t_5 = 0; __pyx_t_5 < __pyx_t_4; __pyx_t_5+=1) {
         __pyx_v_param1 = __pyx_t_5;
 
-        /* "spatial_minimiser1.pyx":871
+        /* "spatial_minimiser1.pyx":1143
  * 		if y1>=1 and y1<=num_y-2:
  * 			for param1 in range(num_params):
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1             # <<<<<<<<<<<<<<
@@ -11017,7 +12852,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
  */
         __pyx_v_ind = ((((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_param1);
 
-        /* "spatial_minimiser1.pyx":872
+        /* "spatial_minimiser1.pyx":1144
  * 			for param1 in range(num_params):
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				ind1=t*num_y*num_x*(num_params+1)+(y1-1)*num_x*(num_params+1)+x1*(num_params+1)+param1             # <<<<<<<<<<<<<<
@@ -11026,58 +12861,94 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
  */
         __pyx_v_ind1 = ((((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + (((__pyx_v_y1 - 1) * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_param1);
 
-        /* "spatial_minimiser1.pyx":873
+        /* "spatial_minimiser1.pyx":1145
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				ind1=t*num_y*num_x*(num_params+1)+(y1-1)*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				ind2=t*num_y*num_x*(num_params+1)+(y1+1)*num_x*(num_params+1)+x1*(num_params+1)+param1             # <<<<<<<<<<<<<<
  * 				if fitted[ind1-param1+num_params]>0 and fitted[ind2-param1+num_params]>0:
- * 					grad_y[param1]=(param_val[param1][int(fitted[ind2])]-\
+ * 					grad_y[param1]=(absolute(param_val[param1][int(fitted[ind])]-\
  */
         __pyx_v_ind2 = ((((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + (((__pyx_v_y1 + 1) * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_param1);
 
-        /* "spatial_minimiser1.pyx":874
+        /* "spatial_minimiser1.pyx":1146
  * 				ind1=t*num_y*num_x*(num_params+1)+(y1-1)*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				ind2=t*num_y*num_x*(num_params+1)+(y1+1)*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				if fitted[ind1-param1+num_params]>0 and fitted[ind2-param1+num_params]>0:             # <<<<<<<<<<<<<<
- * 					grad_y[param1]=(param_val[param1][int(fitted[ind2])]-\
- * 							param_val[param1][int(fitted[ind1])])/2
+ * 					grad_y[param1]=(absolute(param_val[param1][int(fitted[ind])]-\
+ * 							param_val[param1][int(fitted[ind1])])+\
  */
-        __pyx_t_8 = ((__pyx_v_ind1 - __pyx_v_param1) + __pyx_v_num_params);
+        __pyx_t_10 = ((__pyx_v_ind1 - __pyx_v_param1) + __pyx_v_num_params);
         __pyx_t_7 = -1;
-        if (__pyx_t_8 < 0) {
-          __pyx_t_8 += __pyx_v_fitted.shape[0];
-          if (unlikely(__pyx_t_8 < 0)) __pyx_t_7 = 0;
-        } else if (unlikely(__pyx_t_8 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+        if (__pyx_t_10 < 0) {
+          __pyx_t_10 += __pyx_v_fitted.shape[0];
+          if (unlikely(__pyx_t_10 < 0)) __pyx_t_7 = 0;
+        } else if (unlikely(__pyx_t_10 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
         if (unlikely(__pyx_t_7 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_7);
-          __PYX_ERR(0, 874, __pyx_L1_error)
+          __PYX_ERR(0, 1146, __pyx_L1_error)
         }
-        __pyx_t_2 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_8 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
+        __pyx_t_2 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_10 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
         if (__pyx_t_2) {
         } else {
           __pyx_t_1 = __pyx_t_2;
           goto __pyx_L25_bool_binop_done;
         }
-        __pyx_t_8 = ((__pyx_v_ind2 - __pyx_v_param1) + __pyx_v_num_params);
+        __pyx_t_10 = ((__pyx_v_ind2 - __pyx_v_param1) + __pyx_v_num_params);
         __pyx_t_7 = -1;
-        if (__pyx_t_8 < 0) {
-          __pyx_t_8 += __pyx_v_fitted.shape[0];
-          if (unlikely(__pyx_t_8 < 0)) __pyx_t_7 = 0;
-        } else if (unlikely(__pyx_t_8 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+        if (__pyx_t_10 < 0) {
+          __pyx_t_10 += __pyx_v_fitted.shape[0];
+          if (unlikely(__pyx_t_10 < 0)) __pyx_t_7 = 0;
+        } else if (unlikely(__pyx_t_10 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
         if (unlikely(__pyx_t_7 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_7);
-          __PYX_ERR(0, 874, __pyx_L1_error)
+          __PYX_ERR(0, 1146, __pyx_L1_error)
         }
-        __pyx_t_2 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_8 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
+        __pyx_t_2 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_10 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
         __pyx_t_1 = __pyx_t_2;
         __pyx_L25_bool_binop_done:;
         if (__pyx_t_1) {
 
-          /* "spatial_minimiser1.pyx":875
+          /* "spatial_minimiser1.pyx":1147
  * 				ind2=t*num_y*num_x*(num_params+1)+(y1+1)*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				if fitted[ind1-param1+num_params]>0 and fitted[ind2-param1+num_params]>0:
- * 					grad_y[param1]=(param_val[param1][int(fitted[ind2])]-\             # <<<<<<<<<<<<<<
- * 							param_val[param1][int(fitted[ind1])])/2
+ * 					grad_y[param1]=(absolute(param_val[param1][int(fitted[ind])]-\             # <<<<<<<<<<<<<<
+ * 							param_val[param1][int(fitted[ind1])])+\
+ * 							absolute(param_val[param1][int(fitted[ind2])]-\
+ */
+          __pyx_t_10 = __pyx_v_ind;
+          __pyx_t_7 = -1;
+          if (__pyx_t_10 < 0) {
+            __pyx_t_10 += __pyx_v_fitted.shape[0];
+            if (unlikely(__pyx_t_10 < 0)) __pyx_t_7 = 0;
+          } else if (unlikely(__pyx_t_10 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+          if (unlikely(__pyx_t_7 != -1)) {
+            __Pyx_RaiseBufferIndexError(__pyx_t_7);
+            __PYX_ERR(0, 1147, __pyx_L1_error)
+          }
+
+          /* "spatial_minimiser1.pyx":1148
+ * 				if fitted[ind1-param1+num_params]>0 and fitted[ind2-param1+num_params]>0:
+ * 					grad_y[param1]=(absolute(param_val[param1][int(fitted[ind])]-\
+ * 							param_val[param1][int(fitted[ind1])])+\             # <<<<<<<<<<<<<<
+ * 							absolute(param_val[param1][int(fitted[ind2])]-\
+ * 							param_val[param1][int(fitted[ind])]))/2
+ */
+          __pyx_t_9 = __pyx_v_ind1;
+          __pyx_t_7 = -1;
+          if (__pyx_t_9 < 0) {
+            __pyx_t_9 += __pyx_v_fitted.shape[0];
+            if (unlikely(__pyx_t_9 < 0)) __pyx_t_7 = 0;
+          } else if (unlikely(__pyx_t_9 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+          if (unlikely(__pyx_t_7 != -1)) {
+            __Pyx_RaiseBufferIndexError(__pyx_t_7);
+            __PYX_ERR(0, 1148, __pyx_L1_error)
+          }
+
+          /* "spatial_minimiser1.pyx":1149
+ * 					grad_y[param1]=(absolute(param_val[param1][int(fitted[ind])]-\
+ * 							param_val[param1][int(fitted[ind1])])+\
+ * 							absolute(param_val[param1][int(fitted[ind2])]-\             # <<<<<<<<<<<<<<
+ * 							param_val[param1][int(fitted[ind])]))/2
  * 				elif fitted[ind1-param1+num_params]>0:
  */
           __pyx_t_8 = __pyx_v_ind2;
@@ -11088,17 +12959,17 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
           } else if (unlikely(__pyx_t_8 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
           if (unlikely(__pyx_t_7 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_7);
-            __PYX_ERR(0, 875, __pyx_L1_error)
+            __PYX_ERR(0, 1149, __pyx_L1_error)
           }
 
-          /* "spatial_minimiser1.pyx":876
- * 				if fitted[ind1-param1+num_params]>0 and fitted[ind2-param1+num_params]>0:
- * 					grad_y[param1]=(param_val[param1][int(fitted[ind2])]-\
- * 							param_val[param1][int(fitted[ind1])])/2             # <<<<<<<<<<<<<<
+          /* "spatial_minimiser1.pyx":1150
+ * 							param_val[param1][int(fitted[ind1])])+\
+ * 							absolute(param_val[param1][int(fitted[ind2])]-\
+ * 							param_val[param1][int(fitted[ind])]))/2             # <<<<<<<<<<<<<<
  * 				elif fitted[ind1-param1+num_params]>0:
  * 					grad_y[param1]=(param_val[param1][int(fitted[ind])]-\
  */
-          __pyx_t_6 = __pyx_v_ind1;
+          __pyx_t_6 = __pyx_v_ind;
           __pyx_t_7 = -1;
           if (__pyx_t_6 < 0) {
             __pyx_t_6 += __pyx_v_fitted.shape[0];
@@ -11106,31 +12977,31 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
           } else if (unlikely(__pyx_t_6 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
           if (unlikely(__pyx_t_7 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_7);
-            __PYX_ERR(0, 876, __pyx_L1_error)
+            __PYX_ERR(0, 1150, __pyx_L1_error)
           }
 
-          /* "spatial_minimiser1.pyx":875
+          /* "spatial_minimiser1.pyx":1147
  * 				ind2=t*num_y*num_x*(num_params+1)+(y1+1)*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				if fitted[ind1-param1+num_params]>0 and fitted[ind2-param1+num_params]>0:
- * 					grad_y[param1]=(param_val[param1][int(fitted[ind2])]-\             # <<<<<<<<<<<<<<
- * 							param_val[param1][int(fitted[ind1])])/2
- * 				elif fitted[ind1-param1+num_params]>0:
+ * 					grad_y[param1]=(absolute(param_val[param1][int(fitted[ind])]-\             # <<<<<<<<<<<<<<
+ * 							param_val[param1][int(fitted[ind1])])+\
+ * 							absolute(param_val[param1][int(fitted[ind2])]-\
  */
-          (__pyx_v_grad_y[__pyx_v_param1]) = ((((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_8 * __pyx_v_fitted.strides[0]) ))))]) - ((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_6 * __pyx_v_fitted.strides[0]) ))))])) / 2.0);
+          (__pyx_v_grad_y[__pyx_v_param1]) = ((__pyx_f_18spatial_minimiser1_absolute((((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_10 * __pyx_v_fitted.strides[0]) ))))]) - ((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_9 * __pyx_v_fitted.strides[0]) ))))]))) + __pyx_f_18spatial_minimiser1_absolute((((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_8 * __pyx_v_fitted.strides[0]) ))))]) - ((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_6 * __pyx_v_fitted.strides[0]) ))))])))) / 2.0);
 
-          /* "spatial_minimiser1.pyx":874
+          /* "spatial_minimiser1.pyx":1146
  * 				ind1=t*num_y*num_x*(num_params+1)+(y1-1)*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				ind2=t*num_y*num_x*(num_params+1)+(y1+1)*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				if fitted[ind1-param1+num_params]>0 and fitted[ind2-param1+num_params]>0:             # <<<<<<<<<<<<<<
- * 					grad_y[param1]=(param_val[param1][int(fitted[ind2])]-\
- * 							param_val[param1][int(fitted[ind1])])/2
+ * 					grad_y[param1]=(absolute(param_val[param1][int(fitted[ind])]-\
+ * 							param_val[param1][int(fitted[ind1])])+\
  */
           goto __pyx_L24;
         }
 
-        /* "spatial_minimiser1.pyx":877
- * 					grad_y[param1]=(param_val[param1][int(fitted[ind2])]-\
- * 							param_val[param1][int(fitted[ind1])])/2
+        /* "spatial_minimiser1.pyx":1151
+ * 							absolute(param_val[param1][int(fitted[ind2])]-\
+ * 							param_val[param1][int(fitted[ind])]))/2
  * 				elif fitted[ind1-param1+num_params]>0:             # <<<<<<<<<<<<<<
  * 					grad_y[param1]=(param_val[param1][int(fitted[ind])]-\
  * 							param_val[param1][int(fitted[ind1])])
@@ -11143,13 +13014,13 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
         } else if (unlikely(__pyx_t_6 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
         if (unlikely(__pyx_t_7 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_7);
-          __PYX_ERR(0, 877, __pyx_L1_error)
+          __PYX_ERR(0, 1151, __pyx_L1_error)
         }
         __pyx_t_1 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_6 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
         if (__pyx_t_1) {
 
-          /* "spatial_minimiser1.pyx":878
- * 							param_val[param1][int(fitted[ind1])])/2
+          /* "spatial_minimiser1.pyx":1152
+ * 							param_val[param1][int(fitted[ind])]))/2
  * 				elif fitted[ind1-param1+num_params]>0:
  * 					grad_y[param1]=(param_val[param1][int(fitted[ind])]-\             # <<<<<<<<<<<<<<
  * 							param_val[param1][int(fitted[ind1])])
@@ -11163,10 +13034,10 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
           } else if (unlikely(__pyx_t_6 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
           if (unlikely(__pyx_t_7 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_7);
-            __PYX_ERR(0, 878, __pyx_L1_error)
+            __PYX_ERR(0, 1152, __pyx_L1_error)
           }
 
-          /* "spatial_minimiser1.pyx":879
+          /* "spatial_minimiser1.pyx":1153
  * 				elif fitted[ind1-param1+num_params]>0:
  * 					grad_y[param1]=(param_val[param1][int(fitted[ind])]-\
  * 							param_val[param1][int(fitted[ind1])])             # <<<<<<<<<<<<<<
@@ -11181,11 +13052,11 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
           } else if (unlikely(__pyx_t_8 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
           if (unlikely(__pyx_t_7 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_7);
-            __PYX_ERR(0, 879, __pyx_L1_error)
+            __PYX_ERR(0, 1153, __pyx_L1_error)
           }
 
-          /* "spatial_minimiser1.pyx":878
- * 							param_val[param1][int(fitted[ind1])])/2
+          /* "spatial_minimiser1.pyx":1152
+ * 							param_val[param1][int(fitted[ind])]))/2
  * 				elif fitted[ind1-param1+num_params]>0:
  * 					grad_y[param1]=(param_val[param1][int(fitted[ind])]-\             # <<<<<<<<<<<<<<
  * 							param_val[param1][int(fitted[ind1])])
@@ -11193,9 +13064,9 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
  */
           (__pyx_v_grad_y[__pyx_v_param1]) = (((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_6 * __pyx_v_fitted.strides[0]) ))))]) - ((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_8 * __pyx_v_fitted.strides[0]) ))))]));
 
-          /* "spatial_minimiser1.pyx":877
- * 					grad_y[param1]=(param_val[param1][int(fitted[ind2])]-\
- * 							param_val[param1][int(fitted[ind1])])/2
+          /* "spatial_minimiser1.pyx":1151
+ * 							absolute(param_val[param1][int(fitted[ind2])]-\
+ * 							param_val[param1][int(fitted[ind])]))/2
  * 				elif fitted[ind1-param1+num_params]>0:             # <<<<<<<<<<<<<<
  * 					grad_y[param1]=(param_val[param1][int(fitted[ind])]-\
  * 							param_val[param1][int(fitted[ind1])])
@@ -11203,7 +13074,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
           goto __pyx_L24;
         }
 
-        /* "spatial_minimiser1.pyx":880
+        /* "spatial_minimiser1.pyx":1154
  * 					grad_y[param1]=(param_val[param1][int(fitted[ind])]-\
  * 							param_val[param1][int(fitted[ind1])])
  * 				elif fitted[ind2-param1+num_params]>0:             # <<<<<<<<<<<<<<
@@ -11218,12 +13089,12 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
         } else if (unlikely(__pyx_t_8 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
         if (unlikely(__pyx_t_7 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_7);
-          __PYX_ERR(0, 880, __pyx_L1_error)
+          __PYX_ERR(0, 1154, __pyx_L1_error)
         }
         __pyx_t_1 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_8 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
         if (__pyx_t_1) {
 
-          /* "spatial_minimiser1.pyx":881
+          /* "spatial_minimiser1.pyx":1155
  * 							param_val[param1][int(fitted[ind1])])
  * 				elif fitted[ind2-param1+num_params]>0:
  * 					grad_y[param1]=(param_val[param1][int(fitted[ind2])]-\             # <<<<<<<<<<<<<<
@@ -11238,10 +13109,10 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
           } else if (unlikely(__pyx_t_8 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
           if (unlikely(__pyx_t_7 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_7);
-            __PYX_ERR(0, 881, __pyx_L1_error)
+            __PYX_ERR(0, 1155, __pyx_L1_error)
           }
 
-          /* "spatial_minimiser1.pyx":882
+          /* "spatial_minimiser1.pyx":1156
  * 				elif fitted[ind2-param1+num_params]>0:
  * 					grad_y[param1]=(param_val[param1][int(fitted[ind2])]-\
  * 							param_val[param1][int(fitted[ind])])             # <<<<<<<<<<<<<<
@@ -11256,10 +13127,10 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
           } else if (unlikely(__pyx_t_6 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
           if (unlikely(__pyx_t_7 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_7);
-            __PYX_ERR(0, 882, __pyx_L1_error)
+            __PYX_ERR(0, 1156, __pyx_L1_error)
           }
 
-          /* "spatial_minimiser1.pyx":881
+          /* "spatial_minimiser1.pyx":1155
  * 							param_val[param1][int(fitted[ind1])])
  * 				elif fitted[ind2-param1+num_params]>0:
  * 					grad_y[param1]=(param_val[param1][int(fitted[ind2])]-\             # <<<<<<<<<<<<<<
@@ -11268,7 +13139,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
  */
           (__pyx_v_grad_y[__pyx_v_param1]) = (((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_8 * __pyx_v_fitted.strides[0]) ))))]) - ((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_6 * __pyx_v_fitted.strides[0]) ))))]));
 
-          /* "spatial_minimiser1.pyx":880
+          /* "spatial_minimiser1.pyx":1154
  * 					grad_y[param1]=(param_val[param1][int(fitted[ind])]-\
  * 							param_val[param1][int(fitted[ind1])])
  * 				elif fitted[ind2-param1+num_params]>0:             # <<<<<<<<<<<<<<
@@ -11278,7 +13149,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
           goto __pyx_L24;
         }
 
-        /* "spatial_minimiser1.pyx":884
+        /* "spatial_minimiser1.pyx":1158
  * 							param_val[param1][int(fitted[ind])])
  * 				else:
  * 					grad_y[param1]=0.0             # <<<<<<<<<<<<<<
@@ -11291,7 +13162,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
         __pyx_L24:;
       }
 
-      /* "spatial_minimiser1.pyx":869
+      /* "spatial_minimiser1.pyx":1141
  * 					grad_x[param1]=0.0
  * 	if num_y>1:
  * 		if y1>=1 and y1<=num_y-2:             # <<<<<<<<<<<<<<
@@ -11301,7 +13172,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
       goto __pyx_L19;
     }
 
-    /* "spatial_minimiser1.pyx":885
+    /* "spatial_minimiser1.pyx":1159
  * 				else:
  * 					grad_y[param1]=0.0
  * 		elif y1==0:             # <<<<<<<<<<<<<<
@@ -11311,7 +13182,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
     __pyx_t_1 = ((__pyx_v_y1 == 0) != 0);
     if (__pyx_t_1) {
 
-      /* "spatial_minimiser1.pyx":886
+      /* "spatial_minimiser1.pyx":1160
  * 					grad_y[param1]=0.0
  * 		elif y1==0:
  * 			for param1 in range(num_params):             # <<<<<<<<<<<<<<
@@ -11323,7 +13194,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
       for (__pyx_t_5 = 0; __pyx_t_5 < __pyx_t_4; __pyx_t_5+=1) {
         __pyx_v_param1 = __pyx_t_5;
 
-        /* "spatial_minimiser1.pyx":887
+        /* "spatial_minimiser1.pyx":1161
  * 		elif y1==0:
  * 			for param1 in range(num_params):
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1             # <<<<<<<<<<<<<<
@@ -11332,7 +13203,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
  */
         __pyx_v_ind = ((((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_param1);
 
-        /* "spatial_minimiser1.pyx":888
+        /* "spatial_minimiser1.pyx":1162
  * 			for param1 in range(num_params):
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				ind2=t*num_y*num_x*(num_params+1)+(y1+1)*num_x*(num_params+1)+x1*(num_params+1)+param1             # <<<<<<<<<<<<<<
@@ -11341,7 +13212,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
  */
         __pyx_v_ind2 = ((((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + (((__pyx_v_y1 + 1) * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_param1);
 
-        /* "spatial_minimiser1.pyx":889
+        /* "spatial_minimiser1.pyx":1163
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				ind2=t*num_y*num_x*(num_params+1)+(y1+1)*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				if fitted[ind2-param1+num_params]>0:             # <<<<<<<<<<<<<<
@@ -11356,12 +13227,12 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
         } else if (unlikely(__pyx_t_6 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
         if (unlikely(__pyx_t_7 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_7);
-          __PYX_ERR(0, 889, __pyx_L1_error)
+          __PYX_ERR(0, 1163, __pyx_L1_error)
         }
         __pyx_t_1 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_6 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
         if (__pyx_t_1) {
 
-          /* "spatial_minimiser1.pyx":890
+          /* "spatial_minimiser1.pyx":1164
  * 				ind2=t*num_y*num_x*(num_params+1)+(y1+1)*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				if fitted[ind2-param1+num_params]>0:
  * 					grad_y[param1]=(param_val[param1][int(fitted[ind2])]-\             # <<<<<<<<<<<<<<
@@ -11376,10 +13247,10 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
           } else if (unlikely(__pyx_t_6 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
           if (unlikely(__pyx_t_7 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_7);
-            __PYX_ERR(0, 890, __pyx_L1_error)
+            __PYX_ERR(0, 1164, __pyx_L1_error)
           }
 
-          /* "spatial_minimiser1.pyx":891
+          /* "spatial_minimiser1.pyx":1165
  * 				if fitted[ind2-param1+num_params]>0:
  * 					grad_y[param1]=(param_val[param1][int(fitted[ind2])]-\
  * 							param_val[param1][int(fitted[ind])])             # <<<<<<<<<<<<<<
@@ -11394,10 +13265,10 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
           } else if (unlikely(__pyx_t_8 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
           if (unlikely(__pyx_t_7 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_7);
-            __PYX_ERR(0, 891, __pyx_L1_error)
+            __PYX_ERR(0, 1165, __pyx_L1_error)
           }
 
-          /* "spatial_minimiser1.pyx":890
+          /* "spatial_minimiser1.pyx":1164
  * 				ind2=t*num_y*num_x*(num_params+1)+(y1+1)*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				if fitted[ind2-param1+num_params]>0:
  * 					grad_y[param1]=(param_val[param1][int(fitted[ind2])]-\             # <<<<<<<<<<<<<<
@@ -11406,7 +13277,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
  */
           (__pyx_v_grad_y[__pyx_v_param1]) = (((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_6 * __pyx_v_fitted.strides[0]) ))))]) - ((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_8 * __pyx_v_fitted.strides[0]) ))))]));
 
-          /* "spatial_minimiser1.pyx":889
+          /* "spatial_minimiser1.pyx":1163
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				ind2=t*num_y*num_x*(num_params+1)+(y1+1)*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				if fitted[ind2-param1+num_params]>0:             # <<<<<<<<<<<<<<
@@ -11416,7 +13287,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
           goto __pyx_L29;
         }
 
-        /* "spatial_minimiser1.pyx":893
+        /* "spatial_minimiser1.pyx":1167
  * 							param_val[param1][int(fitted[ind])])
  * 				else:
  * 					grad_y[param1]=0.0             # <<<<<<<<<<<<<<
@@ -11429,7 +13300,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
         __pyx_L29:;
       }
 
-      /* "spatial_minimiser1.pyx":885
+      /* "spatial_minimiser1.pyx":1159
  * 				else:
  * 					grad_y[param1]=0.0
  * 		elif y1==0:             # <<<<<<<<<<<<<<
@@ -11439,7 +13310,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
       goto __pyx_L19;
     }
 
-    /* "spatial_minimiser1.pyx":894
+    /* "spatial_minimiser1.pyx":1168
  * 				else:
  * 					grad_y[param1]=0.0
  * 		elif y1==num_y-1:             # <<<<<<<<<<<<<<
@@ -11449,7 +13320,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
     __pyx_t_1 = ((__pyx_v_y1 == (__pyx_v_num_y - 1)) != 0);
     if (__pyx_t_1) {
 
-      /* "spatial_minimiser1.pyx":895
+      /* "spatial_minimiser1.pyx":1169
  * 					grad_y[param1]=0.0
  * 		elif y1==num_y-1:
  * 			for param1 in range(num_params):             # <<<<<<<<<<<<<<
@@ -11461,7 +13332,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
       for (__pyx_t_5 = 0; __pyx_t_5 < __pyx_t_4; __pyx_t_5+=1) {
         __pyx_v_param1 = __pyx_t_5;
 
-        /* "spatial_minimiser1.pyx":896
+        /* "spatial_minimiser1.pyx":1170
  * 		elif y1==num_y-1:
  * 			for param1 in range(num_params):
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1             # <<<<<<<<<<<<<<
@@ -11470,7 +13341,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
  */
         __pyx_v_ind = ((((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_param1);
 
-        /* "spatial_minimiser1.pyx":897
+        /* "spatial_minimiser1.pyx":1171
  * 			for param1 in range(num_params):
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				ind1=t*num_y*num_x*(num_params+1)+(y1-1)*num_x*(num_params+1)+x1*(num_params+1)+param1             # <<<<<<<<<<<<<<
@@ -11479,7 +13350,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
  */
         __pyx_v_ind1 = ((((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + (((__pyx_v_y1 - 1) * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_param1);
 
-        /* "spatial_minimiser1.pyx":898
+        /* "spatial_minimiser1.pyx":1172
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				ind1=t*num_y*num_x*(num_params+1)+(y1-1)*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				if fitted[ind1-param1+num_params]>0:             # <<<<<<<<<<<<<<
@@ -11494,12 +13365,12 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
         } else if (unlikely(__pyx_t_8 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
         if (unlikely(__pyx_t_7 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_7);
-          __PYX_ERR(0, 898, __pyx_L1_error)
+          __PYX_ERR(0, 1172, __pyx_L1_error)
         }
         __pyx_t_1 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_8 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
         if (__pyx_t_1) {
 
-          /* "spatial_minimiser1.pyx":899
+          /* "spatial_minimiser1.pyx":1173
  * 				ind1=t*num_y*num_x*(num_params+1)+(y1-1)*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				if fitted[ind1-param1+num_params]>0:
  * 					grad_y[param1]=(param_val[param1][int(fitted[ind])]-\             # <<<<<<<<<<<<<<
@@ -11514,10 +13385,10 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
           } else if (unlikely(__pyx_t_8 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
           if (unlikely(__pyx_t_7 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_7);
-            __PYX_ERR(0, 899, __pyx_L1_error)
+            __PYX_ERR(0, 1173, __pyx_L1_error)
           }
 
-          /* "spatial_minimiser1.pyx":900
+          /* "spatial_minimiser1.pyx":1174
  * 				if fitted[ind1-param1+num_params]>0:
  * 					grad_y[param1]=(param_val[param1][int(fitted[ind])]-\
  * 							param_val[param1][int(fitted[ind1])])             # <<<<<<<<<<<<<<
@@ -11532,10 +13403,10 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
           } else if (unlikely(__pyx_t_6 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
           if (unlikely(__pyx_t_7 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_7);
-            __PYX_ERR(0, 900, __pyx_L1_error)
+            __PYX_ERR(0, 1174, __pyx_L1_error)
           }
 
-          /* "spatial_minimiser1.pyx":899
+          /* "spatial_minimiser1.pyx":1173
  * 				ind1=t*num_y*num_x*(num_params+1)+(y1-1)*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				if fitted[ind1-param1+num_params]>0:
  * 					grad_y[param1]=(param_val[param1][int(fitted[ind])]-\             # <<<<<<<<<<<<<<
@@ -11544,7 +13415,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
  */
           (__pyx_v_grad_y[__pyx_v_param1]) = (((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_8 * __pyx_v_fitted.strides[0]) ))))]) - ((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_6 * __pyx_v_fitted.strides[0]) ))))]));
 
-          /* "spatial_minimiser1.pyx":898
+          /* "spatial_minimiser1.pyx":1172
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				ind1=t*num_y*num_x*(num_params+1)+(y1-1)*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				if fitted[ind1-param1+num_params]>0:             # <<<<<<<<<<<<<<
@@ -11554,7 +13425,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
           goto __pyx_L32;
         }
 
-        /* "spatial_minimiser1.pyx":902
+        /* "spatial_minimiser1.pyx":1176
  * 							param_val[param1][int(fitted[ind1])])
  * 				else:
  * 					grad_y[param1]=0.0             # <<<<<<<<<<<<<<
@@ -11567,7 +13438,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
         __pyx_L32:;
       }
 
-      /* "spatial_minimiser1.pyx":894
+      /* "spatial_minimiser1.pyx":1168
  * 				else:
  * 					grad_y[param1]=0.0
  * 		elif y1==num_y-1:             # <<<<<<<<<<<<<<
@@ -11577,7 +13448,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
     }
     __pyx_L19:;
 
-    /* "spatial_minimiser1.pyx":868
+    /* "spatial_minimiser1.pyx":1140
  * 				else:
  * 					grad_x[param1]=0.0
  * 	if num_y>1:             # <<<<<<<<<<<<<<
@@ -11586,7 +13457,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
  */
   }
 
-  /* "spatial_minimiser1.pyx":904
+  /* "spatial_minimiser1.pyx":1178
  * 					grad_y[param1]=0.0
  * 
  * 	if num_times>1:             # <<<<<<<<<<<<<<
@@ -11596,7 +13467,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
   __pyx_t_1 = ((__pyx_v_num_times > 1) != 0);
   if (__pyx_t_1) {
 
-    /* "spatial_minimiser1.pyx":905
+    /* "spatial_minimiser1.pyx":1179
  * 
  * 	if num_times>1:
  * 		if t>=1 and t<=num_times-2:             # <<<<<<<<<<<<<<
@@ -11614,7 +13485,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
     __pyx_L35_bool_binop_done:;
     if (__pyx_t_1) {
 
-      /* "spatial_minimiser1.pyx":906
+      /* "spatial_minimiser1.pyx":1180
  * 	if num_times>1:
  * 		if t>=1 and t<=num_times-2:
  * 			for param1 in range(num_params):             # <<<<<<<<<<<<<<
@@ -11626,7 +13497,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
       for (__pyx_t_5 = 0; __pyx_t_5 < __pyx_t_4; __pyx_t_5+=1) {
         __pyx_v_param1 = __pyx_t_5;
 
-        /* "spatial_minimiser1.pyx":907
+        /* "spatial_minimiser1.pyx":1181
  * 		if t>=1 and t<=num_times-2:
  * 			for param1 in range(num_params):
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1             # <<<<<<<<<<<<<<
@@ -11635,7 +13506,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
  */
         __pyx_v_ind = ((((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_param1);
 
-        /* "spatial_minimiser1.pyx":908
+        /* "spatial_minimiser1.pyx":1182
  * 			for param1 in range(num_params):
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				ind1=(t-1)*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1             # <<<<<<<<<<<<<<
@@ -11644,21 +13515,21 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
  */
         __pyx_v_ind1 = (((((((__pyx_v_t - 1) * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_param1);
 
-        /* "spatial_minimiser1.pyx":909
+        /* "spatial_minimiser1.pyx":1183
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				ind1=(t-1)*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				ind2=(t+1)*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1             # <<<<<<<<<<<<<<
  * 				if fitted[ind1-param1+num_params]>0 and fitted[ind2-param1+num_params]>0:
- * 					grad_t[param1]=(param_val[param1][int(fitted[ind2])]-\
+ * 					grad_t[param1]=(absolute(param_val[param1][int(fitted[ind])]-\
  */
         __pyx_v_ind2 = (((((((__pyx_v_t + 1) * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_param1);
 
-        /* "spatial_minimiser1.pyx":910
+        /* "spatial_minimiser1.pyx":1184
  * 				ind1=(t-1)*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				ind2=(t+1)*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				if fitted[ind1-param1+num_params]>0 and fitted[ind2-param1+num_params]>0:             # <<<<<<<<<<<<<<
- * 					grad_t[param1]=(param_val[param1][int(fitted[ind2])]-\
- * 							param_val[param1][int(fitted[ind1])])/2
+ * 					grad_t[param1]=(absolute(param_val[param1][int(fitted[ind])]-\
+ * 							param_val[param1][int(fitted[ind1])])+\
  */
         __pyx_t_6 = ((__pyx_v_ind1 - __pyx_v_param1) + __pyx_v_num_params);
         __pyx_t_7 = -1;
@@ -11668,7 +13539,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
         } else if (unlikely(__pyx_t_6 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
         if (unlikely(__pyx_t_7 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_7);
-          __PYX_ERR(0, 910, __pyx_L1_error)
+          __PYX_ERR(0, 1184, __pyx_L1_error)
         }
         __pyx_t_2 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_6 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
         if (__pyx_t_2) {
@@ -11684,21 +13555,21 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
         } else if (unlikely(__pyx_t_6 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
         if (unlikely(__pyx_t_7 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_7);
-          __PYX_ERR(0, 910, __pyx_L1_error)
+          __PYX_ERR(0, 1184, __pyx_L1_error)
         }
         __pyx_t_2 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_6 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
         __pyx_t_1 = __pyx_t_2;
         __pyx_L40_bool_binop_done:;
         if (__pyx_t_1) {
 
-          /* "spatial_minimiser1.pyx":911
+          /* "spatial_minimiser1.pyx":1185
  * 				ind2=(t+1)*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				if fitted[ind1-param1+num_params]>0 and fitted[ind2-param1+num_params]>0:
- * 					grad_t[param1]=(param_val[param1][int(fitted[ind2])]-\             # <<<<<<<<<<<<<<
- * 							param_val[param1][int(fitted[ind1])])/2
- * 				elif fitted[ind1-param1+num_params]>0:
+ * 					grad_t[param1]=(absolute(param_val[param1][int(fitted[ind])]-\             # <<<<<<<<<<<<<<
+ * 							param_val[param1][int(fitted[ind1])])+\
+ * 							absolute(param_val[param1][int(fitted[ind2])]-\
  */
-          __pyx_t_6 = __pyx_v_ind2;
+          __pyx_t_6 = __pyx_v_ind;
           __pyx_t_7 = -1;
           if (__pyx_t_6 < 0) {
             __pyx_t_6 += __pyx_v_fitted.shape[0];
@@ -11706,15 +13577,15 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
           } else if (unlikely(__pyx_t_6 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
           if (unlikely(__pyx_t_7 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_7);
-            __PYX_ERR(0, 911, __pyx_L1_error)
+            __PYX_ERR(0, 1185, __pyx_L1_error)
           }
 
-          /* "spatial_minimiser1.pyx":912
+          /* "spatial_minimiser1.pyx":1186
  * 				if fitted[ind1-param1+num_params]>0 and fitted[ind2-param1+num_params]>0:
- * 					grad_t[param1]=(param_val[param1][int(fitted[ind2])]-\
- * 							param_val[param1][int(fitted[ind1])])/2             # <<<<<<<<<<<<<<
- * 				elif fitted[ind1-param1+num_params]>0:
- * 					grad_t[param1]=(param_val[param1][int(fitted[ind])]-\
+ * 					grad_t[param1]=(absolute(param_val[param1][int(fitted[ind])]-\
+ * 							param_val[param1][int(fitted[ind1])])+\             # <<<<<<<<<<<<<<
+ * 							absolute(param_val[param1][int(fitted[ind2])]-\
+ * 							param_val[param1][int(fitted[ind])]))/2
  */
           __pyx_t_8 = __pyx_v_ind1;
           __pyx_t_7 = -1;
@@ -11724,96 +13595,132 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
           } else if (unlikely(__pyx_t_8 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
           if (unlikely(__pyx_t_7 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_7);
-            __PYX_ERR(0, 912, __pyx_L1_error)
+            __PYX_ERR(0, 1186, __pyx_L1_error)
           }
 
-          /* "spatial_minimiser1.pyx":911
- * 				ind2=(t+1)*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
- * 				if fitted[ind1-param1+num_params]>0 and fitted[ind2-param1+num_params]>0:
- * 					grad_t[param1]=(param_val[param1][int(fitted[ind2])]-\             # <<<<<<<<<<<<<<
- * 							param_val[param1][int(fitted[ind1])])/2
+          /* "spatial_minimiser1.pyx":1187
+ * 					grad_t[param1]=(absolute(param_val[param1][int(fitted[ind])]-\
+ * 							param_val[param1][int(fitted[ind1])])+\
+ * 							absolute(param_val[param1][int(fitted[ind2])]-\             # <<<<<<<<<<<<<<
+ * 							param_val[param1][int(fitted[ind])]))/2
  * 				elif fitted[ind1-param1+num_params]>0:
  */
-          (__pyx_v_grad_t[__pyx_v_param1]) = ((((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_6 * __pyx_v_fitted.strides[0]) ))))]) - ((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_8 * __pyx_v_fitted.strides[0]) ))))])) / 2.0);
+          __pyx_t_9 = __pyx_v_ind2;
+          __pyx_t_7 = -1;
+          if (__pyx_t_9 < 0) {
+            __pyx_t_9 += __pyx_v_fitted.shape[0];
+            if (unlikely(__pyx_t_9 < 0)) __pyx_t_7 = 0;
+          } else if (unlikely(__pyx_t_9 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+          if (unlikely(__pyx_t_7 != -1)) {
+            __Pyx_RaiseBufferIndexError(__pyx_t_7);
+            __PYX_ERR(0, 1187, __pyx_L1_error)
+          }
 
-          /* "spatial_minimiser1.pyx":910
+          /* "spatial_minimiser1.pyx":1188
+ * 							param_val[param1][int(fitted[ind1])])+\
+ * 							absolute(param_val[param1][int(fitted[ind2])]-\
+ * 							param_val[param1][int(fitted[ind])]))/2             # <<<<<<<<<<<<<<
+ * 				elif fitted[ind1-param1+num_params]>0:
+ * 					grad_t[param1]=(param_val[param1][int(fitted[ind])]-\
+ */
+          __pyx_t_10 = __pyx_v_ind;
+          __pyx_t_7 = -1;
+          if (__pyx_t_10 < 0) {
+            __pyx_t_10 += __pyx_v_fitted.shape[0];
+            if (unlikely(__pyx_t_10 < 0)) __pyx_t_7 = 0;
+          } else if (unlikely(__pyx_t_10 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+          if (unlikely(__pyx_t_7 != -1)) {
+            __Pyx_RaiseBufferIndexError(__pyx_t_7);
+            __PYX_ERR(0, 1188, __pyx_L1_error)
+          }
+
+          /* "spatial_minimiser1.pyx":1185
+ * 				ind2=(t+1)*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
+ * 				if fitted[ind1-param1+num_params]>0 and fitted[ind2-param1+num_params]>0:
+ * 					grad_t[param1]=(absolute(param_val[param1][int(fitted[ind])]-\             # <<<<<<<<<<<<<<
+ * 							param_val[param1][int(fitted[ind1])])+\
+ * 							absolute(param_val[param1][int(fitted[ind2])]-\
+ */
+          (__pyx_v_grad_t[__pyx_v_param1]) = ((__pyx_f_18spatial_minimiser1_absolute((((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_6 * __pyx_v_fitted.strides[0]) ))))]) - ((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_8 * __pyx_v_fitted.strides[0]) ))))]))) + __pyx_f_18spatial_minimiser1_absolute((((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_9 * __pyx_v_fitted.strides[0]) ))))]) - ((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_10 * __pyx_v_fitted.strides[0]) ))))])))) / 2.0);
+
+          /* "spatial_minimiser1.pyx":1184
  * 				ind1=(t-1)*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				ind2=(t+1)*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				if fitted[ind1-param1+num_params]>0 and fitted[ind2-param1+num_params]>0:             # <<<<<<<<<<<<<<
- * 					grad_t[param1]=(param_val[param1][int(fitted[ind2])]-\
- * 							param_val[param1][int(fitted[ind1])])/2
+ * 					grad_t[param1]=(absolute(param_val[param1][int(fitted[ind])]-\
+ * 							param_val[param1][int(fitted[ind1])])+\
  */
           goto __pyx_L39;
         }
 
-        /* "spatial_minimiser1.pyx":913
- * 					grad_t[param1]=(param_val[param1][int(fitted[ind2])]-\
- * 							param_val[param1][int(fitted[ind1])])/2
+        /* "spatial_minimiser1.pyx":1189
+ * 							absolute(param_val[param1][int(fitted[ind2])]-\
+ * 							param_val[param1][int(fitted[ind])]))/2
  * 				elif fitted[ind1-param1+num_params]>0:             # <<<<<<<<<<<<<<
  * 					grad_t[param1]=(param_val[param1][int(fitted[ind])]-\
  * 							param_val[param1][int(fitted[ind1])])
  */
-        __pyx_t_8 = ((__pyx_v_ind1 - __pyx_v_param1) + __pyx_v_num_params);
+        __pyx_t_10 = ((__pyx_v_ind1 - __pyx_v_param1) + __pyx_v_num_params);
         __pyx_t_7 = -1;
-        if (__pyx_t_8 < 0) {
-          __pyx_t_8 += __pyx_v_fitted.shape[0];
-          if (unlikely(__pyx_t_8 < 0)) __pyx_t_7 = 0;
-        } else if (unlikely(__pyx_t_8 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+        if (__pyx_t_10 < 0) {
+          __pyx_t_10 += __pyx_v_fitted.shape[0];
+          if (unlikely(__pyx_t_10 < 0)) __pyx_t_7 = 0;
+        } else if (unlikely(__pyx_t_10 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
         if (unlikely(__pyx_t_7 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_7);
-          __PYX_ERR(0, 913, __pyx_L1_error)
+          __PYX_ERR(0, 1189, __pyx_L1_error)
         }
-        __pyx_t_1 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_8 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
+        __pyx_t_1 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_10 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
         if (__pyx_t_1) {
 
-          /* "spatial_minimiser1.pyx":914
- * 							param_val[param1][int(fitted[ind1])])/2
+          /* "spatial_minimiser1.pyx":1190
+ * 							param_val[param1][int(fitted[ind])]))/2
  * 				elif fitted[ind1-param1+num_params]>0:
  * 					grad_t[param1]=(param_val[param1][int(fitted[ind])]-\             # <<<<<<<<<<<<<<
  * 							param_val[param1][int(fitted[ind1])])
  * 				elif fitted[ind2-param1+num_params]>0:
  */
-          __pyx_t_8 = __pyx_v_ind;
+          __pyx_t_10 = __pyx_v_ind;
           __pyx_t_7 = -1;
-          if (__pyx_t_8 < 0) {
-            __pyx_t_8 += __pyx_v_fitted.shape[0];
-            if (unlikely(__pyx_t_8 < 0)) __pyx_t_7 = 0;
-          } else if (unlikely(__pyx_t_8 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+          if (__pyx_t_10 < 0) {
+            __pyx_t_10 += __pyx_v_fitted.shape[0];
+            if (unlikely(__pyx_t_10 < 0)) __pyx_t_7 = 0;
+          } else if (unlikely(__pyx_t_10 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
           if (unlikely(__pyx_t_7 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_7);
-            __PYX_ERR(0, 914, __pyx_L1_error)
+            __PYX_ERR(0, 1190, __pyx_L1_error)
           }
 
-          /* "spatial_minimiser1.pyx":915
+          /* "spatial_minimiser1.pyx":1191
  * 				elif fitted[ind1-param1+num_params]>0:
  * 					grad_t[param1]=(param_val[param1][int(fitted[ind])]-\
  * 							param_val[param1][int(fitted[ind1])])             # <<<<<<<<<<<<<<
  * 				elif fitted[ind2-param1+num_params]>0:
  * 					grad_t[param1]=(param_val[param1][int(fitted[ind2])]-\
  */
-          __pyx_t_6 = __pyx_v_ind1;
+          __pyx_t_9 = __pyx_v_ind1;
           __pyx_t_7 = -1;
-          if (__pyx_t_6 < 0) {
-            __pyx_t_6 += __pyx_v_fitted.shape[0];
-            if (unlikely(__pyx_t_6 < 0)) __pyx_t_7 = 0;
-          } else if (unlikely(__pyx_t_6 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+          if (__pyx_t_9 < 0) {
+            __pyx_t_9 += __pyx_v_fitted.shape[0];
+            if (unlikely(__pyx_t_9 < 0)) __pyx_t_7 = 0;
+          } else if (unlikely(__pyx_t_9 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
           if (unlikely(__pyx_t_7 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_7);
-            __PYX_ERR(0, 915, __pyx_L1_error)
+            __PYX_ERR(0, 1191, __pyx_L1_error)
           }
 
-          /* "spatial_minimiser1.pyx":914
- * 							param_val[param1][int(fitted[ind1])])/2
+          /* "spatial_minimiser1.pyx":1190
+ * 							param_val[param1][int(fitted[ind])]))/2
  * 				elif fitted[ind1-param1+num_params]>0:
  * 					grad_t[param1]=(param_val[param1][int(fitted[ind])]-\             # <<<<<<<<<<<<<<
  * 							param_val[param1][int(fitted[ind1])])
  * 				elif fitted[ind2-param1+num_params]>0:
  */
-          (__pyx_v_grad_t[__pyx_v_param1]) = (((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_8 * __pyx_v_fitted.strides[0]) ))))]) - ((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_6 * __pyx_v_fitted.strides[0]) ))))]));
+          (__pyx_v_grad_t[__pyx_v_param1]) = (((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_10 * __pyx_v_fitted.strides[0]) ))))]) - ((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_9 * __pyx_v_fitted.strides[0]) ))))]));
 
-          /* "spatial_minimiser1.pyx":913
- * 					grad_t[param1]=(param_val[param1][int(fitted[ind2])]-\
- * 							param_val[param1][int(fitted[ind1])])/2
+          /* "spatial_minimiser1.pyx":1189
+ * 							absolute(param_val[param1][int(fitted[ind2])]-\
+ * 							param_val[param1][int(fitted[ind])]))/2
  * 				elif fitted[ind1-param1+num_params]>0:             # <<<<<<<<<<<<<<
  * 					grad_t[param1]=(param_val[param1][int(fitted[ind])]-\
  * 							param_val[param1][int(fitted[ind1])])
@@ -11821,72 +13728,72 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
           goto __pyx_L39;
         }
 
-        /* "spatial_minimiser1.pyx":916
+        /* "spatial_minimiser1.pyx":1192
  * 					grad_t[param1]=(param_val[param1][int(fitted[ind])]-\
  * 							param_val[param1][int(fitted[ind1])])
  * 				elif fitted[ind2-param1+num_params]>0:             # <<<<<<<<<<<<<<
  * 					grad_t[param1]=(param_val[param1][int(fitted[ind2])]-\
  * 							param_val[param1][int(fitted[ind])])
  */
-        __pyx_t_6 = ((__pyx_v_ind2 - __pyx_v_param1) + __pyx_v_num_params);
+        __pyx_t_9 = ((__pyx_v_ind2 - __pyx_v_param1) + __pyx_v_num_params);
         __pyx_t_7 = -1;
-        if (__pyx_t_6 < 0) {
-          __pyx_t_6 += __pyx_v_fitted.shape[0];
-          if (unlikely(__pyx_t_6 < 0)) __pyx_t_7 = 0;
-        } else if (unlikely(__pyx_t_6 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+        if (__pyx_t_9 < 0) {
+          __pyx_t_9 += __pyx_v_fitted.shape[0];
+          if (unlikely(__pyx_t_9 < 0)) __pyx_t_7 = 0;
+        } else if (unlikely(__pyx_t_9 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
         if (unlikely(__pyx_t_7 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_7);
-          __PYX_ERR(0, 916, __pyx_L1_error)
+          __PYX_ERR(0, 1192, __pyx_L1_error)
         }
-        __pyx_t_1 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_6 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
+        __pyx_t_1 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_9 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
         if (__pyx_t_1) {
 
-          /* "spatial_minimiser1.pyx":917
+          /* "spatial_minimiser1.pyx":1193
  * 							param_val[param1][int(fitted[ind1])])
  * 				elif fitted[ind2-param1+num_params]>0:
  * 					grad_t[param1]=(param_val[param1][int(fitted[ind2])]-\             # <<<<<<<<<<<<<<
  * 							param_val[param1][int(fitted[ind])])
  * 				else:
  */
-          __pyx_t_6 = __pyx_v_ind2;
+          __pyx_t_9 = __pyx_v_ind2;
           __pyx_t_7 = -1;
-          if (__pyx_t_6 < 0) {
-            __pyx_t_6 += __pyx_v_fitted.shape[0];
-            if (unlikely(__pyx_t_6 < 0)) __pyx_t_7 = 0;
-          } else if (unlikely(__pyx_t_6 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+          if (__pyx_t_9 < 0) {
+            __pyx_t_9 += __pyx_v_fitted.shape[0];
+            if (unlikely(__pyx_t_9 < 0)) __pyx_t_7 = 0;
+          } else if (unlikely(__pyx_t_9 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
           if (unlikely(__pyx_t_7 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_7);
-            __PYX_ERR(0, 917, __pyx_L1_error)
+            __PYX_ERR(0, 1193, __pyx_L1_error)
           }
 
-          /* "spatial_minimiser1.pyx":918
+          /* "spatial_minimiser1.pyx":1194
  * 				elif fitted[ind2-param1+num_params]>0:
  * 					grad_t[param1]=(param_val[param1][int(fitted[ind2])]-\
  * 							param_val[param1][int(fitted[ind])])             # <<<<<<<<<<<<<<
  * 				else:
  * 					grad_t[param1]=0.0
  */
-          __pyx_t_8 = __pyx_v_ind;
+          __pyx_t_10 = __pyx_v_ind;
           __pyx_t_7 = -1;
-          if (__pyx_t_8 < 0) {
-            __pyx_t_8 += __pyx_v_fitted.shape[0];
-            if (unlikely(__pyx_t_8 < 0)) __pyx_t_7 = 0;
-          } else if (unlikely(__pyx_t_8 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+          if (__pyx_t_10 < 0) {
+            __pyx_t_10 += __pyx_v_fitted.shape[0];
+            if (unlikely(__pyx_t_10 < 0)) __pyx_t_7 = 0;
+          } else if (unlikely(__pyx_t_10 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
           if (unlikely(__pyx_t_7 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_7);
-            __PYX_ERR(0, 918, __pyx_L1_error)
+            __PYX_ERR(0, 1194, __pyx_L1_error)
           }
 
-          /* "spatial_minimiser1.pyx":917
+          /* "spatial_minimiser1.pyx":1193
  * 							param_val[param1][int(fitted[ind1])])
  * 				elif fitted[ind2-param1+num_params]>0:
  * 					grad_t[param1]=(param_val[param1][int(fitted[ind2])]-\             # <<<<<<<<<<<<<<
  * 							param_val[param1][int(fitted[ind])])
  * 				else:
  */
-          (__pyx_v_grad_t[__pyx_v_param1]) = (((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_6 * __pyx_v_fitted.strides[0]) ))))]) - ((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_8 * __pyx_v_fitted.strides[0]) ))))]));
+          (__pyx_v_grad_t[__pyx_v_param1]) = (((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_9 * __pyx_v_fitted.strides[0]) ))))]) - ((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_10 * __pyx_v_fitted.strides[0]) ))))]));
 
-          /* "spatial_minimiser1.pyx":916
+          /* "spatial_minimiser1.pyx":1192
  * 					grad_t[param1]=(param_val[param1][int(fitted[ind])]-\
  * 							param_val[param1][int(fitted[ind1])])
  * 				elif fitted[ind2-param1+num_params]>0:             # <<<<<<<<<<<<<<
@@ -11896,7 +13803,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
           goto __pyx_L39;
         }
 
-        /* "spatial_minimiser1.pyx":920
+        /* "spatial_minimiser1.pyx":1196
  * 							param_val[param1][int(fitted[ind])])
  * 				else:
  * 					grad_t[param1]=0.0             # <<<<<<<<<<<<<<
@@ -11909,7 +13816,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
         __pyx_L39:;
       }
 
-      /* "spatial_minimiser1.pyx":905
+      /* "spatial_minimiser1.pyx":1179
  * 
  * 	if num_times>1:
  * 		if t>=1 and t<=num_times-2:             # <<<<<<<<<<<<<<
@@ -11919,7 +13826,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
       goto __pyx_L34;
     }
 
-    /* "spatial_minimiser1.pyx":921
+    /* "spatial_minimiser1.pyx":1197
  * 				else:
  * 					grad_t[param1]=0.0
  * 		elif t==0:             # <<<<<<<<<<<<<<
@@ -11929,7 +13836,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
     __pyx_t_1 = ((__pyx_v_t == 0) != 0);
     if (__pyx_t_1) {
 
-      /* "spatial_minimiser1.pyx":922
+      /* "spatial_minimiser1.pyx":1198
  * 					grad_t[param1]=0.0
  * 		elif t==0:
  * 			for param1 in range(num_params):             # <<<<<<<<<<<<<<
@@ -11941,7 +13848,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
       for (__pyx_t_5 = 0; __pyx_t_5 < __pyx_t_4; __pyx_t_5+=1) {
         __pyx_v_param1 = __pyx_t_5;
 
-        /* "spatial_minimiser1.pyx":923
+        /* "spatial_minimiser1.pyx":1199
  * 		elif t==0:
  * 			for param1 in range(num_params):
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1             # <<<<<<<<<<<<<<
@@ -11950,7 +13857,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
  */
         __pyx_v_ind = ((((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_param1);
 
-        /* "spatial_minimiser1.pyx":924
+        /* "spatial_minimiser1.pyx":1200
  * 			for param1 in range(num_params):
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				ind2=(t+1)*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1             # <<<<<<<<<<<<<<
@@ -11959,72 +13866,72 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
  */
         __pyx_v_ind2 = (((((((__pyx_v_t + 1) * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_param1);
 
-        /* "spatial_minimiser1.pyx":925
+        /* "spatial_minimiser1.pyx":1201
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				ind2=(t+1)*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				if fitted[ind2-param1+num_params]>0:             # <<<<<<<<<<<<<<
  * 					grad_t[param1]=(param_val[param1][int(fitted[ind2])]-\
  * 							param_val[param1][int(fitted[ind])])
  */
-        __pyx_t_8 = ((__pyx_v_ind2 - __pyx_v_param1) + __pyx_v_num_params);
+        __pyx_t_10 = ((__pyx_v_ind2 - __pyx_v_param1) + __pyx_v_num_params);
         __pyx_t_7 = -1;
-        if (__pyx_t_8 < 0) {
-          __pyx_t_8 += __pyx_v_fitted.shape[0];
-          if (unlikely(__pyx_t_8 < 0)) __pyx_t_7 = 0;
-        } else if (unlikely(__pyx_t_8 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+        if (__pyx_t_10 < 0) {
+          __pyx_t_10 += __pyx_v_fitted.shape[0];
+          if (unlikely(__pyx_t_10 < 0)) __pyx_t_7 = 0;
+        } else if (unlikely(__pyx_t_10 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
         if (unlikely(__pyx_t_7 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_7);
-          __PYX_ERR(0, 925, __pyx_L1_error)
+          __PYX_ERR(0, 1201, __pyx_L1_error)
         }
-        __pyx_t_1 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_8 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
+        __pyx_t_1 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_10 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
         if (__pyx_t_1) {
 
-          /* "spatial_minimiser1.pyx":926
+          /* "spatial_minimiser1.pyx":1202
  * 				ind2=(t+1)*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				if fitted[ind2-param1+num_params]>0:
  * 					grad_t[param1]=(param_val[param1][int(fitted[ind2])]-\             # <<<<<<<<<<<<<<
  * 							param_val[param1][int(fitted[ind])])
  * 				else:
  */
-          __pyx_t_8 = __pyx_v_ind2;
+          __pyx_t_10 = __pyx_v_ind2;
           __pyx_t_7 = -1;
-          if (__pyx_t_8 < 0) {
-            __pyx_t_8 += __pyx_v_fitted.shape[0];
-            if (unlikely(__pyx_t_8 < 0)) __pyx_t_7 = 0;
-          } else if (unlikely(__pyx_t_8 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+          if (__pyx_t_10 < 0) {
+            __pyx_t_10 += __pyx_v_fitted.shape[0];
+            if (unlikely(__pyx_t_10 < 0)) __pyx_t_7 = 0;
+          } else if (unlikely(__pyx_t_10 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
           if (unlikely(__pyx_t_7 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_7);
-            __PYX_ERR(0, 926, __pyx_L1_error)
+            __PYX_ERR(0, 1202, __pyx_L1_error)
           }
 
-          /* "spatial_minimiser1.pyx":927
+          /* "spatial_minimiser1.pyx":1203
  * 				if fitted[ind2-param1+num_params]>0:
  * 					grad_t[param1]=(param_val[param1][int(fitted[ind2])]-\
  * 							param_val[param1][int(fitted[ind])])             # <<<<<<<<<<<<<<
  * 				else:
  * 					grad_t[param1]=0.0
  */
-          __pyx_t_6 = __pyx_v_ind;
+          __pyx_t_9 = __pyx_v_ind;
           __pyx_t_7 = -1;
-          if (__pyx_t_6 < 0) {
-            __pyx_t_6 += __pyx_v_fitted.shape[0];
-            if (unlikely(__pyx_t_6 < 0)) __pyx_t_7 = 0;
-          } else if (unlikely(__pyx_t_6 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+          if (__pyx_t_9 < 0) {
+            __pyx_t_9 += __pyx_v_fitted.shape[0];
+            if (unlikely(__pyx_t_9 < 0)) __pyx_t_7 = 0;
+          } else if (unlikely(__pyx_t_9 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
           if (unlikely(__pyx_t_7 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_7);
-            __PYX_ERR(0, 927, __pyx_L1_error)
+            __PYX_ERR(0, 1203, __pyx_L1_error)
           }
 
-          /* "spatial_minimiser1.pyx":926
+          /* "spatial_minimiser1.pyx":1202
  * 				ind2=(t+1)*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				if fitted[ind2-param1+num_params]>0:
  * 					grad_t[param1]=(param_val[param1][int(fitted[ind2])]-\             # <<<<<<<<<<<<<<
  * 							param_val[param1][int(fitted[ind])])
  * 				else:
  */
-          (__pyx_v_grad_t[__pyx_v_param1]) = (((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_8 * __pyx_v_fitted.strides[0]) ))))]) - ((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_6 * __pyx_v_fitted.strides[0]) ))))]));
+          (__pyx_v_grad_t[__pyx_v_param1]) = (((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_10 * __pyx_v_fitted.strides[0]) ))))]) - ((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_9 * __pyx_v_fitted.strides[0]) ))))]));
 
-          /* "spatial_minimiser1.pyx":925
+          /* "spatial_minimiser1.pyx":1201
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				ind2=(t+1)*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				if fitted[ind2-param1+num_params]>0:             # <<<<<<<<<<<<<<
@@ -12034,7 +13941,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
           goto __pyx_L44;
         }
 
-        /* "spatial_minimiser1.pyx":929
+        /* "spatial_minimiser1.pyx":1205
  * 							param_val[param1][int(fitted[ind])])
  * 				else:
  * 					grad_t[param1]=0.0             # <<<<<<<<<<<<<<
@@ -12047,7 +13954,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
         __pyx_L44:;
       }
 
-      /* "spatial_minimiser1.pyx":921
+      /* "spatial_minimiser1.pyx":1197
  * 				else:
  * 					grad_t[param1]=0.0
  * 		elif t==0:             # <<<<<<<<<<<<<<
@@ -12057,7 +13964,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
       goto __pyx_L34;
     }
 
-    /* "spatial_minimiser1.pyx":930
+    /* "spatial_minimiser1.pyx":1206
  * 				else:
  * 					grad_t[param1]=0.0
  * 		elif t==num_times-1:             # <<<<<<<<<<<<<<
@@ -12067,7 +13974,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
     __pyx_t_1 = ((__pyx_v_t == (__pyx_v_num_times - 1)) != 0);
     if (__pyx_t_1) {
 
-      /* "spatial_minimiser1.pyx":931
+      /* "spatial_minimiser1.pyx":1207
  * 					grad_t[param1]=0.0
  * 		elif t==num_times-1:
  * 			for param1 in range(num_params):             # <<<<<<<<<<<<<<
@@ -12079,7 +13986,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
       for (__pyx_t_5 = 0; __pyx_t_5 < __pyx_t_4; __pyx_t_5+=1) {
         __pyx_v_param1 = __pyx_t_5;
 
-        /* "spatial_minimiser1.pyx":932
+        /* "spatial_minimiser1.pyx":1208
  * 		elif t==num_times-1:
  * 			for param1 in range(num_params):
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1             # <<<<<<<<<<<<<<
@@ -12088,7 +13995,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
  */
         __pyx_v_ind = ((((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_param1);
 
-        /* "spatial_minimiser1.pyx":933
+        /* "spatial_minimiser1.pyx":1209
  * 			for param1 in range(num_params):
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				ind1=(t-1)*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1             # <<<<<<<<<<<<<<
@@ -12097,72 +14004,72 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
  */
         __pyx_v_ind1 = (((((((__pyx_v_t - 1) * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_param1);
 
-        /* "spatial_minimiser1.pyx":934
+        /* "spatial_minimiser1.pyx":1210
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				ind1=(t-1)*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				if fitted[ind1-param1+num_params]>0:             # <<<<<<<<<<<<<<
  * 					grad_t[param1]=(param_val[param1][int(fitted[ind])]-\
  * 							param_val[param1][int(fitted[ind1])])
  */
-        __pyx_t_6 = ((__pyx_v_ind1 - __pyx_v_param1) + __pyx_v_num_params);
+        __pyx_t_9 = ((__pyx_v_ind1 - __pyx_v_param1) + __pyx_v_num_params);
         __pyx_t_7 = -1;
-        if (__pyx_t_6 < 0) {
-          __pyx_t_6 += __pyx_v_fitted.shape[0];
-          if (unlikely(__pyx_t_6 < 0)) __pyx_t_7 = 0;
-        } else if (unlikely(__pyx_t_6 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+        if (__pyx_t_9 < 0) {
+          __pyx_t_9 += __pyx_v_fitted.shape[0];
+          if (unlikely(__pyx_t_9 < 0)) __pyx_t_7 = 0;
+        } else if (unlikely(__pyx_t_9 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
         if (unlikely(__pyx_t_7 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_7);
-          __PYX_ERR(0, 934, __pyx_L1_error)
+          __PYX_ERR(0, 1210, __pyx_L1_error)
         }
-        __pyx_t_1 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_6 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
+        __pyx_t_1 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_9 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
         if (__pyx_t_1) {
 
-          /* "spatial_minimiser1.pyx":935
+          /* "spatial_minimiser1.pyx":1211
  * 				ind1=(t-1)*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				if fitted[ind1-param1+num_params]>0:
  * 					grad_t[param1]=(param_val[param1][int(fitted[ind])]-\             # <<<<<<<<<<<<<<
  * 							param_val[param1][int(fitted[ind1])])
  * 				else:
  */
-          __pyx_t_6 = __pyx_v_ind;
+          __pyx_t_9 = __pyx_v_ind;
           __pyx_t_7 = -1;
-          if (__pyx_t_6 < 0) {
-            __pyx_t_6 += __pyx_v_fitted.shape[0];
-            if (unlikely(__pyx_t_6 < 0)) __pyx_t_7 = 0;
-          } else if (unlikely(__pyx_t_6 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+          if (__pyx_t_9 < 0) {
+            __pyx_t_9 += __pyx_v_fitted.shape[0];
+            if (unlikely(__pyx_t_9 < 0)) __pyx_t_7 = 0;
+          } else if (unlikely(__pyx_t_9 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
           if (unlikely(__pyx_t_7 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_7);
-            __PYX_ERR(0, 935, __pyx_L1_error)
+            __PYX_ERR(0, 1211, __pyx_L1_error)
           }
 
-          /* "spatial_minimiser1.pyx":936
+          /* "spatial_minimiser1.pyx":1212
  * 				if fitted[ind1-param1+num_params]>0:
  * 					grad_t[param1]=(param_val[param1][int(fitted[ind])]-\
  * 							param_val[param1][int(fitted[ind1])])             # <<<<<<<<<<<<<<
  * 				else:
  * 					grad_t[param1]=0.0
  */
-          __pyx_t_8 = __pyx_v_ind1;
+          __pyx_t_10 = __pyx_v_ind1;
           __pyx_t_7 = -1;
-          if (__pyx_t_8 < 0) {
-            __pyx_t_8 += __pyx_v_fitted.shape[0];
-            if (unlikely(__pyx_t_8 < 0)) __pyx_t_7 = 0;
-          } else if (unlikely(__pyx_t_8 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+          if (__pyx_t_10 < 0) {
+            __pyx_t_10 += __pyx_v_fitted.shape[0];
+            if (unlikely(__pyx_t_10 < 0)) __pyx_t_7 = 0;
+          } else if (unlikely(__pyx_t_10 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
           if (unlikely(__pyx_t_7 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_7);
-            __PYX_ERR(0, 936, __pyx_L1_error)
+            __PYX_ERR(0, 1212, __pyx_L1_error)
           }
 
-          /* "spatial_minimiser1.pyx":935
+          /* "spatial_minimiser1.pyx":1211
  * 				ind1=(t-1)*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				if fitted[ind1-param1+num_params]>0:
  * 					grad_t[param1]=(param_val[param1][int(fitted[ind])]-\             # <<<<<<<<<<<<<<
  * 							param_val[param1][int(fitted[ind1])])
  * 				else:
  */
-          (__pyx_v_grad_t[__pyx_v_param1]) = (((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_6 * __pyx_v_fitted.strides[0]) ))))]) - ((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_8 * __pyx_v_fitted.strides[0]) ))))]));
+          (__pyx_v_grad_t[__pyx_v_param1]) = (((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_9 * __pyx_v_fitted.strides[0]) ))))]) - ((__pyx_v_param_val[__pyx_v_param1])[((Py_ssize_t)(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_10 * __pyx_v_fitted.strides[0]) ))))]));
 
-          /* "spatial_minimiser1.pyx":934
+          /* "spatial_minimiser1.pyx":1210
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				ind1=(t-1)*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+param1
  * 				if fitted[ind1-param1+num_params]>0:             # <<<<<<<<<<<<<<
@@ -12172,7 +14079,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
           goto __pyx_L47;
         }
 
-        /* "spatial_minimiser1.pyx":938
+        /* "spatial_minimiser1.pyx":1214
  * 							param_val[param1][int(fitted[ind1])])
  * 				else:
  * 					grad_t[param1]=0.0             # <<<<<<<<<<<<<<
@@ -12185,7 +14092,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
         __pyx_L47:;
       }
 
-      /* "spatial_minimiser1.pyx":930
+      /* "spatial_minimiser1.pyx":1206
  * 				else:
  * 					grad_t[param1]=0.0
  * 		elif t==num_times-1:             # <<<<<<<<<<<<<<
@@ -12195,7 +14102,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
     }
     __pyx_L34:;
 
-    /* "spatial_minimiser1.pyx":904
+    /* "spatial_minimiser1.pyx":1178
  * 					grad_y[param1]=0.0
  * 
  * 	if num_times>1:             # <<<<<<<<<<<<<<
@@ -12204,7 +14111,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
  */
   }
 
-  /* "spatial_minimiser1.pyx":939
+  /* "spatial_minimiser1.pyx":1215
  * 				else:
  * 					grad_t[param1]=0.0
  * 	return             # <<<<<<<<<<<<<<
@@ -12213,7 +14120,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
  */
   goto __pyx_L0;
 
-  /* "spatial_minimiser1.pyx":827
+  /* "spatial_minimiser1.pyx":1097
  * 	return
  * 
  * cdef void calc_grad(double [:]fitted,double **param_val, int num_times, int num_y, int num_x, int t, int y1, int x1, int num_params,\             # <<<<<<<<<<<<<<
@@ -12228,7 +14135,7 @@ static void __pyx_f_18spatial_minimiser1_calc_grad(__Pyx_memviewslice __pyx_v_fi
   __Pyx_RefNannyFinishContext();
 }
 
-/* "spatial_minimiser1.pyx":941
+/* "spatial_minimiser1.pyx":1217
  * 	return
  * 
  * cdef double calc_grad_chi(double [:]fitted, double **param_val,int num_times, int num_y, int num_x, int num_params, \             # <<<<<<<<<<<<<<
@@ -12278,7 +14185,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
     }
   }
 
-  /* "spatial_minimiser1.pyx":943
+  /* "spatial_minimiser1.pyx":1219
  * cdef double calc_grad_chi(double [:]fitted, double **param_val,int num_times, int num_y, int num_x, int num_params, \
  * 				double spatial_smoothness_enforcer=0.0, double temporal_smoothness_enforcer=0.0):
  * 	cdef double tot_chi=0.0             # <<<<<<<<<<<<<<
@@ -12287,7 +14194,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
  */
   __pyx_v_tot_chi = 0.0;
 
-  /* "spatial_minimiser1.pyx":950
+  /* "spatial_minimiser1.pyx":1226
  * 	cdef double *grad_y
  * 	cdef double *grad_t
  * 	grad_x=<double *>PyMem_Malloc(num_params*sizeof(double))             # <<<<<<<<<<<<<<
@@ -12296,7 +14203,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
  */
   __pyx_v_grad_x = ((double *)PyMem_Malloc((__pyx_v_num_params * (sizeof(double)))));
 
-  /* "spatial_minimiser1.pyx":951
+  /* "spatial_minimiser1.pyx":1227
  * 	cdef double *grad_t
  * 	grad_x=<double *>PyMem_Malloc(num_params*sizeof(double))
  * 	grad_y=<double *>PyMem_Malloc(num_params*sizeof(double))             # <<<<<<<<<<<<<<
@@ -12305,7 +14212,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
  */
   __pyx_v_grad_y = ((double *)PyMem_Malloc((__pyx_v_num_params * (sizeof(double)))));
 
-  /* "spatial_minimiser1.pyx":952
+  /* "spatial_minimiser1.pyx":1228
  * 	grad_x=<double *>PyMem_Malloc(num_params*sizeof(double))
  * 	grad_y=<double *>PyMem_Malloc(num_params*sizeof(double))
  * 	grad_t=<double *>PyMem_Malloc(num_params*sizeof(double))             # <<<<<<<<<<<<<<
@@ -12314,7 +14221,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
  */
   __pyx_v_grad_t = ((double *)PyMem_Malloc((__pyx_v_num_params * (sizeof(double)))));
 
-  /* "spatial_minimiser1.pyx":955
+  /* "spatial_minimiser1.pyx":1231
  * 
  * 
  * 	for l in range(num_params):             # <<<<<<<<<<<<<<
@@ -12326,7 +14233,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_l = __pyx_t_3;
 
-    /* "spatial_minimiser1.pyx":956
+    /* "spatial_minimiser1.pyx":1232
  * 
  * 	for l in range(num_params):
  * 		grad_x[l]=0.0             # <<<<<<<<<<<<<<
@@ -12335,7 +14242,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
  */
     (__pyx_v_grad_x[__pyx_v_l]) = 0.0;
 
-    /* "spatial_minimiser1.pyx":957
+    /* "spatial_minimiser1.pyx":1233
  * 	for l in range(num_params):
  * 		grad_x[l]=0.0
  * 		grad_y[l]=0.0             # <<<<<<<<<<<<<<
@@ -12344,7 +14251,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
  */
     (__pyx_v_grad_y[__pyx_v_l]) = 0.0;
 
-    /* "spatial_minimiser1.pyx":958
+    /* "spatial_minimiser1.pyx":1234
  * 		grad_x[l]=0.0
  * 		grad_y[l]=0.0
  * 		grad_t[l]=0.0             # <<<<<<<<<<<<<<
@@ -12354,7 +14261,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
     (__pyx_v_grad_t[__pyx_v_l]) = 0.0;
   }
 
-  /* "spatial_minimiser1.pyx":962
+  /* "spatial_minimiser1.pyx":1238
  * 
  * 
  * 	for t in range(num_times):             # <<<<<<<<<<<<<<
@@ -12366,7 +14273,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_t = __pyx_t_3;
 
-    /* "spatial_minimiser1.pyx":963
+    /* "spatial_minimiser1.pyx":1239
  * 
  * 	for t in range(num_times):
  * 		for y1 in range(num_y):             # <<<<<<<<<<<<<<
@@ -12378,7 +14285,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_y1 = __pyx_t_6;
 
-      /* "spatial_minimiser1.pyx":964
+      /* "spatial_minimiser1.pyx":1240
  * 	for t in range(num_times):
  * 		for y1 in range(num_y):
  * 			for x1 in range(num_x):             # <<<<<<<<<<<<<<
@@ -12390,7 +14297,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
       for (__pyx_t_9 = 0; __pyx_t_9 < __pyx_t_8; __pyx_t_9+=1) {
         __pyx_v_x1 = __pyx_t_9;
 
-        /* "spatial_minimiser1.pyx":965
+        /* "spatial_minimiser1.pyx":1241
  * 		for y1 in range(num_y):
  * 			for x1 in range(num_x):
  * 				ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params             # <<<<<<<<<<<<<<
@@ -12399,7 +14306,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
  */
         __pyx_v_ind = ((((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_num_params);
 
-        /* "spatial_minimiser1.pyx":968
+        /* "spatial_minimiser1.pyx":1244
  * 
  * 
  * 				if fitted[ind]>-0.2:             # <<<<<<<<<<<<<<
@@ -12414,12 +14321,12 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
         } else if (unlikely(__pyx_t_10 >= __pyx_v_fitted.shape[0])) __pyx_t_11 = 0;
         if (unlikely(__pyx_t_11 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_11);
-          __PYX_ERR(0, 968, __pyx_L1_error)
+          __PYX_ERR(0, 1244, __pyx_L1_error)
         }
         __pyx_t_12 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_10 * __pyx_v_fitted.strides[0]) ))) > -0.2) != 0);
         if (__pyx_t_12) {
 
-          /* "spatial_minimiser1.pyx":969
+          /* "spatial_minimiser1.pyx":1245
  * 
  * 				if fitted[ind]>-0.2:
  * 					tot_chi=tot_chi+fitted[ind]             # <<<<<<<<<<<<<<
@@ -12434,11 +14341,11 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
           } else if (unlikely(__pyx_t_10 >= __pyx_v_fitted.shape[0])) __pyx_t_11 = 0;
           if (unlikely(__pyx_t_11 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_11);
-            __PYX_ERR(0, 969, __pyx_L1_error)
+            __PYX_ERR(0, 1245, __pyx_L1_error)
           }
           __pyx_v_tot_chi = (__pyx_v_tot_chi + (*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_10 * __pyx_v_fitted.strides[0]) ))));
 
-          /* "spatial_minimiser1.pyx":970
+          /* "spatial_minimiser1.pyx":1246
  * 				if fitted[ind]>-0.2:
  * 					tot_chi=tot_chi+fitted[ind]
  * 					calc_grad(fitted,param_val,num_times,num_y,num_x,t,y1,x1,num_params,grad_x,grad_y,grad_t)             # <<<<<<<<<<<<<<
@@ -12447,7 +14354,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
  */
           __pyx_f_18spatial_minimiser1_calc_grad(__pyx_v_fitted, __pyx_v_param_val, __pyx_v_num_times, __pyx_v_num_y, __pyx_v_num_x, __pyx_v_t, __pyx_v_y1, __pyx_v_x1, __pyx_v_num_params, __pyx_v_grad_x, __pyx_v_grad_y, __pyx_v_grad_t);
 
-          /* "spatial_minimiser1.pyx":972
+          /* "spatial_minimiser1.pyx":1248
  * 					calc_grad(fitted,param_val,num_times,num_y,num_x,t,y1,x1,num_params,grad_x,grad_y,grad_t)
  * 
  * 					if num_x>1:             # <<<<<<<<<<<<<<
@@ -12457,7 +14364,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
           __pyx_t_12 = ((__pyx_v_num_x > 1) != 0);
           if (__pyx_t_12) {
 
-            /* "spatial_minimiser1.pyx":973
+            /* "spatial_minimiser1.pyx":1249
  * 
  * 					if num_x>1:
  * 						for param1 in range(num_params):             # <<<<<<<<<<<<<<
@@ -12469,7 +14376,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
             for (__pyx_t_14 = 0; __pyx_t_14 < __pyx_t_13; __pyx_t_14+=1) {
               __pyx_v_param1 = __pyx_t_14;
 
-              /* "spatial_minimiser1.pyx":974
+              /* "spatial_minimiser1.pyx":1250
  * 					if num_x>1:
  * 						for param1 in range(num_params):
  * 							tot_chi=tot_chi+spatial_smoothness_enforcer*square(grad_x[param1])             # <<<<<<<<<<<<<<
@@ -12479,7 +14386,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
               __pyx_v_tot_chi = (__pyx_v_tot_chi + (__pyx_v_spatial_smoothness_enforcer * __pyx_f_18spatial_minimiser1_square((__pyx_v_grad_x[__pyx_v_param1]))));
             }
 
-            /* "spatial_minimiser1.pyx":972
+            /* "spatial_minimiser1.pyx":1248
  * 					calc_grad(fitted,param_val,num_times,num_y,num_x,t,y1,x1,num_params,grad_x,grad_y,grad_t)
  * 
  * 					if num_x>1:             # <<<<<<<<<<<<<<
@@ -12488,7 +14395,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
  */
           }
 
-          /* "spatial_minimiser1.pyx":975
+          /* "spatial_minimiser1.pyx":1251
  * 						for param1 in range(num_params):
  * 							tot_chi=tot_chi+spatial_smoothness_enforcer*square(grad_x[param1])
  * 					if num_y>1:             # <<<<<<<<<<<<<<
@@ -12498,7 +14405,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
           __pyx_t_12 = ((__pyx_v_num_y > 1) != 0);
           if (__pyx_t_12) {
 
-            /* "spatial_minimiser1.pyx":976
+            /* "spatial_minimiser1.pyx":1252
  * 							tot_chi=tot_chi+spatial_smoothness_enforcer*square(grad_x[param1])
  * 					if num_y>1:
  * 						for param1 in range(num_params):             # <<<<<<<<<<<<<<
@@ -12510,7 +14417,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
             for (__pyx_t_14 = 0; __pyx_t_14 < __pyx_t_13; __pyx_t_14+=1) {
               __pyx_v_param1 = __pyx_t_14;
 
-              /* "spatial_minimiser1.pyx":977
+              /* "spatial_minimiser1.pyx":1253
  * 					if num_y>1:
  * 						for param1 in range(num_params):
  * 							tot_chi=tot_chi+spatial_smoothness_enforcer*square(grad_y[param1])             # <<<<<<<<<<<<<<
@@ -12520,7 +14427,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
               __pyx_v_tot_chi = (__pyx_v_tot_chi + (__pyx_v_spatial_smoothness_enforcer * __pyx_f_18spatial_minimiser1_square((__pyx_v_grad_y[__pyx_v_param1]))));
             }
 
-            /* "spatial_minimiser1.pyx":975
+            /* "spatial_minimiser1.pyx":1251
  * 						for param1 in range(num_params):
  * 							tot_chi=tot_chi+spatial_smoothness_enforcer*square(grad_x[param1])
  * 					if num_y>1:             # <<<<<<<<<<<<<<
@@ -12529,7 +14436,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
  */
           }
 
-          /* "spatial_minimiser1.pyx":979
+          /* "spatial_minimiser1.pyx":1255
  * 							tot_chi=tot_chi+spatial_smoothness_enforcer*square(grad_y[param1])
  * 
  * 					if num_times>1:             # <<<<<<<<<<<<<<
@@ -12539,7 +14446,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
           __pyx_t_12 = ((__pyx_v_num_times > 1) != 0);
           if (__pyx_t_12) {
 
-            /* "spatial_minimiser1.pyx":980
+            /* "spatial_minimiser1.pyx":1256
  * 
  * 					if num_times>1:
  * 						for param1 in range(num_params):             # <<<<<<<<<<<<<<
@@ -12551,7 +14458,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
             for (__pyx_t_14 = 0; __pyx_t_14 < __pyx_t_13; __pyx_t_14+=1) {
               __pyx_v_param1 = __pyx_t_14;
 
-              /* "spatial_minimiser1.pyx":981
+              /* "spatial_minimiser1.pyx":1257
  * 					if num_times>1:
  * 						for param1 in range(num_params):
  * 							tot_chi=tot_chi+temporal_smoothness_enforcer*square(grad_t[param1])             # <<<<<<<<<<<<<<
@@ -12561,7 +14468,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
               __pyx_v_tot_chi = (__pyx_v_tot_chi + (__pyx_v_temporal_smoothness_enforcer * __pyx_f_18spatial_minimiser1_square((__pyx_v_grad_t[__pyx_v_param1]))));
             }
 
-            /* "spatial_minimiser1.pyx":979
+            /* "spatial_minimiser1.pyx":1255
  * 							tot_chi=tot_chi+spatial_smoothness_enforcer*square(grad_y[param1])
  * 
  * 					if num_times>1:             # <<<<<<<<<<<<<<
@@ -12570,7 +14477,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
  */
           }
 
-          /* "spatial_minimiser1.pyx":968
+          /* "spatial_minimiser1.pyx":1244
  * 
  * 
  * 				if fitted[ind]>-0.2:             # <<<<<<<<<<<<<<
@@ -12582,7 +14489,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
     }
   }
 
-  /* "spatial_minimiser1.pyx":983
+  /* "spatial_minimiser1.pyx":1259
  * 							tot_chi=tot_chi+temporal_smoothness_enforcer*square(grad_t[param1])
  * 
  * 	PyMem_Free(grad_x)             # <<<<<<<<<<<<<<
@@ -12591,7 +14498,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
  */
   PyMem_Free(__pyx_v_grad_x);
 
-  /* "spatial_minimiser1.pyx":984
+  /* "spatial_minimiser1.pyx":1260
  * 
  * 	PyMem_Free(grad_x)
  * 	PyMem_Free(grad_y)             # <<<<<<<<<<<<<<
@@ -12600,7 +14507,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
  */
   PyMem_Free(__pyx_v_grad_y);
 
-  /* "spatial_minimiser1.pyx":985
+  /* "spatial_minimiser1.pyx":1261
  * 	PyMem_Free(grad_x)
  * 	PyMem_Free(grad_y)
  * 	PyMem_Free(grad_t)             # <<<<<<<<<<<<<<
@@ -12609,7 +14516,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
  */
   PyMem_Free(__pyx_v_grad_t);
 
-  /* "spatial_minimiser1.pyx":986
+  /* "spatial_minimiser1.pyx":1262
  * 	PyMem_Free(grad_y)
  * 	PyMem_Free(grad_t)
  * 	return tot_chi             # <<<<<<<<<<<<<<
@@ -12619,7 +14526,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
   __pyx_r = __pyx_v_tot_chi;
   goto __pyx_L0;
 
-  /* "spatial_minimiser1.pyx":941
+  /* "spatial_minimiser1.pyx":1217
  * 	return
  * 
  * cdef double calc_grad_chi(double [:]fitted, double **param_val,int num_times, int num_y, int num_x, int num_params, \             # <<<<<<<<<<<<<<
@@ -12636,7 +14543,7 @@ static double __pyx_f_18spatial_minimiser1_calc_grad_chi(__Pyx_memviewslice __py
   return __pyx_r;
 }
 
-/* "spatial_minimiser1.pyx":988
+/* "spatial_minimiser1.pyx":1264
  * 	return tot_chi
  * 
  * cdef void make_cube_fit_ready(int num_times,int num_y, int num_x,int num_freqs, double [:,:]err_cube,\             # <<<<<<<<<<<<<<
@@ -12681,7 +14588,7 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("make_cube_fit_ready", 0);
 
-  /* "spatial_minimiser1.pyx":997
+  /* "spatial_minimiser1.pyx":1273
  * 	cdef double *rms
  * 
  * 	spectrum=<double *>PyMem_Malloc(num_freqs*sizeof(double))             # <<<<<<<<<<<<<<
@@ -12690,7 +14597,7 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
  */
   __pyx_v_spectrum = ((double *)PyMem_Malloc((__pyx_v_num_freqs * (sizeof(double)))));
 
-  /* "spatial_minimiser1.pyx":998
+  /* "spatial_minimiser1.pyx":1274
  * 
  * 	spectrum=<double *>PyMem_Malloc(num_freqs*sizeof(double))
  * 	rms=<double *>PyMem_Malloc(num_freqs*sizeof(double))             # <<<<<<<<<<<<<<
@@ -12699,7 +14606,7 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
  */
   __pyx_v_rms = ((double *)PyMem_Malloc((__pyx_v_num_freqs * (sizeof(double)))));
 
-  /* "spatial_minimiser1.pyx":1001
+  /* "spatial_minimiser1.pyx":1277
  * 
  * 
  * 	for t in range(num_times):             # <<<<<<<<<<<<<<
@@ -12711,7 +14618,7 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_t = __pyx_t_3;
 
-    /* "spatial_minimiser1.pyx":1002
+    /* "spatial_minimiser1.pyx":1278
  * 
  * 	for t in range(num_times):
  * 		for i in range(num_freqs):             # <<<<<<<<<<<<<<
@@ -12723,7 +14630,7 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_i = __pyx_t_6;
 
-      /* "spatial_minimiser1.pyx":1003
+      /* "spatial_minimiser1.pyx":1279
  * 	for t in range(num_times):
  * 		for i in range(num_freqs):
  * 			rms[i]=err_cube[t,i]             # <<<<<<<<<<<<<<
@@ -12743,12 +14650,12 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
       } else if (unlikely(__pyx_t_8 >= __pyx_v_err_cube.shape[1])) __pyx_t_9 = 1;
       if (unlikely(__pyx_t_9 != -1)) {
         __Pyx_RaiseBufferIndexError(__pyx_t_9);
-        __PYX_ERR(0, 1003, __pyx_L1_error)
+        __PYX_ERR(0, 1279, __pyx_L1_error)
       }
       (__pyx_v_rms[__pyx_v_i]) = (*((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_err_cube.data + __pyx_t_7 * __pyx_v_err_cube.strides[0]) ) + __pyx_t_8 * __pyx_v_err_cube.strides[1]) )));
     }
 
-    /* "spatial_minimiser1.pyx":1004
+    /* "spatial_minimiser1.pyx":1280
  * 		for i in range(num_freqs):
  * 			rms[i]=err_cube[t,i]
  * 		for y1 in range(num_y):             # <<<<<<<<<<<<<<
@@ -12760,7 +14667,7 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_y1 = __pyx_t_6;
 
-      /* "spatial_minimiser1.pyx":1005
+      /* "spatial_minimiser1.pyx":1281
  * 			rms[i]=err_cube[t,i]
  * 		for y1 in range(num_y):
  * 			for x1 in range(num_x):             # <<<<<<<<<<<<<<
@@ -12772,7 +14679,7 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
       for (__pyx_t_11 = 0; __pyx_t_11 < __pyx_t_10; __pyx_t_11+=1) {
         __pyx_v_x1 = __pyx_t_11;
 
-        /* "spatial_minimiser1.pyx":1006
+        /* "spatial_minimiser1.pyx":1282
  * 		for y1 in range(num_y):
  * 			for x1 in range(num_x):
  * 				for i in range(num_freqs):             # <<<<<<<<<<<<<<
@@ -12784,7 +14691,7 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
         for (__pyx_t_14 = 0; __pyx_t_14 < __pyx_t_13; __pyx_t_14+=1) {
           __pyx_v_i = __pyx_t_14;
 
-          /* "spatial_minimiser1.pyx":1007
+          /* "spatial_minimiser1.pyx":1283
  * 			for x1 in range(num_x):
  * 				for i in range(num_freqs):
  * 					spectrum[i]=cube[t,i,y1,x1]             # <<<<<<<<<<<<<<
@@ -12814,12 +14721,12 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
           } else if (unlikely(__pyx_t_16 >= __pyx_v_cube.shape[3])) __pyx_t_17 = 3;
           if (unlikely(__pyx_t_17 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_17);
-            __PYX_ERR(0, 1007, __pyx_L1_error)
+            __PYX_ERR(0, 1283, __pyx_L1_error)
           }
           (__pyx_v_spectrum[__pyx_v_i]) = (*((double *) ( /* dim=3 */ (( /* dim=2 */ (( /* dim=1 */ (( /* dim=0 */ (__pyx_v_cube.data + __pyx_t_8 * __pyx_v_cube.strides[0]) ) + __pyx_t_7 * __pyx_v_cube.strides[1]) ) + __pyx_t_15 * __pyx_v_cube.strides[2]) ) + __pyx_t_16 * __pyx_v_cube.strides[3]) )));
         }
 
-        /* "spatial_minimiser1.pyx":1008
+        /* "spatial_minimiser1.pyx":1284
  * 				for i in range(num_freqs):
  * 					spectrum[i]=cube[t,i,y1,x1]
  * 				ind3=t*num_y*num_x*num_freqs+y1*num_x*num_freqs+x1*num_freqs             # <<<<<<<<<<<<<<
@@ -12828,7 +14735,7 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
  */
         __pyx_v_ind3 = (((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * __pyx_v_num_freqs) + ((__pyx_v_y1 * __pyx_v_num_x) * __pyx_v_num_freqs)) + (__pyx_v_x1 * __pyx_v_num_freqs));
 
-        /* "spatial_minimiser1.pyx":1009
+        /* "spatial_minimiser1.pyx":1285
  * 					spectrum[i]=cube[t,i,y1,x1]
  * 				ind3=t*num_y*num_x*num_freqs+y1*num_x*num_freqs+x1*num_freqs
  * 				low_ind=find_min_freq(freqs1,lower_freq,num_freqs)             # <<<<<<<<<<<<<<
@@ -12837,7 +14744,7 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
  */
         __pyx_v_low_ind = __pyx_f_18spatial_minimiser1_find_min_freq(__pyx_v_freqs1, __pyx_v_lower_freq, __pyx_v_num_freqs);
 
-        /* "spatial_minimiser1.pyx":1010
+        /* "spatial_minimiser1.pyx":1286
  * 				ind3=t*num_y*num_x*num_freqs+y1*num_x*num_freqs+x1*num_freqs
  * 				low_ind=find_min_freq(freqs1,lower_freq,num_freqs)
  * 				high_ind=find_max_freq(freqs1,upper_freq,num_freqs)             # <<<<<<<<<<<<<<
@@ -12846,7 +14753,7 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
  */
         __pyx_v_high_ind = __pyx_f_18spatial_minimiser1_find_max_freq(__pyx_v_freqs1, __pyx_v_upper_freq, __pyx_v_num_freqs);
 
-        /* "spatial_minimiser1.pyx":1011
+        /* "spatial_minimiser1.pyx":1287
  * 				low_ind=find_min_freq(freqs1,lower_freq,num_freqs)
  * 				high_ind=find_max_freq(freqs1,upper_freq,num_freqs)
  * 				calc_fitrange_homogenous(spectrum, &low_ind, &high_ind,num_freqs)             # <<<<<<<<<<<<<<
@@ -12855,7 +14762,7 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
  */
         __pyx_f_18spatial_minimiser1_calc_fitrange_homogenous(__pyx_v_spectrum, (&__pyx_v_low_ind), (&__pyx_v_high_ind), __pyx_v_num_freqs);
 
-        /* "spatial_minimiser1.pyx":1012
+        /* "spatial_minimiser1.pyx":1288
  * 				high_ind=find_max_freq(freqs1,upper_freq,num_freqs)
  * 				calc_fitrange_homogenous(spectrum, &low_ind, &high_ind,num_freqs)
  * 				low_freq_ind[t][y1][x1]=low_ind             # <<<<<<<<<<<<<<
@@ -12864,7 +14771,7 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
  */
         (((__pyx_v_low_freq_ind[__pyx_v_t])[__pyx_v_y1])[__pyx_v_x1]) = __pyx_v_low_ind;
 
-        /* "spatial_minimiser1.pyx":1013
+        /* "spatial_minimiser1.pyx":1289
  * 				calc_fitrange_homogenous(spectrum, &low_ind, &high_ind,num_freqs)
  * 				low_freq_ind[t][y1][x1]=low_ind
  * 				upper_freq_ind[t][y1][x1]=high_ind             # <<<<<<<<<<<<<<
@@ -12873,7 +14780,7 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
  */
         (((__pyx_v_upper_freq_ind[__pyx_v_t])[__pyx_v_y1])[__pyx_v_x1]) = __pyx_v_high_ind;
 
-        /* "spatial_minimiser1.pyx":1014
+        /* "spatial_minimiser1.pyx":1290
  * 				low_freq_ind[t][y1][x1]=low_ind
  * 				upper_freq_ind[t][y1][x1]=high_ind
  * 				high_snr_freq_num=detect_low_snr_freqs(spectrum,rms,rms_thresh,pos+ind3,low_ind,high_ind,num_freqs)             # <<<<<<<<<<<<<<
@@ -12882,7 +14789,7 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
  */
         __pyx_v_high_snr_freq_num = __pyx_f_18spatial_minimiser1_detect_low_snr_freqs(__pyx_v_spectrum, __pyx_v_rms, __pyx_v_rms_thresh, (__pyx_v_pos + __pyx_v_ind3), __pyx_v_low_ind, __pyx_v_high_ind, __pyx_v_num_freqs);
 
-        /* "spatial_minimiser1.pyx":1015
+        /* "spatial_minimiser1.pyx":1291
  * 				upper_freq_ind[t][y1][x1]=high_ind
  * 				high_snr_freq_num=detect_low_snr_freqs(spectrum,rms,rms_thresh,pos+ind3,low_ind,high_ind,num_freqs)
  * 				if high_snr_freq_num<min_freq_num:             # <<<<<<<<<<<<<<
@@ -12892,7 +14799,7 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
         __pyx_t_18 = ((__pyx_v_high_snr_freq_num < __pyx_v_min_freq_num) != 0);
         if (__pyx_t_18) {
 
-          /* "spatial_minimiser1.pyx":1016
+          /* "spatial_minimiser1.pyx":1292
  * 				high_snr_freq_num=detect_low_snr_freqs(spectrum,rms,rms_thresh,pos+ind3,low_ind,high_ind,num_freqs)
  * 				if high_snr_freq_num<min_freq_num:
  * 					for l in range(num_params):             # <<<<<<<<<<<<<<
@@ -12904,7 +14811,7 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
           for (__pyx_t_14 = 0; __pyx_t_14 < __pyx_t_13; __pyx_t_14+=1) {
             __pyx_v_l = __pyx_t_14;
 
-            /* "spatial_minimiser1.pyx":1017
+            /* "spatial_minimiser1.pyx":1293
  * 				if high_snr_freq_num<min_freq_num:
  * 					for l in range(num_params):
  * 						ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+l             # <<<<<<<<<<<<<<
@@ -12913,7 +14820,7 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
  */
             __pyx_v_ind5 = ((((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_l);
 
-            /* "spatial_minimiser1.pyx":1018
+            /* "spatial_minimiser1.pyx":1294
  * 					for l in range(num_params):
  * 						ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+l
  * 						fitted[ind5]=-1             # <<<<<<<<<<<<<<
@@ -12928,12 +14835,12 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
             } else if (unlikely(__pyx_t_16 >= __pyx_v_fitted.shape[0])) __pyx_t_17 = 0;
             if (unlikely(__pyx_t_17 != -1)) {
               __Pyx_RaiseBufferIndexError(__pyx_t_17);
-              __PYX_ERR(0, 1018, __pyx_L1_error)
+              __PYX_ERR(0, 1294, __pyx_L1_error)
             }
             *((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_16 * __pyx_v_fitted.strides[0]) )) = -1.0;
           }
 
-          /* "spatial_minimiser1.pyx":1019
+          /* "spatial_minimiser1.pyx":1295
  * 						ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+l
  * 						fitted[ind5]=-1
  * 					ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params             # <<<<<<<<<<<<<<
@@ -12942,7 +14849,7 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
  */
           __pyx_v_ind5 = ((((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_num_params);
 
-          /* "spatial_minimiser1.pyx":1020
+          /* "spatial_minimiser1.pyx":1296
  * 						fitted[ind5]=-1
  * 					ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
  * 					fitted[ind5]=-1             # <<<<<<<<<<<<<<
@@ -12957,11 +14864,11 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
           } else if (unlikely(__pyx_t_16 >= __pyx_v_fitted.shape[0])) __pyx_t_12 = 0;
           if (unlikely(__pyx_t_12 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_12);
-            __PYX_ERR(0, 1020, __pyx_L1_error)
+            __PYX_ERR(0, 1296, __pyx_L1_error)
           }
           *((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_16 * __pyx_v_fitted.strides[0]) )) = -1.0;
 
-          /* "spatial_minimiser1.pyx":1015
+          /* "spatial_minimiser1.pyx":1291
  * 				upper_freq_ind[t][y1][x1]=high_ind
  * 				high_snr_freq_num=detect_low_snr_freqs(spectrum,rms,rms_thresh,pos+ind3,low_ind,high_ind,num_freqs)
  * 				if high_snr_freq_num<min_freq_num:             # <<<<<<<<<<<<<<
@@ -12971,7 +14878,7 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
           goto __pyx_L13;
         }
 
-        /* "spatial_minimiser1.pyx":1022
+        /* "spatial_minimiser1.pyx":1298
  * 					fitted[ind5]=-1
  * 				else:
  * 					ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params             # <<<<<<<<<<<<<<
@@ -12981,7 +14888,7 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
         /*else*/ {
           __pyx_v_ind5 = ((((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_num_params);
 
-          /* "spatial_minimiser1.pyx":1023
+          /* "spatial_minimiser1.pyx":1299
  * 				else:
  * 					ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
  * 					fitted[ind5]=0.00             # <<<<<<<<<<<<<<
@@ -12996,7 +14903,7 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
           } else if (unlikely(__pyx_t_16 >= __pyx_v_fitted.shape[0])) __pyx_t_12 = 0;
           if (unlikely(__pyx_t_12 != -1)) {
             __Pyx_RaiseBufferIndexError(__pyx_t_12);
-            __PYX_ERR(0, 1023, __pyx_L1_error)
+            __PYX_ERR(0, 1299, __pyx_L1_error)
           }
           *((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_16 * __pyx_v_fitted.strides[0]) )) = 0.00;
         }
@@ -13005,7 +14912,7 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
     }
   }
 
-  /* "spatial_minimiser1.pyx":1025
+  /* "spatial_minimiser1.pyx":1301
  * 					fitted[ind5]=0.00
  * 
  * 	PyMem_Free(spectrum)             # <<<<<<<<<<<<<<
@@ -13014,7 +14921,7 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
  */
   PyMem_Free(__pyx_v_spectrum);
 
-  /* "spatial_minimiser1.pyx":1026
+  /* "spatial_minimiser1.pyx":1302
  * 
  * 	PyMem_Free(spectrum)
  * 	PyMem_Free(rms)             # <<<<<<<<<<<<<<
@@ -13023,7 +14930,7 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
  */
   PyMem_Free(__pyx_v_rms);
 
-  /* "spatial_minimiser1.pyx":1027
+  /* "spatial_minimiser1.pyx":1303
  * 	PyMem_Free(spectrum)
  * 	PyMem_Free(rms)
  * 	return             # <<<<<<<<<<<<<<
@@ -13032,7 +14939,7 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
  */
   goto __pyx_L0;
 
-  /* "spatial_minimiser1.pyx":988
+  /* "spatial_minimiser1.pyx":1264
  * 	return tot_chi
  * 
  * cdef void make_cube_fit_ready(int num_times,int num_y, int num_x,int num_freqs, double [:,:]err_cube,\             # <<<<<<<<<<<<<<
@@ -13047,7 +14954,7 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
   __Pyx_RefNannyFinishContext();
 }
 
-/* "spatial_minimiser1.pyx":1029
+/* "spatial_minimiser1.pyx":1305
  * 	return
  * 
  * cdef double calc_red_chi_all_pix(int num_times, int num_freqs, int num_y, int num_x, int num_params,int ***low_freq_ind,\             # <<<<<<<<<<<<<<
@@ -13055,7 +14962,7 @@ static void __pyx_f_18spatial_minimiser1_make_cube_fit_ready(int __pyx_v_num_tim
  * 						numpy.ndarray[numpy.double_t,ndim=2] err_cube,numpy.ndarray[numpy.double_t,ndim=1] model, double sys_error,\
  */
 
-static double __pyx_f_18spatial_minimiser1_calc_red_chi_all_pix(int __pyx_v_num_times, int __pyx_v_num_freqs, int __pyx_v_num_y, int __pyx_v_num_x, int __pyx_v_num_params, int ***__pyx_v_low_freq_ind, int ***__pyx_v_upper_freq_ind, PyArrayObject *__pyx_v_cube, PyArrayObject *__pyx_v_err_cube, PyArrayObject *__pyx_v_model, double __pyx_v_sys_error, int *__pyx_v_pos, __Pyx_memviewslice __pyx_v_fitted, CYTHON_UNUSED double *__pyx_v_freqs1, CYTHON_UNUSED double __pyx_v_lower_freq, CYTHON_UNUSED double __pyx_v_upper_freq, CYTHON_UNUSED int __pyx_v_first_pass, CYTHON_UNUSED double __pyx_v_rms_thresh, CYTHON_UNUSED int __pyx_v_min_freq_num, int *__pyx_v_param_lengths1, CYTHON_UNUSED int *__pyx_v_param_ind, double **__pyx_v_param_val, double __pyx_v_spatial_smoothness_enforcer, double __pyx_v_temporal_smoothness_enforcer, int __pyx_v_search_length, double __pyx_v_discont_thresh) {
+static double __pyx_f_18spatial_minimiser1_calc_red_chi_all_pix(int __pyx_v_num_times, int __pyx_v_num_freqs, int __pyx_v_num_y, int __pyx_v_num_x, int __pyx_v_num_params, int ***__pyx_v_low_freq_ind, int ***__pyx_v_upper_freq_ind, PyArrayObject *__pyx_v_cube, PyArrayObject *__pyx_v_err_cube, PyArrayObject *__pyx_v_model, double __pyx_v_sys_error, int *__pyx_v_pos, __Pyx_memviewslice __pyx_v_fitted, CYTHON_UNUSED double *__pyx_v_freqs1, CYTHON_UNUSED double __pyx_v_lower_freq, CYTHON_UNUSED double __pyx_v_upper_freq, CYTHON_UNUSED int __pyx_v_first_pass, CYTHON_UNUSED double __pyx_v_rms_thresh, CYTHON_UNUSED int __pyx_v_min_freq_num, int *__pyx_v_param_lengths1, CYTHON_UNUSED int *__pyx_v_param_ind, double **__pyx_v_param_val, double __pyx_v_spatial_smoothness_enforcer, double __pyx_v_temporal_smoothness_enforcer, int __pyx_v_search_length, double __pyx_v_discont_thresh, double __pyx_v_max_dist) {
   PyObject *__pyx_v_hf = NULL;
   PyArrayObject *__pyx_v_fitted1 = 0;
   double __pyx_v_grad_chi;
@@ -13108,30 +15015,30 @@ static double __pyx_f_18spatial_minimiser1_calc_red_chi_all_pix(int __pyx_v_num_
   __pyx_pybuffernd_model.rcbuffer = &__pyx_pybuffer_model;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_cube.rcbuffer->pybuffer, (PyObject*)__pyx_v_cube, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 4, 0, __pyx_stack) == -1)) __PYX_ERR(0, 1029, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_cube.rcbuffer->pybuffer, (PyObject*)__pyx_v_cube, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 4, 0, __pyx_stack) == -1)) __PYX_ERR(0, 1305, __pyx_L1_error)
   }
   __pyx_pybuffernd_cube.diminfo[0].strides = __pyx_pybuffernd_cube.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_cube.diminfo[0].shape = __pyx_pybuffernd_cube.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_cube.diminfo[1].strides = __pyx_pybuffernd_cube.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_cube.diminfo[1].shape = __pyx_pybuffernd_cube.rcbuffer->pybuffer.shape[1]; __pyx_pybuffernd_cube.diminfo[2].strides = __pyx_pybuffernd_cube.rcbuffer->pybuffer.strides[2]; __pyx_pybuffernd_cube.diminfo[2].shape = __pyx_pybuffernd_cube.rcbuffer->pybuffer.shape[2]; __pyx_pybuffernd_cube.diminfo[3].strides = __pyx_pybuffernd_cube.rcbuffer->pybuffer.strides[3]; __pyx_pybuffernd_cube.diminfo[3].shape = __pyx_pybuffernd_cube.rcbuffer->pybuffer.shape[3];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_err_cube.rcbuffer->pybuffer, (PyObject*)__pyx_v_err_cube, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 1029, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_err_cube.rcbuffer->pybuffer, (PyObject*)__pyx_v_err_cube, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 1305, __pyx_L1_error)
   }
   __pyx_pybuffernd_err_cube.diminfo[0].strides = __pyx_pybuffernd_err_cube.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_err_cube.diminfo[0].shape = __pyx_pybuffernd_err_cube.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_err_cube.diminfo[1].strides = __pyx_pybuffernd_err_cube.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_err_cube.diminfo[1].shape = __pyx_pybuffernd_err_cube.rcbuffer->pybuffer.shape[1];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_model.rcbuffer->pybuffer, (PyObject*)__pyx_v_model, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 1029, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_model.rcbuffer->pybuffer, (PyObject*)__pyx_v_model, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 1305, __pyx_L1_error)
   }
   __pyx_pybuffernd_model.diminfo[0].strides = __pyx_pybuffernd_model.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_model.diminfo[0].shape = __pyx_pybuffernd_model.rcbuffer->pybuffer.shape[0];
 
-  /* "spatial_minimiser1.pyx":1093
+  /* "spatial_minimiser1.pyx":1369
  * 	hf.close()
  * 	'''
  * 	hf=h5py.File('test_cython_code.hdf5')             # <<<<<<<<<<<<<<
  * 	cdef numpy.ndarray[numpy.double_t,ndim=1]fitted1
  * 	fitted1=np.array(hf['fitted'])
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_h5py); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1093, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_h5py); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1369, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_File); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1093, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_File); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1369, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_2 = NULL;
@@ -13146,25 +15053,25 @@ static double __pyx_f_18spatial_minimiser1_calc_red_chi_all_pix(int __pyx_v_num_
   }
   __pyx_t_1 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_2, __pyx_kp_u_test_cython_code_hdf5) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_kp_u_test_cython_code_hdf5);
   __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1093, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1369, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_hf = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "spatial_minimiser1.pyx":1095
+  /* "spatial_minimiser1.pyx":1371
  * 	hf=h5py.File('test_cython_code.hdf5')
  * 	cdef numpy.ndarray[numpy.double_t,ndim=1]fitted1
  * 	fitted1=np.array(hf['fitted'])             # <<<<<<<<<<<<<<
  * 	hf.close()
  * 
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1095, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1371, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_array); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1095, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_array); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1371, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyObject_Dict_GetItem(__pyx_v_hf, __pyx_n_u_fitted); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1095, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_Dict_GetItem(__pyx_v_hf, __pyx_n_u_fitted); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1371, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_4 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
@@ -13179,10 +15086,10 @@ static double __pyx_f_18spatial_minimiser1_calc_red_chi_all_pix(int __pyx_v_num_
   __pyx_t_1 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_4, __pyx_t_3) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1095, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1371, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 1095, __pyx_L1_error)
+  if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 1371, __pyx_L1_error)
   __pyx_t_5 = ((PyArrayObject *)__pyx_t_1);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
@@ -13199,20 +15106,20 @@ static double __pyx_f_18spatial_minimiser1_calc_red_chi_all_pix(int __pyx_v_num_
       __pyx_t_7 = __pyx_t_8 = __pyx_t_9 = 0;
     }
     __pyx_pybuffernd_fitted1.diminfo[0].strides = __pyx_pybuffernd_fitted1.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_fitted1.diminfo[0].shape = __pyx_pybuffernd_fitted1.rcbuffer->pybuffer.shape[0];
-    if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 1095, __pyx_L1_error)
+    if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 1371, __pyx_L1_error)
   }
   __pyx_t_5 = 0;
   __pyx_v_fitted1 = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "spatial_minimiser1.pyx":1096
+  /* "spatial_minimiser1.pyx":1372
  * 	cdef numpy.ndarray[numpy.double_t,ndim=1]fitted1
  * 	fitted1=np.array(hf['fitted'])
  * 	hf.close()             # <<<<<<<<<<<<<<
  * 
  * 	####------------------------------------ for testing---------------------------------####
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_hf, __pyx_n_s_close); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1096, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_hf, __pyx_n_s_close); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1372, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
@@ -13226,34 +15133,34 @@ static double __pyx_f_18spatial_minimiser1_calc_red_chi_all_pix(int __pyx_v_num_
   }
   __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3) : __Pyx_PyObject_CallNoArg(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1096, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1372, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "spatial_minimiser1.pyx":1106
+  /* "spatial_minimiser1.pyx":1382
  * 
  * 
  * 	cdef double grad_chi=remove_discontinuities(cube, err_cube, model, pos, low_freq_ind, upper_freq_ind, fitted1,param_val,num_times,num_x, num_y, \             # <<<<<<<<<<<<<<
  * 				num_params,num_freqs,search_length,discont_thresh, param_val, sys_error,spatial_smoothness_enforcer,\
- * 						temporal_smoothness_enforcer,param_lengths1)
+ * 						temporal_smoothness_enforcer,param_lengths1, max_dist)
  */
-  __pyx_t_10 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(((PyObject *)__pyx_v_fitted1), PyBUF_WRITABLE); if (unlikely(!__pyx_t_10.memview)) __PYX_ERR(0, 1106, __pyx_L1_error)
+  __pyx_t_10 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(((PyObject *)__pyx_v_fitted1), PyBUF_WRITABLE); if (unlikely(!__pyx_t_10.memview)) __PYX_ERR(0, 1382, __pyx_L1_error)
 
-  /* "spatial_minimiser1.pyx":1108
+  /* "spatial_minimiser1.pyx":1384
  * 	cdef double grad_chi=remove_discontinuities(cube, err_cube, model, pos, low_freq_ind, upper_freq_ind, fitted1,param_val,num_times,num_x, num_y, \
  * 				num_params,num_freqs,search_length,discont_thresh, param_val, sys_error,spatial_smoothness_enforcer,\
- * 						temporal_smoothness_enforcer,param_lengths1)             # <<<<<<<<<<<<<<
+ * 						temporal_smoothness_enforcer,param_lengths1, max_dist)             # <<<<<<<<<<<<<<
  * 
  * 	cdef unsigned int num_val=num_times*num_x*num_y*(num_params+1)
  */
-  __pyx_v_grad_chi = __pyx_f_18spatial_minimiser1_remove_discontinuities(((PyArrayObject *)__pyx_v_cube), ((PyArrayObject *)__pyx_v_err_cube), ((PyArrayObject *)__pyx_v_model), __pyx_v_pos, __pyx_v_low_freq_ind, __pyx_v_upper_freq_ind, __pyx_t_10, __pyx_v_param_val, __pyx_v_num_times, __pyx_v_num_x, __pyx_v_num_y, __pyx_v_num_params, __pyx_v_num_freqs, __pyx_v_search_length, __pyx_v_discont_thresh, __pyx_v_param_val, __pyx_v_sys_error, __pyx_v_spatial_smoothness_enforcer, __pyx_v_temporal_smoothness_enforcer, __pyx_v_param_lengths1);
+  __pyx_v_grad_chi = __pyx_f_18spatial_minimiser1_remove_discontinuities(((PyArrayObject *)__pyx_v_cube), ((PyArrayObject *)__pyx_v_err_cube), ((PyArrayObject *)__pyx_v_model), __pyx_v_pos, __pyx_v_low_freq_ind, __pyx_v_upper_freq_ind, __pyx_t_10, __pyx_v_param_val, __pyx_v_num_times, __pyx_v_num_x, __pyx_v_num_y, __pyx_v_num_params, __pyx_v_num_freqs, __pyx_v_search_length, __pyx_v_discont_thresh, __pyx_v_param_val, __pyx_v_sys_error, __pyx_v_spatial_smoothness_enforcer, __pyx_v_temporal_smoothness_enforcer, __pyx_v_param_lengths1, __pyx_v_max_dist);
   __PYX_XDEC_MEMVIEW(&__pyx_t_10, 1);
   __pyx_t_10.memview = NULL;
   __pyx_t_10.data = NULL;
 
-  /* "spatial_minimiser1.pyx":1110
- * 						temporal_smoothness_enforcer,param_lengths1)
+  /* "spatial_minimiser1.pyx":1386
+ * 						temporal_smoothness_enforcer,param_lengths1, max_dist)
  * 
  * 	cdef unsigned int num_val=num_times*num_x*num_y*(num_params+1)             # <<<<<<<<<<<<<<
  * 
@@ -13261,7 +15168,7 @@ static double __pyx_f_18spatial_minimiser1_calc_red_chi_all_pix(int __pyx_v_num_
  */
   __pyx_v_num_val = (((__pyx_v_num_times * __pyx_v_num_x) * __pyx_v_num_y) * (__pyx_v_num_params + 1));
 
-  /* "spatial_minimiser1.pyx":1112
+  /* "spatial_minimiser1.pyx":1388
  * 	cdef unsigned int num_val=num_times*num_x*num_y*(num_params+1)
  * 
  * 	for i in range(num_val):             # <<<<<<<<<<<<<<
@@ -13273,7 +15180,7 @@ static double __pyx_f_18spatial_minimiser1_calc_red_chi_all_pix(int __pyx_v_num_
   for (__pyx_t_13 = 0; __pyx_t_13 < __pyx_t_12; __pyx_t_13+=1) {
     __pyx_v_i = __pyx_t_13;
 
-    /* "spatial_minimiser1.pyx":1113
+    /* "spatial_minimiser1.pyx":1389
  * 
  * 	for i in range(num_val):
  * 		fitted[i]=fitted1[i]             # <<<<<<<<<<<<<<
@@ -13285,19 +15192,19 @@ static double __pyx_f_18spatial_minimiser1_calc_red_chi_all_pix(int __pyx_v_num_
     if (unlikely(__pyx_t_14 >= (size_t)__pyx_pybuffernd_fitted1.diminfo[0].shape)) __pyx_t_6 = 0;
     if (unlikely(__pyx_t_6 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_6);
-      __PYX_ERR(0, 1113, __pyx_L1_error)
+      __PYX_ERR(0, 1389, __pyx_L1_error)
     }
     __pyx_t_15 = __pyx_v_i;
     __pyx_t_6 = -1;
     if (unlikely(__pyx_t_15 >= (size_t)__pyx_v_fitted.shape[0])) __pyx_t_6 = 0;
     if (unlikely(__pyx_t_6 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_6);
-      __PYX_ERR(0, 1113, __pyx_L1_error)
+      __PYX_ERR(0, 1389, __pyx_L1_error)
     }
     *((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_15 * __pyx_v_fitted.strides[0]) )) = (*__Pyx_BufPtrStrided1d(__pyx_t_5numpy_double_t *, __pyx_pybuffernd_fitted1.rcbuffer->pybuffer.buf, __pyx_t_14, __pyx_pybuffernd_fitted1.diminfo[0].strides));
   }
 
-  /* "spatial_minimiser1.pyx":1115
+  /* "spatial_minimiser1.pyx":1391
  * 		fitted[i]=fitted1[i]
  * 
  * 	return grad_chi             # <<<<<<<<<<<<<<
@@ -13307,7 +15214,7 @@ static double __pyx_f_18spatial_minimiser1_calc_red_chi_all_pix(int __pyx_v_num_
   __pyx_r = __pyx_v_grad_chi;
   goto __pyx_L0;
 
-  /* "spatial_minimiser1.pyx":1029
+  /* "spatial_minimiser1.pyx":1305
  * 	return
  * 
  * cdef double calc_red_chi_all_pix(int num_times, int num_freqs, int num_y, int num_x, int num_params,int ***low_freq_ind,\             # <<<<<<<<<<<<<<
@@ -13346,7 +15253,7 @@ static double __pyx_f_18spatial_minimiser1_calc_red_chi_all_pix(int __pyx_v_num_
   return __pyx_r;
 }
 
-/* "spatial_minimiser1.pyx":1118
+/* "spatial_minimiser1.pyx":1394
  * 
  * 
  * cdef double absolute (double x):             # <<<<<<<<<<<<<<
@@ -13360,7 +15267,7 @@ static double __pyx_f_18spatial_minimiser1_absolute(double __pyx_v_x) {
   int __pyx_t_1;
   __Pyx_RefNannySetupContext("absolute", 0);
 
-  /* "spatial_minimiser1.pyx":1119
+  /* "spatial_minimiser1.pyx":1395
  * 
  * cdef double absolute (double x):
  * 	if x<0:             # <<<<<<<<<<<<<<
@@ -13370,7 +15277,7 @@ static double __pyx_f_18spatial_minimiser1_absolute(double __pyx_v_x) {
   __pyx_t_1 = ((__pyx_v_x < 0.0) != 0);
   if (__pyx_t_1) {
 
-    /* "spatial_minimiser1.pyx":1120
+    /* "spatial_minimiser1.pyx":1396
  * cdef double absolute (double x):
  * 	if x<0:
  * 		return -x             # <<<<<<<<<<<<<<
@@ -13380,7 +15287,7 @@ static double __pyx_f_18spatial_minimiser1_absolute(double __pyx_v_x) {
     __pyx_r = (-__pyx_v_x);
     goto __pyx_L0;
 
-    /* "spatial_minimiser1.pyx":1119
+    /* "spatial_minimiser1.pyx":1395
  * 
  * cdef double absolute (double x):
  * 	if x<0:             # <<<<<<<<<<<<<<
@@ -13389,7 +15296,7 @@ static double __pyx_f_18spatial_minimiser1_absolute(double __pyx_v_x) {
  */
   }
 
-  /* "spatial_minimiser1.pyx":1121
+  /* "spatial_minimiser1.pyx":1397
  * 	if x<0:
  * 		return -x
  * 	return x             # <<<<<<<<<<<<<<
@@ -13399,7 +15306,7 @@ static double __pyx_f_18spatial_minimiser1_absolute(double __pyx_v_x) {
   __pyx_r = __pyx_v_x;
   goto __pyx_L0;
 
-  /* "spatial_minimiser1.pyx":1118
+  /* "spatial_minimiser1.pyx":1394
  * 
  * 
  * cdef double absolute (double x):             # <<<<<<<<<<<<<<
@@ -13413,7 +15320,7 @@ static double __pyx_f_18spatial_minimiser1_absolute(double __pyx_v_x) {
   return __pyx_r;
 }
 
-/* "spatial_minimiser1.pyx":1122
+/* "spatial_minimiser1.pyx":1398
  * 		return -x
  * 	return x
  * cpdef numpy.ndarray[numpy.double_t,ndim=1] compute_min_chi_square(numpy.ndarray[numpy.double_t, ndim=1] model, \             # <<<<<<<<<<<<<<
@@ -13422,11 +15329,7 @@ static double __pyx_f_18spatial_minimiser1_absolute(double __pyx_v_x) {
  */
 
 static PyObject *__pyx_pw_18spatial_minimiser1_1compute_min_chi_square(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArrayObject *__pyx_v_model, PyArrayObject *__pyx_v_cube, PyArrayObject *__pyx_v_err_cube, double __pyx_v_lower_freq, double __pyx_v_upper_freq, PyArrayObject *__pyx_v_param_lengths, PyArrayObject *__pyx_v_freqs, double __pyx_v_sys_error, double __pyx_v_rms_thresh, int __pyx_v_min_freq_num, int __pyx_v_num_params, int __pyx_v_num_times, int __pyx_v_num_freqs, int __pyx_v_num_y, int __pyx_v_num_x, PyArrayObject *__pyx_v_param_vals, CYTHON_UNUSED int __pyx_skip_dispatch, struct __pyx_opt_args_18spatial_minimiser1_compute_min_chi_square *__pyx_optional_args) {
-  double __pyx_v_spatial_smoothness_enforcer = ((double)0.001);
-  double __pyx_v_temporal_smoothness_enforcer = ((double)0.0);
-  int __pyx_v_search_length = ((int)20);
-  double __pyx_v_discont_thresh = ((double)3.0);
+static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArrayObject *__pyx_v_model, PyArrayObject *__pyx_v_cube, PyArrayObject *__pyx_v_err_cube, double __pyx_v_lower_freq, double __pyx_v_upper_freq, PyArrayObject *__pyx_v_param_lengths, PyArrayObject *__pyx_v_freqs, double __pyx_v_sys_error, double __pyx_v_rms_thresh, int __pyx_v_min_freq_num, int __pyx_v_num_params, int __pyx_v_num_times, int __pyx_v_num_freqs, int __pyx_v_num_y, int __pyx_v_num_x, PyArrayObject *__pyx_v_param_vals, double __pyx_v_spatial_smoothness_enforcer, double __pyx_v_temporal_smoothness_enforcer, CYTHON_UNUSED double __pyx_v_frac_tol, CYTHON_UNUSED int __pyx_v_max_iter, int __pyx_v_search_length, double __pyx_v_discont_thresh, double __pyx_v_max_dist_parameter_space, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_v_t;
   int __pyx_v_y1;
   int __pyx_v_x1;
@@ -13481,20 +15384,6 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("compute_min_chi_square", 0);
-  if (__pyx_optional_args) {
-    if (__pyx_optional_args->__pyx_n > 0) {
-      __pyx_v_spatial_smoothness_enforcer = __pyx_optional_args->spatial_smoothness_enforcer;
-      if (__pyx_optional_args->__pyx_n > 1) {
-        __pyx_v_temporal_smoothness_enforcer = __pyx_optional_args->temporal_smoothness_enforcer;
-        if (__pyx_optional_args->__pyx_n > 4) {
-          __pyx_v_search_length = __pyx_optional_args->search_length;
-          if (__pyx_optional_args->__pyx_n > 5) {
-            __pyx_v_discont_thresh = __pyx_optional_args->discont_thresh;
-          }
-        }
-      }
-    }
-  }
   __pyx_pybuffer_fitted1.pybuffer.buf = NULL;
   __pyx_pybuffer_fitted1.refcount = 0;
   __pyx_pybuffernd_fitted1.data = NULL;
@@ -13525,48 +15414,48 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
   __pyx_pybuffernd_param_vals.rcbuffer = &__pyx_pybuffer_param_vals;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_model.rcbuffer->pybuffer, (PyObject*)__pyx_v_model, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 1122, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_model.rcbuffer->pybuffer, (PyObject*)__pyx_v_model, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 1398, __pyx_L1_error)
   }
   __pyx_pybuffernd_model.diminfo[0].strides = __pyx_pybuffernd_model.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_model.diminfo[0].shape = __pyx_pybuffernd_model.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_cube.rcbuffer->pybuffer, (PyObject*)__pyx_v_cube, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 4, 0, __pyx_stack) == -1)) __PYX_ERR(0, 1122, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_cube.rcbuffer->pybuffer, (PyObject*)__pyx_v_cube, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 4, 0, __pyx_stack) == -1)) __PYX_ERR(0, 1398, __pyx_L1_error)
   }
   __pyx_pybuffernd_cube.diminfo[0].strides = __pyx_pybuffernd_cube.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_cube.diminfo[0].shape = __pyx_pybuffernd_cube.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_cube.diminfo[1].strides = __pyx_pybuffernd_cube.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_cube.diminfo[1].shape = __pyx_pybuffernd_cube.rcbuffer->pybuffer.shape[1]; __pyx_pybuffernd_cube.diminfo[2].strides = __pyx_pybuffernd_cube.rcbuffer->pybuffer.strides[2]; __pyx_pybuffernd_cube.diminfo[2].shape = __pyx_pybuffernd_cube.rcbuffer->pybuffer.shape[2]; __pyx_pybuffernd_cube.diminfo[3].strides = __pyx_pybuffernd_cube.rcbuffer->pybuffer.strides[3]; __pyx_pybuffernd_cube.diminfo[3].shape = __pyx_pybuffernd_cube.rcbuffer->pybuffer.shape[3];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_err_cube.rcbuffer->pybuffer, (PyObject*)__pyx_v_err_cube, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 1122, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_err_cube.rcbuffer->pybuffer, (PyObject*)__pyx_v_err_cube, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 1398, __pyx_L1_error)
   }
   __pyx_pybuffernd_err_cube.diminfo[0].strides = __pyx_pybuffernd_err_cube.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_err_cube.diminfo[0].shape = __pyx_pybuffernd_err_cube.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_err_cube.diminfo[1].strides = __pyx_pybuffernd_err_cube.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_err_cube.diminfo[1].shape = __pyx_pybuffernd_err_cube.rcbuffer->pybuffer.shape[1];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_param_lengths.rcbuffer->pybuffer, (PyObject*)__pyx_v_param_lengths, &__Pyx_TypeInfo_nn___pyx_t_5numpy_int_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 1122, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_param_lengths.rcbuffer->pybuffer, (PyObject*)__pyx_v_param_lengths, &__Pyx_TypeInfo_nn___pyx_t_5numpy_int_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 1398, __pyx_L1_error)
   }
   __pyx_pybuffernd_param_lengths.diminfo[0].strides = __pyx_pybuffernd_param_lengths.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_param_lengths.diminfo[0].shape = __pyx_pybuffernd_param_lengths.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_freqs.rcbuffer->pybuffer, (PyObject*)__pyx_v_freqs, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 1122, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_freqs.rcbuffer->pybuffer, (PyObject*)__pyx_v_freqs, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 1398, __pyx_L1_error)
   }
   __pyx_pybuffernd_freqs.diminfo[0].strides = __pyx_pybuffernd_freqs.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_freqs.diminfo[0].shape = __pyx_pybuffernd_freqs.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_param_vals.rcbuffer->pybuffer, (PyObject*)__pyx_v_param_vals, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 1122, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_param_vals.rcbuffer->pybuffer, (PyObject*)__pyx_v_param_vals, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 1398, __pyx_L1_error)
   }
   __pyx_pybuffernd_param_vals.diminfo[0].strides = __pyx_pybuffernd_param_vals.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_param_vals.diminfo[0].shape = __pyx_pybuffernd_param_vals.rcbuffer->pybuffer.shape[0];
 
-  /* "spatial_minimiser1.pyx":1135
+  /* "spatial_minimiser1.pyx":1411
  * 
  * 	cdef int t,y1,x1,i,j,l,ind
  * 	cdef numpy.ndarray[numpy.double_t,ndim=1] fitted1=np.zeros(num_times*num_y*num_x*(num_params+1))             # <<<<<<<<<<<<<<
  * 
  * 	cdef int *pos
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1135, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1411, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_zeros); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1135, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_zeros); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1411, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyInt_From_long((((__pyx_v_num_times * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1))); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1135, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_long((((__pyx_v_num_times * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1))); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1411, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_4 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -13581,16 +15470,16 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
   __pyx_t_1 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_4, __pyx_t_2) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2);
   __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1135, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1411, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 1135, __pyx_L1_error)
+  if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 1411, __pyx_L1_error)
   __pyx_t_5 = ((PyArrayObject *)__pyx_t_1);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_fitted1.rcbuffer->pybuffer, (PyObject*)__pyx_t_5, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
       __pyx_v_fitted1 = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_fitted1.rcbuffer->pybuffer.buf = NULL;
-      __PYX_ERR(0, 1135, __pyx_L1_error)
+      __PYX_ERR(0, 1411, __pyx_L1_error)
     } else {__pyx_pybuffernd_fitted1.diminfo[0].strides = __pyx_pybuffernd_fitted1.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_fitted1.diminfo[0].shape = __pyx_pybuffernd_fitted1.rcbuffer->pybuffer.shape[0];
     }
   }
@@ -13598,7 +15487,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
   __pyx_v_fitted1 = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "spatial_minimiser1.pyx":1138
+  /* "spatial_minimiser1.pyx":1414
  * 
  * 	cdef int *pos
  * 	pos=<int *>PyMem_Malloc(num_times*num_y*num_x*num_freqs*sizeof(int))             # <<<<<<<<<<<<<<
@@ -13607,7 +15496,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
  */
   __pyx_v_pos = ((int *)PyMem_Malloc(((((__pyx_v_num_times * __pyx_v_num_y) * __pyx_v_num_x) * __pyx_v_num_freqs) * (sizeof(int)))));
 
-  /* "spatial_minimiser1.pyx":1140
+  /* "spatial_minimiser1.pyx":1416
  * 	pos=<int *>PyMem_Malloc(num_times*num_y*num_x*num_freqs*sizeof(int))
  * 
  * 	for i in range(num_times*num_y*num_x*num_freqs):             # <<<<<<<<<<<<<<
@@ -13619,7 +15508,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
   for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
     __pyx_v_i = __pyx_t_8;
 
-    /* "spatial_minimiser1.pyx":1141
+    /* "spatial_minimiser1.pyx":1417
  * 
  * 	for i in range(num_times*num_y*num_x*num_freqs):
  * 		pos[i]=-1             # <<<<<<<<<<<<<<
@@ -13629,7 +15518,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
     (__pyx_v_pos[__pyx_v_i]) = -1;
   }
 
-  /* "spatial_minimiser1.pyx":1144
+  /* "spatial_minimiser1.pyx":1420
  * 
  * 	cdef int *param_ind
  * 	param_ind=<int *>PyMem_Malloc(num_params*sizeof(int))             # <<<<<<<<<<<<<<
@@ -13638,7 +15527,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
  */
   __pyx_v_param_ind = ((int *)PyMem_Malloc((__pyx_v_num_params * (sizeof(int)))));
 
-  /* "spatial_minimiser1.pyx":1146
+  /* "spatial_minimiser1.pyx":1422
  * 	param_ind=<int *>PyMem_Malloc(num_params*sizeof(int))
  * 
  * 	for i in range(num_params):             # <<<<<<<<<<<<<<
@@ -13650,7 +15539,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
   for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
     __pyx_v_i = __pyx_t_8;
 
-    /* "spatial_minimiser1.pyx":1147
+    /* "spatial_minimiser1.pyx":1423
  * 
  * 	for i in range(num_params):
  * 		param_ind[i]=-1             # <<<<<<<<<<<<<<
@@ -13660,7 +15549,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
     (__pyx_v_param_ind[__pyx_v_i]) = -1;
   }
 
-  /* "spatial_minimiser1.pyx":1154
+  /* "spatial_minimiser1.pyx":1430
  * 
  * 	cdef int *param_lengths1
  * 	param_lengths1=<int *>PyMem_Malloc(num_params*sizeof(int))             # <<<<<<<<<<<<<<
@@ -13669,7 +15558,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
  */
   __pyx_v_param_lengths1 = ((int *)PyMem_Malloc((__pyx_v_num_params * (sizeof(int)))));
 
-  /* "spatial_minimiser1.pyx":1155
+  /* "spatial_minimiser1.pyx":1431
  * 	cdef int *param_lengths1
  * 	param_lengths1=<int *>PyMem_Malloc(num_params*sizeof(int))
  * 	for i in range(num_params):             # <<<<<<<<<<<<<<
@@ -13681,7 +15570,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
   for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
     __pyx_v_i = __pyx_t_8;
 
-    /* "spatial_minimiser1.pyx":1156
+    /* "spatial_minimiser1.pyx":1432
  * 	param_lengths1=<int *>PyMem_Malloc(num_params*sizeof(int))
  * 	for i in range(num_params):
  * 		param_lengths1[i]=param_lengths[i]  #### making it a raw pointer. Faster access             # <<<<<<<<<<<<<<
@@ -13696,12 +15585,12 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
     } else if (unlikely(__pyx_t_9 >= __pyx_pybuffernd_param_lengths.diminfo[0].shape)) __pyx_t_10 = 0;
     if (unlikely(__pyx_t_10 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_10);
-      __PYX_ERR(0, 1156, __pyx_L1_error)
+      __PYX_ERR(0, 1432, __pyx_L1_error)
     }
     (__pyx_v_param_lengths1[__pyx_v_i]) = (*__Pyx_BufPtrStrided1d(__pyx_t_5numpy_int_t *, __pyx_pybuffernd_param_lengths.rcbuffer->pybuffer.buf, __pyx_t_9, __pyx_pybuffernd_param_lengths.diminfo[0].strides));
   }
 
-  /* "spatial_minimiser1.pyx":1159
+  /* "spatial_minimiser1.pyx":1435
  * 
  * 	cdef double *freqs1
  * 	freqs1=<double *>PyMem_Malloc(num_freqs*sizeof(double))             # <<<<<<<<<<<<<<
@@ -13710,7 +15599,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
  */
   __pyx_v_freqs1 = ((double *)PyMem_Malloc((__pyx_v_num_freqs * (sizeof(double)))));
 
-  /* "spatial_minimiser1.pyx":1160
+  /* "spatial_minimiser1.pyx":1436
  * 	cdef double *freqs1
  * 	freqs1=<double *>PyMem_Malloc(num_freqs*sizeof(double))
  * 	for i in range(num_freqs):             # <<<<<<<<<<<<<<
@@ -13722,7 +15611,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
   for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
     __pyx_v_i = __pyx_t_8;
 
-    /* "spatial_minimiser1.pyx":1161
+    /* "spatial_minimiser1.pyx":1437
  * 	freqs1=<double *>PyMem_Malloc(num_freqs*sizeof(double))
  * 	for i in range(num_freqs):
  * 		freqs1[i]=freqs[i]             # <<<<<<<<<<<<<<
@@ -13737,12 +15626,12 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
     } else if (unlikely(__pyx_t_9 >= __pyx_pybuffernd_freqs.diminfo[0].shape)) __pyx_t_10 = 0;
     if (unlikely(__pyx_t_10 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_10);
-      __PYX_ERR(0, 1161, __pyx_L1_error)
+      __PYX_ERR(0, 1437, __pyx_L1_error)
     }
     (__pyx_v_freqs1[__pyx_v_i]) = (*__Pyx_BufPtrStrided1d(__pyx_t_5numpy_double_t *, __pyx_pybuffernd_freqs.rcbuffer->pybuffer.buf, __pyx_t_9, __pyx_pybuffernd_freqs.diminfo[0].strides));
   }
 
-  /* "spatial_minimiser1.pyx":1166
+  /* "spatial_minimiser1.pyx":1442
  * 	cdef int ***upper_freq_ind
  * 
  * 	low_freq_ind=<int ***>PyMem_Malloc(num_times*sizeof(int ***))             # <<<<<<<<<<<<<<
@@ -13751,7 +15640,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
  */
   __pyx_v_low_freq_ind = ((int ***)PyMem_Malloc((__pyx_v_num_times * (sizeof(int ***)))));
 
-  /* "spatial_minimiser1.pyx":1167
+  /* "spatial_minimiser1.pyx":1443
  * 
  * 	low_freq_ind=<int ***>PyMem_Malloc(num_times*sizeof(int ***))
  * 	upper_freq_ind=<int ***>PyMem_Malloc(num_times*sizeof(int ***))             # <<<<<<<<<<<<<<
@@ -13760,7 +15649,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
  */
   __pyx_v_upper_freq_ind = ((int ***)PyMem_Malloc((__pyx_v_num_times * (sizeof(int ***)))));
 
-  /* "spatial_minimiser1.pyx":1169
+  /* "spatial_minimiser1.pyx":1445
  * 	upper_freq_ind=<int ***>PyMem_Malloc(num_times*sizeof(int ***))
  * 
  * 	for t in range(num_times):             # <<<<<<<<<<<<<<
@@ -13772,7 +15661,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
   for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
     __pyx_v_t = __pyx_t_8;
 
-    /* "spatial_minimiser1.pyx":1170
+    /* "spatial_minimiser1.pyx":1446
  * 
  * 	for t in range(num_times):
  * 		low_freq_ind[t]=<int **>PyMem_Malloc(num_y*sizeof(int **))             # <<<<<<<<<<<<<<
@@ -13781,7 +15670,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
  */
     (__pyx_v_low_freq_ind[__pyx_v_t]) = ((int **)PyMem_Malloc((__pyx_v_num_y * (sizeof(int **)))));
 
-    /* "spatial_minimiser1.pyx":1171
+    /* "spatial_minimiser1.pyx":1447
  * 	for t in range(num_times):
  * 		low_freq_ind[t]=<int **>PyMem_Malloc(num_y*sizeof(int **))
  * 		upper_freq_ind[t]=<int **>PyMem_Malloc(num_y*sizeof(int **))             # <<<<<<<<<<<<<<
@@ -13790,7 +15679,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
  */
     (__pyx_v_upper_freq_ind[__pyx_v_t]) = ((int **)PyMem_Malloc((__pyx_v_num_y * (sizeof(int **)))));
 
-    /* "spatial_minimiser1.pyx":1172
+    /* "spatial_minimiser1.pyx":1448
  * 		low_freq_ind[t]=<int **>PyMem_Malloc(num_y*sizeof(int **))
  * 		upper_freq_ind[t]=<int **>PyMem_Malloc(num_y*sizeof(int **))
  * 		for y1 in range(num_y):             # <<<<<<<<<<<<<<
@@ -13802,7 +15691,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
     for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12+=1) {
       __pyx_v_y1 = __pyx_t_12;
 
-      /* "spatial_minimiser1.pyx":1173
+      /* "spatial_minimiser1.pyx":1449
  * 		upper_freq_ind[t]=<int **>PyMem_Malloc(num_y*sizeof(int **))
  * 		for y1 in range(num_y):
  * 			low_freq_ind[t][y1]=<int *>PyMem_Malloc(num_x*sizeof(int))             # <<<<<<<<<<<<<<
@@ -13811,7 +15700,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
  */
       ((__pyx_v_low_freq_ind[__pyx_v_t])[__pyx_v_y1]) = ((int *)PyMem_Malloc((__pyx_v_num_x * (sizeof(int)))));
 
-      /* "spatial_minimiser1.pyx":1174
+      /* "spatial_minimiser1.pyx":1450
  * 		for y1 in range(num_y):
  * 			low_freq_ind[t][y1]=<int *>PyMem_Malloc(num_x*sizeof(int))
  * 			upper_freq_ind[t][y1]=<int *>PyMem_Malloc(num_x*sizeof(int))             # <<<<<<<<<<<<<<
@@ -13820,7 +15709,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
  */
       ((__pyx_v_upper_freq_ind[__pyx_v_t])[__pyx_v_y1]) = ((int *)PyMem_Malloc((__pyx_v_num_x * (sizeof(int)))));
 
-      /* "spatial_minimiser1.pyx":1175
+      /* "spatial_minimiser1.pyx":1451
  * 			low_freq_ind[t][y1]=<int *>PyMem_Malloc(num_x*sizeof(int))
  * 			upper_freq_ind[t][y1]=<int *>PyMem_Malloc(num_x*sizeof(int))
  * 			for x1 in range(num_x):             # <<<<<<<<<<<<<<
@@ -13832,7 +15721,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
       for (__pyx_t_15 = 0; __pyx_t_15 < __pyx_t_14; __pyx_t_15+=1) {
         __pyx_v_x1 = __pyx_t_15;
 
-        /* "spatial_minimiser1.pyx":1176
+        /* "spatial_minimiser1.pyx":1452
  * 			upper_freq_ind[t][y1]=<int *>PyMem_Malloc(num_x*sizeof(int))
  * 			for x1 in range(num_x):
  * 				low_freq_ind[t][y1][x1]=0             # <<<<<<<<<<<<<<
@@ -13841,7 +15730,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
  */
         (((__pyx_v_low_freq_ind[__pyx_v_t])[__pyx_v_y1])[__pyx_v_x1]) = 0;
 
-        /* "spatial_minimiser1.pyx":1177
+        /* "spatial_minimiser1.pyx":1453
  * 			for x1 in range(num_x):
  * 				low_freq_ind[t][y1][x1]=0
  * 				upper_freq_ind[t][y1][x1]=0             # <<<<<<<<<<<<<<
@@ -13853,7 +15742,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
     }
   }
 
-  /* "spatial_minimiser1.pyx":1182
+  /* "spatial_minimiser1.pyx":1458
  * 
  * 
  * 	cdef int first_try=0             # <<<<<<<<<<<<<<
@@ -13862,34 +15751,34 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
  */
   __pyx_v_first_try = 0;
 
-  /* "spatial_minimiser1.pyx":1186
+  /* "spatial_minimiser1.pyx":1462
  * 
  * 
  * 	make_cube_fit_ready(num_times, num_y, num_x,num_freqs, err_cube,\             # <<<<<<<<<<<<<<
  * 			cube, freqs1, lower_freq,\
  * 			upper_freq, low_freq_ind, upper_freq_ind,min_freq_num,\
  */
-  __pyx_t_16 = __Pyx_PyObject_to_MemoryviewSlice_dsds_double(((PyObject *)__pyx_v_err_cube), PyBUF_WRITABLE); if (unlikely(!__pyx_t_16.memview)) __PYX_ERR(0, 1186, __pyx_L1_error)
+  __pyx_t_16 = __Pyx_PyObject_to_MemoryviewSlice_dsds_double(((PyObject *)__pyx_v_err_cube), PyBUF_WRITABLE); if (unlikely(!__pyx_t_16.memview)) __PYX_ERR(0, 1462, __pyx_L1_error)
 
-  /* "spatial_minimiser1.pyx":1187
+  /* "spatial_minimiser1.pyx":1463
  * 
  * 	make_cube_fit_ready(num_times, num_y, num_x,num_freqs, err_cube,\
  * 			cube, freqs1, lower_freq,\             # <<<<<<<<<<<<<<
  * 			upper_freq, low_freq_ind, upper_freq_ind,min_freq_num,\
  * 			num_params, fitted1, pos,rms_thresh)
  */
-  __pyx_t_17 = __Pyx_PyObject_to_MemoryviewSlice_dsdsdsds_double(((PyObject *)__pyx_v_cube), PyBUF_WRITABLE); if (unlikely(!__pyx_t_17.memview)) __PYX_ERR(0, 1187, __pyx_L1_error)
+  __pyx_t_17 = __Pyx_PyObject_to_MemoryviewSlice_dsdsdsds_double(((PyObject *)__pyx_v_cube), PyBUF_WRITABLE); if (unlikely(!__pyx_t_17.memview)) __PYX_ERR(0, 1463, __pyx_L1_error)
 
-  /* "spatial_minimiser1.pyx":1189
+  /* "spatial_minimiser1.pyx":1465
  * 			cube, freqs1, lower_freq,\
  * 			upper_freq, low_freq_ind, upper_freq_ind,min_freq_num,\
  * 			num_params, fitted1, pos,rms_thresh)             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  __pyx_t_18 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(((PyObject *)__pyx_v_fitted1), PyBUF_WRITABLE); if (unlikely(!__pyx_t_18.memview)) __PYX_ERR(0, 1189, __pyx_L1_error)
+  __pyx_t_18 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(((PyObject *)__pyx_v_fitted1), PyBUF_WRITABLE); if (unlikely(!__pyx_t_18.memview)) __PYX_ERR(0, 1465, __pyx_L1_error)
 
-  /* "spatial_minimiser1.pyx":1186
+  /* "spatial_minimiser1.pyx":1462
  * 
  * 
  * 	make_cube_fit_ready(num_times, num_y, num_x,num_freqs, err_cube,\             # <<<<<<<<<<<<<<
@@ -13907,7 +15796,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
   __pyx_t_18.memview = NULL;
   __pyx_t_18.data = NULL;
 
-  /* "spatial_minimiser1.pyx":1193
+  /* "spatial_minimiser1.pyx":1469
  * 
  * 	cdef double **param_vals1
  * 	param_vals1=<double **>PyMem_Malloc(num_params*sizeof(double **))             # <<<<<<<<<<<<<<
@@ -13916,7 +15805,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
  */
   __pyx_v_param_vals1 = ((double **)PyMem_Malloc((__pyx_v_num_params * (sizeof(double **)))));
 
-  /* "spatial_minimiser1.pyx":1196
+  /* "spatial_minimiser1.pyx":1472
  * 
  * 
  * 	l=0             # <<<<<<<<<<<<<<
@@ -13925,7 +15814,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
  */
   __pyx_v_l = 0;
 
-  /* "spatial_minimiser1.pyx":1197
+  /* "spatial_minimiser1.pyx":1473
  * 
  * 	l=0
  * 	for i in range(num_params):             # <<<<<<<<<<<<<<
@@ -13937,7 +15826,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
   for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
     __pyx_v_i = __pyx_t_8;
 
-    /* "spatial_minimiser1.pyx":1198
+    /* "spatial_minimiser1.pyx":1474
  * 	l=0
  * 	for i in range(num_params):
  * 		param_vals1[i]=<double *>PyMem_Malloc(param_lengths1[i]*sizeof(double))             # <<<<<<<<<<<<<<
@@ -13946,7 +15835,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
  */
     (__pyx_v_param_vals1[__pyx_v_i]) = ((double *)PyMem_Malloc(((__pyx_v_param_lengths1[__pyx_v_i]) * (sizeof(double)))));
 
-    /* "spatial_minimiser1.pyx":1199
+    /* "spatial_minimiser1.pyx":1475
  * 	for i in range(num_params):
  * 		param_vals1[i]=<double *>PyMem_Malloc(param_lengths1[i]*sizeof(double))
  * 		for j in range(param_lengths1[i]):             # <<<<<<<<<<<<<<
@@ -13958,7 +15847,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
     for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12+=1) {
       __pyx_v_j = __pyx_t_12;
 
-      /* "spatial_minimiser1.pyx":1200
+      /* "spatial_minimiser1.pyx":1476
  * 		param_vals1[i]=<double *>PyMem_Malloc(param_lengths1[i]*sizeof(double))
  * 		for j in range(param_lengths1[i]):
  * 			param_vals1[i][j]=param_vals[l]             # <<<<<<<<<<<<<<
@@ -13973,11 +15862,11 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
       } else if (unlikely(__pyx_t_9 >= __pyx_pybuffernd_param_vals.diminfo[0].shape)) __pyx_t_13 = 0;
       if (unlikely(__pyx_t_13 != -1)) {
         __Pyx_RaiseBufferIndexError(__pyx_t_13);
-        __PYX_ERR(0, 1200, __pyx_L1_error)
+        __PYX_ERR(0, 1476, __pyx_L1_error)
       }
       ((__pyx_v_param_vals1[__pyx_v_i])[__pyx_v_j]) = (*__Pyx_BufPtrStrided1d(__pyx_t_5numpy_double_t *, __pyx_pybuffernd_param_vals.rcbuffer->pybuffer.buf, __pyx_t_9, __pyx_pybuffernd_param_vals.diminfo[0].strides));
 
-      /* "spatial_minimiser1.pyx":1201
+      /* "spatial_minimiser1.pyx":1477
  * 		for j in range(param_lengths1[i]):
  * 			param_vals1[i][j]=param_vals[l]
  * 			l=l+1             # <<<<<<<<<<<<<<
@@ -13988,42 +15877,42 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
     }
   }
 
-  /* "spatial_minimiser1.pyx":1208
+  /* "spatial_minimiser1.pyx":1484
  * 	cdef double grad_chi=calc_red_chi_all_pix(num_times, num_freqs, num_y, num_x, num_params,low_freq_ind,\
  * 						upper_freq_ind, cube, err_cube, model, sys_error,\
  * 						pos, fitted1, freqs1, lower_freq,\             # <<<<<<<<<<<<<<
  * 						upper_freq, first_try, rms_thresh, min_freq_num,\
  * 						param_lengths1,param_ind, param_vals1,\
  */
-  __pyx_t_18 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(((PyObject *)__pyx_v_fitted1), PyBUF_WRITABLE); if (unlikely(!__pyx_t_18.memview)) __PYX_ERR(0, 1208, __pyx_L1_error)
+  __pyx_t_18 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(((PyObject *)__pyx_v_fitted1), PyBUF_WRITABLE); if (unlikely(!__pyx_t_18.memview)) __PYX_ERR(0, 1484, __pyx_L1_error)
 
-  /* "spatial_minimiser1.pyx":1206
+  /* "spatial_minimiser1.pyx":1482
  * 
  * 
  * 	cdef double grad_chi=calc_red_chi_all_pix(num_times, num_freqs, num_y, num_x, num_params,low_freq_ind,\             # <<<<<<<<<<<<<<
  * 						upper_freq_ind, cube, err_cube, model, sys_error,\
  * 						pos, fitted1, freqs1, lower_freq,\
  */
-  __pyx_v_grad_chi = __pyx_f_18spatial_minimiser1_calc_red_chi_all_pix(__pyx_v_num_times, __pyx_v_num_freqs, __pyx_v_num_y, __pyx_v_num_x, __pyx_v_num_params, __pyx_v_low_freq_ind, __pyx_v_upper_freq_ind, ((PyArrayObject *)__pyx_v_cube), ((PyArrayObject *)__pyx_v_err_cube), ((PyArrayObject *)__pyx_v_model), __pyx_v_sys_error, __pyx_v_pos, __pyx_t_18, __pyx_v_freqs1, __pyx_v_lower_freq, __pyx_v_upper_freq, __pyx_v_first_try, __pyx_v_rms_thresh, __pyx_v_min_freq_num, __pyx_v_param_lengths1, __pyx_v_param_ind, __pyx_v_param_vals1, __pyx_v_spatial_smoothness_enforcer, __pyx_v_temporal_smoothness_enforcer, __pyx_v_search_length, __pyx_v_discont_thresh);
+  __pyx_v_grad_chi = __pyx_f_18spatial_minimiser1_calc_red_chi_all_pix(__pyx_v_num_times, __pyx_v_num_freqs, __pyx_v_num_y, __pyx_v_num_x, __pyx_v_num_params, __pyx_v_low_freq_ind, __pyx_v_upper_freq_ind, ((PyArrayObject *)__pyx_v_cube), ((PyArrayObject *)__pyx_v_err_cube), ((PyArrayObject *)__pyx_v_model), __pyx_v_sys_error, __pyx_v_pos, __pyx_t_18, __pyx_v_freqs1, __pyx_v_lower_freq, __pyx_v_upper_freq, __pyx_v_first_try, __pyx_v_rms_thresh, __pyx_v_min_freq_num, __pyx_v_param_lengths1, __pyx_v_param_ind, __pyx_v_param_vals1, __pyx_v_spatial_smoothness_enforcer, __pyx_v_temporal_smoothness_enforcer, __pyx_v_search_length, __pyx_v_discont_thresh, __pyx_v_max_dist_parameter_space);
   __PYX_XDEC_MEMVIEW(&__pyx_t_18, 1);
   __pyx_t_18.memview = NULL;
   __pyx_t_18.data = NULL;
 
-  /* "spatial_minimiser1.pyx":1215
+  /* "spatial_minimiser1.pyx":1491
  * 
  * 
  * 	print (grad_chi)             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_grad_chi); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1215, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_grad_chi); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1491, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_builtin_print, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1215, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_builtin_print, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1491, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "spatial_minimiser1.pyx":1221
+  /* "spatial_minimiser1.pyx":1497
  * 
  * 
  * 	for t in range(num_times):             # <<<<<<<<<<<<<<
@@ -14035,7 +15924,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
   for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
     __pyx_v_t = __pyx_t_8;
 
-    /* "spatial_minimiser1.pyx":1222
+    /* "spatial_minimiser1.pyx":1498
  * 
  * 	for t in range(num_times):
  * 		for y1 in range(num_y):             # <<<<<<<<<<<<<<
@@ -14047,7 +15936,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
     for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12+=1) {
       __pyx_v_y1 = __pyx_t_12;
 
-      /* "spatial_minimiser1.pyx":1223
+      /* "spatial_minimiser1.pyx":1499
  * 	for t in range(num_times):
  * 		for y1 in range(num_y):
  * 			PyMem_Free(low_freq_ind[t][y1])             # <<<<<<<<<<<<<<
@@ -14056,7 +15945,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
  */
       PyMem_Free(((__pyx_v_low_freq_ind[__pyx_v_t])[__pyx_v_y1]));
 
-      /* "spatial_minimiser1.pyx":1224
+      /* "spatial_minimiser1.pyx":1500
  * 		for y1 in range(num_y):
  * 			PyMem_Free(low_freq_ind[t][y1])
  * 			PyMem_Free(upper_freq_ind[t][y1])             # <<<<<<<<<<<<<<
@@ -14066,7 +15955,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
       PyMem_Free(((__pyx_v_upper_freq_ind[__pyx_v_t])[__pyx_v_y1]));
     }
 
-    /* "spatial_minimiser1.pyx":1225
+    /* "spatial_minimiser1.pyx":1501
  * 			PyMem_Free(low_freq_ind[t][y1])
  * 			PyMem_Free(upper_freq_ind[t][y1])
  * 		PyMem_Free(low_freq_ind[t])             # <<<<<<<<<<<<<<
@@ -14075,7 +15964,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
  */
     PyMem_Free((__pyx_v_low_freq_ind[__pyx_v_t]));
 
-    /* "spatial_minimiser1.pyx":1226
+    /* "spatial_minimiser1.pyx":1502
  * 			PyMem_Free(upper_freq_ind[t][y1])
  * 		PyMem_Free(low_freq_ind[t])
  * 		PyMem_Free(upper_freq_ind[t])             # <<<<<<<<<<<<<<
@@ -14085,7 +15974,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
     PyMem_Free((__pyx_v_upper_freq_ind[__pyx_v_t]));
   }
 
-  /* "spatial_minimiser1.pyx":1229
+  /* "spatial_minimiser1.pyx":1505
  * 
  * 
  * 	for i in range(num_params):             # <<<<<<<<<<<<<<
@@ -14097,7 +15986,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
   for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
     __pyx_v_i = __pyx_t_8;
 
-    /* "spatial_minimiser1.pyx":1230
+    /* "spatial_minimiser1.pyx":1506
  * 
  * 	for i in range(num_params):
  * 		PyMem_Free(param_vals1[i])             # <<<<<<<<<<<<<<
@@ -14107,7 +15996,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
     PyMem_Free((__pyx_v_param_vals1[__pyx_v_i]));
   }
 
-  /* "spatial_minimiser1.pyx":1231
+  /* "spatial_minimiser1.pyx":1507
  * 	for i in range(num_params):
  * 		PyMem_Free(param_vals1[i])
  * 	PyMem_Free(param_vals1)             # <<<<<<<<<<<<<<
@@ -14116,7 +16005,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
  */
   PyMem_Free(__pyx_v_param_vals1);
 
-  /* "spatial_minimiser1.pyx":1232
+  /* "spatial_minimiser1.pyx":1508
  * 		PyMem_Free(param_vals1[i])
  * 	PyMem_Free(param_vals1)
  * 	PyMem_Free(low_freq_ind)             # <<<<<<<<<<<<<<
@@ -14125,7 +16014,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
  */
   PyMem_Free(__pyx_v_low_freq_ind);
 
-  /* "spatial_minimiser1.pyx":1233
+  /* "spatial_minimiser1.pyx":1509
  * 	PyMem_Free(param_vals1)
  * 	PyMem_Free(low_freq_ind)
  * 	PyMem_Free(upper_freq_ind)             # <<<<<<<<<<<<<<
@@ -14134,7 +16023,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
  */
   PyMem_Free(__pyx_v_upper_freq_ind);
 
-  /* "spatial_minimiser1.pyx":1235
+  /* "spatial_minimiser1.pyx":1511
  * 	PyMem_Free(upper_freq_ind)
  * 
  * 	PyMem_Free(pos)             # <<<<<<<<<<<<<<
@@ -14143,7 +16032,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
  */
   PyMem_Free(__pyx_v_pos);
 
-  /* "spatial_minimiser1.pyx":1236
+  /* "spatial_minimiser1.pyx":1512
  * 
  * 	PyMem_Free(pos)
  * 	PyMem_Free(param_ind)             # <<<<<<<<<<<<<<
@@ -14152,7 +16041,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
  */
   PyMem_Free(__pyx_v_param_ind);
 
-  /* "spatial_minimiser1.pyx":1237
+  /* "spatial_minimiser1.pyx":1513
  * 	PyMem_Free(pos)
  * 	PyMem_Free(param_ind)
  * 	return fitted1             # <<<<<<<<<<<<<<
@@ -14163,7 +16052,7 @@ static PyArrayObject *__pyx_f_18spatial_minimiser1_compute_min_chi_square(PyArra
   __pyx_r = ((PyArrayObject *)__pyx_v_fitted1);
   goto __pyx_L0;
 
-  /* "spatial_minimiser1.pyx":1122
+  /* "spatial_minimiser1.pyx":1398
  * 		return -x
  * 	return x
  * cpdef numpy.ndarray[numpy.double_t,ndim=1] compute_min_chi_square(numpy.ndarray[numpy.double_t, ndim=1] model, \             # <<<<<<<<<<<<<<
@@ -14235,6 +16124,7 @@ static PyObject *__pyx_pw_18spatial_minimiser1_1compute_min_chi_square(PyObject 
   int __pyx_v_max_iter;
   int __pyx_v_search_length;
   double __pyx_v_discont_thresh;
+  double __pyx_v_max_dist_parameter_space;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -14242,12 +16132,14 @@ static PyObject *__pyx_pw_18spatial_minimiser1_1compute_min_chi_square(PyObject 
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("compute_min_chi_square (wrapper)", 0);
   {
-    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_model,&__pyx_n_s_cube,&__pyx_n_s_err_cube,&__pyx_n_s_lower_freq,&__pyx_n_s_upper_freq,&__pyx_n_s_param_lengths,&__pyx_n_s_freqs,&__pyx_n_s_sys_error,&__pyx_n_s_rms_thresh,&__pyx_n_s_min_freq_num,&__pyx_n_s_num_params,&__pyx_n_s_num_times,&__pyx_n_s_num_freqs,&__pyx_n_s_num_y,&__pyx_n_s_num_x,&__pyx_n_s_param_vals,&__pyx_n_s_spatial_smoothness_enforcer,&__pyx_n_s_temporal_smoothness_enforcer,&__pyx_n_s_frac_tol,&__pyx_n_s_max_iter,&__pyx_n_s_search_length,&__pyx_n_s_discont_thresh,0};
-    PyObject* values[22] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_model,&__pyx_n_s_cube,&__pyx_n_s_err_cube,&__pyx_n_s_lower_freq,&__pyx_n_s_upper_freq,&__pyx_n_s_param_lengths,&__pyx_n_s_freqs,&__pyx_n_s_sys_error,&__pyx_n_s_rms_thresh,&__pyx_n_s_min_freq_num,&__pyx_n_s_num_params,&__pyx_n_s_num_times,&__pyx_n_s_num_freqs,&__pyx_n_s_num_y,&__pyx_n_s_num_x,&__pyx_n_s_param_vals,&__pyx_n_s_spatial_smoothness_enforcer,&__pyx_n_s_temporal_smoothness_enforcer,&__pyx_n_s_frac_tol,&__pyx_n_s_max_iter,&__pyx_n_s_search_length,&__pyx_n_s_discont_thresh,&__pyx_n_s_max_dist_parameter_space,0};
+    PyObject* values[23] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
     if (unlikely(__pyx_kwds)) {
       Py_ssize_t kw_args;
       const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
       switch (pos_args) {
+        case 23: values[22] = PyTuple_GET_ITEM(__pyx_args, 22);
+        CYTHON_FALLTHROUGH;
         case 22: values[21] = PyTuple_GET_ITEM(__pyx_args, 21);
         CYTHON_FALLTHROUGH;
         case 21: values[20] = PyTuple_GET_ITEM(__pyx_args, 20);
@@ -14304,228 +16196,204 @@ static PyObject *__pyx_pw_18spatial_minimiser1_1compute_min_chi_square(PyObject 
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_cube)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 0, 16, 22, 1); __PYX_ERR(0, 1122, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 23, 23, 1); __PYX_ERR(0, 1398, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_err_cube)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 0, 16, 22, 2); __PYX_ERR(0, 1122, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 23, 23, 2); __PYX_ERR(0, 1398, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_lower_freq)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 0, 16, 22, 3); __PYX_ERR(0, 1122, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 23, 23, 3); __PYX_ERR(0, 1398, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  4:
         if (likely((values[4] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_upper_freq)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 0, 16, 22, 4); __PYX_ERR(0, 1122, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 23, 23, 4); __PYX_ERR(0, 1398, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  5:
         if (likely((values[5] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_param_lengths)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 0, 16, 22, 5); __PYX_ERR(0, 1122, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 23, 23, 5); __PYX_ERR(0, 1398, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  6:
         if (likely((values[6] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_freqs)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 0, 16, 22, 6); __PYX_ERR(0, 1122, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 23, 23, 6); __PYX_ERR(0, 1398, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  7:
         if (likely((values[7] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_sys_error)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 0, 16, 22, 7); __PYX_ERR(0, 1122, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 23, 23, 7); __PYX_ERR(0, 1398, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  8:
         if (likely((values[8] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_rms_thresh)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 0, 16, 22, 8); __PYX_ERR(0, 1122, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 23, 23, 8); __PYX_ERR(0, 1398, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  9:
         if (likely((values[9] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_min_freq_num)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 0, 16, 22, 9); __PYX_ERR(0, 1122, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 23, 23, 9); __PYX_ERR(0, 1398, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case 10:
         if (likely((values[10] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_num_params)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 0, 16, 22, 10); __PYX_ERR(0, 1122, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 23, 23, 10); __PYX_ERR(0, 1398, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case 11:
         if (likely((values[11] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_num_times)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 0, 16, 22, 11); __PYX_ERR(0, 1122, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 23, 23, 11); __PYX_ERR(0, 1398, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case 12:
         if (likely((values[12] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_num_freqs)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 0, 16, 22, 12); __PYX_ERR(0, 1122, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 23, 23, 12); __PYX_ERR(0, 1398, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case 13:
         if (likely((values[13] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_num_y)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 0, 16, 22, 13); __PYX_ERR(0, 1122, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 23, 23, 13); __PYX_ERR(0, 1398, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case 14:
         if (likely((values[14] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_num_x)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 0, 16, 22, 14); __PYX_ERR(0, 1122, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 23, 23, 14); __PYX_ERR(0, 1398, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case 15:
         if (likely((values[15] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_param_vals)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 0, 16, 22, 15); __PYX_ERR(0, 1122, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 23, 23, 15); __PYX_ERR(0, 1398, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case 16:
-        if (kw_args > 0) {
-          PyObject* value = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_spatial_smoothness_enforcer);
-          if (value) { values[16] = value; kw_args--; }
+        if (likely((values[16] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_spatial_smoothness_enforcer)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 23, 23, 16); __PYX_ERR(0, 1398, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case 17:
-        if (kw_args > 0) {
-          PyObject* value = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_temporal_smoothness_enforcer);
-          if (value) { values[17] = value; kw_args--; }
+        if (likely((values[17] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_temporal_smoothness_enforcer)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 23, 23, 17); __PYX_ERR(0, 1398, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case 18:
-        if (kw_args > 0) {
-          PyObject* value = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_frac_tol);
-          if (value) { values[18] = value; kw_args--; }
+        if (likely((values[18] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_frac_tol)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 23, 23, 18); __PYX_ERR(0, 1398, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case 19:
-        if (kw_args > 0) {
-          PyObject* value = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_max_iter);
-          if (value) { values[19] = value; kw_args--; }
+        if (likely((values[19] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_max_iter)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 23, 23, 19); __PYX_ERR(0, 1398, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case 20:
-        if (kw_args > 0) {
-          PyObject* value = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_search_length);
-          if (value) { values[20] = value; kw_args--; }
+        if (likely((values[20] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_search_length)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 23, 23, 20); __PYX_ERR(0, 1398, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case 21:
-        if (kw_args > 0) {
-          PyObject* value = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_discont_thresh);
-          if (value) { values[21] = value; kw_args--; }
+        if (likely((values[21] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_discont_thresh)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 23, 23, 21); __PYX_ERR(0, 1398, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case 22:
+        if (likely((values[22] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_max_dist_parameter_space)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 23, 23, 22); __PYX_ERR(0, 1398, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "compute_min_chi_square") < 0)) __PYX_ERR(0, 1122, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "compute_min_chi_square") < 0)) __PYX_ERR(0, 1398, __pyx_L3_error)
       }
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 23) {
+      goto __pyx_L5_argtuple_error;
     } else {
-      switch (PyTuple_GET_SIZE(__pyx_args)) {
-        case 22: values[21] = PyTuple_GET_ITEM(__pyx_args, 21);
-        CYTHON_FALLTHROUGH;
-        case 21: values[20] = PyTuple_GET_ITEM(__pyx_args, 20);
-        CYTHON_FALLTHROUGH;
-        case 20: values[19] = PyTuple_GET_ITEM(__pyx_args, 19);
-        CYTHON_FALLTHROUGH;
-        case 19: values[18] = PyTuple_GET_ITEM(__pyx_args, 18);
-        CYTHON_FALLTHROUGH;
-        case 18: values[17] = PyTuple_GET_ITEM(__pyx_args, 17);
-        CYTHON_FALLTHROUGH;
-        case 17: values[16] = PyTuple_GET_ITEM(__pyx_args, 16);
-        CYTHON_FALLTHROUGH;
-        case 16: values[15] = PyTuple_GET_ITEM(__pyx_args, 15);
-        values[14] = PyTuple_GET_ITEM(__pyx_args, 14);
-        values[13] = PyTuple_GET_ITEM(__pyx_args, 13);
-        values[12] = PyTuple_GET_ITEM(__pyx_args, 12);
-        values[11] = PyTuple_GET_ITEM(__pyx_args, 11);
-        values[10] = PyTuple_GET_ITEM(__pyx_args, 10);
-        values[9] = PyTuple_GET_ITEM(__pyx_args, 9);
-        values[8] = PyTuple_GET_ITEM(__pyx_args, 8);
-        values[7] = PyTuple_GET_ITEM(__pyx_args, 7);
-        values[6] = PyTuple_GET_ITEM(__pyx_args, 6);
-        values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
-        values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
-        values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
-        values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
-        values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
-        values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
-        break;
-        default: goto __pyx_L5_argtuple_error;
-      }
+      values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+      values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+      values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+      values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
+      values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
+      values[6] = PyTuple_GET_ITEM(__pyx_args, 6);
+      values[7] = PyTuple_GET_ITEM(__pyx_args, 7);
+      values[8] = PyTuple_GET_ITEM(__pyx_args, 8);
+      values[9] = PyTuple_GET_ITEM(__pyx_args, 9);
+      values[10] = PyTuple_GET_ITEM(__pyx_args, 10);
+      values[11] = PyTuple_GET_ITEM(__pyx_args, 11);
+      values[12] = PyTuple_GET_ITEM(__pyx_args, 12);
+      values[13] = PyTuple_GET_ITEM(__pyx_args, 13);
+      values[14] = PyTuple_GET_ITEM(__pyx_args, 14);
+      values[15] = PyTuple_GET_ITEM(__pyx_args, 15);
+      values[16] = PyTuple_GET_ITEM(__pyx_args, 16);
+      values[17] = PyTuple_GET_ITEM(__pyx_args, 17);
+      values[18] = PyTuple_GET_ITEM(__pyx_args, 18);
+      values[19] = PyTuple_GET_ITEM(__pyx_args, 19);
+      values[20] = PyTuple_GET_ITEM(__pyx_args, 20);
+      values[21] = PyTuple_GET_ITEM(__pyx_args, 21);
+      values[22] = PyTuple_GET_ITEM(__pyx_args, 22);
     }
     __pyx_v_model = ((PyArrayObject *)values[0]);
     __pyx_v_cube = ((PyArrayObject *)values[1]);
     __pyx_v_err_cube = ((PyArrayObject *)values[2]);
-    __pyx_v_lower_freq = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_lower_freq == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 1125, __pyx_L3_error)
-    __pyx_v_upper_freq = __pyx_PyFloat_AsDouble(values[4]); if (unlikely((__pyx_v_upper_freq == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 1126, __pyx_L3_error)
+    __pyx_v_lower_freq = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_lower_freq == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 1401, __pyx_L3_error)
+    __pyx_v_upper_freq = __pyx_PyFloat_AsDouble(values[4]); if (unlikely((__pyx_v_upper_freq == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 1402, __pyx_L3_error)
     __pyx_v_param_lengths = ((PyArrayObject *)values[5]);
     __pyx_v_freqs = ((PyArrayObject *)values[6]);
-    __pyx_v_sys_error = __pyx_PyFloat_AsDouble(values[7]); if (unlikely((__pyx_v_sys_error == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 1129, __pyx_L3_error)
-    __pyx_v_rms_thresh = __pyx_PyFloat_AsDouble(values[8]); if (unlikely((__pyx_v_rms_thresh == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 1129, __pyx_L3_error)
-    __pyx_v_min_freq_num = __Pyx_PyInt_As_int(values[9]); if (unlikely((__pyx_v_min_freq_num == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1129, __pyx_L3_error)
-    __pyx_v_num_params = __Pyx_PyInt_As_int(values[10]); if (unlikely((__pyx_v_num_params == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1129, __pyx_L3_error)
-    __pyx_v_num_times = __Pyx_PyInt_As_int(values[11]); if (unlikely((__pyx_v_num_times == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1130, __pyx_L3_error)
-    __pyx_v_num_freqs = __Pyx_PyInt_As_int(values[12]); if (unlikely((__pyx_v_num_freqs == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1130, __pyx_L3_error)
-    __pyx_v_num_y = __Pyx_PyInt_As_int(values[13]); if (unlikely((__pyx_v_num_y == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1130, __pyx_L3_error)
-    __pyx_v_num_x = __Pyx_PyInt_As_int(values[14]); if (unlikely((__pyx_v_num_x == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1130, __pyx_L3_error)
+    __pyx_v_sys_error = __pyx_PyFloat_AsDouble(values[7]); if (unlikely((__pyx_v_sys_error == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 1405, __pyx_L3_error)
+    __pyx_v_rms_thresh = __pyx_PyFloat_AsDouble(values[8]); if (unlikely((__pyx_v_rms_thresh == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 1405, __pyx_L3_error)
+    __pyx_v_min_freq_num = __Pyx_PyInt_As_int(values[9]); if (unlikely((__pyx_v_min_freq_num == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1405, __pyx_L3_error)
+    __pyx_v_num_params = __Pyx_PyInt_As_int(values[10]); if (unlikely((__pyx_v_num_params == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1405, __pyx_L3_error)
+    __pyx_v_num_times = __Pyx_PyInt_As_int(values[11]); if (unlikely((__pyx_v_num_times == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1406, __pyx_L3_error)
+    __pyx_v_num_freqs = __Pyx_PyInt_As_int(values[12]); if (unlikely((__pyx_v_num_freqs == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1406, __pyx_L3_error)
+    __pyx_v_num_y = __Pyx_PyInt_As_int(values[13]); if (unlikely((__pyx_v_num_y == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1406, __pyx_L3_error)
+    __pyx_v_num_x = __Pyx_PyInt_As_int(values[14]); if (unlikely((__pyx_v_num_x == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1406, __pyx_L3_error)
     __pyx_v_param_vals = ((PyArrayObject *)values[15]);
-    if (values[16]) {
-      __pyx_v_spatial_smoothness_enforcer = __pyx_PyFloat_AsDouble(values[16]); if (unlikely((__pyx_v_spatial_smoothness_enforcer == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 1131, __pyx_L3_error)
-    } else {
-      __pyx_v_spatial_smoothness_enforcer = ((double)0.001);
-    }
-    if (values[17]) {
-      __pyx_v_temporal_smoothness_enforcer = __pyx_PyFloat_AsDouble(values[17]); if (unlikely((__pyx_v_temporal_smoothness_enforcer == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 1131, __pyx_L3_error)
-    } else {
-      __pyx_v_temporal_smoothness_enforcer = ((double)0.0);
-    }
-    if (values[18]) {
-      __pyx_v_frac_tol = __pyx_PyFloat_AsDouble(values[18]); if (unlikely((__pyx_v_frac_tol == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 1132, __pyx_L3_error)
-    } else {
-      __pyx_v_frac_tol = ((double)0.1);
-    }
-    if (values[19]) {
-      __pyx_v_max_iter = __Pyx_PyInt_As_int(values[19]); if (unlikely((__pyx_v_max_iter == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1132, __pyx_L3_error)
-    } else {
-      __pyx_v_max_iter = ((int)10);
-    }
-    if (values[20]) {
-      __pyx_v_search_length = __Pyx_PyInt_As_int(values[20]); if (unlikely((__pyx_v_search_length == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1132, __pyx_L3_error)
-    } else {
-      __pyx_v_search_length = ((int)20);
-    }
-    if (values[21]) {
-      __pyx_v_discont_thresh = __pyx_PyFloat_AsDouble(values[21]); if (unlikely((__pyx_v_discont_thresh == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 1132, __pyx_L3_error)
-    } else {
-      __pyx_v_discont_thresh = ((double)3.0);
-    }
+    __pyx_v_spatial_smoothness_enforcer = __pyx_PyFloat_AsDouble(values[16]); if (unlikely((__pyx_v_spatial_smoothness_enforcer == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 1407, __pyx_L3_error)
+    __pyx_v_temporal_smoothness_enforcer = __pyx_PyFloat_AsDouble(values[17]); if (unlikely((__pyx_v_temporal_smoothness_enforcer == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 1407, __pyx_L3_error)
+    __pyx_v_frac_tol = __pyx_PyFloat_AsDouble(values[18]); if (unlikely((__pyx_v_frac_tol == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 1408, __pyx_L3_error)
+    __pyx_v_max_iter = __Pyx_PyInt_As_int(values[19]); if (unlikely((__pyx_v_max_iter == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1408, __pyx_L3_error)
+    __pyx_v_search_length = __Pyx_PyInt_As_int(values[20]); if (unlikely((__pyx_v_search_length == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1408, __pyx_L3_error)
+    __pyx_v_discont_thresh = __pyx_PyFloat_AsDouble(values[21]); if (unlikely((__pyx_v_discont_thresh == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 1408, __pyx_L3_error)
+    __pyx_v_max_dist_parameter_space = __pyx_PyFloat_AsDouble(values[22]); if (unlikely((__pyx_v_max_dist_parameter_space == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 1408, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 0, 16, 22, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 1122, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 23, 23, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 1398, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("spatial_minimiser1.compute_min_chi_square", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_model), __pyx_ptype_5numpy_ndarray, 1, "model", 0))) __PYX_ERR(0, 1122, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_cube), __pyx_ptype_5numpy_ndarray, 1, "cube", 0))) __PYX_ERR(0, 1123, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_err_cube), __pyx_ptype_5numpy_ndarray, 1, "err_cube", 0))) __PYX_ERR(0, 1124, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_param_lengths), __pyx_ptype_5numpy_ndarray, 1, "param_lengths", 0))) __PYX_ERR(0, 1127, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_freqs), __pyx_ptype_5numpy_ndarray, 1, "freqs", 0))) __PYX_ERR(0, 1128, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_param_vals), __pyx_ptype_5numpy_ndarray, 1, "param_vals", 0))) __PYX_ERR(0, 1130, __pyx_L1_error)
-  __pyx_r = __pyx_pf_18spatial_minimiser1_compute_min_chi_square(__pyx_self, __pyx_v_model, __pyx_v_cube, __pyx_v_err_cube, __pyx_v_lower_freq, __pyx_v_upper_freq, __pyx_v_param_lengths, __pyx_v_freqs, __pyx_v_sys_error, __pyx_v_rms_thresh, __pyx_v_min_freq_num, __pyx_v_num_params, __pyx_v_num_times, __pyx_v_num_freqs, __pyx_v_num_y, __pyx_v_num_x, __pyx_v_param_vals, __pyx_v_spatial_smoothness_enforcer, __pyx_v_temporal_smoothness_enforcer, __pyx_v_frac_tol, __pyx_v_max_iter, __pyx_v_search_length, __pyx_v_discont_thresh);
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_model), __pyx_ptype_5numpy_ndarray, 1, "model", 0))) __PYX_ERR(0, 1398, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_cube), __pyx_ptype_5numpy_ndarray, 1, "cube", 0))) __PYX_ERR(0, 1399, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_err_cube), __pyx_ptype_5numpy_ndarray, 1, "err_cube", 0))) __PYX_ERR(0, 1400, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_param_lengths), __pyx_ptype_5numpy_ndarray, 1, "param_lengths", 0))) __PYX_ERR(0, 1403, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_freqs), __pyx_ptype_5numpy_ndarray, 1, "freqs", 0))) __PYX_ERR(0, 1404, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_param_vals), __pyx_ptype_5numpy_ndarray, 1, "param_vals", 0))) __PYX_ERR(0, 1406, __pyx_L1_error)
+  __pyx_r = __pyx_pf_18spatial_minimiser1_compute_min_chi_square(__pyx_self, __pyx_v_model, __pyx_v_cube, __pyx_v_err_cube, __pyx_v_lower_freq, __pyx_v_upper_freq, __pyx_v_param_lengths, __pyx_v_freqs, __pyx_v_sys_error, __pyx_v_rms_thresh, __pyx_v_min_freq_num, __pyx_v_num_params, __pyx_v_num_times, __pyx_v_num_freqs, __pyx_v_num_y, __pyx_v_num_x, __pyx_v_param_vals, __pyx_v_spatial_smoothness_enforcer, __pyx_v_temporal_smoothness_enforcer, __pyx_v_frac_tol, __pyx_v_max_iter, __pyx_v_search_length, __pyx_v_discont_thresh, __pyx_v_max_dist_parameter_space);
 
   /* function exit code */
   goto __pyx_L0;
@@ -14536,7 +16404,7 @@ static PyObject *__pyx_pw_18spatial_minimiser1_1compute_min_chi_square(PyObject 
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_18spatial_minimiser1_compute_min_chi_square(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_model, PyArrayObject *__pyx_v_cube, PyArrayObject *__pyx_v_err_cube, double __pyx_v_lower_freq, double __pyx_v_upper_freq, PyArrayObject *__pyx_v_param_lengths, PyArrayObject *__pyx_v_freqs, double __pyx_v_sys_error, double __pyx_v_rms_thresh, int __pyx_v_min_freq_num, int __pyx_v_num_params, int __pyx_v_num_times, int __pyx_v_num_freqs, int __pyx_v_num_y, int __pyx_v_num_x, PyArrayObject *__pyx_v_param_vals, double __pyx_v_spatial_smoothness_enforcer, double __pyx_v_temporal_smoothness_enforcer, double __pyx_v_frac_tol, int __pyx_v_max_iter, int __pyx_v_search_length, double __pyx_v_discont_thresh) {
+static PyObject *__pyx_pf_18spatial_minimiser1_compute_min_chi_square(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_model, PyArrayObject *__pyx_v_cube, PyArrayObject *__pyx_v_err_cube, double __pyx_v_lower_freq, double __pyx_v_upper_freq, PyArrayObject *__pyx_v_param_lengths, PyArrayObject *__pyx_v_freqs, double __pyx_v_sys_error, double __pyx_v_rms_thresh, int __pyx_v_min_freq_num, int __pyx_v_num_params, int __pyx_v_num_times, int __pyx_v_num_freqs, int __pyx_v_num_y, int __pyx_v_num_x, PyArrayObject *__pyx_v_param_vals, double __pyx_v_spatial_smoothness_enforcer, double __pyx_v_temporal_smoothness_enforcer, double __pyx_v_frac_tol, int __pyx_v_max_iter, int __pyx_v_search_length, double __pyx_v_discont_thresh, double __pyx_v_max_dist_parameter_space) {
   __Pyx_LocalBuf_ND __pyx_pybuffernd_cube;
   __Pyx_Buffer __pyx_pybuffer_cube;
   __Pyx_LocalBuf_ND __pyx_pybuffernd_err_cube;
@@ -14552,7 +16420,6 @@ static PyObject *__pyx_pf_18spatial_minimiser1_compute_min_chi_square(CYTHON_UNU
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
-  struct __pyx_opt_args_18spatial_minimiser1_compute_min_chi_square __pyx_t_2;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -14583,43 +16450,36 @@ static PyObject *__pyx_pf_18spatial_minimiser1_compute_min_chi_square(CYTHON_UNU
   __pyx_pybuffernd_param_vals.rcbuffer = &__pyx_pybuffer_param_vals;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_model.rcbuffer->pybuffer, (PyObject*)__pyx_v_model, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 1122, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_model.rcbuffer->pybuffer, (PyObject*)__pyx_v_model, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 1398, __pyx_L1_error)
   }
   __pyx_pybuffernd_model.diminfo[0].strides = __pyx_pybuffernd_model.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_model.diminfo[0].shape = __pyx_pybuffernd_model.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_cube.rcbuffer->pybuffer, (PyObject*)__pyx_v_cube, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 4, 0, __pyx_stack) == -1)) __PYX_ERR(0, 1122, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_cube.rcbuffer->pybuffer, (PyObject*)__pyx_v_cube, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 4, 0, __pyx_stack) == -1)) __PYX_ERR(0, 1398, __pyx_L1_error)
   }
   __pyx_pybuffernd_cube.diminfo[0].strides = __pyx_pybuffernd_cube.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_cube.diminfo[0].shape = __pyx_pybuffernd_cube.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_cube.diminfo[1].strides = __pyx_pybuffernd_cube.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_cube.diminfo[1].shape = __pyx_pybuffernd_cube.rcbuffer->pybuffer.shape[1]; __pyx_pybuffernd_cube.diminfo[2].strides = __pyx_pybuffernd_cube.rcbuffer->pybuffer.strides[2]; __pyx_pybuffernd_cube.diminfo[2].shape = __pyx_pybuffernd_cube.rcbuffer->pybuffer.shape[2]; __pyx_pybuffernd_cube.diminfo[3].strides = __pyx_pybuffernd_cube.rcbuffer->pybuffer.strides[3]; __pyx_pybuffernd_cube.diminfo[3].shape = __pyx_pybuffernd_cube.rcbuffer->pybuffer.shape[3];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_err_cube.rcbuffer->pybuffer, (PyObject*)__pyx_v_err_cube, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 1122, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_err_cube.rcbuffer->pybuffer, (PyObject*)__pyx_v_err_cube, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 1398, __pyx_L1_error)
   }
   __pyx_pybuffernd_err_cube.diminfo[0].strides = __pyx_pybuffernd_err_cube.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_err_cube.diminfo[0].shape = __pyx_pybuffernd_err_cube.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_err_cube.diminfo[1].strides = __pyx_pybuffernd_err_cube.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_err_cube.diminfo[1].shape = __pyx_pybuffernd_err_cube.rcbuffer->pybuffer.shape[1];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_param_lengths.rcbuffer->pybuffer, (PyObject*)__pyx_v_param_lengths, &__Pyx_TypeInfo_nn___pyx_t_5numpy_int_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 1122, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_param_lengths.rcbuffer->pybuffer, (PyObject*)__pyx_v_param_lengths, &__Pyx_TypeInfo_nn___pyx_t_5numpy_int_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 1398, __pyx_L1_error)
   }
   __pyx_pybuffernd_param_lengths.diminfo[0].strides = __pyx_pybuffernd_param_lengths.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_param_lengths.diminfo[0].shape = __pyx_pybuffernd_param_lengths.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_freqs.rcbuffer->pybuffer, (PyObject*)__pyx_v_freqs, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 1122, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_freqs.rcbuffer->pybuffer, (PyObject*)__pyx_v_freqs, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 1398, __pyx_L1_error)
   }
   __pyx_pybuffernd_freqs.diminfo[0].strides = __pyx_pybuffernd_freqs.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_freqs.diminfo[0].shape = __pyx_pybuffernd_freqs.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_param_vals.rcbuffer->pybuffer, (PyObject*)__pyx_v_param_vals, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 1122, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_param_vals.rcbuffer->pybuffer, (PyObject*)__pyx_v_param_vals, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 1398, __pyx_L1_error)
   }
   __pyx_pybuffernd_param_vals.diminfo[0].strides = __pyx_pybuffernd_param_vals.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_param_vals.diminfo[0].shape = __pyx_pybuffernd_param_vals.rcbuffer->pybuffer.shape[0];
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2.__pyx_n = 6;
-  __pyx_t_2.spatial_smoothness_enforcer = __pyx_v_spatial_smoothness_enforcer;
-  __pyx_t_2.temporal_smoothness_enforcer = __pyx_v_temporal_smoothness_enforcer;
-  __pyx_t_2.frac_tol = __pyx_v_frac_tol;
-  __pyx_t_2.max_iter = __pyx_v_max_iter;
-  __pyx_t_2.search_length = __pyx_v_search_length;
-  __pyx_t_2.discont_thresh = __pyx_v_discont_thresh;
-  __pyx_t_1 = ((PyObject *)__pyx_f_18spatial_minimiser1_compute_min_chi_square(__pyx_v_model, __pyx_v_cube, __pyx_v_err_cube, __pyx_v_lower_freq, __pyx_v_upper_freq, __pyx_v_param_lengths, __pyx_v_freqs, __pyx_v_sys_error, __pyx_v_rms_thresh, __pyx_v_min_freq_num, __pyx_v_num_params, __pyx_v_num_times, __pyx_v_num_freqs, __pyx_v_num_y, __pyx_v_num_x, __pyx_v_param_vals, 0, &__pyx_t_2)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1122, __pyx_L1_error)
+  __pyx_t_1 = ((PyObject *)__pyx_f_18spatial_minimiser1_compute_min_chi_square(__pyx_v_model, __pyx_v_cube, __pyx_v_err_cube, __pyx_v_lower_freq, __pyx_v_upper_freq, __pyx_v_param_lengths, __pyx_v_freqs, __pyx_v_sys_error, __pyx_v_rms_thresh, __pyx_v_min_freq_num, __pyx_v_num_params, __pyx_v_num_times, __pyx_v_num_freqs, __pyx_v_num_y, __pyx_v_num_x, __pyx_v_param_vals, __pyx_v_spatial_smoothness_enforcer, __pyx_v_temporal_smoothness_enforcer, __pyx_v_frac_tol, __pyx_v_max_iter, __pyx_v_search_length, __pyx_v_discont_thresh, __pyx_v_max_dist_parameter_space, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1398, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -15187,7 +17047,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_array(void) {
  * 
  * cdef inline int import_umath() except -1:
  */
-      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 945, __pyx_L5_except_error)
+      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 945, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_Raise(__pyx_t_8, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
@@ -15319,7 +17179,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_umath(void) {
  * 
  * cdef inline int import_ufunc() except -1:
  */
-      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 951, __pyx_L5_except_error)
+      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 951, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_Raise(__pyx_t_8, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
@@ -15451,7 +17311,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_ufunc(void) {
  * 
  * cdef extern from *:
  */
-      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 957, __pyx_L5_except_error)
+      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 957, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_Raise(__pyx_t_8, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
@@ -15875,7 +17735,7 @@ static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __
  * 
  *         if itemsize <= 0:
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 134, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__5, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 134, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -15907,7 +17767,7 @@ static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __
  * 
  *         if not isinstance(format, bytes):
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__5, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 137, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 137, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -16034,7 +17894,7 @@ static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __
  * 
  * 
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_MemoryError, __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 149, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_MemoryError, __pyx_tuple__7, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 149, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -16308,7 +18168,7 @@ static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __
  * 
  *             if self.dtype_is_object:
  */
-      __pyx_t_10 = __Pyx_PyObject_Call(__pyx_builtin_MemoryError, __pyx_tuple__7, NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(2, 177, __pyx_L1_error)
+      __pyx_t_10 = __Pyx_PyObject_Call(__pyx_builtin_MemoryError, __pyx_tuple__8, NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(2, 177, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
       __Pyx_Raise(__pyx_t_10, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
@@ -16552,7 +18412,7 @@ static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array_2__getbuffer__(stru
  *         info.buf = self.data
  *         info.len = self.len
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__8, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 193, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 193, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -17286,7 +19146,7 @@ static PyObject *__pyx_pf___pyx_array___reduce_cython__(CYTHON_UNUSED struct __p
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 2, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__10, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 2, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_Raise(__pyx_t_1, 0, 0, 0);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -17342,7 +19202,7 @@ static PyObject *__pyx_pf___pyx_array_2__setstate_cython__(CYTHON_UNUSED struct 
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")             # <<<<<<<<<<<<<<
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__10, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 4, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__11, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_Raise(__pyx_t_1, 0, 0, 0);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -19071,7 +20931,7 @@ static int __pyx_memoryview___pyx_pf_15View_dot_MemoryView_10memoryview_6__setit
  * 
  *         have_slices, index = _unellipsify(index, self.view.ndim)
  */
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__11, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 420, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__12, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 420, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_Raise(__pyx_t_2, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -20119,7 +21979,7 @@ static PyObject *__pyx_memoryview_convert_item_to_object(struct __pyx_memoryview
  *         else:
  *             if len(self.view.format) == 1:
  */
-      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__12, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(2, 497, __pyx_L5_except_error)
+      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__13, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(2, 497, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_Raise(__pyx_t_6, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
@@ -20481,7 +22341,7 @@ static int __pyx_memoryview___pyx_pf_15View_dot_MemoryView_10memoryview_8__getbu
  * 
  *         if flags & PyBUF_ND:
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__13, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 522, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__14, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 522, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -21030,7 +22890,7 @@ static PyObject *__pyx_pf_15View_dot_MemoryView_10memoryview_7strides___get__(st
  * 
  *         return tuple([stride for stride in self.view.strides[:self.view.ndim]])
  */
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__14, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 572, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__15, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 572, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_Raise(__pyx_t_2, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -21147,7 +23007,7 @@ static PyObject *__pyx_pf_15View_dot_MemoryView_10memoryview_10suboffsets___get_
     __Pyx_XDECREF(__pyx_r);
     __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->view.ndim); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 579, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = PyNumber_Multiply(__pyx_tuple__15, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 579, __pyx_L1_error)
+    __pyx_t_3 = PyNumber_Multiply(__pyx_tuple__16, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 579, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_r = __pyx_t_3;
@@ -22185,7 +24045,7 @@ static PyObject *__pyx_pf___pyx_memoryview___reduce_cython__(CYTHON_UNUSED struc
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__16, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 2, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__17, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 2, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_Raise(__pyx_t_1, 0, 0, 0);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -22241,7 +24101,7 @@ static PyObject *__pyx_pf___pyx_memoryview_2__setstate_cython__(CYTHON_UNUSED st
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")             # <<<<<<<<<<<<<<
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__17, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 4, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__18, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_Raise(__pyx_t_1, 0, 0, 0);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -22598,9 +24458,9 @@ static PyObject *_unellipsify(PyObject *__pyx_v_index, int __pyx_v_ndim) {
         __Pyx_GOTREF(__pyx_t_7);
         { Py_ssize_t __pyx_temp;
           for (__pyx_temp=0; __pyx_temp < ((__pyx_v_ndim - __pyx_t_8) + 1); __pyx_temp++) {
-            __Pyx_INCREF(__pyx_slice__18);
-            __Pyx_GIVEREF(__pyx_slice__18);
-            PyList_SET_ITEM(__pyx_t_7, __pyx_temp, __pyx_slice__18);
+            __Pyx_INCREF(__pyx_slice__19);
+            __Pyx_GIVEREF(__pyx_slice__19);
+            PyList_SET_ITEM(__pyx_t_7, __pyx_temp, __pyx_slice__19);
           }
         }
         __pyx_t_9 = __Pyx_PyList_Extend(__pyx_v_result, __pyx_t_7); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(2, 684, __pyx_L1_error)
@@ -22633,7 +24493,7 @@ static PyObject *_unellipsify(PyObject *__pyx_v_index, int __pyx_v_ndim) {
  *         else:
  */
       /*else*/ {
-        __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_result, __pyx_slice__18); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(2, 687, __pyx_L1_error)
+        __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_result, __pyx_slice__19); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(2, 687, __pyx_L1_error)
       }
       __pyx_L7:;
 
@@ -22773,9 +24633,9 @@ static PyObject *_unellipsify(PyObject *__pyx_v_index, int __pyx_v_ndim) {
     __Pyx_GOTREF(__pyx_t_3);
     { Py_ssize_t __pyx_temp;
       for (__pyx_temp=0; __pyx_temp < __pyx_v_nslices; __pyx_temp++) {
-        __Pyx_INCREF(__pyx_slice__18);
-        __Pyx_GIVEREF(__pyx_slice__18);
-        PyList_SET_ITEM(__pyx_t_3, __pyx_temp, __pyx_slice__18);
+        __Pyx_INCREF(__pyx_slice__19);
+        __Pyx_GIVEREF(__pyx_slice__19);
+        PyList_SET_ITEM(__pyx_t_3, __pyx_temp, __pyx_slice__19);
       }
     }
     __pyx_t_9 = __Pyx_PyList_Extend(__pyx_v_result, __pyx_t_3); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(2, 698, __pyx_L1_error)
@@ -22902,7 +24762,7 @@ static PyObject *assert_direct_dimensions(Py_ssize_t *__pyx_v_suboffsets, int __
  * 
  * 
  */
-      __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__19, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(2, 705, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__20, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(2, 705, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_Raise(__pyx_t_5, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -25086,7 +26946,7 @@ static PyObject *__pyx_pf___pyx_memoryviewslice___reduce_cython__(CYTHON_UNUSED 
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__20, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 2, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__21, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 2, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_Raise(__pyx_t_1, 0, 0, 0);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -25142,7 +27002,7 @@ static PyObject *__pyx_pf___pyx_memoryviewslice_2__setstate_cython__(CYTHON_UNUS
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")             # <<<<<<<<<<<<<<
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__21, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 4, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__22, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_Raise(__pyx_t_1, 0, 0, 0);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -28419,7 +30279,7 @@ static PyObject *__pyx_pf_15View_dot_MemoryView___pyx_unpickle_Enum(CYTHON_UNUSE
  */
   __pyx_t_1 = __Pyx_PyInt_From_long(__pyx_v___pyx_checksum); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = (__Pyx_PySequence_ContainsTF(__pyx_t_1, __pyx_tuple__22, Py_NE)); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(2, 4, __pyx_L1_error)
+  __pyx_t_2 = (__Pyx_PySequence_ContainsTF(__pyx_t_1, __pyx_tuple__23, Py_NE)); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(2, 4, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_3 = (__pyx_t_2 != 0);
   if (__pyx_t_3) {
@@ -28805,8 +30665,8 @@ static PyObject *__pyx_format_from_typeinfo(__Pyx_TypeInfo *__pyx_v_type) {
  *         else:
  *             alignment = b''
  */
-      __Pyx_INCREF(__pyx_kp_b__23);
-      __pyx_v_alignment = __pyx_kp_b__23;
+      __Pyx_INCREF(__pyx_kp_b__24);
+      __pyx_v_alignment = __pyx_kp_b__24;
 
       /* "BufferFormatFromTypeInfo":1474
  *         assert type.fields.type != NULL
@@ -28826,8 +30686,8 @@ static PyObject *__pyx_format_from_typeinfo(__Pyx_TypeInfo *__pyx_v_type) {
  *         parts = [b"T{"]
  */
     /*else*/ {
-      __Pyx_INCREF(__pyx_kp_b__24);
-      __pyx_v_alignment = __pyx_kp_b__24;
+      __Pyx_INCREF(__pyx_kp_b__25);
+      __pyx_v_alignment = __pyx_kp_b__25;
     }
     __pyx_L4:;
 
@@ -28886,7 +30746,7 @@ static PyObject *__pyx_format_from_typeinfo(__Pyx_TypeInfo *__pyx_v_type) {
  *             field += 1
  * 
  */
-      __pyx_t_2 = PyNumber_Add(__pyx_v_part, __pyx_kp_b__25); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 1484, __pyx_L1_error)
+      __pyx_t_2 = PyNumber_Add(__pyx_v_part, __pyx_kp_b__26); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 1484, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
       __pyx_t_4 = __Pyx_PyBytes_FromString(__pyx_v_field->name); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 1484, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
@@ -28894,7 +30754,7 @@ static PyObject *__pyx_format_from_typeinfo(__Pyx_TypeInfo *__pyx_v_type) {
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __pyx_t_4 = PyNumber_Add(__pyx_t_5, __pyx_kp_b__25); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 1484, __pyx_L1_error)
+      __pyx_t_4 = PyNumber_Add(__pyx_t_5, __pyx_kp_b__26); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 1484, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __pyx_t_6 = __Pyx_PyList_Append(__pyx_v_parts, __pyx_t_4); if (unlikely(__pyx_t_6 == ((int)-1))) __PYX_ERR(2, 1484, __pyx_L1_error)
@@ -28919,7 +30779,7 @@ static PyObject *__pyx_format_from_typeinfo(__Pyx_TypeInfo *__pyx_v_type) {
  */
     __pyx_t_4 = __Pyx_PyBytes_Join(__pyx_v_alignment, __pyx_v_parts); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 1487, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = PyNumber_Add(__pyx_t_4, __pyx_kp_b__26); if (unlikely(!__pyx_t_5)) __PYX_ERR(2, 1487, __pyx_L1_error)
+    __pyx_t_5 = PyNumber_Add(__pyx_t_4, __pyx_kp_b__27); if (unlikely(!__pyx_t_5)) __PYX_ERR(2, 1487, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     if (!(likely(PyBytes_CheckExact(__pyx_t_5))||((__pyx_t_5) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "bytes", Py_TYPE(__pyx_t_5)->tp_name), 0))) __PYX_ERR(2, 1487, __pyx_L1_error)
@@ -28987,7 +30847,7 @@ static PyObject *__pyx_format_from_typeinfo(__Pyx_TypeInfo *__pyx_v_type) {
  *         else:
  *             result = fmt.string
  */
-      __pyx_t_5 = PyUnicode_Join(__pyx_kp_u__27, __pyx_v_extents); if (unlikely(!__pyx_t_5)) __PYX_ERR(2, 1492, __pyx_L1_error)
+      __pyx_t_5 = PyUnicode_Join(__pyx_kp_u__28, __pyx_v_extents); if (unlikely(!__pyx_t_5)) __PYX_ERR(2, 1492, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __pyx_t_2 = PyUnicode_Format(__pyx_kp_u_s, __pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 1492, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
@@ -29868,11 +31728,11 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_s_Unable_to_convert_item_to_object, __pyx_k_Unable_to_convert_item_to_object, sizeof(__pyx_k_Unable_to_convert_item_to_object), 0, 0, 1, 0},
   {&__pyx_n_s_ValueError, __pyx_k_ValueError, sizeof(__pyx_k_ValueError), 0, 0, 1, 1},
   {&__pyx_n_s_View_MemoryView, __pyx_k_View_MemoryView, sizeof(__pyx_k_View_MemoryView), 0, 0, 1, 1},
-  {&__pyx_kp_b__23, __pyx_k__23, sizeof(__pyx_k__23), 0, 0, 0, 0},
   {&__pyx_kp_b__24, __pyx_k__24, sizeof(__pyx_k__24), 0, 0, 0, 0},
   {&__pyx_kp_b__25, __pyx_k__25, sizeof(__pyx_k__25), 0, 0, 0, 0},
   {&__pyx_kp_b__26, __pyx_k__26, sizeof(__pyx_k__26), 0, 0, 0, 0},
-  {&__pyx_kp_u__27, __pyx_k__27, sizeof(__pyx_k__27), 0, 1, 0, 0},
+  {&__pyx_kp_b__27, __pyx_k__27, sizeof(__pyx_k__27), 0, 0, 0, 0},
+  {&__pyx_kp_u__28, __pyx_k__28, sizeof(__pyx_k__28), 0, 1, 0, 0},
   {&__pyx_n_s_allocate_buffer, __pyx_k_allocate_buffer, sizeof(__pyx_k_allocate_buffer), 0, 0, 1, 1},
   {&__pyx_n_s_array, __pyx_k_array, sizeof(__pyx_k_array), 0, 0, 1, 1},
   {&__pyx_n_s_base, __pyx_k_base, sizeof(__pyx_k_base), 0, 0, 1, 1},
@@ -29908,6 +31768,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_join, __pyx_k_join, sizeof(__pyx_k_join), 0, 0, 1, 1},
   {&__pyx_n_s_lower_freq, __pyx_k_lower_freq, sizeof(__pyx_k_lower_freq), 0, 0, 1, 1},
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
+  {&__pyx_n_s_max_dist_parameter_space, __pyx_k_max_dist_parameter_space, sizeof(__pyx_k_max_dist_parameter_space), 0, 0, 1, 1},
   {&__pyx_n_s_max_iter, __pyx_k_max_iter, sizeof(__pyx_k_max_iter), 0, 0, 1, 1},
   {&__pyx_n_s_memview, __pyx_k_memview, sizeof(__pyx_k_memview), 0, 0, 1, 1},
   {&__pyx_n_s_min_freq_num, __pyx_k_min_freq_num, sizeof(__pyx_k_min_freq_num), 0, 0, 1, 1},
@@ -29917,6 +31778,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_name_2, __pyx_k_name_2, sizeof(__pyx_k_name_2), 0, 0, 1, 1},
   {&__pyx_n_s_ndim, __pyx_k_ndim, sizeof(__pyx_k_ndim), 0, 0, 1, 1},
   {&__pyx_n_s_new, __pyx_k_new, sizeof(__pyx_k_new), 0, 0, 1, 1},
+  {&__pyx_n_u_new_cluster, __pyx_k_new_cluster, sizeof(__pyx_k_new_cluster), 0, 1, 0, 1},
   {&__pyx_kp_s_no_default___reduce___due_to_non, __pyx_k_no_default___reduce___due_to_non, sizeof(__pyx_k_no_default___reduce___due_to_non), 0, 0, 1, 0},
   {&__pyx_n_s_np, __pyx_k_np, sizeof(__pyx_k_np), 0, 0, 1, 1},
   {&__pyx_n_s_num_freqs, __pyx_k_num_freqs, sizeof(__pyx_k_num_freqs), 0, 0, 1, 1},
@@ -29975,8 +31837,8 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 29, __pyx_L1_error)
-  __pyx_builtin_print = __Pyx_GetBuiltinName(__pyx_n_s_print); if (!__pyx_builtin_print) __PYX_ERR(0, 222, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 38, __pyx_L1_error)
+  __pyx_builtin_print = __Pyx_GetBuiltinName(__pyx_n_s_print); if (!__pyx_builtin_print) __PYX_ERR(0, 198, __pyx_L1_error)
   __pyx_builtin_ImportError = __Pyx_GetBuiltinName(__pyx_n_s_ImportError); if (!__pyx_builtin_ImportError) __PYX_ERR(1, 945, __pyx_L1_error)
   __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(2, 134, __pyx_L1_error)
   __pyx_builtin_MemoryError = __Pyx_GetBuiltinName(__pyx_n_s_MemoryError); if (!__pyx_builtin_MemoryError) __PYX_ERR(2, 149, __pyx_L1_error)
@@ -29994,16 +31856,27 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "spatial_minimiser1.pyx":222
+  /* "spatial_minimiser1.pyx":198
+ * 	j=0
+ * 	while temp1!=NULL:
+ * 		print ("new_cluster")             # <<<<<<<<<<<<<<
+ * 		temp2=temp1
+ * 		while temp2!=NULL:
+ */
+  __pyx_tuple_ = PyTuple_Pack(1, __pyx_n_u_new_cluster); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 198, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple_);
+  __Pyx_GIVEREF(__pyx_tuple_);
+
+  /* "spatial_minimiser1.pyx":415
  * 		if current_grad_chi<grad_chi:
  * 			grad_chi=current_grad_chi
  * 			print ("successfull")             # <<<<<<<<<<<<<<
  * 			for i in range(num_val):
  * 				current_subcube_fit[i]=sub_fitted[i]
  */
-  __pyx_tuple_ = PyTuple_Pack(1, __pyx_n_u_successfull); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 222, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple_);
-  __Pyx_GIVEREF(__pyx_tuple_);
+  __pyx_tuple__2 = PyTuple_Pack(1, __pyx_n_u_successfull); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(0, 415, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__2);
+  __Pyx_GIVEREF(__pyx_tuple__2);
 
   /* "../../envs/default_python/lib/python3.8/site-packages/numpy/__init__.pxd":945
  *         __pyx_import_array()
@@ -30012,9 +31885,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  * cdef inline int import_umath() except -1:
  */
-  __pyx_tuple__2 = PyTuple_Pack(1, __pyx_kp_u_numpy_core_multiarray_failed_to); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(1, 945, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__2);
-  __Pyx_GIVEREF(__pyx_tuple__2);
+  __pyx_tuple__3 = PyTuple_Pack(1, __pyx_kp_u_numpy_core_multiarray_failed_to); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(1, 945, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__3);
+  __Pyx_GIVEREF(__pyx_tuple__3);
 
   /* "../../envs/default_python/lib/python3.8/site-packages/numpy/__init__.pxd":951
  *         _import_umath()
@@ -30023,9 +31896,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  * cdef inline int import_ufunc() except -1:
  */
-  __pyx_tuple__3 = PyTuple_Pack(1, __pyx_kp_u_numpy_core_umath_failed_to_impor); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(1, 951, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__3);
-  __Pyx_GIVEREF(__pyx_tuple__3);
+  __pyx_tuple__4 = PyTuple_Pack(1, __pyx_kp_u_numpy_core_umath_failed_to_impor); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(1, 951, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__4);
+  __Pyx_GIVEREF(__pyx_tuple__4);
 
   /* "View.MemoryView":134
  * 
@@ -30034,9 +31907,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  *         if itemsize <= 0:
  */
-  __pyx_tuple__4 = PyTuple_Pack(1, __pyx_kp_s_Empty_shape_tuple_for_cython_arr); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(2, 134, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__4);
-  __Pyx_GIVEREF(__pyx_tuple__4);
+  __pyx_tuple__5 = PyTuple_Pack(1, __pyx_kp_s_Empty_shape_tuple_for_cython_arr); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(2, 134, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__5);
+  __Pyx_GIVEREF(__pyx_tuple__5);
 
   /* "View.MemoryView":137
  * 
@@ -30045,9 +31918,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  *         if not isinstance(format, bytes):
  */
-  __pyx_tuple__5 = PyTuple_Pack(1, __pyx_kp_s_itemsize_0_for_cython_array); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(2, 137, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__5);
-  __Pyx_GIVEREF(__pyx_tuple__5);
+  __pyx_tuple__6 = PyTuple_Pack(1, __pyx_kp_s_itemsize_0_for_cython_array); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(2, 137, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__6);
+  __Pyx_GIVEREF(__pyx_tuple__6);
 
   /* "View.MemoryView":149
  * 
@@ -30056,9 +31929,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  * 
  */
-  __pyx_tuple__6 = PyTuple_Pack(1, __pyx_kp_s_unable_to_allocate_shape_and_str); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(2, 149, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__6);
-  __Pyx_GIVEREF(__pyx_tuple__6);
+  __pyx_tuple__7 = PyTuple_Pack(1, __pyx_kp_s_unable_to_allocate_shape_and_str); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(2, 149, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__7);
+  __Pyx_GIVEREF(__pyx_tuple__7);
 
   /* "View.MemoryView":177
  *             self.data = <char *>malloc(self.len)
@@ -30067,9 +31940,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  *             if self.dtype_is_object:
  */
-  __pyx_tuple__7 = PyTuple_Pack(1, __pyx_kp_s_unable_to_allocate_array_data); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(2, 177, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__7);
-  __Pyx_GIVEREF(__pyx_tuple__7);
+  __pyx_tuple__8 = PyTuple_Pack(1, __pyx_kp_s_unable_to_allocate_array_data); if (unlikely(!__pyx_tuple__8)) __PYX_ERR(2, 177, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__8);
+  __Pyx_GIVEREF(__pyx_tuple__8);
 
   /* "View.MemoryView":193
  *             bufmode = PyBUF_F_CONTIGUOUS | PyBUF_ANY_CONTIGUOUS
@@ -30078,9 +31951,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *         info.buf = self.data
  *         info.len = self.len
  */
-  __pyx_tuple__8 = PyTuple_Pack(1, __pyx_kp_s_Can_only_create_a_buffer_that_is); if (unlikely(!__pyx_tuple__8)) __PYX_ERR(2, 193, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__8);
-  __Pyx_GIVEREF(__pyx_tuple__8);
+  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_kp_s_Can_only_create_a_buffer_that_is); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(2, 193, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__9);
+  __Pyx_GIVEREF(__pyx_tuple__9);
 
   /* "(tree fragment)":2
  * def __reduce_cython__(self):
@@ -30088,18 +31961,18 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
-  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(2, 2, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__9);
-  __Pyx_GIVEREF(__pyx_tuple__9);
+  __pyx_tuple__10 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(2, 2, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__10);
+  __Pyx_GIVEREF(__pyx_tuple__10);
 
   /* "(tree fragment)":4
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")             # <<<<<<<<<<<<<<
  */
-  __pyx_tuple__10 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(2, 4, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__10);
-  __Pyx_GIVEREF(__pyx_tuple__10);
+  __pyx_tuple__11 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__11)) __PYX_ERR(2, 4, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__11);
+  __Pyx_GIVEREF(__pyx_tuple__11);
 
   /* "View.MemoryView":420
  *     def __setitem__(memoryview self, object index, object value):
@@ -30108,9 +31981,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  *         have_slices, index = _unellipsify(index, self.view.ndim)
  */
-  __pyx_tuple__11 = PyTuple_Pack(1, __pyx_kp_s_Cannot_assign_to_read_only_memor); if (unlikely(!__pyx_tuple__11)) __PYX_ERR(2, 420, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__11);
-  __Pyx_GIVEREF(__pyx_tuple__11);
+  __pyx_tuple__12 = PyTuple_Pack(1, __pyx_kp_s_Cannot_assign_to_read_only_memor); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(2, 420, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__12);
+  __Pyx_GIVEREF(__pyx_tuple__12);
 
   /* "View.MemoryView":497
  *             result = struct.unpack(self.view.format, bytesitem)
@@ -30119,9 +31992,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *         else:
  *             if len(self.view.format) == 1:
  */
-  __pyx_tuple__12 = PyTuple_Pack(1, __pyx_kp_s_Unable_to_convert_item_to_object); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(2, 497, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__12);
-  __Pyx_GIVEREF(__pyx_tuple__12);
+  __pyx_tuple__13 = PyTuple_Pack(1, __pyx_kp_s_Unable_to_convert_item_to_object); if (unlikely(!__pyx_tuple__13)) __PYX_ERR(2, 497, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__13);
+  __Pyx_GIVEREF(__pyx_tuple__13);
 
   /* "View.MemoryView":522
  *     def __getbuffer__(self, Py_buffer *info, int flags):
@@ -30130,9 +32003,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  *         if flags & PyBUF_ND:
  */
-  __pyx_tuple__13 = PyTuple_Pack(1, __pyx_kp_s_Cannot_create_writable_memory_vi); if (unlikely(!__pyx_tuple__13)) __PYX_ERR(2, 522, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__13);
-  __Pyx_GIVEREF(__pyx_tuple__13);
+  __pyx_tuple__14 = PyTuple_Pack(1, __pyx_kp_s_Cannot_create_writable_memory_vi); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(2, 522, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__14);
+  __Pyx_GIVEREF(__pyx_tuple__14);
 
   /* "View.MemoryView":572
  *         if self.view.strides == NULL:
@@ -30141,9 +32014,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  *         return tuple([stride for stride in self.view.strides[:self.view.ndim]])
  */
-  __pyx_tuple__14 = PyTuple_Pack(1, __pyx_kp_s_Buffer_view_does_not_expose_stri); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(2, 572, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__14);
-  __Pyx_GIVEREF(__pyx_tuple__14);
+  __pyx_tuple__15 = PyTuple_Pack(1, __pyx_kp_s_Buffer_view_does_not_expose_stri); if (unlikely(!__pyx_tuple__15)) __PYX_ERR(2, 572, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__15);
+  __Pyx_GIVEREF(__pyx_tuple__15);
 
   /* "View.MemoryView":579
  *     def suboffsets(self):
@@ -30152,12 +32025,12 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  *         return tuple([suboffset for suboffset in self.view.suboffsets[:self.view.ndim]])
  */
-  __pyx_tuple__15 = PyTuple_New(1); if (unlikely(!__pyx_tuple__15)) __PYX_ERR(2, 579, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__15);
+  __pyx_tuple__16 = PyTuple_New(1); if (unlikely(!__pyx_tuple__16)) __PYX_ERR(2, 579, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__16);
   __Pyx_INCREF(__pyx_int_neg_1);
   __Pyx_GIVEREF(__pyx_int_neg_1);
-  PyTuple_SET_ITEM(__pyx_tuple__15, 0, __pyx_int_neg_1);
-  __Pyx_GIVEREF(__pyx_tuple__15);
+  PyTuple_SET_ITEM(__pyx_tuple__16, 0, __pyx_int_neg_1);
+  __Pyx_GIVEREF(__pyx_tuple__16);
 
   /* "(tree fragment)":2
  * def __reduce_cython__(self):
@@ -30165,18 +32038,18 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
-  __pyx_tuple__16 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__16)) __PYX_ERR(2, 2, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__16);
-  __Pyx_GIVEREF(__pyx_tuple__16);
+  __pyx_tuple__17 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__17)) __PYX_ERR(2, 2, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__17);
+  __Pyx_GIVEREF(__pyx_tuple__17);
 
   /* "(tree fragment)":4
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")             # <<<<<<<<<<<<<<
  */
-  __pyx_tuple__17 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__17)) __PYX_ERR(2, 4, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__17);
-  __Pyx_GIVEREF(__pyx_tuple__17);
+  __pyx_tuple__18 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__18)) __PYX_ERR(2, 4, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__18);
+  __Pyx_GIVEREF(__pyx_tuple__18);
 
   /* "View.MemoryView":684
  *         if item is Ellipsis:
@@ -30185,9 +32058,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *                 seen_ellipsis = True
  *             else:
  */
-  __pyx_slice__18 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__18)) __PYX_ERR(2, 684, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice__18);
-  __Pyx_GIVEREF(__pyx_slice__18);
+  __pyx_slice__19 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__19)) __PYX_ERR(2, 684, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__19);
+  __Pyx_GIVEREF(__pyx_slice__19);
 
   /* "View.MemoryView":705
  *     for suboffset in suboffsets[:ndim]:
@@ -30196,9 +32069,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  * 
  */
-  __pyx_tuple__19 = PyTuple_Pack(1, __pyx_kp_s_Indirect_dimensions_not_supporte); if (unlikely(!__pyx_tuple__19)) __PYX_ERR(2, 705, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__19);
-  __Pyx_GIVEREF(__pyx_tuple__19);
+  __pyx_tuple__20 = PyTuple_Pack(1, __pyx_kp_s_Indirect_dimensions_not_supporte); if (unlikely(!__pyx_tuple__20)) __PYX_ERR(2, 705, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__20);
+  __Pyx_GIVEREF(__pyx_tuple__20);
 
   /* "(tree fragment)":2
  * def __reduce_cython__(self):
@@ -30206,21 +32079,21 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
-  __pyx_tuple__20 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__20)) __PYX_ERR(2, 2, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__20);
-  __Pyx_GIVEREF(__pyx_tuple__20);
+  __pyx_tuple__21 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__21)) __PYX_ERR(2, 2, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__21);
+  __Pyx_GIVEREF(__pyx_tuple__21);
 
   /* "(tree fragment)":4
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")             # <<<<<<<<<<<<<<
  */
-  __pyx_tuple__21 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__21)) __PYX_ERR(2, 4, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__21);
-  __Pyx_GIVEREF(__pyx_tuple__21);
-  __pyx_tuple__22 = PyTuple_Pack(3, __pyx_int_184977713, __pyx_int_136983863, __pyx_int_112105877); if (unlikely(!__pyx_tuple__22)) __PYX_ERR(2, 4, __pyx_L1_error)
+  __pyx_tuple__22 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__22)) __PYX_ERR(2, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__22);
   __Pyx_GIVEREF(__pyx_tuple__22);
+  __pyx_tuple__23 = PyTuple_Pack(3, __pyx_int_184977713, __pyx_int_136983863, __pyx_int_112105877); if (unlikely(!__pyx_tuple__23)) __PYX_ERR(2, 4, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__23);
+  __Pyx_GIVEREF(__pyx_tuple__23);
 
   /* "View.MemoryView":287
  *         return self.name
@@ -30229,9 +32102,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * cdef strided = Enum("<strided and direct>") # default
  * cdef indirect = Enum("<strided and indirect>")
  */
-  __pyx_tuple__28 = PyTuple_Pack(1, __pyx_kp_s_strided_and_direct_or_indirect); if (unlikely(!__pyx_tuple__28)) __PYX_ERR(2, 287, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__28);
-  __Pyx_GIVEREF(__pyx_tuple__28);
+  __pyx_tuple__29 = PyTuple_Pack(1, __pyx_kp_s_strided_and_direct_or_indirect); if (unlikely(!__pyx_tuple__29)) __PYX_ERR(2, 287, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__29);
+  __Pyx_GIVEREF(__pyx_tuple__29);
 
   /* "View.MemoryView":288
  * 
@@ -30240,9 +32113,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * cdef indirect = Enum("<strided and indirect>")
  * 
  */
-  __pyx_tuple__29 = PyTuple_Pack(1, __pyx_kp_s_strided_and_direct); if (unlikely(!__pyx_tuple__29)) __PYX_ERR(2, 288, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__29);
-  __Pyx_GIVEREF(__pyx_tuple__29);
+  __pyx_tuple__30 = PyTuple_Pack(1, __pyx_kp_s_strided_and_direct); if (unlikely(!__pyx_tuple__30)) __PYX_ERR(2, 288, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__30);
+  __Pyx_GIVEREF(__pyx_tuple__30);
 
   /* "View.MemoryView":289
  * cdef generic = Enum("<strided and direct or indirect>")
@@ -30251,9 +32124,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  * 
  */
-  __pyx_tuple__30 = PyTuple_Pack(1, __pyx_kp_s_strided_and_indirect); if (unlikely(!__pyx_tuple__30)) __PYX_ERR(2, 289, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__30);
-  __Pyx_GIVEREF(__pyx_tuple__30);
+  __pyx_tuple__31 = PyTuple_Pack(1, __pyx_kp_s_strided_and_indirect); if (unlikely(!__pyx_tuple__31)) __PYX_ERR(2, 289, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__31);
+  __Pyx_GIVEREF(__pyx_tuple__31);
 
   /* "View.MemoryView":292
  * 
@@ -30262,9 +32135,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * cdef indirect_contiguous = Enum("<contiguous and indirect>")
  * 
  */
-  __pyx_tuple__31 = PyTuple_Pack(1, __pyx_kp_s_contiguous_and_direct); if (unlikely(!__pyx_tuple__31)) __PYX_ERR(2, 292, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__31);
-  __Pyx_GIVEREF(__pyx_tuple__31);
+  __pyx_tuple__32 = PyTuple_Pack(1, __pyx_kp_s_contiguous_and_direct); if (unlikely(!__pyx_tuple__32)) __PYX_ERR(2, 292, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__32);
+  __Pyx_GIVEREF(__pyx_tuple__32);
 
   /* "View.MemoryView":293
  * 
@@ -30273,19 +32146,19 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  * 
  */
-  __pyx_tuple__32 = PyTuple_Pack(1, __pyx_kp_s_contiguous_and_indirect); if (unlikely(!__pyx_tuple__32)) __PYX_ERR(2, 293, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__32);
-  __Pyx_GIVEREF(__pyx_tuple__32);
+  __pyx_tuple__33 = PyTuple_Pack(1, __pyx_kp_s_contiguous_and_indirect); if (unlikely(!__pyx_tuple__33)) __PYX_ERR(2, 293, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__33);
+  __Pyx_GIVEREF(__pyx_tuple__33);
 
   /* "(tree fragment)":1
  * def __pyx_unpickle_Enum(__pyx_type, long __pyx_checksum, __pyx_state):             # <<<<<<<<<<<<<<
  *     cdef object __pyx_PickleError
  *     cdef object __pyx_result
  */
-  __pyx_tuple__33 = PyTuple_Pack(5, __pyx_n_s_pyx_type, __pyx_n_s_pyx_checksum, __pyx_n_s_pyx_state, __pyx_n_s_pyx_PickleError, __pyx_n_s_pyx_result); if (unlikely(!__pyx_tuple__33)) __PYX_ERR(2, 1, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__33);
-  __Pyx_GIVEREF(__pyx_tuple__33);
-  __pyx_codeobj__34 = (PyObject*)__Pyx_PyCode_New(3, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__33, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_pyx_unpickle_Enum, 1, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__34)) __PYX_ERR(2, 1, __pyx_L1_error)
+  __pyx_tuple__34 = PyTuple_Pack(5, __pyx_n_s_pyx_type, __pyx_n_s_pyx_checksum, __pyx_n_s_pyx_state, __pyx_n_s_pyx_PickleError, __pyx_n_s_pyx_result); if (unlikely(!__pyx_tuple__34)) __PYX_ERR(2, 1, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__34);
+  __Pyx_GIVEREF(__pyx_tuple__34);
+  __pyx_codeobj__35 = (PyObject*)__Pyx_PyCode_New(3, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__34, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_pyx_unpickle_Enum, 1, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__35)) __PYX_ERR(2, 1, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -30738,7 +32611,7 @@ if (!__Pyx_RefNanny) {
  * cdef strided = Enum("<strided and direct>") # default
  * cdef indirect = Enum("<strided and indirect>")
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__28, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 287, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__29, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 287, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_XGOTREF(generic);
   __Pyx_DECREF_SET(generic, __pyx_t_1);
@@ -30752,7 +32625,7 @@ if (!__Pyx_RefNanny) {
  * cdef indirect = Enum("<strided and indirect>")
  * 
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__29, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 288, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__30, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 288, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_XGOTREF(strided);
   __Pyx_DECREF_SET(strided, __pyx_t_1);
@@ -30766,7 +32639,7 @@ if (!__Pyx_RefNanny) {
  * 
  * 
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__30, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 289, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__31, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 289, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_XGOTREF(indirect);
   __Pyx_DECREF_SET(indirect, __pyx_t_1);
@@ -30780,7 +32653,7 @@ if (!__Pyx_RefNanny) {
  * cdef indirect_contiguous = Enum("<contiguous and indirect>")
  * 
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__31, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 292, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__32, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 292, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_XGOTREF(contiguous);
   __Pyx_DECREF_SET(contiguous, __pyx_t_1);
@@ -30794,7 +32667,7 @@ if (!__Pyx_RefNanny) {
  * 
  * 
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__32, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 293, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__33, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 293, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_XGOTREF(indirect_contiguous);
   __Pyx_DECREF_SET(indirect_contiguous, __pyx_t_1);
@@ -30941,15 +32814,11 @@ static PyObject *__Pyx_GetBuiltinName(PyObject *name) {
     return result;
 }
 
-/* PyIntFromDouble */
-#if PY_MAJOR_VERSION < 3
-static CYTHON_INLINE PyObject* __Pyx_PyInt_FromDouble(double value) {
-    if (value >= (double)LONG_MIN && value <= (double)LONG_MAX) {
-        return PyInt_FromLong((long)value);
-    }
-    return PyLong_FromDouble(value);
+/* BufferIndexError */
+static void __Pyx_RaiseBufferIndexError(int axis) {
+  PyErr_Format(PyExc_IndexError,
+     "Out of bounds on buffer access (axis %d)", axis);
 }
-#endif
 
 /* PyErrFetchRestore */
 #if CYTHON_FAST_THREAD_STATE
@@ -31017,11 +32886,35 @@ static void __Pyx_WriteUnraisable(const char *name, CYTHON_UNUSED int clineno,
 #endif
 }
 
-/* BufferIndexError */
-static void __Pyx_RaiseBufferIndexError(int axis) {
-  PyErr_Format(PyExc_IndexError,
-     "Out of bounds on buffer access (axis %d)", axis);
+/* PyObjectCall */
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg, PyObject *kw) {
+    PyObject *result;
+    ternaryfunc call = Py_TYPE(func)->tp_call;
+    if (unlikely(!call))
+        return PyObject_Call(func, arg, kw);
+    if (unlikely(Py_EnterRecursiveCall((char*)" while calling a Python object")))
+        return NULL;
+    result = (*call)(func, arg, kw);
+    Py_LeaveRecursiveCall();
+    if (unlikely(!result) && unlikely(!PyErr_Occurred())) {
+        PyErr_SetString(
+            PyExc_SystemError,
+            "NULL result without error in PyObject_Call");
+    }
+    return result;
 }
+#endif
+
+/* PyIntFromDouble */
+#if PY_MAJOR_VERSION < 3
+static CYTHON_INLINE PyObject* __Pyx_PyInt_FromDouble(double value) {
+    if (value >= (double)LONG_MIN && value <= (double)LONG_MAX) {
+        return PyInt_FromLong((long)value);
+    }
+    return PyLong_FromDouble(value);
+}
+#endif
 
 /* PyCFunctionFastCall */
 #if CYTHON_FAST_PYCCALL
@@ -31163,26 +33056,6 @@ done:
     return result;
 }
 #endif
-#endif
-
-/* PyObjectCall */
-#if CYTHON_COMPILING_IN_CPYTHON
-static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg, PyObject *kw) {
-    PyObject *result;
-    ternaryfunc call = Py_TYPE(func)->tp_call;
-    if (unlikely(!call))
-        return PyObject_Call(func, arg, kw);
-    if (unlikely(Py_EnterRecursiveCall((char*)" while calling a Python object")))
-        return NULL;
-    result = (*call)(func, arg, kw);
-    Py_LeaveRecursiveCall();
-    if (unlikely(!result) && unlikely(!PyErr_Occurred())) {
-        PyErr_SetString(
-            PyExc_SystemError,
-            "NULL result without error in PyObject_Call");
-    }
-    return result;
-}
 #endif
 
 /* PyObjectCallMethO */
