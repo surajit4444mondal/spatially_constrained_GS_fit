@@ -89,20 +89,23 @@ cdef void calc_map_chi(double **spectrum, double *rms, double [:] sub_fitted,\
 	num_times=1
 	
 	t=0
-	
+	cdef int k
 	for y1 in range(num_y):
 		for x1 in range(num_x):
 			sum1=0.0
 			ind=y1*num_x+x1
 			spectrum_1d=spectrum[ind]
 			ind=find_model_ind(sub_fitted,x1,y1,param_lengths,num_params, num_x, num_y, num_freqs)  
+			k=0
 			for i in range(num_freqs):
 				if spectrum_1d[i]<0:
 					continue
 				error=sqrt(square(rms[i])+square(sys_error*spectrum_1d[i]))
 				sum1=sum1+square((model[ind+i]-spectrum_1d[i])/error)
+				k=k+1
 			ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
-			sub_fitted[ind]=sum1
+			if k>0:
+				sub_fitted[ind]=sum1
 	return
 	
 cdef void get_random_param_ind(int *rand_param_inds, int num_params, int **param_val_ind, int *param_val_lengths):
@@ -176,8 +179,8 @@ cdef void do_bee_swarm_optimisation(double **spectrum, double *rms, double [:] m
 	
 	cdef double init_grad_chi=grad_chi
 	cdef int max_iter=1000
-	cdef double exit_drop=0.2
-	cdef double good_drop=0.1
+	cdef double exit_drop=0.6
+	cdef double good_drop=0.4
 	cdef int max_iter_good_drop=max_iter//2
 	
 	cdef int iter1=0
@@ -465,13 +468,10 @@ cdef double remove_discontinuities(numpy.ndarray[numpy.double_t, ndim=4] cube,\
 						temporal_smoothness_enforcer)
 						
 	
-	
+	print (grad_chi,current_grad_chi)
 	if grad_chi<=current_grad_chi:
-		print ("Entered 1")
-		for i in range(num_val):
 			fitted[i]=fitted_copy[i]
 	else:
-		print ("Entered 2")
 		grad_chi=current_grad_chi
 
 		
@@ -675,19 +675,23 @@ cdef int find_max_freq(double * freqs,double upper_freq,int num_freqs):
 	if freqs[num_freqs-1]<=upper_freq:
 		return num_freqs-1		
 
-cdef int detect_low_snr_freqs(double *spectrum,double *rms, double rms_thresh, int *pos, int num_freqs):
+cdef int detect_low_snr_freqs(double *spectrum,double *rms, double rms_thresh, int *pos, int low_ind, int high_ind,int num_freqs):
+	'''
+	counts the number of high SNR freqs
+	'''
 	cdef int i
 	cdef int j
 	j=0
 	for i in range(num_freqs):
 		if rms[i]<1e-5:
 			pos[i]=1
-			j=j+1
+			
 		elif spectrum[i]<rms_thresh*rms[i]:
 			pos[i]=1
-			j=j+1
 		else:
 			pos[i]=0
+			if i>=low_ind and i<=high_ind:
+				j=j+1
 	return j
 
 cdef double square(double x):
@@ -989,7 +993,7 @@ cdef void make_cube_fit_ready(int num_times,int num_y, int num_x,int num_freqs, 
 			double upper_freq, int ***low_freq_ind, int ***upper_freq_ind, int min_freq_num,\
 			int num_params, double [:] fitted, int *pos, double rms_thresh):
 
-	cdef int t, i, y1, x1,j, low_ind, high_ind, low_snr_freq_num,l, ind5, ind3
+	cdef int t, i, y1, x1,j, low_ind, high_ind, high_snr_freq_num,l, ind5, ind3
 	cdef double *spectrum
 	cdef double *rms
 	
@@ -1010,8 +1014,8 @@ cdef void make_cube_fit_ready(int num_times,int num_y, int num_x,int num_freqs, 
 				calc_fitrange_homogenous(spectrum, &low_ind, &high_ind,num_freqs)
 				low_freq_ind[t][y1][x1]=low_ind
 				upper_freq_ind[t][y1][x1]=high_ind
-				low_snr_freq_num=detect_low_snr_freqs(spectrum,rms,rms_thresh,pos+ind3,num_freqs)
-				if low_snr_freq_num>min_freq_num:
+				high_snr_freq_num=detect_low_snr_freqs(spectrum,rms,rms_thresh,pos+ind3,low_ind,high_ind,num_freqs)
+				if high_snr_freq_num<min_freq_num:
 					for l in range(num_params):
 						ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+l
 						fitted[ind5]=-1
@@ -1042,7 +1046,7 @@ cdef double calc_red_chi_all_pix(int num_times, int num_freqs, int num_y, int nu
 	cdef int low_ind,high_ind, t, x1,y1,j, ind3,ind
 	cdef int low_snr_freq_num
 	cdef int ind5
-	
+	'''
 	spectrum=<double *>PyMem_Malloc(num_freqs*sizeof(double))
 	rms=<double *>PyMem_Malloc(num_freqs*sizeof(double))
 	sys_err=<double *>PyMem_Malloc(num_freqs*sizeof(double))
@@ -1084,16 +1088,16 @@ cdef double calc_red_chi_all_pix(int num_times, int num_freqs, int num_y, int nu
 	PyMem_Free(error)
 	
 	###------------------------------------------ For testing the code after initial value finding---------------------####
-	'''
+	
 	hf=h5py.File("test_cython_code.hdf5","w")
 	hf.create_dataset("fitted",data=fitted)
 	hf.close()
-	
+	'''
 	hf=h5py.File('test_cython_code.hdf5')
 	cdef numpy.ndarray[numpy.double_t,ndim=1]fitted1
 	fitted1=np.array(hf['fitted'])
 	hf.close()
-	'''
+	
 	####------------------------------------ for testing---------------------------------####
 	
 	
@@ -1102,9 +1106,14 @@ cdef double calc_red_chi_all_pix(int num_times, int num_freqs, int num_y, int nu
 						
 	
 				
-	cdef double grad_chi=remove_discontinuities(cube, err_cube, model, pos, low_freq_ind, upper_freq_ind, fitted,param_val,num_times,num_x, num_y, \
+	cdef double grad_chi=remove_discontinuities(cube, err_cube, model, pos, low_freq_ind, upper_freq_ind, fitted1,param_val,num_times,num_x, num_y, \
 				num_params,num_freqs,search_length,discont_thresh, param_val, sys_error,spatial_smoothness_enforcer,\
-						temporal_smoothness_enforcer,param_lengths1)				
+						temporal_smoothness_enforcer,param_lengths1)		
+						
+	cdef unsigned int num_val=num_times*num_x*num_y*(num_params+1)
+	
+	for i in range(num_val):
+		fitted[i]=fitted1[i]		
 	
 	return grad_chi
 	

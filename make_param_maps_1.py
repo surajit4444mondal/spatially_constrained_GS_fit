@@ -88,7 +88,7 @@ for i in range(model.num_params):
 	
 search_length=5
 discontinuity_thresh=20.0
-spatial_smooth=0.02
+spatial_smooth=0.05
 temporal_smooth=0.0
 frac_tol=0.1
 max_iter=10
