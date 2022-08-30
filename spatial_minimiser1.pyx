@@ -183,6 +183,25 @@ cdef void cluster_to_add(fof_struct *fof_list, fof_struct *member_struct, double
 		temp1=temp1.cluster_forward
 		i=i+1
 	return
+cdef void find_member_number(fof_struct *fof_list, int *member_number):
+	cdef fof_struct *temp1
+	cdef fof_struct *temp2
+	cdef double dist
+	cdef int i,j
+	
+	temp1=fof_list
+	i=0
+	j=0
+	while temp1!=NULL:
+		temp2=temp1
+		j=0
+		while temp2!=NULL:
+			j=j+1
+			temp2=temp2.member_forward
+		temp1=temp1.cluster_forward
+		member_number[i]=j
+		i=i+1
+	return
 
 cdef int print_cluster(fof_struct *fof_list):
 	
@@ -204,6 +223,51 @@ cdef int print_cluster(fof_struct *fof_list):
 		i=i+1
 	return i
 	
+cdef int add_locs_to_change(int cluster_num, int **locations_to_change, fof_struct *fof_list, int max_size):
+	cdef int i,inserted
+	inserted=0
+	for i in range(max_size):
+		if locations_to_change[0][i]<0:
+			inserted=1
+			break
+	if inserted==0:
+		return inserted
+	
+	cdef fof_struct *temp1
+	cdef fof_struct *temp2
+	cdef double dist
+	cdef int j
+	
+	temp1=fof_list
+	j=0
+	while temp1!=NULL:
+		temp2=temp1
+		if j==cluster_num:
+			while temp2!=NULL:
+				locations_to_change[0][i]=temp2.x
+				locations_to_change[1][i]=temp2.y
+				i=i+1
+				temp2=temp2.member_forward
+			break
+		temp1=temp1.cluster_forward
+		j=j+1
+	return inserted	
+	
+cdef int find_cluster_num(fof_struct *fof_list):
+	
+	cdef fof_struct *temp1
+	cdef fof_struct *temp2
+	cdef double dist
+	cdef int i,j
+	
+	temp1=fof_list
+	i=0
+	j=0
+	while temp1!=NULL:
+		temp1=temp1.cluster_forward
+		i=i+1
+	return i
+
 cdef int find_high_indx(int high_ind_val, int num):
 	cdef int i
 	i=high_ind_val
@@ -217,14 +281,24 @@ cdef int find_low_indx(int low_ind_val):
 		i=i+1
 	return i
 	
-cdef int check_present_already(int *param_val_ind,int value, int max_size):
-	cdef int i
+cdef int check_present_already(int **param_val_ind,int *current_param_ind, int max_size, int num_params):
+	cdef int i, j
+	cdef int present=1
 	for i in range(max_size):
-		if param_val_ind[i]==value:
+		present=1
+		for j in range(num_params):
+			if param_val_ind[j][i]<0:
+				return i
+			
+			if param_val_ind[j][i]!=current_param_ind[j]:
+				present=0
+				break
+		if present==1:
 			return -1
-		if param_val_ind[i]<0:
-			return i
+		
+	
 	return 0
+	
 	
 cdef void gen_seed(double *seed, int num):
 	cdef timespec ts
@@ -472,6 +546,7 @@ cdef void make_data_ready_for_discont_removal(numpy.ndarray[numpy.double_t,ndim=
 	high_indy[0]=high_indy_val
 	high_indt[0]=0	
 	
+	
 	cdef int i,k
 	cdef int t,j, ind, insert_position			
 	
@@ -495,13 +570,6 @@ cdef void make_data_ready_for_discont_removal(numpy.ndarray[numpy.double_t,ndim=
 					if low_snr_loc[t*num_y*num_x*num_freqs+y1*num_x*num_freqs+x1*num_freqs+j]==0:  ### not a low SNR point
 						spectrum[i][j]=cube[t,j,y1,x1]
 					
-				for j in range(num_params):
-					ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+j
-					if fitted[ind]>0:
-						insert_position=check_present_already(param_val_ind[j],int(fitted[ind]), (2*half_box_size+1)*(2*half_box_size+1))
-						if insert_position>=0:
-							param_val_ind[j][insert_position]=int(fitted[ind])
-					
 			i=i+1
 	
 	t=t0
@@ -513,8 +581,43 @@ cdef void make_data_ready_for_discont_removal(numpy.ndarray[numpy.double_t,ndim=
 			for j in range(num_params+1):
 				previous_param_inds[i]=fitted[ind+j]
 				i=i+1
+			
+	return
 	
+cdef get_high_confidence_param_vals(int low_indx, int low_indy, int low_indt, int high_indx, int high_indy, int high_indt,\
+					 int num_times, int num_y, int num_x, int num_params,double[:] fitted, int **param_val_ind,\
+					  int **locations_to_change, int max_locations_to_change, int box_size):
+					 
+	cdef int x1,y1,i,j,k
+	cdef int to_change=0
+	cdef int t=0
+	cdef unsigned int ind
+	cdef int insert_position
+	cdef int *current_param_ind
+	current_param_ind=<int *>PyMem_Malloc(num_params*sizeof(int))
+	for y1 in range(low_indy,high_indy+1):
+		for x1 in range(low_indx,high_indx+1):
+			for k in range(max_locations_to_change):
+				if locations_to_change[0][k]==x1 and locations_to_change[1][k]==y1:
+					to_change=1
+					break
+			if to_change==1:
+				continue
+			ind=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)
+			
+			for j in range(num_params):
+				current_param_ind[j]=int(fitted[ind+j])
 				
+			if fitted[ind]>0:
+				insert_position=check_present_already(param_val_ind,current_param_ind, box_size,num_params)
+			
+				if insert_position>=0:
+					for j in range(num_params):
+						param_val_ind[j][insert_position]=current_param_ind[j]
+						
+							
+	
+	PyMem_Free(current_param_ind)	
 	return
 	
 cdef void count_unique_param_vals(int **param_val_ind, int *param_val_lengths, int num_params, int box_size):
@@ -554,12 +657,13 @@ cdef double find_distance(fof_struct *temp2, fof_struct *member_struct, int num_
 
 cdef void do_clustering_analysis(int **cluster_coords, int num_times, int num_y, int num_x,int num_params, int low_indx,\
 				int low_indy, int low_indt, int high_indx, int high_indy,\
-				int high_indt, double **param_vals, double [:] fitted, double max_dist):
+				int high_indt, double **param_vals, double [:] fitted, double max_dist, int max_locations_to_change,\
+				int **locations_to_change):
 	
 	cdef int x1,y1,t1
 	cdef fof_struct *fof
 	cdef fof_struct *fof_list
-	cdef int i
+	cdef int i,j
 	
 	cdef int cluster_numbers[2]
 	cluster_numbers[0]=-1
@@ -590,9 +694,46 @@ cdef void do_clustering_analysis(int **cluster_coords, int num_times, int num_y,
 					join_clusters(fof_list, cluster_numbers[0], cluster_numbers[1])
 			i=i+1
 					
-	cdef int num_cluster=print_cluster(fof_list)
-	#find_cluster_params(fof_list)
+	cdef int num_cluster=find_cluster_num(fof_list)
+	
+	
+	cdef int *member_number
+	member_number=<int *>PyMem_Malloc(num_cluster*sizeof(int))
+	find_member_number(fof_list,member_number)
+	
+		
+	cdef int *locs_to_change
+	
+	locs_to_change=<int *>PyMem_Malloc(max_locations_to_change*sizeof(int))
+	
+	for i in range(max_locations_to_change):
+		locs_to_change[i]=-1
+	
+	cdef int member_num, total_locs
+	cdef int filled=0
+	cdef int inserted
+	total_locs=0
+	j=0
+	
+	for member_num in range(4):
+		for i in range(num_cluster):
+			if filled==1:
+				break
+			if member_number[i]==member_num:
+				total_locs=total_locs+member_num
+				if total_locs>max_locations_to_change:
+					filled=1
+				else:
+					locs_to_change[j]=i
+					inserted=add_locs_to_change(i,locations_to_change,fof_list,max_locations_to_change)
+					if inserted==0:
+						filled=1
+					j=j+1
+	
+	
 	free_cluster(fof_list)
+	PyMem_Free(member_number)
+	PyMem_Free(locs_to_change)
 	return	
 	 		
 
@@ -684,10 +825,20 @@ cdef double remove_discontinuities(numpy.ndarray[numpy.double_t, ndim=4] cube,\
 		
 	for i in range(discont_num):
 		previous_param_inds[i]=<double *>PyMem_Malloc(box_size*(num_params+1)*sizeof(double))
+		
+	cdef int max_locations_to_change=10
+	cdef int *locations_to_change[2]
 	
-	for i in range(21,discont_num):
+	for i in range(2):
+		locations_to_change[i]=<int *>PyMem_Malloc(max_locations_to_change*sizeof(int))
+		for j in range(max_locations_to_change):
+			locations_to_change[i][j]=-1
+		
+	
+	for i in range(discont_num):
 		if discont[0][i]<0 and discont[1][i]<0 and discont[2][i]<0:
 			continue
+			
 		make_data_ready_for_discont_removal(cube,err_cube,low_snr_loc,\
 					low_freq_ind,upper_freq_ind,\
 					num_times,num_y,num_x,num_freqs, \
@@ -697,17 +848,22 @@ cdef double remove_discontinuities(numpy.ndarray[numpy.double_t, ndim=4] cube,\
 					&high_indt,search_length, param_val_ind, fitted,\
 					previous_param_inds[i])
 		
-		count_unique_param_vals(param_val_ind,param_val_lengths, num_params, box_size)
+		#count_unique_param_vals(param_val_ind,param_val_lengths, num_params, box_size)
 		
 		do_clustering_analysis(cluster_coords, num_times, num_y, num_x,num_params, low_indx,low_indy,low_indt,\
-					high_indx, high_indy, high_indt, param_val_actual, fitted, max_dist) 
+					high_indx, high_indy, high_indt, param_val_actual, fitted, max_dist, max_locations_to_change,\
+					locations_to_change) 
+					
+		get_high_confidence_param_vals(low_indx,low_indy, low_indt,high_indx,high_indy,high_indt, num_times, \
+						num_y, num_x, num_params, fitted, param_val_ind,locations_to_change,\
+						 max_locations_to_change, box_size)
 		
 		#do_bee_swarm_optimisation(spectrum, rms, model,num_freqs, param_val_ind, param_val_lengths,\
 		#			 num_params, low_indx,low_indy,low_indt,high_indx,high_indy,high_indt,\
 		#			 fitted, param_val_actual, sys_error,spatial_smoothness_enforcer,\
 		#				temporal_smoothness_enforcer, num_x, num_y,model_param_lengths)
 		remove_duplicate_findings(discont, discont_num,low_indx, low_indy, low_indt, high_indx, high_indy,high_indt)				
-		break
+		
 		
 	
 	
@@ -727,6 +883,9 @@ cdef double remove_discontinuities(numpy.ndarray[numpy.double_t, ndim=4] cube,\
 	
 	for i in range(discont_num):
 		PyMem_Free(previous_param_inds[i])
+		
+	for i in range(2):
+		PyMem_Free(locations_to_change[i])
 		
 		
 	
@@ -1387,7 +1546,6 @@ cdef double calc_red_chi_all_pix(int num_times, int num_freqs, int num_y, int nu
 	
 	for i in range(num_val):
 		fitted[i]=fitted1[i]		
-	
 	return grad_chi
 	
 
