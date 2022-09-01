@@ -597,6 +597,7 @@ cdef get_high_confidence_param_vals(int low_indx, int low_indy, int low_indt, in
 	current_param_ind=<int *>PyMem_Malloc(num_params*sizeof(int))
 	for y1 in range(low_indy,high_indy+1):
 		for x1 in range(low_indx,high_indx+1):
+			to_change=0
 			for k in range(max_locations_to_change):
 				if locations_to_change[0][k]==x1 and locations_to_change[1][k]==y1:
 					to_change=1
@@ -615,24 +616,19 @@ cdef get_high_confidence_param_vals(int low_indx, int low_indy, int low_indt, in
 					for j in range(num_params):
 						param_val_ind[j][insert_position]=current_param_ind[j]
 						
-							
-	
 	PyMem_Free(current_param_ind)	
 	return
 	
-cdef void count_unique_param_vals(int **param_val_ind, int *param_val_lengths, int num_params, int box_size):
+cdef unsigned int count_unique_param_vals(int **param_val_ind, int num_params, int box_size):
 	cdef int i,j
 	cdef int full_box=1
-	for i in range(num_params):
-		full_box=1
-		for j in range(box_size):
-			if param_val_ind[i][j]<0:
-				param_val_lengths[i]=j
-				full_box=0
-				break	
-		if full_box==1:
-			param_val_lengths[i]=box_size
-	return
+	
+	i=0
+	for j in range(box_size):
+		if param_val_ind[i][j]<0:
+			return j+1
+			
+	return box_size
 	
 cdef void remove_duplicate_findings(int **discont, int discont_num, int low_indx, int low_indy, int low_indt,\
 					int  high_indx, int high_indy, int high_indt):
@@ -833,9 +829,10 @@ cdef double remove_discontinuities(numpy.ndarray[numpy.double_t, ndim=4] cube,\
 		locations_to_change[i]=<int *>PyMem_Malloc(max_locations_to_change*sizeof(int))
 		for j in range(max_locations_to_change):
 			locations_to_change[i][j]=-1
-		
 	
-	for i in range(discont_num):
+	cdef unsigned int unique_params	
+	
+	for i in range(21,discont_num):
 		if discont[0][i]<0 and discont[1][i]<0 and discont[2][i]<0:
 			continue
 			
@@ -848,7 +845,6 @@ cdef double remove_discontinuities(numpy.ndarray[numpy.double_t, ndim=4] cube,\
 					&high_indt,search_length, param_val_ind, fitted,\
 					previous_param_inds[i])
 		
-		#count_unique_param_vals(param_val_ind,param_val_lengths, num_params, box_size)
 		
 		do_clustering_analysis(cluster_coords, num_times, num_y, num_x,num_params, low_indx,low_indy,low_indt,\
 					high_indx, high_indy, high_indt, param_val_actual, fitted, max_dist, max_locations_to_change,\
@@ -857,13 +853,16 @@ cdef double remove_discontinuities(numpy.ndarray[numpy.double_t, ndim=4] cube,\
 		get_high_confidence_param_vals(low_indx,low_indy, low_indt,high_indx,high_indy,high_indt, num_times, \
 						num_y, num_x, num_params, fitted, param_val_ind,locations_to_change,\
 						 max_locations_to_change, box_size)
+						 
+		unique_params=count_unique_param_vals(param_val_ind, num_params, box_size)
+		print (unique_params)
 		
 		#do_bee_swarm_optimisation(spectrum, rms, model,num_freqs, param_val_ind, param_val_lengths,\
 		#			 num_params, low_indx,low_indy,low_indt,high_indx,high_indy,high_indt,\
 		#			 fitted, param_val_actual, sys_error,spatial_smoothness_enforcer,\
 		#				temporal_smoothness_enforcer, num_x, num_y,model_param_lengths)
 		remove_duplicate_findings(discont, discont_num,low_indx, low_indy, low_indt, high_indx, high_indy,high_indt)				
-		
+		break
 		
 	
 	
@@ -911,7 +910,7 @@ cdef double remove_discontinuities(numpy.ndarray[numpy.double_t, ndim=4] cube,\
 	PyMem_Free(fitted_pointer)
 	return grad_chi
 
-cdef int detect_discont(double[:] fitted, double **param_val,int t0, int y, int x, int param,int num_x, \
+cdef int detect_discont_prev(double[:] fitted, double **param_val,int t0, int y, int x, int param,int num_x, \
 			int num_y, int num_times, int num_params, int search_length,\
 			 int axis, double thresh,int reverse):
 	
@@ -1020,7 +1019,110 @@ cdef int detect_discont(double[:] fitted, double **param_val,int t0, int y, int 
 		return 0  ### temporal discontinuity detection not implemented
 	
 	return 0
+	
+cdef int find_median(int *x, int size):
+	cdef int *sorted_array
+	sorted_array=PyMem_Malloc(size*sizeof(int))
+	
+	memcpy(sorted_array, x, size*sizeof(int)) 
+	
+	cdef int i
+	cdef int temp,indx
+	cdef int min_indx
+	cdef int min1
+	
+	for i in range(size):
+		min_indx=i
+		for indx in range(i,size):
+			temp=sorted_array[indx]
+			if temp<sorted_array[min_indx]:
+				min_indx=indx
+		temp=sorted_array[min_indx]
+		sorted_array[min_indx]=sorted_array[i]
+		sorted_array[i]=temp
+	
+	PyMem_Free(sorted_array)
+	return sorted_array[size//2]
+	
+	
+cdef int find_mad(int *x,int median, int size):
+	return 0
+#TODO The function below may have issues. Check. 
 
+cdef int detect_discont(double[:] fitted, double **param_val,int t0, int y, int x, int param,int num_x, \
+			int num_y, int num_times, int num_params, int search_length,\
+			 int axis, double thresh,int reverse):
+	
+	cdef int t,x1,y1,ind, ind1, ind5,j
+	cdef double sum1, sum2, mean,std, all_mean, ratio
+	cdef int low_indx, low_indy, high_indx,high_indy
+	
+	sum1=0.0
+	sum2=0.0
+	
+	ind5=t0*num_y*num_x*(num_params+1)+y*num_x*(num_params+1)+x*(num_params+1)+num_params
+	if fitted[ind5]<-0.2:
+		return 0
+			
+	cdef double param_value
+	
+	param_value=param_val[param][int(fitted[ind5-num_params+param])]
+	
+	
+	cdef int num
+		
+	
+	low_indx=x-search_length//2
+	high_indx=x+search_length//2
+		
+	low_indy=y-search_length//2
+	high_indy=y+search_length//2
+	
+	while low_indx<0:
+		low_indx=low_indx+1
+	
+	while low_indy<0:
+		low_indy=low_indy+1
+		
+	while high_indx>num_x-1:
+		high_indx=high_indx-1
+	
+	while high_indy>num_y-1:
+		high_indy=high_indy-1
+		
+	if (high_indy-low_indy<search_length) or (high_indx-low_indx<search_length):
+		return 0
+	
+	
+	cdef int *for_median
+	
+	for_median=<int *>PyMem_Malloc(search_length*search_length*sizeof(int))	
+	
+	j=0
+	for y1 in range(low_indy,high_indy+1):
+		for x1 in range(low_indx,high_indx+1):
+			ind5=t0*num_y*num_x*(num_params+1)+y*num_x*(num_params+1)+x1*(num_params+1)+num_params
+			if fitted[ind5]>0.0:
+				ind=t0*num_y*num_x*(num_params+1)+y*num_x*(num_params+1)+x1*(num_params+1)+param
+				for_median[j]=int(fitted[ind])
+				j=j+1
+	cdef int median=find_median(for_median,j)
+	cdef int mad=find_mad(for_median,median,j)
+	
+	j=0
+	for y1 in range(low_indy,high_indy+1):
+		for x1 in range(low_indx,high_indx+1):
+			ind5=t0*num_y*num_x*(num_params+1)+y*num_x*(num_params+1)+x1*(num_params+1)+num_params
+			if fitted[ind5]>0.0:
+				if mad<1e-4 and absolute(for_median[j]-median)<1e-4:
+					return 0
+				elif mad<1e-4 and absolute(for_median[j]-median)>1e-4:
+					return 1
+				elif for_median[j]>thresh*mad+median:
+					return 1
+	
+				j=j+1
+	return 0
 
 
 cdef int list_discont(double[:] fitted, double **param_val, int num_x, int num_y,\
