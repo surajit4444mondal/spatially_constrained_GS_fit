@@ -30,7 +30,7 @@ class Model:
 		hf.close()
 	
 
-time_slice='190200_190210'
+time_slice='185220_185230'
 model_file='/home/surajit/Downloads/20210507/eovsa_data/model_gs_spectra.hdf5'
 outfile='model_paramaters_'+time_slice+'.hdf5'
 lower_freq=2
@@ -45,7 +45,7 @@ lowest_freq=2
 highest_freq=15
 sys_error=0.2
 rms_thresh=3.0
-min_freq_num=10
+min_freq_num=30
 
 spectrum_files=['/home/surajit/Downloads/20210507/eovsa_data/time_'+time_slice+'_scaled.fits']
 
@@ -94,14 +94,22 @@ frac_tol=0.1
 max_iter=10
 max_dist_parameter_space=4
 
+print (model.freqs)
+print (spectrum_shape)
+
+
+if spectrum_shape[1]==51:
+	num_freqs=spectrum_shape[1]-1
+else:
+	num_freqs=spectrum_shape[1]
 f1=chi_mod.compute_min_chi_square(model1,spectrum.spectrum,spectrum.error,lowest_freq,\
 		highest_freq,param_lengths,model.freqs,sys_error,rms_thresh,min_freq_num,\
-		model.num_params, spectrum_shape[0],spectrum_shape[1],spectrum_shape[2],\
+		model.num_params, spectrum_shape[0],num_freqs,spectrum_shape[2],\
 		spectrum_shape[3],param_vals,spatial_smoothness_enforcer=spatial_smooth,
 		temporal_smoothness_enforcer=temporal_smooth,\
 		search_length=search_length,discont_thresh=discontinuity_thresh,\
 		frac_tol=0.1,max_iter=max_iter, max_dist_parameter_space=max_dist_parameter_space)
-'''
+
 f1=f1.reshape((spectrum_shape[0],spectrum_shape[2],spectrum_shape[3],model.num_params+1))
 #print (f1[0,0,0,:])
 end=time.time()
@@ -119,7 +127,7 @@ for t in range(spectrum_shape[0]):
 
 param_names=model.param_names
 
-hf=h5py.File("fitted_param_maps_"+time_slice+"_smoothness_enforced.hdf5",'w')
+hf=h5py.File("/home/surajit/Downloads/20210507/eovsa_data/fitted_param_maps_"+time_slice+".hdf5",'w')
 hf.attrs['xmin']=xmin
 hf.attrs['ymin']=ymin
 hf.attrs['xmax']=xmax
@@ -135,4 +143,4 @@ for n,key in enumerate(param_names):
 	hf.create_dataset(key,data=param_maps[:,:,:,n])
 hf.create_dataset('chi_sq',data=chi_map[:,:,:])
 hf.close()
-'''
+

@@ -1022,7 +1022,7 @@ cdef int detect_discont_prev(double[:] fitted, double **param_val,int t0, int y,
 	
 cdef int find_median(int *x, int size):
 	cdef int *sorted_array
-	sorted_array=PyMem_Malloc(size*sizeof(int))
+	sorted_array=<int *>PyMem_Malloc(size*sizeof(int))
 	
 	memcpy(sorted_array, x, size*sizeof(int)) 
 	
@@ -1580,7 +1580,7 @@ cdef double calc_red_chi_all_pix(int num_times, int num_freqs, int num_y, int nu
 	cdef int low_ind,high_ind, t, x1,y1,j, ind3,ind
 	cdef int low_snr_freq_num
 	cdef int ind5
-	'''
+	
 	spectrum=<double *>PyMem_Malloc(num_freqs*sizeof(double))
 	rms=<double *>PyMem_Malloc(num_freqs*sizeof(double))
 	sys_err=<double *>PyMem_Malloc(num_freqs*sizeof(double))
@@ -1622,16 +1622,16 @@ cdef double calc_red_chi_all_pix(int num_times, int num_freqs, int num_y, int nu
 	PyMem_Free(error)
 	
 	###------------------------------------------ For testing the code after initial value finding---------------------####
-	
+	'''
 	hf=h5py.File("test_cython_code.hdf5","w")
 	hf.create_dataset("fitted",data=fitted)
 	hf.close()
-	'''
+	
 	hf=h5py.File('test_cython_code.hdf5')
 	cdef numpy.ndarray[numpy.double_t,ndim=1]fitted1
 	fitted1=np.array(hf['fitted'])
 	hf.close()
-	
+	'''
 	####------------------------------------ for testing---------------------------------####
 	
 	
@@ -1640,14 +1640,14 @@ cdef double calc_red_chi_all_pix(int num_times, int num_freqs, int num_y, int nu
 						
 	
 				
-	cdef double grad_chi=remove_discontinuities(cube, err_cube, model, pos, low_freq_ind, upper_freq_ind, fitted1,param_val,num_times,num_x, num_y, \
-				num_params,num_freqs,search_length,discont_thresh, param_val, sys_error,spatial_smoothness_enforcer,\
-						temporal_smoothness_enforcer,param_lengths1, max_dist)		
+	cdef double grad_chi=0.0#remove_discontinuities(cube, err_cube, model, pos, low_freq_ind, upper_freq_ind, fitted1,param_val,num_times,num_x, num_y, \
+	#			num_params,num_freqs,search_length,discont_thresh, param_val, sys_error,spatial_smoothness_enforcer,\
+	#					temporal_smoothness_enforcer,param_lengths1, max_dist)		
 						
-	cdef unsigned int num_val=num_times*num_x*num_y*(num_params+1)
+	#cdef unsigned int num_val=num_times*num_x*num_y*(num_params+1)
 	
-	for i in range(num_val):
-		fitted[i]=fitted1[i]		
+	#for i in range(num_val):
+	#	fitted[i]=fitted1[i]		
 	return grad_chi
 	
 
