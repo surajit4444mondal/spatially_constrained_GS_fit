@@ -585,14 +585,14 @@ def smooth_param_maps(spectral_cube, err_cube, fitted, param_val,numx,numy,num_p
 				
 
 										
-def create_smoothed_model_image(low_indx,low_indy,high_indx,high_indy,low_freq_ind,high_freq_ind,num_x, num_y, num_params, num_freqs, resolution,model,fitted, smoothed_model_cube):
+def create_smoothed_model_image(low_freq_ind,high_freq_ind,num_x, num_y, num_params, num_freqs, resolution,model,fitted, smoothed_model_cube):
 
 	
-	for y1 in range(low_indy,high_indy+1):
-		for x1 in range(low_indx,high_indx+1):
+	for y1 in range(num_y):
+		for x1 in range(num_x):
 			ind=y1*num_x*(num_params+1)+x1*(num_params+1)
 			if fitted[ind]>0:
-				smoothed_model_cube[:,y1-low_indy,x1-low_indx]=model[int(fitted[ind]),int(fitted[ind+1]),int(fitted[ind+2]),\
+				smoothed_model_cube[:,y1,x1]=model[int(fitted[ind]),int(fitted[ind+1]),int(fitted[ind+2]),\
 								int(fitted[ind+3]),int(fitted[ind+4]),:]
 	
 	for i in range(num_freqs):
@@ -701,12 +701,12 @@ def remove_big_clusters_image_comparison(clusters,cluster1,cluster2,\
 	high_freq_ind=40
 	
 	
-	model_image_cube=np.zeros((num_freqs,size_y,size_x))
-	observed_image_cube=spectral_cube[0,:,low_indy:high_indy+1,low_indx:high_indx+1]
+	model_image_cube=np.zeros((num_freqs,numy,numx))
+	observed_image_cube=spectral_cube[0,:,:,:]
 	
 	model_image_cube[:,:,:]=observed_image_cube
 	
-	create_smoothed_model_image(low_indx,low_indy,high_indx,high_indy,low_freq_ind,high_freq_ind,numx, numy, num_params, num_freqs, resolution,model,fitted, model_image_cube)
+	create_smoothed_model_image(low_freq_ind,high_freq_ind,numx, numy, num_params, num_freqs, resolution,model,fitted, model_image_cube)
 	
 	get_image_chisquare(observed_image_cube,model_image_cube,err_cube,low_indx,low_indy,high_indx,high_indy,numx,numy,num_params,fitted)
 	
@@ -760,7 +760,7 @@ def remove_big_clusters_image_comparison(clusters,cluster1,cluster2,\
 		satisfies_smoothness_condition=check_if_smoothness_condition_satisfied(cluster2, fitted,numx,numy,num_params)
 		if satisfies_smoothness_condition==False:
 			continue
-		create_smoothed_model_image(low_indx,low_indy,high_indx,high_indy,low_freq_ind,high_freq_ind,numx, numy, num_params, num_freqs, resolution,model,fitted, model_image_cube)
+		create_smoothed_model_image(low_freq_ind,high_freq_ind,numx, numy, num_params, num_freqs, resolution,model,fitted, model_image_cube)
 		get_image_chisquare(observed_image_cube,model_image_cube,err_cube,low_indx,low_indy,high_indx,high_indy,numx,numy,num_params,fitted)
 		grad_chisquare_new=calc_grad_chisquare(low_indx,low_indy,high_indx,high_indy,numx,numy, num_params, param_val,fitted)
 		if grad_chisquare_temp>grad_chisquare_new:
@@ -784,7 +784,7 @@ def remove_big_clusters_image_comparison(clusters,cluster1,cluster2,\
 	return	
 								
 										
-def smooth_param_maps_image_comparison(spectral_cube, err_cube, fitted, param_val,numx,numy,num_params,smooth_lengths,thresh,max_dist_parameter_space, model,resolution):
+def smooth_param_maps_image_comparison(spectral_cube, err_cube, fitted, param_val,numx,numy,num_params,smooth_lengths,thresh,max_dist_parameter_space, model,resolution, param_lengths):
 	j=0
 	model_shape=model.shape
 	sys_err=0.2
@@ -794,84 +794,88 @@ def smooth_param_maps_image_comparison(spectral_cube, err_cube, fitted, param_va
 	grads=subcubes[:,2]
 	sorted_indices=np.argsort(grads)[::-1]
 	
+	iter1=0
+	max_iter=3
+	
+	
 	for smooth_length in smooth_lengths:
-		subcubes[:,2]=grads
-		for sort_ind in sorted_indices:
-			if subcubes[sort_ind,2]<0:
-				continue
-			x=int(subcubes[sort_ind,0])
-			y=int(subcubes[sort_ind,1])
+		while iter1<max_iter:
+			subcubes=form_subcubes_with_gradients(numx,numy,num_params,param_val,fitted,smooth_length)
+			grads=subcubes[:,2]
+			sorted_indices=np.argsort(grads)[::-1]
+			for sort_ind in sorted_indices:
+				if subcubes[sort_ind,2]<0:
+					continue
+				x=int(subcubes[sort_ind,0])
+				y=int(subcubes[sort_ind,1])
+				
 			
-		
-			
-			low_indx=max(0,x-smooth_length//2)
-			low_indy=max(0,y-smooth_length//2)
+				
+				low_indx=max(0,x-smooth_length//2)
+				low_indy=max(0,y-smooth_length//2)
 
-			high_indx=min(numx-1,x+smooth_length//2)
-			high_indy=min(numy-1,y+smooth_length//2)
-			
-			
-			if high_indx-low_indx+1<smooth_length or high_indy-low_indy+1<smooth_length:
-				continue	
-			
-			clusters=get_clusters(fitted,low_indx,low_indy, high_indx,high_indy,numx,numy,num_params,max_dist_parameter_space)
-			
-			if len(clusters)<=1:
-				continue	
-			tot_member=get_total_members(clusters)
-			if tot_member<smooth_length**2:
-				continue
-			
-			cluster_len=len(clusters)
-			if cluster_len<=1:
-				return
+				high_indx=min(numx-1,x+smooth_length//2)
+				high_indy=min(numy-1,y+smooth_length//2)
 				
-			if cluster_len>6:
-				clusters=get_clusters(fitted,low_indx,low_indy, high_indx,high_indy,numx,numy,num_params,max_dist_parameter_space*1.5)
+				print (x,y)
+				if high_indx-low_indx+1<smooth_length or high_indy-low_indy+1<smooth_length:
+					continue	
+				
+				clusters=get_clusters(fitted,low_indx,low_indy, high_indx,high_indy,numx,numy,num_params,max_dist_parameter_space,param_lengths)
+				
+				if len(clusters)<=1:
+					continue	
+				tot_member=get_total_members(clusters)
+				if tot_member<smooth_length**2:
+					continue
+				
 				cluster_len=len(clusters)
-				
-			member_num=[]
-			for cluster in clusters:
-				member_num.append(len(cluster))	
-			
-			member_num=np.array(member_num)
-			sorted_pos=np.argsort(member_num)[::-1]
-			
-			cluster1=clusters[sorted_pos[0]]
-			
-			
-			len_cluster1=len(cluster1)
-			
-			min_params1=np.zeros(num_params,dtype=int)
-			max_params1=np.zeros(num_params,dtype=int)
-			for param in range(num_params):
-				ind=[]
-				for i in range(len_cluster1):
-					x1=cluster1[i][0]
-					y1=cluster1[i][1]
-					ind1=y1*numx*(num_params+1)+x1*(num_params+1)+param
-					ind.append(fitted[ind1])
-				ind=np.array(ind)
-				min_params1[param]=max(0,int(np.min(ind))-2)
-				max_params1[param]=min(int(np.max(ind))+2,model_shape[param]-1)
-				del ind	
-			
-			if member_num[sorted_pos[0]]==member_num[sorted_pos[1]]:
-				continue
-			print (x,y)
-			for cluster_num in sorted_pos[1:]:
-			#	if member_num[cluster_num]==member_num[sorted_pos[1]]:	
-				
-				if member_num[cluster_num]<0.5*member_num[sorted_pos[0]] and member_num[cluster_num]<8:
+				if cluster_len<=1:
+					continue
 					
-					remove_big_clusters_image_comparison(clusters,cluster1,clusters[cluster_num],\
-									spectral_cube,err_cube,sys_err,fitted, param_val,numx,numy,num_params,\
-									smooth_length,thresh,max_dist_parameter_space, model, low_indx,low_indy,\
-									high_indx,high_indy,min_params1,max_params1, resolution)
-			remove_overlapping_subcubes(subcubes,x,y,smooth_length,numy,numx)
-			j+=1
-			#if j>16:
-		#		break
+				if cluster_len>6:
+					clusters=get_clusters(fitted,low_indx,low_indy, high_indx,high_indy,numx,numy,num_params,max_dist_parameter_space*1.5,param_lengths)
+					cluster_len=len(clusters)
+					
+				member_num=[]
+				for cluster in clusters:
+					member_num.append(len(cluster))	
+				
+				member_num=np.array(member_num)
+				sorted_pos=np.argsort(member_num)[::-1]
+				
+				cluster1=clusters[sorted_pos[0]]
+				
+				
+				len_cluster1=len(cluster1)
+				
+				min_params1=np.zeros(num_params,dtype=int)
+				max_params1=np.zeros(num_params,dtype=int)
+				for param in range(num_params):
+					ind=[]
+					for i in range(len_cluster1):
+						x1=cluster1[i][0]
+						y1=cluster1[i][1]
+						ind1=y1*numx*(num_params+1)+x1*(num_params+1)+param
+						ind.append(fitted[ind1])
+					ind=np.array(ind)
+					min_params1[param]=max(0,int(np.min(ind))-2)
+					max_params1[param]=min(int(np.max(ind))+2,model_shape[param]-1)
+					del ind	
+				
+				
+				for cluster_num in sorted_pos[1:]:
+				#	if member_num[cluster_num]==member_num[sorted_pos[1]]:	
+					
+					if member_num[cluster_num]<0.5*member_num[sorted_pos[0]] and member_num[cluster_num]<8:
+						
+						remove_big_clusters_image_comparison(clusters,cluster1,clusters[cluster_num],\
+										spectral_cube,err_cube,sys_err,fitted, param_val,numx,numy,num_params,\
+										smooth_length,thresh,max_dist_parameter_space, model, low_indx,low_indy,\
+										high_indx,high_indy,min_params1,max_params1, resolution)
+				remove_overlapping_subcubes(subcubes,x,y,smooth_length,numy,numx)
+			iter1+=1
+				
 			
 		
 class Model:
@@ -951,18 +955,18 @@ for param in range(num_params):
 
 #remove_discont(spectrum.spectrum, spectrum.error, fitted, model.param_vals,spectrum_shape[3],spectrum_shape[2],num_params,\
 #						smooth_lengths,discontinuity_thresh,max_dist_parameter_space, model.model,param_lengths)
-print ("Calling smooth_param_maps")
-smooth_param_maps(spectrum.spectrum, spectrum.error, fitted, model.param_vals,spectrum_shape[3],spectrum_shape[2],num_params,\
-					smooth_lengths,discontinuity_thresh,max_dist_parameter_space, model.model,param_lengths)
-np.save("after_loop_cluster_smoothing.npy",fitted)
-#fitted=np.load("after_cluster_smoothing.npy")
-'''
+#print ("Calling smooth_param_maps")
+#smooth_param_maps(spectrum.spectrum, spectrum.error, fitted, model.param_vals,spectrum_shape[3],spectrum_shape[2],num_params,\
+#					smooth_lengths,discontinuity_thresh,max_dist_parameter_space, model.model,param_lengths)
+#np.save("after_loop_cluster_smoothing.npy",fitted)
+fitted=np.load("after_loop_cluster_smoothing.npy")
+
 smooth_lengths=[4,9]
 smooth_param_maps_image_comparison(spectrum.spectrum, spectrum.error, fitted, model.param_vals,spectrum_shape[3],spectrum_shape[2],num_params,smooth_lengths,\
-				discontinuity_thresh,max_dist_parameter_space*2, model.model,resolution)
+				discontinuity_thresh,max_dist_parameter_space, model.model,resolution,param_lengths)
 
-np.save("after_image_smoothing.npy",fitted)
-'''
+np.save("after_loop_cluster_full_image_smoothing.npy",fitted)
+
 
 '''
 hf=h5py.File("fitted_param_maps_"+time_slice+"_after_discont_removal_loop_cluster_remover.hdf5")
@@ -1004,7 +1008,7 @@ for t in range(spectrum_shape[0]):
 
 param_names=model.param_names
 
-hf=h5py.File("fitted_param_maps_"+time_slice+"_after_discont_removal_15loops_cluster_remover.hdf5",'w')
+hf=h5py.File("fitted_param_maps_"+time_slice+"_after_discont_removal_15loops_cluster_remover_full_image_smoothed.hdf5",'w')
 hf.attrs['xmin']=xmin
 hf.attrs['ymin']=ymin
 hf.attrs['xmax']=xmax

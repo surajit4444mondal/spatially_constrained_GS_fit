@@ -39,6 +39,8 @@ class Spectrum:
 			rms=np.nanstd(rdata[0,:,0:full_shape[1]//3,0:full_shape[2]],axis=(1,2))  ### taking rms along
 								### a horizontal stripe
 			error[i,:]=rms
+			
+			
 		
 		self.spectrum=spectrum
 		self.error=error
