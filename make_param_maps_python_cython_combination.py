@@ -321,8 +321,8 @@ def remove_big_clusters(clusters,cluster1,cluster2,spectral_cube,err_cube,sys_er
 		y0=point[1]
 		spectrum=np.ravel(spectral_cube[0,:,y0,x0])
 		new_params_temp[:]=-1
-		freq_ind=y0*num_x+x0
-		get_new_param_inds(spectrum,rms,model,min_params1,max_params1,param_lengths, new_params_temp,low_freq_ind[freq_ind],\
+		freq_ind=y0*numx+x0
+		cfunc.get_new_param_inds(spectrum,rms,model,min_params1,max_params1,param_lengths, new_params_temp,low_freq_ind[freq_ind],\
 							upper_freq_ind[freq_ind],rms_thresh,num_params, num_freqs,sys_err)	
 		if new_params_temp[0]>0:
 			ind=y0*numx*(num_params+1)+x0*(num_params+1)
@@ -352,7 +352,7 @@ def get_total_members(clusters):
 		member_num+=len(cluster)
 	return member_num
 	
-def form_subcubes_with_gradients(numx,numy,num_params,param_val,fitted,smooth_length):
+def form_subcubes_with_gradients(numx,numy,num_params,fitted,smooth_length,param_lengths):
 	cube_vals=np.ones((numy*numx,3))*(-1)
 	
 	
@@ -373,7 +373,7 @@ def form_subcubes_with_gradients(numx,numy,num_params,param_val,fitted,smooth_le
 			
 			cube_vals[j,0]=x
 			cube_vals[j,1]=y
-			grad=calc_gradient(x,y,param_val,fitted, numx,numy,num_params)
+			grad=cfunc.calc_gradient_wrapper(x,y,fitted, numx,numy,num_params,param_lengths,smoothness_enforcer)
 			cube_vals[j,2]=grad
 			j+=1
 	return cube_vals
@@ -399,24 +399,24 @@ def remove_overlapping_subcubes(cube_vals,x0,y0,smooth_length,numy,numx):
 			j+=1	
 	return		
 
-def smooth_param_maps(spectral_cube, err_cube, fitted,numx,numy,num_params,\
+def smooth_param_maps(spectral_cube, err_cube, fitted,param_val,numx,numy,num_params,\
 			smooth_lengths,thresh,max_dist_parameter_space, model,param_lengths,\
 			sys_err,num_freqs,low_freq_ind,upper_freq_ind,rms_thresh,max_iter=5):
 	j=0
 	
-	model_shape=model.shape
-	
-	subcubes=form_subcubes_with_gradients(numx,numy,num_params,param_val,fitted,smooth_lengths[0])
 	
 	
-	grads=subcubes[:,2]
-	sorted_indices=np.argsort(grads)[::-1]
+	#subcubes=form_subcubes_with_gradients(numx,numy,num_params,param_val,fitted,smooth_lengths[0],param_lengths)
+	
+	
+	#grads=subcubes[:,2]
+	#sorted_indices=np.argsort(grads)[::-1]
 	
 	for smooth_length in smooth_lengths:
 		iter1=0
 		changed_points=0
 		while iter1<max_iter:
-			subcubes=form_subcubes_with_gradients(numx,numy,num_params,fitted,smooth_lengths[0])
+			subcubes=form_subcubes_with_gradients(numx,numy,num_params,fitted,smooth_length,param_lengths)
 			grads=subcubes[:,2]
 			sorted_indices=np.argsort(grads)[::-1]
 			subcubes[:,2]=grads
@@ -476,7 +476,7 @@ def smooth_param_maps(spectral_cube, err_cube, fitted,numx,numy,num_params,\
 						ind.append(fitted[ind1])
 					ind=np.array(ind)
 					min_params1[param]=max(0,int(np.min(ind))-2)
-					max_params1[param]=min(int(np.max(ind))+2,model_shape[param]-1)
+					max_params1[param]=min(int(np.max(ind))+2,param_lengths[param]-1)
 					del ind	
 				
 				if member_num[sorted_pos[0]]==member_num[sorted_pos[1]]:
@@ -595,27 +595,27 @@ spectrum1=np.ravel(spectrum.spectrum)
 error1=np.ravel(spectrum.error)
 
 
-cfunc.compute_min_chi_square(model1,spectrum1,error1,lowest_freq,\
-		highest_freq,param_lengths,model.freqs,sys_error,rms_thresh,min_freq_num,\
-		model.num_params, num_times,num_freqs,numy,numx,param_vals,high_snr_freq_loc,\
-		fitted, low_freq_ind, upper_freq_ind)
+#cfunc.compute_min_chi_square(model1,spectrum1,error1,lowest_freq,\
+#		highest_freq,param_lengths,model.freqs,sys_error,rms_thresh,min_freq_num,\
+#		model.num_params, num_times,num_freqs,numy,numx,param_vals,high_snr_freq_loc,\
+#		fitted, low_freq_ind, upper_freq_ind)
 		
-#hf=h5py.File("python_cython_comb_test.hdf5")
+hf=h5py.File("python_cython_comb_test.hdf5")
 #fitted=np.array(hf['fitted'])
 #np.save("python_cython_comb_test.npy",fitted)
-#fitted=np.load("python_cython_comb_test.npy")
-#low_freq_ind=np.array(hf['low_freq_ind'])
-#upper_freq_ind=np.array(hf['upper_freq_ind'])
-#hf.close()
+fitted=np.load("python_cython_comb_test.npy")
+low_freq_ind=np.array(hf['low_freq_ind'])
+upper_freq_ind=np.array(hf['upper_freq_ind'])
+hf.close()
 
 print ("removing discont")		
 remove_discont(spectrum.spectrum, spectrum.error, fitted, model.param_vals,numx,numy,num_params,\
 		smooth_lengths,discontinuity_thresh,max_dist_parameter_space, model1,param_lengths,\
 		sys_error,num_freqs,low_freq_ind,upper_freq_ind,rms_thresh)
 		
-#smooth_param_maps(spectrum.spectrum, spectrum.error, fitted, model.param_vals,numx,numy,num_params,\
-#		smooth_lengths,discontinuity_thresh,max_dist_parameter_space, model.model,param_lengths,\
-#		sys_error,num_freqs,low_freq_ind,upper_freq_ind,rms_thresh)
+smooth_param_maps(spectrum.spectrum, spectrum.error, fitted, model.param_vals,numx,numy,num_params,\
+		smooth_lengths,discontinuity_thresh,max_dist_parameter_space, model1,param_lengths,\
+		sys_error,num_freqs,low_freq_ind,upper_freq_ind,rms_thresh)
 
 param_maps=np.zeros((num_times,numy,numx,num_params))
 chi_map=np.zeros((num_times,numy,numx))
@@ -630,7 +630,7 @@ for t in range(num_times):
 
 param_names=model.param_names
 
-hf=h5py.File("python_cython_comb_discont_removal_test.hdf5",'w')
+hf=h5py.File("python_cython_comb_discont_removal_cluster_removal_test.hdf5",'w')
 hf.attrs['xmin']=xmin
 hf.attrs['ymin']=ymin
 hf.attrs['xmax']=xmax
@@ -642,7 +642,7 @@ hf.attrs['rms_thresh']=rms_thresh
 hf.attrs['sys_error']=sys_error
 hf.attrs['min_freq_num']=min_freq_num
 
-hf.create_dataset('fitted',data=fitted)
+#hf.create_dataset('fitted',data=fitted)
 hf.create_dataset('low_freq_ind',data=low_freq_ind)
 hf.create_dataset('upper_freq_ind',data=upper_freq_ind)
 

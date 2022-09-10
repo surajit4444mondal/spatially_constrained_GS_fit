@@ -5,6 +5,61 @@ from cpython.mem cimport PyMem_Malloc, PyMem_Realloc, PyMem_Free
 from libc.string cimport memcpy 
 import cython	
 
+cpdef void get_new_param_inds(double [:]spectrum,\
+			  double [:]rms,
+			  double [:] model,\
+			  int [:]min_param,\
+			  int [:] max_param,\
+			  int [:] param_lengths,\
+			  double [:]params,\
+			  int min_freq_ind,\
+			  int max_freq_ind,\
+			  double rms_thresh,\
+			  int num_params,\
+			  int num_freqs,\
+			  double sys_err):
+			  
+	
+	cdef double chisq=1e9
+	cdef int i,j,k,l,m,n,p
+	cdef unsigned int model_ind
+	cdef unsigned int product=1
+	cdef int param_ind[5]
+	cdef double [:]model_spec
+	cdef int mid_ind
+	cdef double ratio,chisq_temp
+	for i in range(min_param[0],max_param[0]+1):
+		for j in range(min_param[1],max_param[1]+1):
+			for k in range(min_param[2],max_param[2]+1):
+				for l in range(min_param[3],max_param[3]+1):
+					for m in range(min_param[4],max_param[4]+1):
+						param_ind[0]=i
+						param_ind[1]=j
+						param_ind[2]=k
+						param_ind[3]=l
+						param_ind[4]=m
+						model_ind=0
+						for n in range(num_params):
+							product=1
+							for p in range(n+1,num_params):
+								product=product*param_lengths[p]
+							model_ind+=param_ind[n]*product*num_freqs
+						model_spec=model[model_ind:]
+						mid_ind=(min_freq_ind+max_freq_ind)//2
+						ratio=spectrum[mid_ind]/model_spec[mid_ind]
+						if ratio>2 or ratio<0.5:
+							continue
+						chisq_temp=calc_chi_square(spectrum, rms,sys_err, model_spec, min_freq_ind,max_freq_ind,rms_thresh)
+						if chisq_temp<chisq:
+							chisq=chisq_temp
+							params[0]=i
+							params[1]=j
+							params[2]=k
+							params[3]=l
+							params[4]=m
+							params[5]=chisq
+	return
+
 cdef int find_min_freq(double * freqs,\
 			double lower_freq,\
 			int num_freqs):
@@ -288,6 +343,18 @@ cdef double calc_grady(int x0,\
 		
 	cdef double grad=sqrt(square(grad1)+square(grad2))
 	return grad	
+	
+cpdef double calc_gradient_wrapper(int x0,\
+			   int y0,\
+			   double [:]fitted,\
+			   int num_x,\
+			   int num_y,\
+			   int num_params,\
+			   int [:]param_lengths,\
+			   double smoothness_enforcer):
+	return calc_gradient(x0,y0,&fitted[0],num_x,num_y,num_params,&param_lengths[0],smoothness_enforcer)
+			   
+			   
 	
 cdef double calc_gradient(int x0,\
 			   int y0,\
