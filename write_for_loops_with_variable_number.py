@@ -51,7 +51,7 @@ for i in range(len_x):
 		break
 print (lists)
 print (len(lists))
-'''	
+	
 
 x=[[1,2,3],[1,2,3,4],[1,2,3]]
 
@@ -78,4 +78,11 @@ for i in range(len_x):
 			
 print (lists)
 print (len(lists))
+'''
 
+from itertools import product
+
+x=[[1,2,3],[4,5,6,7],[8,9]]
+
+for elem in product(*x):
+	print (elem)

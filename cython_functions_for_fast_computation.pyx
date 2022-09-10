@@ -5,6 +5,45 @@ from cpython.mem cimport PyMem_Malloc, PyMem_Realloc, PyMem_Free
 from libc.string cimport memcpy 
 import cython	
 
+cpdef void get_image_chisquare(double [:,:,:] observed_image_cube,\
+			  double [:,:,:] model_image_cube,\
+			  double [:] rms,\
+			  int low_indx,\
+			  int low_indy,\
+			  int high_indx,\
+			  int high_indy,\
+			  int numx,\
+			  int numy,\
+			  int num_params,\
+			  double [:] fitted,\
+			  double sys_error,\
+			  int num_freqs,\
+			  int [:] low_freq_ind,\
+			  int [:] high_freq_ind,\
+			  double rms_thresh):
+	
+	cdef int i=0
+	cdef double chi_sq=0.0
+	cdef int y1,x1
+	cdef int j
+	cdef unsigned int ind,freq_ind
+
+	
+	for y1 in range(low_indy,high_indy+1):
+		j=0
+		for x1 in range(low_indx,high_indx+1):
+			ind=y1*numx*(num_params+1)+x1*(num_params+1)+num_params
+			if fitted[ind]>0:
+				freq_ind=y1*numx+x1
+				fitted[ind]=calc_chi_square(observed_image_cube[i,j,:], rms, \
+								sys_error, model_image_cube[i,j,:],\
+								low_freq_ind[freq_ind],high_freq_ind[freq_ind],\
+								rms_thresh)	
+			j+=1
+		i+=1	
+		
+	return
+
 cpdef void get_new_param_inds(double [:]spectrum,\
 			  double [:]rms,
 			  double [:] model,\
@@ -467,7 +506,7 @@ cdef void make_cube_fit_ready(int num_times,\
 		for y1 in range(num_y):
 			for x1 in range(num_x):
 				for i in range(num_freqs):
-					freq_ind=t*num_freqs*num_y*num_x+i*num_y*num_x+y1*num_x+x1
+					freq_ind=t*num_y*num_x*num_freqs+y1*num_x*num_freqs+x1*num_freqs+i
 					spectrum[i]=cube[freq_ind]
 				ind3=t*num_y*num_x*num_freqs+y1*num_x*num_freqs+x1*num_freqs		
 				low_ind=find_min_freq(freqs1,lower_freq,num_freqs)
@@ -545,7 +584,7 @@ cdef void calc_red_chi_all_pix(int num_times,\
 		for y1 in range(num_y):
 			for x1 in range(num_x):
 				for j in range(num_freqs):
-					freq_ind=t*num_freqs*num_y*num_x+j*num_y*num_x+y1*num_x+x1
+					freq_ind=t*num_y*num_x*num_freqs+y1*num_x*num_freqs+x1*num_freqs+j
 					spectrum[j]=cube[freq_ind]
 					sys_err[j]=sys_error*spectrum[j]
 					error[j]=sqrt(square(rms[j])+square(sys_err[j]))

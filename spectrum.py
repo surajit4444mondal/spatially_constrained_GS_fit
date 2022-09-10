@@ -40,9 +40,15 @@ class Spectrum:
 								### a horizontal stripe
 			error[i,:]=rms
 			
-			
+		spectrum1=np.zeros((num_files,shape[1],shape[2],shape[0]))
 		
-		self.spectrum=spectrum
+		for i in range(num_files):
+			for j in range(shape[1]):
+				for k in range(shape[2]):
+					for l in range(shape[0]):
+						spectrum1[i,j,k,l]=spectrum[i,l,j,k]	
+		
+		self.spectrum=spectrum1
 		self.error=error
 		
 	

@@ -6,6 +6,8 @@ from spectrum import Spectrum
 import cython_functions_for_fast_computation as cfunc
 import h5py
 from scipy.ndimage import gaussian_filter
+from itertools import product
+from astropy.convolution import convolve,Gaussian1DKernel
 
 smoothness_enforcer=0.05
 
@@ -166,7 +168,7 @@ def find_new_params(points_to_remove,fitted,model,spectrum,sys_error,rms,param_v
 						inds.append(fitted[ind-num_params:ind].tolist())
 		low_freq=low_freq_ind[y0*numx+x0]
 		upper_freq=upper_freq_ind[y0*numx+x0]
-		spectrum1=np.ravel(spectrum[:,y0-low_indy,x0-low_indx])
+		spectrum1=np.ravel(spectrum[y0-low_indy,x0-low_indx,:])
 		grad_chi_square=cfunc.calc_grad_chisquare(max(low_indx, x0-2),max(low_indy,y0-2),min(high_indx,x0+2),min(high_indy,y0+2), \
 					numx,numy,num_params, fitted, param_lengths, smoothness_enforcer)	
 		for n,param_ind in enumerate(inds):
@@ -236,7 +238,7 @@ def remove_discont(spectral_cube, \
 				if high_indx-low_indx<search_length or high_indy-low_indy<search_length:
 					continue
 				
-				spectrum=spectral_cube[0,:,low_indy:high_indy+1,low_indx:high_indx+1]
+				spectrum=spectral_cube[0,low_indy:high_indy+1,low_indx:high_indx+1,:]
 				
 				
 				clusters=get_clusters(fitted,low_indx,low_indy, high_indx,high_indy,numx,numy,num_params,max_dist_parameter_space,param_lengths)
@@ -314,12 +316,12 @@ def remove_big_clusters(clusters,cluster1,cluster2,spectral_cube,err_cube,sys_er
 			
 	grad_chi_square_old=cfunc.calc_grad_chisquare(low_indx,low_indy,high_indx,high_indy,numx,numy,num_params,fitted,param_lengths,smoothness_enforcer)
 	
-	rms=err_cube[0,:]
+	rms=np.ravel(err_cube[0,:])
 	new_params_temp=np.ravel(np.ones(num_params+1)*(-1))
 	for m,point in enumerate(cluster2):
 		x0=point[0]
 		y0=point[1]
-		spectrum=np.ravel(spectral_cube[0,:,y0,x0])
+		spectrum=np.ravel(spectral_cube[0,y0,x0,:])
 		new_params_temp[:]=-1
 		freq_ind=y0*numx+x0
 		cfunc.get_new_param_inds(spectrum,rms,model,min_params1,max_params1,param_lengths, new_params_temp,low_freq_ind[freq_ind],\
@@ -446,9 +448,6 @@ def smooth_param_maps(spectral_cube, err_cube, fitted,param_val,numx,numy,num_pa
 					continue
 				
 				
-				spectrum=spectral_cube[0,:,low_indy:high_indy+1,low_indx:high_indx+1]
-				rms=np.ravel(err_cube[0,:])
-				
 							
 				print (x,y)
 				
@@ -494,6 +493,299 @@ def smooth_param_maps(spectral_cube, err_cube, fitted,param_val,numx,numy,num_pa
 				break
 			iter1+=1
 
+def create_smoothed_model_image(low_freq_ind,high_freq_ind,num_x, num_y, num_params, num_freqs, resolution,\
+					model,fitted, smoothed_model_cube, low_indx, low_indy, high_indx,high_indy):
+
+	low_freq_ind_conv=0
+	high_freq_ind_conv=1e5
+	
+	for y1 in range(low_indy,high_indy+1):
+		for x1 in range(low_indx,high_indy+1):
+			freq_ind=y1*num_freqs+x1
+			if low_freq_ind_conv>low_freq_ind[freq_ind]:
+				low_freq_ind_conv=low_freq_ind[freq_ind]
+			if high_freq_ind_conv<high_freq_ind[freq_ind]:
+				high_freq_ind_conv=high_freq_ind[freq_ind]
+	
+	
+	for y1 in range(num_y):
+		for x1 in range(num_x):
+			ind=y1*num_x*(num_params+1)+x1*(num_params+1)
+			if fitted[ind]>0:
+				smoothed_model_cube[y1,x1,:]=model[int(fitted[ind]),int(fitted[ind+1]),int(fitted[ind+2]),\
+								int(fitted[ind+3]),int(fitted[ind+4]),:]
+	
+	for i in range(num_freqs):
+		if i<low_freq_ind_conv or i>high_freq_ind_conv:
+			continue
+			
+		res=resolution[i]
+		sigma=res/(2*np.sqrt(2*np.log(2)))
+		sigma_pix=int(sigma)+1
+		truncate_sigma=3
+		low_indx_conv=max(low_indx-truncate_sigma*sigma_pix,0)
+		low_indy_conv=max(low_indy-truncate_sigma*sigma_pix,0)
+		high_indx_conv=min(high_indx+truncate_sigma*sigma_pix,num_x-1)
+		high_indy_conv=min(high_indy+truncate_sigma*sigma_pix,num_y-1)
+		
+		#kernel=Gaussian2DKernel(sigma_pix,sigma_pix,x_size=2*truncate_sigma*sigma_pix+1,\
+		#			y_size=2*truncate_sigma*sigma_pix+1)
+		
+		smoothed_model_cube[low_indy_conv:high_indy_conv+1,\
+					low_indx_conv:high_indx_conv+1,i]=\
+									gaussian_filter(smoothed_model_cube[\
+									low_indy_conv:high_indy_conv+1,\
+									low_indx_conv:high_indx_conv+1,i],\
+									sigma=sigma,mode='constant',cval=0.0,\
+									truncate=truncate_sigma)
+		
+		
+	return
+	
+
+
+def find_spatial_neighbours(cluster1,cluster2,nearest=True):
+	neighbours=[]
+	for n,member in enumerate(cluster2):
+		x0=member[0]
+		y0=member[1]
+		temp=[]
+		k=0
+		for i in range(-2,3):
+			if nearest==True: 
+				if i<-1 or  i>1:
+					continue
+			for j in range(-2,3):
+				if nearest==True:
+					if j<-1 or  j>1:
+						continue
+				k+=1
+				try:
+					ind=cluster1.index([x0+i,y0+j])
+					temp.append(ind)
+				except ValueError:
+					pass
+		neighbours.append(temp)
+		del temp
+	return neighbours		
+	
+def find_ind_combinations(x):
+	lists=[]
+	for elem in product(*x):
+		lists.append(elem)
+	return lists
+	
+def check_if_smoothness_condition_satisfied(cluster2, fitted,numx,numy,num_params):
+	break_condition=False
+	for n,member in enumerate(cluster2):
+		x0=member[0]
+		y0=member[1]
+		ind0=y0*numx*(num_params+1)+x0*(num_params+1)
+		for i in range(-1,2):
+			for j in range(-1,2):
+				try:
+					ind=cluster2.index([x0+i,y0+j])
+				except ValueError:
+					continue
+				x1=cluster2[ind][0]
+				y1=cluster2[ind][1]
+				ind1=y1*numx*(num_params+1)+x1*(num_params+1)
+				
+				for param in range(num_params):
+					if abs(fitted[ind0+param]-fitted[ind1+param])>1:
+						return False
+	return True
+						
+										
+def remove_big_clusters_image_comparison(clusters,cluster1,cluster2,\
+					spectral_cube,rms,sys_err,fitted, numx,numy,num_params,\
+					smooth_length,thresh,max_dist_parameter_space, model, low_indx,low_indy,\
+					high_indx,high_indy,min_params1,max_params1, resolution, low_freq_ind,\
+					upper_freq_ind,num_freqs,rms_thresh):
+					
+	size_x=high_indx-low_indx+1
+	size_y=high_indy-low_indy+1
+	
+	model_image_cube=np.zeros((numy,numx,num_freqs))
+	observed_image_cube=spectral_cube[0,:,:,:]
+	
+	model_image_cube[:,:,:]=observed_image_cube
+	
+	create_smoothed_model_image(low_freq_ind,upper_freq_ind,numx, numy, num_params, num_freqs, resolution,model,fitted,\
+					 model_image_cube, low_indx, low_indy, high_indx,high_indy)
+	
+	cfunc.get_image_chisquare(observed_image_cube,model_image_cube,rms,low_indx,low_indy,high_indx,high_indy,numx,numy,\
+				num_params,fitted,sys_err, num_freqs,low_freq_ind, upper_freq_ind,rms_thresh)
+	
+	grad_chisquare_old=cfunc.calc_grad_chisquare(low_indx,low_indy,high_indx,high_indy,numx,numy, num_params, \
+							fitted,param_lengths,smoothness_enforcer)
+	
+	
+	grad_chisquare_temp=grad_chisquare_old
+	neighbours=find_spatial_neighbours(cluster1,cluster2,nearest=False)
+	
+
+	
+			
+	param_indices=[]
+	for param in range(num_params):
+		temp=[]
+		for n,member in enumerate(cluster2):
+			member_neighbour=neighbours[n]
+			len_member_neighbour=len(member_neighbour)
+			temp2=[]
+			x0=member[0]
+			y0=member[1]
+			ind=y0*numx*(num_params+1)+x0*(num_params+1)+param
+			temp2.append(fitted[ind])
+			if len_member_neighbour>0:
+				for i in  range(len_member_neighbour):
+					x0=cluster1[member_neighbour[i]][0]
+					y0=cluster1[member_neighbour[i]][1]
+					ind=y0*numx*(num_params+1)+x0*(num_params+1)+param
+					temp2.append(fitted[ind])
+			temp.append([i for i in temp2])
+			del temp2
+		param_indices.append(find_ind_combinations(temp))
+		del temp		
+	#print (param_indices[0])	
+	old_params=[]
+	for n,member in enumerate(cluster2):
+		x0=member[0]
+		y0=member[1]
+		ind=y0*numx*(num_params+1)+x0*(num_params+1)
+		for i in range(num_params+1):
+			old_params.append(fitted[ind+i])	
+			
+	num_trials=len(param_indices[0])
+	
+	for i in range(num_trials):
+		for n,member in enumerate(cluster2):
+			x0=member[0]
+			y0=member[1]
+			ind=y0*numx*(num_params+1)+x0*(num_params+1)
+			for j in range(num_params):
+				fitted[ind+j]=param_indices[j][i][n]
+		satisfies_smoothness_condition=check_if_smoothness_condition_satisfied(cluster2, fitted,numx,numy,num_params)
+		if satisfies_smoothness_condition==False:
+			continue
+		create_smoothed_model_image(low_freq_ind,upper_freq_ind,numx, numy, num_params, num_freqs, resolution,model,\
+						fitted, model_image_cube, low_indx, low_indy, high_indx,high_indy)
+		cfunc.get_image_chisquare(observed_image_cube,model_image_cube,rms,low_indx,low_indy,high_indx,high_indy,numx,numy,\
+				num_params,fitted,sys_err, num_freqs,low_freq_ind, upper_freq_ind,rms_thresh)
+		grad_chisquare_new=cfunc.calc_grad_chisquare(low_indx,low_indy,high_indx,high_indy,numx,numy, num_params, \
+							fitted,param_lengths,smoothness_enforcer)
+		if grad_chisquare_temp>grad_chisquare_new:
+			del old_params
+			old_params=[]
+			for n,member in enumerate(cluster2):
+				x0=member[0]
+				y0=member[1]
+				ind=y0*numx*(num_params+1)+x0*(num_params+1)
+				for i in range(num_params+1):
+					old_params.append(fitted[ind+i])	
+			grad_chisquare_temp=grad_chisquare_new
+	
+	for n,member in enumerate(cluster2):
+		x0=member[0]
+		y0=member[1]
+		ind=y0*numx*(num_params+1)+x0*(num_params+1)
+		for i in range(num_params+1):
+			fitted[ind+i]=old_params[i]
+	print (grad_chisquare_old,grad_chisquare_temp)	
+	return	
+								
+										
+def smooth_param_maps_image_comparison(spectral_cube, err_cube, fitted, param_val,numx,numy,num_params,\
+					smooth_lengths,thresh,max_dist_parameter_space, model,resolution, \
+					param_lengths, sys_err,num_freqs,low_freq_ind,upper_freq_ind,rms_thresh,\
+					max_iter=3):
+	j=0
+	
+	iter1=0
+	max_iter=3
+	
+	err=np.ravel(err_cube[0,:])
+	
+	
+	for smooth_length in smooth_lengths:
+		while iter1<max_iter:
+			subcubes=form_subcubes_with_gradients(numx,numy,num_params,fitted,smooth_length,param_lengths)
+			grads=subcubes[:,2]
+			sorted_indices=np.argsort(grads)[::-1]
+			for sort_ind in sorted_indices:
+				if subcubes[sort_ind,2]<0:
+					continue
+				x=int(subcubes[sort_ind,0])
+				y=int(subcubes[sort_ind,1])
+				
+			
+				
+				low_indx=max(0,x-smooth_length//2)
+				low_indy=max(0,y-smooth_length//2)
+
+				high_indx=min(numx-1,x+smooth_length//2)
+				high_indy=min(numy-1,y+smooth_length//2)
+				
+				print (x,y)
+				if high_indx-low_indx+1<smooth_length or high_indy-low_indy+1<smooth_length:
+					continue	
+				
+				
+				clusters=get_clusters(fitted,low_indx,low_indy, high_indx,high_indy,numx,numy,num_params,max_dist_parameter_space,param_lengths)
+				
+				if len(clusters)<=1:
+					continue	
+				tot_member=get_total_members(clusters)
+				if tot_member<smooth_length**2:
+					continue
+				
+				cluster_len=len(clusters)
+				if cluster_len<=1:
+					continue
+					
+				if cluster_len>6:
+					clusters=get_clusters(fitted,low_indx,low_indy, high_indx,high_indy,numx,numy,num_params,max_dist_parameter_space*1.5,param_lengths)
+					cluster_len=len(clusters)
+					
+				member_num=[]
+				for cluster in clusters:
+					member_num.append(len(cluster))	
+				
+				member_num=np.array(member_num)
+				sorted_pos=np.argsort(member_num)[::-1]
+				
+				cluster1=clusters[sorted_pos[0]]
+				
+				
+				len_cluster1=len(cluster1)
+				
+				min_params1=np.zeros(num_params,dtype=int)
+				max_params1=np.zeros(num_params,dtype=int)
+				for param in range(num_params):
+					ind=[]
+					for i in range(len_cluster1):
+						x1=cluster1[i][0]
+						y1=cluster1[i][1]
+						ind1=y1*numx*(num_params+1)+x1*(num_params+1)+param
+						ind.append(fitted[ind1])
+					ind=np.array(ind)
+					min_params1[param]=max(0,int(np.min(ind))-2)
+					max_params1[param]=min(int(np.max(ind))+2,param_lengths[param]-1)
+					del ind	
+				
+				
+				for cluster_num in sorted_pos[1:]:
+					if member_num[cluster_num]<0.5*member_num[sorted_pos[0]] and member_num[cluster_num]<8:
+						
+						remove_big_clusters_image_comparison(clusters,cluster1,clusters[cluster_num],\
+										spectral_cube,err,sys_err,fitted, numx,numy,num_params,\
+										smooth_length,thresh,max_dist_parameter_space, model, low_indx,low_indy,\
+										high_indx,high_indy,min_params1,max_params1, resolution, low_freq_ind,\
+										upper_freq_ind, num_freqs,rms_thresh)
+				remove_overlapping_subcubes(subcubes,x,y,smooth_length,numy,numx)
+			iter1+=1
+				
 
 	
 
@@ -560,10 +852,10 @@ shape=model.model.shape
 spectrum_shape=spectrum.spectrum.shape
 model1=np.ravel(model.model)
 
-numx=spectrum_shape[3]
-numy=spectrum_shape[2]
+numx=spectrum_shape[2]
+numy=spectrum_shape[1]
 num_times=spectrum_shape[0]
-num_freqs=spectrum_shape[1]
+num_freqs=spectrum_shape[3]
 num_params=model.num_params
 
 param_lengths=np.ravel(np.zeros(len(model.param_names),dtype=np.intc))
@@ -616,6 +908,13 @@ remove_discont(spectrum.spectrum, spectrum.error, fitted, model.param_vals,numx,
 smooth_param_maps(spectrum.spectrum, spectrum.error, fitted, model.param_vals,numx,numy,num_params,\
 		smooth_lengths,discontinuity_thresh,max_dist_parameter_space, model1,param_lengths,\
 		sys_error,num_freqs,low_freq_ind,upper_freq_ind,rms_thresh)
+		
+		
+smooth_param_maps_image_comparison(spectrum.spectrum, spectrum.error, fitted, model.param_vals,numx,numy,\
+				num_params,smooth_lengths,discontinuity_thresh,max_dist_parameter_space,\
+				model.model,resolution,param_lengths,sys_error,num_freqs,low_freq_ind,\
+				upper_freq_ind,rms_thresh)
+				
 
 param_maps=np.zeros((num_times,numy,numx,num_params))
 chi_map=np.zeros((num_times,numy,numx))
@@ -630,7 +929,7 @@ for t in range(num_times):
 
 param_names=model.param_names
 
-hf=h5py.File("python_cython_comb_discont_removal_cluster_removal_test.hdf5",'w')
+hf=h5py.File("python_cython_comb_discont_removal_cluster_removal_image_removal_test1.hdf5",'w')
 hf.attrs['xmin']=xmin
 hf.attrs['ymin']=ymin
 hf.attrs['xmax']=xmax
