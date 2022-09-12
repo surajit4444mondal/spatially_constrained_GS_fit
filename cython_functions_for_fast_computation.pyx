@@ -97,6 +97,50 @@ cpdef void get_new_param_inds(double [:]spectrum,\
 							params[3]=l
 							params[4]=m
 							params[5]=chisq
+					
+	return
+	
+cpdef void get_new_param_inds_general(double [:]spectrum,\
+			  double [:]rms,
+			  double [:] model,\
+			  int [:]param_ind,\
+			  int [:] param_lengths,\
+			  double [:]params,\
+			  int min_freq_ind,\
+			  int max_freq_ind,\
+			  double rms_thresh,\
+			  int num_params,\
+			  int num_freqs,\
+			  double sys_err,\
+			  double [:]chisq):
+			  
+	
+	
+	cdef int n,p,i
+	cdef unsigned int model_ind
+	cdef unsigned int product=1
+	cdef double [:]model_spec
+	cdef int mid_ind
+	cdef double ratio,chisq_temp
+
+	model_ind=0
+	for n in range(num_params):
+		product=1
+		for p in range(n+1,num_params):
+			product=product*param_lengths[p]
+		model_ind+=param_ind[n]*product*num_freqs
+		
+	model_spec=model[model_ind:]
+	mid_ind=(min_freq_ind+max_freq_ind)//2
+	ratio=spectrum[mid_ind]/model_spec[mid_ind]
+	if ratio>2 or ratio<0.5:
+		return
+	chisq_temp=calc_chi_square(spectrum, rms,sys_err, model_spec, min_freq_ind,max_freq_ind,rms_thresh)
+	if chisq_temp<chisq[0]:
+		chisq[0]=chisq_temp
+		for i in range(num_params):
+			params[i]=param_ind[i]
+		params[num_params]=chisq[0]
 	return
 
 cdef int find_min_freq(double * freqs,\

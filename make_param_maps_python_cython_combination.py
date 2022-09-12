@@ -299,7 +299,20 @@ def remove_all_points(points_to_remove,spectrum,rms,sys_err, fitted, param_val,n
 			
 	return	points_changed
 	
+def get_new_param_inds(spectrum,rms,model,min_params1,max_params1,param_lengths, new_params_temp,low_freq_ind,\
+							upper_freq_ind,rms_thresh,num_params, num_freqs,sys_err):
 
+	possible_param_indices=[None]*num_params
+	for i in range(num_params):
+		possible_param_indices[i]=np.arange(min_params1[i],max_params1[i]+1)
+	
+	
+	chisq=np.array([1e9])
+	for i in product(*possible_param_indices):
+		param_ind=np.array(i,dtype=np.intc)
+		cfunc.get_new_param_inds_general(spectrum,rms,model,param_ind,param_lengths, new_params_temp,low_freq_ind,\
+							upper_freq_ind,rms_thresh,num_params, num_freqs,sys_err,chisq)
+	return
 	
 def remove_big_clusters(clusters,cluster1,cluster2,spectral_cube,err_cube,sys_err,fitted, param_val,numx,numy,num_params,\
 								smooth_length,thresh,max_dist_parameter_space, model, low_indx,low_indy,high_indx,high_indy,\
@@ -324,7 +337,7 @@ def remove_big_clusters(clusters,cluster1,cluster2,spectral_cube,err_cube,sys_er
 		spectrum=np.ravel(spectral_cube[0,y0,x0,:])
 		new_params_temp[:]=-1
 		freq_ind=y0*numx+x0
-		cfunc.get_new_param_inds(spectrum,rms,model,min_params1,max_params1,param_lengths, new_params_temp,low_freq_ind[freq_ind],\
+		get_new_param_inds(spectrum,rms,model,min_params1,max_params1,param_lengths, new_params_temp,low_freq_ind[freq_ind],\
 							upper_freq_ind[freq_ind],rms_thresh,num_params, num_freqs,sys_err)	
 		if new_params_temp[0]>0:
 			ind=y0*numx*(num_params+1)+x0*(num_params+1)
@@ -785,7 +798,7 @@ def smooth_param_maps_image_comparison(spectral_cube, err_cube, fitted, param_va
 										upper_freq_ind, num_freqs,rms_thresh)
 				remove_overlapping_subcubes(subcubes,x,y,smooth_length,numy,numx)
 			iter1+=1
-				
+			
 
 	
 
@@ -909,7 +922,8 @@ smooth_param_maps(spectrum.spectrum, spectrum.error, fitted, model.param_vals,nu
 		smooth_lengths,discontinuity_thresh,max_dist_parameter_space, model1,param_lengths,\
 		sys_error,num_freqs,low_freq_ind,upper_freq_ind,rms_thresh)
 		
-		
+#np.save("python_cython_comb_cluster_removal_test.npy",fitted)
+fitted=np.load("python_cython_comb_cluster_removal_test.npy")		
 smooth_param_maps_image_comparison(spectrum.spectrum, spectrum.error, fitted, model.param_vals,numx,numy,\
 				num_params,smooth_lengths,discontinuity_thresh,max_dist_parameter_space,\
 				model.model,resolution,param_lengths,sys_error,num_freqs,low_freq_ind,\
@@ -929,7 +943,7 @@ for t in range(num_times):
 
 param_names=model.param_names
 
-hf=h5py.File("python_cython_comb_discont_removal_cluster_removal_image_removal_test1.hdf5",'w')
+hf=h5py.File("python_cython_comb_discont_removal_cluster_removal_test1.hdf5",'w')
 hf.attrs['xmin']=xmin
 hf.attrs['ymin']=ymin
 hf.attrs['xmax']=xmax
@@ -949,6 +963,6 @@ for n,key in enumerate(param_names):
 	hf.create_dataset(key,data=param_maps[:,:,:,n])
 hf.create_dataset('chi_sq',data=chi_map[:,:,:])
 hf.close()
-		
+
 
 
