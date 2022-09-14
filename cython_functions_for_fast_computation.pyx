@@ -35,10 +35,11 @@ cpdef void get_image_chisquare(double [:,:,:] observed_image_cube,\
 			ind=y1*numx*(num_params+1)+x1*(num_params+1)+num_params
 			if fitted[ind]>0:
 				freq_ind=y1*numx+x1
-				fitted[ind]=calc_chi_square(observed_image_cube[i,j,:], rms, \
-								sys_error, model_image_cube[i,j,:],\
+				fitted[ind]=calc_chi_square(observed_image_cube[y1,x1,:], rms, \
+								sys_error, model_image_cube[y1,x1,:],\
 								low_freq_ind[freq_ind],high_freq_ind[freq_ind],\
-								rms_thresh)	
+								rms_thresh)
+					
 			j+=1
 		i+=1	
 		
@@ -474,6 +475,7 @@ cpdef double calc_chi_square(double [:]spectrum,\
 	cdef double chi_square=0
 	cdef int freq_ind
 	cdef double error
+	
 	for freq_ind in range(low_ind,high_ind+1):
 		if spectrum[freq_ind]>=rms_thresh*rms[freq_ind]:
 			error=sqrt(square(rms[freq_ind])+square(sys_error*spectrum[freq_ind]))
