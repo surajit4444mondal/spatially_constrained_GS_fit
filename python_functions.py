@@ -721,7 +721,7 @@ def remove_big_clusters(clusters,\
 		
 	grad_chi_square_new=cfunc.calc_grad_chisquare(low_indx,low_indy,high_indx,high_indy, numx,numy,num_params, fitted,param_lengths,smoothness_enforcer)
 	
-	print (grad_chi_square_old,grad_chi_square_new)
+	
 	
 	if grad_chi_square_old<grad_chi_square_new:
 		for m,point in enumerate(cluster2):
@@ -911,7 +911,7 @@ def smooth_param_maps(spectral_cube,\
 				
 				
 							
-				print (x,y)
+				
 				
 				cluster_len=len(clusters)
 				if cluster_len<=1:
@@ -1232,7 +1232,7 @@ def remove_big_clusters_image_comparison(clusters,\
 			del temp2
 		param_indices.append(find_ind_combinations(temp))
 		del temp		
-	#print (param_indices[0])	
+		
 	old_params=[]
 	for n,member in enumerate(cluster2):
 		x0=member[0]
@@ -1275,8 +1275,7 @@ def remove_big_clusters_image_comparison(clusters,\
 		y0=member[1]
 		ind=y0*numx*(num_params+1)+x0*(num_params+1)
 		for i in range(num_params+1):
-			fitted[ind+i]=old_params[i]
-	print (grad_chisquare_old,grad_chisquare_temp)	
+			fitted[ind+i]=old_params[i]	
 	return	
 								
 										
@@ -1361,7 +1360,7 @@ def smooth_param_maps_image_comparison(spectral_cube, \
 				high_indx=min(numx-1,x+smooth_length//2)
 				high_indy=min(numy-1,y+smooth_length//2)
 				
-				print (x,y)
+				
 				if high_indx-low_indx+1<smooth_length or high_indy-low_indy+1<smooth_length:
 					continue	
 				
@@ -1377,9 +1376,6 @@ def smooth_param_maps_image_comparison(spectral_cube, \
 				if cluster_len<=1:
 					continue
 					
-				if cluster_len>6:
-					clusters=get_clusters(fitted,low_indx,low_indy, high_indx,high_indy,numx,numy,num_params,max_dist_parameter_space*1.5,param_lengths)
-					cluster_len=len(clusters)
 					
 				member_num=[]
 				for cluster in clusters:
@@ -1448,7 +1444,6 @@ def main_func(xmin,\
 
 	numx=spectrum_shape[2]
 	numy=spectrum_shape[1]
-	print (numx,numy)
 	num_times=spectrum_shape[0]
 	num_freqs=spectrum_shape[3]
 	num_params=model.num_params

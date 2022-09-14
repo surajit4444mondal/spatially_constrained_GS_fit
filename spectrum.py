@@ -28,7 +28,7 @@ class Spectrum:
 			filename=files[i]
 			meta,rdata=ndfits.read(filename)
 			freqs=meta['ref_cfreqs']*1e-9  ### convert to GHz
-			pgdata = rdata[0, :, self.ymin:self.ymax+1, self.xmin:self.xmax+1]
+			pgdata = rdata[0, :, self.ymin:self.ymax+1:3, self.xmin:self.xmax+1:3]
 			shape=pgdata.shape
 			full_shape=rdata[0,...].shape
 			if i==0:

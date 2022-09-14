@@ -45,7 +45,7 @@ max_dist_parameter_space=4
 outfile="param_maps.hdf5"
 
 
-cell=0.5  ###arcsec
+cell=1.5  ###arcsec
 freqs=np.loadtxt("/home/surajit/Downloads/20210507/eovsa_data/ctrl_freqs.txt")
 num_freqs=np.size(freqs)
 resolution=np.zeros(num_freqs)
