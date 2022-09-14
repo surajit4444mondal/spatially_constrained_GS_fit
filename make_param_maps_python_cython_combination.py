@@ -8,10 +8,36 @@ import h5py
 from scipy.ndimage import gaussian_filter
 from itertools import product
 from astropy.convolution import convolve,Gaussian1DKernel
+import timeit
 
 smoothness_enforcer=0.05
 
-def check_at_boundary(x0,y0,numx,numy,num_params,fitted):
+def check_at_boundary(x0,\
+		      y0,\
+		      numx,\
+		      numy,\
+		      num_params,\
+		      fitted):
+	'''
+	Here boundary DOES NOT mean the boundary of the 
+	image cube. It just means the edge at after which 
+	the data could not be fitted based on the current
+	user specified parameters.
+	
+	x0: x position
+	y0: y position
+	numx: total x length
+	numy: total y length
+	num_params: number of unkwnon parameters
+	fitted: the array containing the current fit results
+	
+	This function does not check the validity of x and y 
+	inputs, as the function calling it will never send
+	an invalid coordinate. And hence putting that check 
+	will result in unnecessary overhead.
+	'''
+	
+	
 	x=[x0-1,x0+1,x0,x0,x0-1,x0+1,x0-1,x0-1]
 	y=[y0,y0,y0-1,y0+1,y0+1,y0+1,y0-1,y0+1]
 	
@@ -23,7 +49,38 @@ def check_at_boundary(x0,y0,numx,numy,num_params,fitted):
 	return 0
 
 
-def detect_discont(fitted, param_val,x,y,numx,numy,num_params,search_length,thresh):
+def detect_discont(fitted,\
+		   param_val,\
+		   x,\
+		   y,\
+		   numx,\
+		   numy,\
+		   num_params,\
+		   search_length,\
+		   thresh):
+	'''
+	This function detects pixel level discontinuities
+	based on median-rms approach. I have chosen to not take
+	the mad because since this is a index based fitting
+	method, sometimes, the mad can give zero, resulting in
+	false discontinutites and also 0/0 values.
+	
+	fitted: the array containing the current fit results
+	param_val: the actual parameter values in physical units.
+		    Not used now. 
+	x,y: Spatial coordinates
+	numx,numy: Length along X and Y coordinates
+	num_params: Number of fitted parameters
+	search_length: Averaging interval for detecting discontinuity
+	thresh:  Threshold in terms of std, above which discontinuity
+		 is identified.
+		 
+	I take an area around x+-search_length//2, subject to the boundary 
+	constraints of the cube. If the length is less than search length,
+	I return. For every parameter, I calculate median and std using the
+	median. If the (value-median)/std> thresh, I detect a discontinuity.
+	And I return, as there is no further need to search other parameters.
+	'''
 	
 	low_indx=max(0,x-search_length//2)
 	low_indy=max(0,y-search_length//2)
@@ -65,7 +122,23 @@ def detect_discont(fitted, param_val,x,y,numx,numy,num_params,search_length,thre
 			return 1
 		
 		
-def list_discont(fitted, param_val,numx,numy,num_params,search_length,thresh):
+def list_discont(fitted,\
+		 param_val,\
+		 numx,\
+		 numy,\
+		 num_params,\
+		 search_length,\
+		 thresh):
+	'''
+	This function calls detect discont for every x,y and finally
+	returns all the detected discontinuitites.
+	x,y: Spatial coordinates
+	numx,numy: Length along X and Y coordinates
+	num_params: Number of fitted parameters
+	search_length: Averaging interval for detecting discontinuity
+	thresh:  Threshold in terms of std, above which discontinuity
+		 is identified.
+	'''
 	discont=[]
 	for y in range(numy):
 		for x in range(numx):
@@ -80,7 +153,55 @@ def list_discont(fitted, param_val,numx,numy,num_params,search_length,thresh):
 
 
 
-def get_clusters(fitted,low_indx,low_indy, high_indx,high_indy,numx,numy,num_params,max_dist_parameter_space,param_lengths):
+def get_clusters(fitted,\
+		 low_indx,\
+		 low_indy, \
+		 high_indx,\
+		 high_indy,\
+		 numx,\
+		 numy,\
+		 num_params,\
+		 max_dist_parameter_space,\
+		 param_lengths):
+	'''
+	Here I implement a cluster finder using FOF algorithm.
+	The code finds cluster in the parameter space. Now I 
+	had two choices. I can either use the actual parameter
+	values or use the fit indices. If I choose the parameter
+	values then I have to normalise them somehow so that I
+	can use a single spatial_smoothness_enforcer. Having a
+	different multiplier for each parameter is extremely
+	crude in my opinion. if I normalise the values using the 
+	mean, then I would minimise spread on the parameter whose
+	range is the least. Because the ratio/difference with respect
+	to the other parameters would be less for that. Hence, if
+	there is a discontinuity in that parameter only, it will
+	not be detected. I thought of using the length of the
+	model paramters. Since they are indices, then they are on
+	same sclae and hence there is no need to normalise. However
+	here also I faced an issue. The parameter which is the longest
+	gets the largest weight during this, which is again I did not want. 
+	So while getting the distance along an parameter axes, I first
+	take the difference between the indices of the parameter
+	and then strtech that by the ratio of the maximum parameter length
+	and the length of the parameter where the search is being done.
+	I find that this creates a smooth map in all parameters.
+	No ill effect of this kind of normalisation and distance finding
+	has been found yet.  
+	
+	fitted: the array containing the current fit results
+	low_indx,low_indy: the corodinate of the bottom-left corner of
+	                   the box where the search should be done
+	high_indx,high_indy: the corodinate of the top-right corner of
+	                     the box where the search should be done
+	numx,numy: Length along X and Y coordinates
+	num_params: Number of fitted parameters
+	max_dist_parameter_space: The maximum distance between two cluster
+	                          in the parameter space. The distance is
+	                          calculated according to the discussion above.
+	param_lengths: The length of the parameters the user has provided.
+			This is read from the model cube provided by the user.
+	'''
 	
 	cluster_list=[]
 	max_param_length=np.max(param_lengths)
@@ -121,14 +242,25 @@ def get_clusters(fitted,low_indx,low_indy, high_indx,high_indy,numx,numy,num_par
 	return cluster_list
 	
 def get_points_to_remove(cluster_list):
+	'''
+	Here I am passed a cluster list, which was created in the box
+	where at least discontituity has been detected. Because of
+	memory constraints, I choose not to try to replace the values of
+	all the detected points. I choose to replace a maximum of 10
+	points. So I start with the clusters which ahs lowest number of member,
+	which is generally 1. Then I start putting in points from that cluster.
+	I always include all points from a cluster for removal or donot include
+	any at all. 
 	
+	cluster_list: List of all clusters detected and their members
+	'''
 	member_num=[]
 	for cluster in cluster_list:
 		member_num.append(len(cluster))
 	
-	min_member=min(member_num)
-	max_member=4
-	
+	min_member=int(min(member_num))
+	max_member=int(min(max(member_num)//1.2,4))
+	## In earlier versions, max_member was always set to 4. 
 	points_to_remove=[]
 	max_points_to_remove=10
 	j=0
@@ -144,13 +276,65 @@ def get_points_to_remove(cluster_list):
 	return points_to_remove
 	
 	
-def find_new_params(points_to_remove,fitted,model,spectrum,sys_error,rms,param_val,numx,numy,num_params,\
-			 low_indx,low_indy,high_indx,high_indy,param_lengths,num_freqs,low_freq_ind,upper_freq_ind,\
-			 rms_thresh):
+def find_new_params(points_to_remove,\
+		     fitted,\
+		     model,\
+		     spectrum,\
+		     sys_error,\
+		     rms,\
+		     param_val,\
+		     numx,\
+		     numy,\
+		     num_params,\
+		     low_indx,\
+		     low_indy,\
+		     high_indx,\
+		     high_indy,\
+		     param_lengths,\
+		     num_freqs,\
+		     low_freq_ind,\
+		     upper_freq_ind,\
+		     rms_thresh):
+	'''
+	This function finds new parameter values for the points in
+	the list returned by points_to_remove function. I take the
+	parameter values of the neighbours of each point, unless 
+	neighbour was itself in the points_to_remove list. Then I
+	iterate through each point in points_to_Remove list and 
+	calculate the grad_chi_square with the values of its neighbours.
+	The grad_chi_square has been implemented in Cython. If I
+	see that the grad_chi_square has decreased, I keep the new
+	parameter values.
+	
+	points_to_remove: list of the points to be replaced returned 
+	                  by get_points_to_remove function
+	fitted: the array containing the current fit results
+	model: model cube supplied by the user
+	spectrum: Observed image cube provided by user. Shape: numy,numx,num_freqs
+	sys_error: Systematic flux uncertainty; user input.
+		    Added in quadrature (sys_error x flux at that frequency)
+	rms: Rms of the image cube. Shape= num_freqs
+	param_val: Actual values of the parameters
+	numx,numy: Length along X and Y coordinates
+	num_params: Number of fitted parameters
+	low_indx,low_indy: the corodinate of the bottom-left corner of
+	                   the box where the search should be done
+	high_indx,high_indy: the corodinate of the top-right corner of
+	                     the box where the search should be done
+	param_lengths: Lengths of the parameters in the supplied model cube
+	num_freqs: Number of frequencies in the image cube.
+	low_freq_ind,high_freq_ind: This contains the lowest and highest
+	                            frequency index for which the spectrum
+	                            can be described as a homogenous source spectrum.
+	rms_thresh: Threshold in terms of image rms above which we can
+	            treat that the source is not detected and we use the upper limit
+	            as rms_thresh x rms at that frequency
+	'''
+	
 	new_params=[]
 	points_changed=0
-	changed=False
 	for m,point in enumerate(points_to_remove):
+		changed=False
 		x0=point[0]
 		y0=point[1]
 		ind=y0*numx*(num_params+1)+x0*(num_params+1)
@@ -214,6 +398,39 @@ def remove_discont(spectral_cube, \
 			 rms_thresh,\
 			 max_iter=5):
 
+	'''
+	This function is a wrapper for the all the functions needed to remove
+	the pixel scale discontinuities. The user calls this function and this
+	calls others as needed.
+	
+	spectral_cube: Observed spectral cube, Shape: num_times, num_y, num_x, num_freqs
+	err_cube: Image rms cube, shape: num_times, num_freqs
+	fitted: the array containing the current fit results
+	param_val: Actual values of the parameters
+	numx,numy: Length along X and Y coordinates
+	num_params: Number of fitted parameters
+	smooth_lengths: The list of smoothing lengths to be used for finding
+			 discontituiny
+	thresh: Threshold used to detect discontinuity.
+	max_dist_parameter_space: Maximum distance in parameter space. Used
+	                          for cluster finding
+	model: model cube supplied by the user
+	param_lengths: Lengths of the parameters in the supplied model cube
+	sys_error: Systematic flux uncertainty; user input.
+		    Added in quadrature (sys_error x flux at that frequency)
+	
+	num_freqs: Number of frequencies in the image cube.
+	low_freq_ind,high_freq_ind: This contains the lowest and highest
+	                            frequency index for which the spectrum
+	                            can be described as a homogenous source spectrum.
+	rms_thresh: Threshold in terms of image rms above which we can
+	            treat that the source is not detected and we use the upper limit
+	            as rms_thresh x rms at that frequency
+	max_iter: Optional parameter. Maximum number of iterations for which the search
+		  and removal process is repeated. If no points are changed in any
+		  iteration search and removal process for that smoothing length
+		  is stopped.	
+	'''
 	
 	rms=np.ravel(err_cube[0,:])
 	for search_length in smooth_lengths:
@@ -228,6 +445,7 @@ def remove_discont(spectral_cube, \
 				y=discont[1]
 				
 				if x<0 and y<0:
+		
 					continue
 				low_indx=max(0,x-search_length//2)
 				low_indy=max(0,y-search_length//2)
@@ -261,10 +479,63 @@ def remove_discont(spectral_cube, \
 		
 	return		
 
-def remove_all_points(points_to_remove,spectrum,rms,sys_err, fitted, param_val,numx,numy,num_params,\
-					search_length,thresh,max_dist_parameter_space, model, low_indx,\
-					low_indy,high_indx,high_indy,param_lengths,num_freqs,\
-					low_freq_ind,upper_freq_ind,rms_thresh):
+def remove_all_points(points_to_remove,\
+			spectrum,\
+			rms,\
+			sys_err,\
+			fitted,\
+			param_val,\
+			numx,\
+			numy,\
+			num_params,\
+			search_length,\
+			thresh,\
+			max_dist_parameter_space,\
+			model,\
+			low_indx,\
+			low_indy,\
+			high_indx,\
+			high_indy,\
+			param_lengths,\
+			num_freqs,\
+			low_freq_ind,\
+			upper_freq_ind,\
+			rms_thresh):
+	'''
+	This function first calls get_new_params and then decides if the
+	found points can be kept considering the full box.
+	
+	points_to_remove: points_to_remove obtained from get_points_to_remove
+			   function 
+	spectrum: Observed spectral cube, Shape: num_times, num_y, num_x, num_freqs
+	rms: Image rms cube, shape: num_freqs
+	sys_err: Systematic flux uncertainty; user input.
+		    Added in quadrature (sys_error x flux at that frequency)
+	fitted: the array containing the current fit results
+	param_val: Actual values of the parameters
+	numx,numy: Length along X and Y coordinates
+	num_params: Number of fitted parameters
+	smooth_length: smoothing length to be used for finding
+			 discontituiny
+	thresh: Threshold used to detect discontinuity.
+	max_dist_parameter_space: Maximum distance in parameter space. Used
+	                          for cluster finding
+	model: model cube supplied by the user
+	low_indx,low_indy: the corodinate of the bottom-left corner of
+	                   the box where the search should be done
+	high_indx,high_indy: the corodinate of the top-right corner of
+	                     the box where the search should be done
+	param_lengths: Lengths of the parameters in the supplied model cube
+	
+	
+	num_freqs: Number of frequencies in the image cube.
+	low_freq_ind,high_freq_ind: This contains the lowest and highest
+	                            frequency index for which the spectrum
+	                            can be described as a homogenous source spectrum.
+	rms_thresh: Threshold in terms of image rms above which we can
+	            treat that the source is not detected and we use the upper limit
+	            as rms_thresh x rms at that frequency
+	'''
 
 	old_params=[]
 	for m,point in enumerate(points_to_remove):
@@ -299,12 +570,53 @@ def remove_all_points(points_to_remove,spectrum,rms,sys_err, fitted, param_val,n
 			
 	return	points_changed
 	
-def get_new_param_inds(spectrum,rms,model,min_params1,max_params1,param_lengths, new_params_temp,low_freq_ind,\
-							upper_freq_ind,rms_thresh,num_params, num_freqs,sys_err):
-
+def get_new_param_inds(spectrum,\
+			rms,\
+			model,\
+			min_params,\
+			max_params,\
+			param_lengths,\
+			new_params_temp,\
+			low_freq_ind,\
+			upper_freq_ind,\
+			rms_thresh,\
+			num_params, \
+			num_freqs,\
+			sys_err):
+	'''
+	This is the function which is used to find new parameter values
+	when search is done in the cluster space, irerspective of whether
+	a discontinuity is present or not. The important thing to note is
+	that the cython code actually has a function with name same as this.
+	If used, that can make this part of the code ~11 times faster. 
+	The only reason I am not using that is that there I had to hardcode
+	the number of fitting parameters in the for loops. The number of for
+	loops is exactly equal to the number of fitted parameters. While I
+	would try to remove this and write something more general, if you want
+	blazing fast speed and can handle code changing, please consider using
+	that function. On the otherhand, this function is a general function
+	and can handle any number of unknowns. 
+	
+	spectrum: 1D spectrum
+	rms: image rms 
+	model: user supplied model cube
+	min_params: The minimum parameter indices possible. Shape: num_params
+	max_params: The maximum parameter indices possible. Shape: num_params
+	param_lengths: Lengths of the parameters in the supplied model cube  
+	new_params_temp: Holder of new found parameter values
+	low_freq_ind: Lowest frequency to be used for chi_square calculation
+	upper_freq_ind: Highest frequency to be used for chi_square_calculation
+	rms_thresh: Threshold in terms of image rms above which we can
+	            treat that the source is not detected and we use the upper limit
+	            as rms_thresh x rms at that frequency
+	num_params: Number of fitted parameters
+	num_freqs: Number of frequencies in the image cube.
+	sys_err: Systematic flux uncertainty; user input.
+		    Added in quadrature (sys_error x flux at that frequency)
+	'''
 	possible_param_indices=[None]*num_params
 	for i in range(num_params):
-		possible_param_indices[i]=np.arange(min_params1[i],max_params1[i]+1)
+		possible_param_indices[i]=np.arange(min_params[i],max_params[i]+1)
 	
 	
 	chisq=np.array([1e9])
@@ -314,10 +626,73 @@ def get_new_param_inds(spectrum,rms,model,min_params1,max_params1,param_lengths,
 							upper_freq_ind,rms_thresh,num_params, num_freqs,sys_err,chisq)
 	return
 	
-def remove_big_clusters(clusters,cluster1,cluster2,spectral_cube,err_cube,sys_err,fitted, param_val,numx,numy,num_params,\
-								smooth_length,thresh,max_dist_parameter_space, model, low_indx,low_indy,high_indx,high_indy,\
-								min_params1,max_params1,num_freqs,low_freq_ind,upper_freq_ind,rms_thresh,param_lengths):
+def remove_big_clusters(clusters,\
+			 cluster1,\
+			 cluster2,\
+			 spectral_cube,\
+			 err_cube,\
+			 sys_err,\
+			 fitted, \
+			 param_val,\
+			 numx,\
+			 numy,\
+			 num_params,\
+			 smooth_length,\
+			 thresh,\
+			 max_dist_parameter_space,\
+			 model,\
+			 low_indx,\
+			 low_indy,\
+			 high_indx,\
+			 high_indy,\
+			 min_params1,\
+			 max_params1,\
+			 num_freqs,\
+			 low_freq_ind,\
+			 upper_freq_ind,\
+			 rms_thresh,\
+			 param_lengths):
+								
+	'''
+	This function tries to find new parameters for a small cluster
+	close to the parameter values of the biggest cluster in that
+	box.
 	
+	clusters: List of all clusters detected in the box
+	cluster1: Members of the biggest cluster of the box
+	cluster2: Members of the smaller cluster which would be analysed
+		  in this call
+	spectral_cube: Observed spectrum. Shape-num_timesx num_y x num_x x num_freqs
+			At this moment num_times>1 has not been implemented
+	err_cube: Image rms cube. Shape= num_times x num_freqs. At this moment 
+		   num_times>1 has not been implemented.
+	sys_err: Systematic flux uncertainty; user input.
+		    Added in quadrature (sys_error x flux at that frequency)
+	fitted: array containing current fitted parameter values
+	param_val: Array containing the actual parameter values
+	numx,numy: Length along X and Y coordinates
+	num_params: Number of fitted parameters
+	smooth_length: smoothing length to be used
+	thresh: Threshold used to detect discontinuity (not used probably)
+	max_dist_parameter_space: Maximum distance in parameter space. Used
+	                          for cluster finding
+	model: model cube supplied by the user
+	low_indx,low_indy: the corodinate of the bottom-left corner of
+	                   the box where the search should be done
+	high_indx,high_indy: the corodinate of the top-right corner of
+	                     the box where the search should be done
+	min_params1, max_params1: List of the minimum and maximum allowed
+				   allowed values of all parameters      
+	num_freqs: Number of frequencies in the image cube.
+	low_freq_ind,high_freq_ind: This contains the lowest and highest
+	                            frequency index for which the spectrum
+	                            can be described as a homogenous source spectrum.
+	rms_thresh: Threshold in terms of image rms above which we can
+	            treat that the source is not detected and we use the upper limit
+	            as rms_thresh x rms at that frequency               
+	param_lengths: Lengths of the parameters in the supplied model cube
+	'''
+
 	old_params=[]
 	for m,point in enumerate(cluster2):
 		x0=point[0]
@@ -362,15 +737,34 @@ def remove_big_clusters(clusters,cluster1,cluster2,spectral_cube,err_cube,sys_er
 		
 	
 def get_total_members(clusters):
+	'''
+	Get total number of members in a cluster
+	
+	clusters: list of clusters
+	'''
 	member_num=0
 	for cluster in clusters:
 		member_num+=len(cluster)
 	return member_num
 	
-def form_subcubes_with_gradients(numx,numy,num_params,fitted,smooth_length,param_lengths):
+def form_subcubes_with_gradients(numx,\
+				  numy,\
+				  num_params,\
+				  fitted,\
+				  smooth_length,\
+				  param_lengths):
+	'''
+	This function first creates all the subcubes in the image
+	of size smooth_length and then calculats the gradient of 
+	each one of them.
+	
+	numx,numy: Length along X and Y coordinates of image cube
+	num_params: Number of fitted parameters
+	fitted: array containing current fitted parameter values
+	smooth_length: smoothing length to be used
+	param_lengths: Lengths of the parameters in the supplied model cube
+	'''
 	cube_vals=np.ones((numy*numx,3))*(-1)
-	
-	
 	j=0
 	for y in range(0,numy):
 		for x in range(0,numx):
@@ -396,6 +790,19 @@ def form_subcubes_with_gradients(numx,numy,num_params,fitted,smooth_length,param
 	
 	
 def remove_overlapping_subcubes(cube_vals,x0,y0,smooth_length,numy,numx):
+	'''
+	Here I remove the subcubes for which one searh has already been done.
+	This is because, even we are concerned with the point (x0,y0), we 
+	search for a box of size smooth_length around it. So there is no point
+	is suppose search in a box centred around (x0-1,y0-1).
+	
+	cube_vals: The subcube list which has all the subcubes and their gradients
+		    calculated
+	x0,y0: coordinate around which the search has happened
+	smooth_length: smooth length determines the box size for which search has 
+			happened and should be used for finding overlaps.
+	numx,numy: Length along X and Y coordinates of image cube
+	'''
 	j=0
 	for y in range(0,numy):
 		for x in range(0,numx):
@@ -414,19 +821,60 @@ def remove_overlapping_subcubes(cube_vals,x0,y0,smooth_length,numy,numx):
 			j+=1	
 	return		
 
-def smooth_param_maps(spectral_cube, err_cube, fitted,param_val,numx,numy,num_params,\
-			smooth_lengths,thresh,max_dist_parameter_space, model,param_lengths,\
-			sys_err,num_freqs,low_freq_ind,upper_freq_ind,rms_thresh,max_iter=5):
+def smooth_param_maps(spectral_cube,\
+		       err_cube, \
+		       fitted,\
+		       param_val,\
+		       numx,\
+		       numy,\
+		       num_params,\
+		       smooth_lengths,\
+		       thresh,\
+		       max_dist_parameter_space,\
+		       model,\
+		       param_lengths,\
+		       sys_err,\
+		       num_freqs,\
+		       low_freq_ind,\
+		       upper_freq_ind,\
+		       rms_thresh,\
+		       max_iter=5):
+	
+	'''
+	This function is a wrapper for the all the functions needed to do
+	the cluster wise analysis. The user calls this function and this
+	calls others as needed.
+	
+	spectral_cube: Observed spectral cube, Shape: num_times, num_y, num_x, num_freqs
+	err_cube: Image rms cube, shape: num_times, num_freqs
+	fitted: the array containing the current fit results
+	param_val: Actual values of the parameters
+	numx,numy: Length along X and Y coordinates
+	num_params: Number of fitted parameters
+	smooth_lengths: The list of smoothing lengths to be used for finding
+			 discontituiny
+	thresh: Threshold used to detect discontinuity.
+	max_dist_parameter_space: Maximum distance in parameter space. Used
+	                          for cluster finding
+	model: model cube supplied by the user
+	param_lengths: Lengths of the parameters in the supplied model cube
+	sys_err: Systematic flux uncertainty; user input.
+		    Added in quadrature (sys_error x flux at that frequency)
+	
+	num_freqs: Number of frequencies in the image cube.
+	low_freq_ind,high_freq_ind: This contains the lowest and highest
+	                            frequency index for which the spectrum
+	                            can be described as a homogenous source spectrum.
+	rms_thresh: Threshold in terms of image rms above which we can
+	            treat that the source is not detected and we use the upper limit
+	            as rms_thresh x rms at that frequency
+	max_iter: Optional parameter. Maximum number of iterations for which the search
+		  and removal process is repeated. If no points are changed in any
+		  iteration search and removal process for that smoothing length
+		  is stopped.	
+	'''
+	
 	j=0
-	
-	
-	
-	#subcubes=form_subcubes_with_gradients(numx,numy,num_params,param_val,fitted,smooth_lengths[0],param_lengths)
-	
-	
-	#grads=subcubes[:,2]
-	#sorted_indices=np.argsort(grads)[::-1]
-	
 	for smooth_length in smooth_lengths:
 		iter1=0
 		changed_points=0
@@ -506,9 +954,36 @@ def smooth_param_maps(spectral_cube, err_cube, fitted,param_val,numx,numy,num_pa
 				break
 			iter1+=1
 
-def create_smoothed_model_image(low_freq_ind,high_freq_ind,num_x, num_y, num_params, num_freqs, resolution,\
-					model,fitted, smoothed_model_cube, low_indx, low_indy, high_indx,high_indy):
-
+def create_smoothed_model_image(low_freq_ind,\
+				 high_freq_ind,\
+				 num_x, \
+				 num_y, \
+				 num_params, \
+				 num_freqs, \
+				 resolution,\
+				 model,\
+				 fitted, \
+				 smoothed_model_cube, \
+				 low_indx, \
+				 low_indy, \
+				 high_indx,\
+				 high_indy):
+	'''
+	This function first creates a model cube using the parameter information.
+	In regions where fitting has not been done due to user choices, it uses
+	the actual image values. Then I convolve each frequency image using the 
+	appropriate gaussain. For convolution, I truncate the gaussian at +- 1 sigma.
+	
+	low_freq_ind,high_freq_ind: This contains the lowest and highest
+	                            frequency index for which the spectrum
+	                            can be described as a homogenous source spectrum.
+	numx,numy: Length along X and Y coordinates
+	num_params: Number of fitted parameters
+	num_freqs: Number of frequencies in image cube
+	resolution: Array containing the resolution at all frequencies in pixel units 
+	
+	'''
+	
 	low_freq_ind_conv=0
 	high_freq_ind_conv=1e5
 	
@@ -535,7 +1010,7 @@ def create_smoothed_model_image(low_freq_ind,high_freq_ind,num_x, num_y, num_par
 		res=resolution[i]
 		sigma=res/(2*np.sqrt(2*np.log(2)))
 		sigma_pix=int(sigma)+1
-		truncate_sigma=3
+		truncate_sigma=1 ### I verified the source code. This takes +- truncate_sigma kernel
 		low_indx_conv=max(low_indx-truncate_sigma*sigma_pix,0)
 		low_indy_conv=max(low_indy-truncate_sigma*sigma_pix,0)
 		high_indx_conv=min(high_indx+truncate_sigma*sigma_pix,num_x-1)
@@ -557,7 +1032,21 @@ def create_smoothed_model_image(low_freq_ind,high_freq_ind,num_x, num_y, num_par
 	
 
 
-def find_spatial_neighbours(cluster1,cluster2,nearest=True):
+def find_spatial_neighbours(cluster1,\
+			     cluster2,\
+			     nearest=True):
+	'''
+	This function takes one member of cluster2. Then it searches 
+	neighbours within +-2 pixels and sees if those pixels are 
+	located in cluster1. If yes, then it notes down the index
+	number of that neighbour in the cluster1 list.
+	
+	cluster1: The list containing members of the biggest cluster
+	cluster2: List containing memebers whose new parameters are
+		  being searrched.
+	nearest: Optional parameter. Decides whether we search for
+		 neighbours between +-1 pix or +-2 pix 
+	'''
 	neighbours=[]
 	for n,member in enumerate(cluster2):
 		x0=member[0]
@@ -583,12 +1072,34 @@ def find_spatial_neighbours(cluster1,cluster2,nearest=True):
 	return neighbours		
 	
 def find_ind_combinations(x):
+	'''
+	This function produces this output
+	input=[[1,2],[4,5,6]]
+	output=[[1,4],[1,5],[1,6],[2,4],[2,5],[2,6]]
+	
+	x: List of lists
+	'''
 	lists=[]
 	for elem in product(*x):
 		lists.append(elem)
 	return lists
 	
 def check_if_smoothness_condition_satisfied(cluster2, fitted,numx,numy,num_params):
+	'''
+	This function is used to reduce the computation time. While I am searching
+	for all parameter combinations, if I find that the parameter difference from
+	its neigbours is more than 1 array index, even though the neighbours is from
+	the same cluster and I am finding the parameters for that point as well
+	then I conlcude that this is not a smooth parameter combination.
+	Hence there is no point in doing more computation. This function returns if 
+	it is worth going through all the pain of computation, without doing the
+	computation itself.
+	
+	cluster2: List containing members of smaller cluster
+	fitted: Array containing current fit results
+	numx,numy: Array size in X and Y coordinates
+	num_params: Number of fitted parameters
+	'''
 	break_condition=False
 	for n,member in enumerate(cluster2):
 		x0=member[0]
@@ -610,12 +1121,70 @@ def check_if_smoothness_condition_satisfied(cluster2, fitted,numx,numy,num_param
 	return True
 						
 										
-def remove_big_clusters_image_comparison(clusters,cluster1,cluster2,\
-					spectral_cube,rms,sys_err,fitted, numx,numy,num_params,\
-					smooth_length,thresh,max_dist_parameter_space, model, low_indx,low_indy,\
-					high_indx,high_indy,min_params1,max_params1, resolution, low_freq_ind,\
-					upper_freq_ind,num_freqs,rms_thresh):
-					
+def remove_big_clusters_image_comparison(clusters,\
+					  cluster1,\
+					  cluster2,\
+					  spectral_cube,\
+					  rms,\
+					  sys_err,\
+					  fitted, \
+					  numx,\
+					  numy,\
+					  num_params,\
+					  smooth_length,\
+					  thresh,\
+					  max_dist_parameter_space, \
+					  model, \
+					  low_indx,\
+					  low_indy,\
+					  high_indx,\
+					  high_indy,\
+					  min_params1,\
+					  max_params1, \
+					  resolution, \
+					  low_freq_ind,\
+					  upper_freq_ind,\
+					  num_freqs,\
+					  rms_thresh,\
+					  param_lengths):
+	'''
+	This function tries to find new parameters for a small cluster
+	close to the parameter values of the biggest cluster in that
+	box.
+	
+	clusters: List of all clusters detected in the box
+	cluster1: Members of the biggest cluster of the box
+	cluster2: Members of the smaller cluster which would be analysed
+		  in this call
+	spectral_cube: Observed spectrum. Shape-num_timesx num_y x num_x x num_freqs
+			At this moment num_times>1 has not been implemented
+	rms: Image rms cube. Shape=  num_freqs.
+	sys_err: Systematic flux uncertainty; user input.
+		    Added in quadrature (sys_error x flux at that frequency)
+	fitted: array containing current fitted parameter values
+	numx,numy: Length along X and Y coordinates
+	num_params: Number of fitted parameters
+	smooth_length: smoothing length to be used
+	thresh: Threshold used to detect discontinuity (not used probably)
+	max_dist_parameter_space: Maximum distance in parameter space. Used
+	                          for cluster finding
+	model: model cube supplied by the user
+	low_indx,low_indy: the corodinate of the bottom-left corner of
+	                   the box where the search should be done
+	high_indx,high_indy: the corodinate of the top-right corner of
+	                     the box where the search should be done
+	min_params1, max_params1: List of the minimum and maximum allowed
+				   allowed values of all parameters      
+	resolution: resolution at all frequencies in pixel units
+	low_freq_ind,high_freq_ind: This contains the lowest and highest
+	                            frequency index for which the spectrum
+	                            can be described as a homogenous source spectrum.
+	num_freqs: Number of frequencies in the image cube.
+	rms_thresh: Threshold in terms of image rms above which we can
+	            treat that the source is not detected and we use the upper limit
+	            as rms_thresh x rms at that frequency               
+	param_lengths: Lengths of the parameters in the supplied model cube
+	'''				
 	size_x=high_indx-low_indx+1
 	size_y=high_indy-low_indy+1
 	
@@ -709,10 +1278,59 @@ def remove_big_clusters_image_comparison(clusters,cluster1,cluster2,\
 	return	
 								
 										
-def smooth_param_maps_image_comparison(spectral_cube, err_cube, fitted, param_val,numx,numy,num_params,\
-					smooth_lengths,thresh,max_dist_parameter_space, model,resolution, \
-					param_lengths, sys_err,num_freqs,low_freq_ind,upper_freq_ind,rms_thresh,\
+def smooth_param_maps_image_comparison(spectral_cube, \
+					err_cube, \
+					fitted, \
+					param_val,\
+					numx,\
+					numy,\
+					num_params,\
+					smooth_lengths,\
+					thresh,\
+					max_dist_parameter_space, \
+					model,\
+					resolution, \
+					param_lengths, \
+					sys_err,\
+					num_freqs,\
+					low_freq_ind,\
+					upper_freq_ind,\
+					rms_thresh,\
 					max_iter=3):
+	'''
+	This function is a wrapper for the all the functions needed to find
+	smooth parameter maps based on image smoothing according to frequency.
+	The user calls this function and this calls others as needed.
+	
+	spectral_cube: Observed spectral cube, Shape: num_times, num_y, num_x, num_freqs
+	err_cube: Image rms cube, shape: num_times, num_freqs
+	fitted: the array containing the current fit results
+	param_val: Actual values of the parameters
+	numx,numy: Length along X and Y coordinates
+	num_params: Number of fitted parameters
+	smooth_lengths: The list of smoothing lengths to be used for finding
+			 discontituiny
+	thresh: Threshold used to detect discontinuity.
+	max_dist_parameter_space: Maximum distance in parameter space. Used
+	                          for cluster finding
+	model: model cube supplied by the user
+	resolution: Resolution at all frequencies in pixel units
+	param_lengths: Lengths of the parameters in the supplied model cube
+	sys_err: Systematic flux uncertainty; user input.
+		    Added in quadrature (sys_error x flux at that frequency)
+	
+	num_freqs: Number of frequencies in the image cube.
+	low_freq_ind,high_freq_ind: This contains the lowest and highest
+	                            frequency index for which the spectrum
+	                            can be described as a homogenous source spectrum.
+	rms_thresh: Threshold in terms of image rms above which we can
+	            treat that the source is not detected and we use the upper limit
+	            as rms_thresh x rms at that frequency
+	max_iter: Optional parameter. Maximum number of iterations for which the search
+		  and removal process is repeated. If no points are changed in any
+		  iteration search and removal process for that smoothing length
+		  is stopped.
+	'''
 	j=0
 	
 	iter1=0
@@ -795,7 +1413,7 @@ def smooth_param_maps_image_comparison(spectral_cube, err_cube, fitted, param_va
 										spectral_cube,err,sys_err,fitted, numx,numy,num_params,\
 										smooth_length,thresh,max_dist_parameter_space, model, low_indx,low_indy,\
 										high_indx,high_indy,min_params1,max_params1, resolution, low_freq_ind,\
-										upper_freq_ind, num_freqs,rms_thresh)
+										upper_freq_ind, num_freqs,rms_thresh,param_lengths)
 				remove_overlapping_subcubes(subcubes,x,y,smooth_length,numy,numx)
 			iter1+=1
 			
@@ -839,10 +1457,6 @@ rms_thresh=3.0
 min_freq_num=35
 smooth_lengths=[4,9]
 discontinuity_thresh=5.0
-spatial_smooth=0.05
-temporal_smooth=0.0
-frac_tol=0.1
-max_iter=10
 max_dist_parameter_space=4
 cell=0.5  ###arcsec
 
@@ -900,30 +1514,29 @@ spectrum1=np.ravel(spectrum.spectrum)
 error1=np.ravel(spectrum.error)
 
 
-#cfunc.compute_min_chi_square(model1,spectrum1,error1,lowest_freq,\
-#		highest_freq,param_lengths,model.freqs,sys_error,rms_thresh,min_freq_num,\
-#		model.num_params, num_times,num_freqs,numy,numx,param_vals,high_snr_freq_loc,\
-#		fitted, low_freq_ind, upper_freq_ind)
+cfunc.compute_min_chi_square(model1,spectrum1,error1,lowest_freq,\
+		highest_freq,param_lengths,model.freqs,sys_error,rms_thresh,min_freq_num,\
+		model.num_params, num_times,num_freqs,numy,numx,param_vals,high_snr_freq_loc,\
+		fitted, low_freq_ind, upper_freq_ind)
 		
-hf=h5py.File("python_cython_comb_test.hdf5")
-#fitted=np.array(hf['fitted'])
-#np.save("python_cython_comb_test.npy",fitted)
-fitted=np.load("python_cython_comb_test.npy")
-low_freq_ind=np.array(hf['low_freq_ind'])
-upper_freq_ind=np.array(hf['upper_freq_ind'])
-hf.close()
+#hf=h5py.File("python_cython_comb_test.hdf5")
+#fitted=np.load("python_cython_comb_test.npy")
+#low_freq_ind=np.array(hf['low_freq_ind'])
+#upper_freq_ind=np.array(hf['upper_freq_ind'])
+#hf.close()
 
 print ("removing discont")		
 remove_discont(spectrum.spectrum, spectrum.error, fitted, model.param_vals,numx,numy,num_params,\
 		smooth_lengths,discontinuity_thresh,max_dist_parameter_space, model1,param_lengths,\
 		sys_error,num_freqs,low_freq_ind,upper_freq_ind,rms_thresh)
-		
+
+print ("Calling cluster remover")		
 smooth_param_maps(spectrum.spectrum, spectrum.error, fitted, model.param_vals,numx,numy,num_params,\
 		smooth_lengths,discontinuity_thresh,max_dist_parameter_space, model1,param_lengths,\
 		sys_error,num_freqs,low_freq_ind,upper_freq_ind,rms_thresh)
-		
-#np.save("python_cython_comb_cluster_removal_test.npy",fitted)
-fitted=np.load("python_cython_comb_cluster_removal_test.npy")		
+
+
+print ("Doing image plane smoothing")	
 smooth_param_maps_image_comparison(spectrum.spectrum, spectrum.error, fitted, model.param_vals,numx,numy,\
 				num_params,smooth_lengths,discontinuity_thresh,max_dist_parameter_space,\
 				model.model,resolution,param_lengths,sys_error,num_freqs,low_freq_ind,\
@@ -943,7 +1556,7 @@ for t in range(num_times):
 
 param_names=model.param_names
 
-hf=h5py.File("python_cython_comb_discont_removal_cluster_removal_test1.hdf5",'w')
+hf=h5py.File("python_cython_comb_discont_removal_cluster_removal_test2.hdf5",'w')
 hf.attrs['xmin']=xmin
 hf.attrs['ymin']=ymin
 hf.attrs['xmax']=xmax

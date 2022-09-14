@@ -5,3 +5,4 @@ __pycache__/*
 *.html
 *.hdf5
 *.npy
+tests/*
