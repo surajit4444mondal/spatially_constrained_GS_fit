@@ -281,70 +281,38 @@ cdef void calc_fitrange_homogenous(double *spectrum, \
 					   
 	cdef int max_loc=find_max_pos(spectrum,lower_freq_ind, upper_freq_ind, num_freqs)
 			
-	cdef double *smoothed_spectrum
-	smoothed_spectrum=<double *>PyMem_Malloc(num_freqs*sizeof(double))
-	
-	
-		
-	cdef int smooth_length=3
 	cdef int i,j
-	cdef int smooth_interval=smooth_length//2
-	cdef double sum1
-	
-	for i in range(num_freqs):
-		smoothed_spectrum[i]=0.0
-	
-	for i in range(lower_freq_ind[0],upper_freq_ind[0]+1):
-		if i<smooth_interval:
-			smoothed_spectrum[i]=0.0
-			continue
-		elif i>num_freqs-1-smooth_interval:
-			smoothed_spectrum[i]=0.0
-			continue
-		j=-smooth_interval
-		sum1=0.0
-		while j<smooth_interval:
-			sum1=sum1+spectrum[i+j]
-			j=j+1
-		sum1=sum1/smooth_length
-		smoothed_spectrum[i]=sum1
-	
-	
-	j=max_loc-smooth_interval
-	
-	
-	while j>smooth_interval:
-		if smoothed_spectrum[j]<1e-7:
+
+	j=max_loc-1
+	while j>=0:
+		if spectrum[j]<1e-7:
 			lower_freq_ind[0]=j
 			break
 		if j==lower_freq_ind[0]:
 			break
-		if (smoothed_spectrum[j-1]-smoothed_spectrum[j])>sqrt((square(error[j])+\
-								   square(error[j-1]))/smooth_length+\
-								   square(sys_error*smoothed_spectrum[j-1])+\
-								   square(sys_error*smoothed_spectrum[j])):
+		if (spectrum[j-1]-spectrum[j])>sqrt(square(error[j])+\
+								   square(error[j-1])+\
+								   square(sys_error*spectrum[j-1])+\
+								   square(sys_error*spectrum[j])):
 			lower_freq_ind[0]=j
 			break
 		j=j-1
 		
-	j=max_loc+1+smooth_interval
-	
-	
-	while j<num_freqs-2-smooth_interval:
-		if smoothed_spectrum[j]<1e-7:
+	j=max_loc+1
+	while j<num_freqs:
+		if spectrum[j]<1e-7:
 			upper_freq_ind[0]=j
 			break
 		if j==upper_freq_ind[0]:
 			break
-		if (smoothed_spectrum[j+1]-smoothed_spectrum[j])>sqrt((square(error[j])+\
-								   square(error[j-1]))/smooth_length+\
-								   square(sys_error*smoothed_spectrum[j+1])+\
-								   square(sys_error*smoothed_spectrum[j])):
+		if (spectrum[j+1]-spectrum[j])>sqrt(square(error[j])+\
+								   square(error[j+1])+\
+								   square(sys_error*spectrum[j+1])+\
+								   square(sys_error*spectrum[j])):
 			upper_freq_ind[0]=j
 			break
 		j=j+1
 		
-	PyMem_Free(smoothed_spectrum)
 	return
 	
 cdef int find_maximum(int *param_lengths,\

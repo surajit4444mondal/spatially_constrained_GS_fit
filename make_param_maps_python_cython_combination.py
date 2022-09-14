@@ -42,7 +42,7 @@ min_freq_num=35
 smooth_lengths=[4,9]
 discontinuity_thresh=5.0
 max_dist_parameter_space=4
-outfile="no_cluster_removal.hdf5"
+outfile="param_maps.hdf5"
 
 
 cell=0.5  ###arcsec
@@ -63,6 +63,7 @@ spectrum.read_map()
 pf.main_func(xmin,ymin,xmax,ymax,lowest_freq,highest_freq,min_freq_num,spectrum,model,resolution, smooth_lengths,\
 		sys_error=sys_error,rms_thresh=rms_thresh,discontinuity_thresh=discontinuity_thresh,\
 		max_dist_parameter_space=max_dist_parameter_space, outfile=outfile)
+
 
 
 

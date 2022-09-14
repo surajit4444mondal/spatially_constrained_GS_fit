@@ -990,8 +990,8 @@ def create_smoothed_model_image(low_freq_ind,\
 	high_freq_ind_conv=1e5
 	
 	for y1 in range(low_indy,high_indy+1):
-		for x1 in range(low_indx,high_indy+1):
-			freq_ind=y1*num_freqs+x1
+		for x1 in range(low_indx,high_indx+1):
+			freq_ind=y1*num_x+x1
 			if low_freq_ind_conv>low_freq_ind[freq_ind]:
 				low_freq_ind_conv=low_freq_ind[freq_ind]
 			if high_freq_ind_conv<high_freq_ind[freq_ind]:
@@ -1448,6 +1448,7 @@ def main_func(xmin,\
 
 	numx=spectrum_shape[2]
 	numy=spectrum_shape[1]
+	print (numx,numy)
 	num_times=spectrum_shape[0]
 	num_freqs=spectrum_shape[3]
 	num_params=model.num_params
@@ -1494,17 +1495,10 @@ def main_func(xmin,\
 			sys_error,num_freqs,low_freq_ind,upper_freq_ind,rms_thresh,smoothness_enforcer)
 
 	print ("Calling cluster remover")		
-	#smooth_param_maps(spectrum.spectrum, spectrum.error, fitted, model.param_vals,numx,numy,num_params,\
-	#		smooth_lengths,discontinuity_thresh,max_dist_parameter_space, model1,param_lengths,\
-	#		sys_error,num_freqs,low_freq_ind,upper_freq_ind,rms_thresh,smoothness_enforcer)
-	'''
-	#np.save("after_loop_cluster_smoothing1.npy",fitted)
-	fitted=np.load("after_loop_cluster_smoothing1.npy")
-	hf=h5py.File('python_cython_comb_discont_removal_cluster_removal_image_removal_test.hdf5')
-	low_freq_ind=np.array(hf.get('low_freq_ind'))
-	upper_freq_ind=np.array(hf.get('upper_freq_ind'))
-	hf.close()
-	'''
+	smooth_param_maps(spectrum.spectrum, spectrum.error, fitted, model.param_vals,numx,numy,num_params,\
+			smooth_lengths,discontinuity_thresh,max_dist_parameter_space, model1,param_lengths,\
+			sys_error,num_freqs,low_freq_ind,upper_freq_ind,rms_thresh,smoothness_enforcer)
+	
 	print ("Doing image plane smoothing")	
 	smooth_param_maps_image_comparison(spectrum.spectrum, spectrum.error, fitted, model.param_vals,numx,numy,\
 					num_params,smooth_lengths,discontinuity_thresh,max_dist_parameter_space,\
