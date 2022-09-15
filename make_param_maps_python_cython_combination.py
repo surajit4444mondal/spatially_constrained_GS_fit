@@ -45,7 +45,7 @@ max_dist_parameter_space=4
 outfile="param_maps.hdf5"
 
 
-cell=1.5  ###arcsec
+cell=0.5  ###arcsec
 freqs=np.loadtxt("/home/surajit/Downloads/20210507/eovsa_data/ctrl_freqs.txt")
 num_freqs=np.size(freqs)
 resolution=np.zeros(num_freqs)
@@ -56,11 +56,10 @@ for i in range(num_freqs):
 spectrum_files=['/home/surajit/Downloads/20210507/eovsa_data/time_'+time_slice+'_scaled.fits']
 
 model=Model(model_file)
-spectrum=Spectrum(spectrum_files,xmin,ymin,xmax,ymax,lowest_freq,highest_freq)
-spectrum.read_map()
 
 
-pf.main_func(xmin,ymin,xmax,ymax,lowest_freq,highest_freq,min_freq_num,spectrum,model,resolution, smooth_lengths,\
+
+pf.main_func(xmin,ymin,xmax,ymax,lowest_freq,highest_freq,min_freq_num,spectrum_files,model,resolution, smooth_lengths,\
 		sys_error=sys_error,rms_thresh=rms_thresh,discontinuity_thresh=discontinuity_thresh,\
 		max_dist_parameter_space=max_dist_parameter_space, outfile=outfile)
 

@@ -1332,6 +1332,16 @@ def smooth_param_maps_image_comparison(spectral_cube, \
 		  and removal process is repeated. If no points are changed in any
 		  iteration search and removal process for that smoothing length
 		  is stopped.
+		  
+	During cluster removal if enforce that the number of members of the cluster
+	should be less than half the member number of the bigegst cluster. Additionally
+	I enforce that the member number of the cluster should be less than 8. This is 
+	becuase since here I generate an image, I have simultaneously change all pixel
+	values. Hence if member number is large, the number of permutations becomes
+	exponentially large. I have also put in a check_smoothness_condition, where if
+	the pixel value is more than 1 different from that of its neighbour, I do not 
+	check that combination. If you have less pixels in your resolution element, consider
+	these checks. or you can decrease the strength of the conditions.
 	'''
 	j=0
 	
@@ -1427,7 +1437,7 @@ def main_func(xmin,\
 	       lowest_freq,\
 	       highest_freq,\
 	       min_freq_num,\
-	       spectrum,\
+	       spectrum_files,\
 	       model,\
 	       resolution,\
 	       smooth_lengths,\
@@ -1437,7 +1447,10 @@ def main_func(xmin,\
 	       rms_thresh=3,\
 	       smoothness_enforcer=0.05,\
 	       outfile='outfile.hdf5'):
-	       
+	
+	spectrum=Spectrum(spectrum_files,xmin,ymin,xmax,ymax,lowest_freq,highest_freq)
+	spectrum.read_map()   
+	
 	shape=model.model.shape
 	spectrum_shape=spectrum.spectrum.shape
 	model1=np.ravel(model.model)
@@ -1503,6 +1516,8 @@ def main_func(xmin,\
 				
 	param_maps=np.zeros((num_times,numy,numx,num_params))
 	chi_map=np.zeros((num_times,numy,numx))
+	low_freq_ind_map=np.zeros((num_times,numy,numx))
+	upper_freq_ind_map=np.zeros((num_times,numy,numx))
 
 	for t in range(num_times):
 		for y1 in range(numy):
@@ -1511,6 +1526,9 @@ def main_func(xmin,\
 					ind=t*numy*numx*(num_params+1)+y1*numx*(num_params+1)+x1*(num_params+1)+m
 					param_maps[t,y1,x1,m]=model.param_vals[m][int(fitted[ind])]
 				chi_map[t,y1,x1]=fitted[int(ind+1)]
+				ind=y1*numx+x1
+				low_freq_ind_map[t,y1,x1]=low_freq_ind[int(ind)]
+				upper_freq_ind_map[t,y1,x1]=upper_freq_ind[int(ind)]
 
 	param_names=model.param_names
 
@@ -1528,8 +1546,8 @@ def main_func(xmin,\
 	hf.attrs['max_dist_parameter_space']=max_dist_parameter_space
 	hf.attrs['smoothness_enforcer']=smoothness_enforcer
 
-	hf.create_dataset('low_freq_ind',data=low_freq_ind)
-	hf.create_dataset('upper_freq_ind',data=upper_freq_ind)
+	hf.create_dataset('low_freq_ind',data=low_freq_ind_map)
+	hf.create_dataset('upper_freq_ind',data=upper_freq_ind_map)
 	hf.create_dataset('smooth_lengths',data=np.array(smooth_lengths))
 
 	for n,key in enumerate(param_names):
