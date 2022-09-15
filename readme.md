@@ -44,4 +44,14 @@ model: Please use a structure same as that provided in the example. Let us assum
 	
 smoothness_enforcer: This parameter determines what weight should be given to the gradient. 
 
+The code which the user needs to modify is make_param_maps_python_cython_combination.py .
+
+Before running the python code first run,
+
+python3 setup.py build_ext --inplace
+
+Next run
+
+python3 make_param_maps_python_cython_combination.py
+
 
