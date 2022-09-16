@@ -966,7 +966,7 @@ def smooth_param_maps(spectral_cube,\
 						tot_member=get_total_members(clusters)
 						cluster_len=len(clusters)
 						if cluster_len<=1:
-							return	
+							continue	
 				
 				member_num=[]
 				for cluster in clusters:
@@ -975,6 +975,25 @@ def smooth_param_maps(spectral_cube,\
 				
 				member_num=np.array(member_num)
 				sorted_pos=np.argsort(member_num)[::-1]
+				
+				if member_num[sorted_pos[0]]==member_num[sorted_pos[1]]:
+					sep=1
+					clusters=get_clusters(fitted,low_indx,low_indy, high_indx,high_indy,\
+						numx,numy,num_params,max_dist_parameter_space,\
+						param_lengths,stride=sep)
+					tot_member=get_total_members(clusters)
+					cluster_len=len(clusters)
+					if cluster_len<=1:
+						continue
+					member_num=[]
+					for cluster in clusters:
+						member_num.append(len(cluster))	
+					
+					
+					member_num=np.array(member_num)
+					sorted_pos=np.argsort(member_num)[::-1]
+					if member_num[sorted_pos[0]]==member_num[sorted_pos[1]]:
+						continue	
 				
 				cluster1=clusters[sorted_pos[0]]
 				len_cluster1=len(cluster1)
@@ -995,8 +1014,7 @@ def smooth_param_maps(spectral_cube,\
 					max_params1[param]=min(int(np.max(ind))+2,param_lengths[param]-1)
 					del ind	
 				
-				if member_num[sorted_pos[0]]==member_num[sorted_pos[1]]:
-					continue
+				
 				grad_chi_square_old=cfunc.calc_grad_chisquare(low_indx,low_indy,high_indx,\
 										high_indy,numx,numy,num_params,\
 										fitted,param_lengths,smoothness_enforcer,1)
@@ -1759,7 +1777,7 @@ def main_func(xmin,\
 	print ("Calling cluster remover")		
 	smooth_param_maps(spectrum.spectrum, spectrum.error, fitted, model.param_vals,numx,numy,num_params,\
 			smooth_lengths,discontinuity_thresh,max_dist_parameter_space, model1,param_lengths,\
-			sys_error,num_freqs,low_freq_ind,upper_freq_ind,rms_thresh,smoothness_enforcer,resolution,max_iter=7)
+			sys_error,num_freqs,low_freq_ind,upper_freq_ind,rms_thresh,smoothness_enforcer,resolution,max_iter=5)
 	
 	#print ("Doing image plane smoothing")	
 	#smooth_param_maps_image_comparison(spectrum.spectrum, spectrum.error, fitted, model.param_vals,numx,numy,\
