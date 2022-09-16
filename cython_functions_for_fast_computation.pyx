@@ -5,6 +5,84 @@ from cpython.mem cimport PyMem_Malloc, PyMem_Realloc, PyMem_Free
 from libc.string cimport memcpy 
 import cython	
 
+cpdef void verify_new_coords(int[::1] new_coords_x,\
+			     int [::1] new_coords_y, \
+			     int tot_coords,\
+			     double [:,:] new_param_vals, \
+			     double [:] fitted, \
+			     int numx,\
+			     int numy,\
+			     int num_params,\
+			     int num_freqs,\
+			     double [:,:,:] spectral_cube,\
+			     double [:] rms,\
+			     double [:] model,\
+			     int [:] low_freq_ind,\
+			     int [:] high_freq_ind,\
+			     double rms_thresh,\
+			     int [:] param_lengths,\
+			     double sys_err,\
+			     int low_indx,\
+			     int low_indy,\
+			     int high_indx,\
+			     int high_indy,\
+			     double smoothness_enforcer):
+
+
+	cdef int i,x1,y1,param,ind,n,p,product
+	cdef double [:]model_spec
+	cdef int min_freq_ind,max_freq_ind,freq_ind
+	cdef double ratio,chisq_temp,grad_chisquare_old
+	cdef double grad_chisquare_new
+	cdef double chisq=1e9
+	cdef double [:] spectrum
+	cdef int model_ind
+	
+	cdef double *old_params
+	old_params=<double *>PyMem_Malloc((num_params+1)*sizeof(double))
+	
+	
+	for i in range(tot_coords):
+		x1=new_coords_x[i]
+		y1=new_coords_y[i]
+		ind=y1*numx*(num_params+1)+x1*(num_params+1)
+		grad_chisqaure_old=fitted[ind+num_params]+calc_gradient_wrapper(x1,y1,fitted,\
+						numx,numy,num_params,param_lengths,\
+						smoothness_enforcer)
+		
+		freq_ind=y1*numx+x1
+		min_freq_ind=low_freq_ind[freq_ind]
+		max_freq_ind=high_freq_ind[freq_ind]
+		spectrum=spectral_cube[y1,x1,:]
+		for param in range(num_params):
+			old_params[param]=fitted[ind+param]
+			fitted[ind+param]=new_param_vals[param,i]
+		old_params[num_params]=fitted[ind+num_params]
+		
+		model_ind=0
+		for n in range(num_params):
+			product=1
+			for p in range(n+1,num_params):
+				product=product*param_lengths[p]
+			model_ind+=int(new_param_vals[n,i])*product*num_freqs
+		model_spec=model[model_ind:]
+		mid_ind=(min_freq_ind+max_freq_ind)//2
+		ratio=spectrum[mid_ind]/model_spec[mid_ind]
+		if ratio>2 or ratio<0.5:
+			continue
+		chisq_temp=calc_chi_square(spectrum, rms,sys_err, model_spec, min_freq_ind,max_freq_ind,rms_thresh)
+		fitted[ind+num_params]=chisq_temp
+		grad_chisquare_new=chisq_temp+calc_gradient_wrapper(x1,y1,fitted,\
+						numx,numy,num_params,param_lengths,\
+						smoothness_enforcer)
+		if grad_chisquare_new>grad_chisquare_old:
+			for param in range(num_params+1):
+				fitted[ind+param]=old_params[param]		
+		
+					     
+	PyMem_Free(old_params)
+	return
+
 cpdef void get_image_chisquare(double [:,:,:] observed_image_cube,\
 			  double [:,:,:] model_image_cube,\
 			  double [:] rms,\
@@ -464,7 +542,8 @@ cpdef double calc_grad_chisquare(int low_indx,\
 				  int num_params,\
 				  double [:] fitted,\
 				  int [:] param_lengths,\
-				  double smoothness_enforcer):
+				  double smoothness_enforcer,\
+				  int stride):
 				  
 	cdef double chi_square=0.0
 	cdef int y1,x1,ind
@@ -475,8 +554,8 @@ cpdef double calc_grad_chisquare(int low_indx,\
 	cdef int *param_lengths1
 	param_lengths1=&param_lengths[0]
 	
-	for y1 in range(low_indy, high_indy):
-		for x1 in range(low_indx,high_indx):
+	for y1 in range(low_indy, high_indy+1,stride):
+		for x1 in range(low_indx,high_indx+1,stride):
 			ind=y1*numx*(num_params+1)+x1*(num_params+1)+num_params
 			if fitted[ind]>0:
 				chi_square=chi_square+fitted[ind]+\

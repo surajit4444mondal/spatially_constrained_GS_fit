@@ -39,10 +39,10 @@ highest_freq=15
 sys_error=0.2
 rms_thresh=3.0
 min_freq_num=35
-smooth_lengths=[4,9]
+smooth_lengths=[0.5,1]
 discontinuity_thresh=5.0
 max_dist_parameter_space=4
-outfile="param_maps.hdf5"
+outfile="frequency_dependent_smoothing.hdf5"
 
 
 cell=0.5  ###arcsec
