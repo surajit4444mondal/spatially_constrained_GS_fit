@@ -42,7 +42,7 @@ min_freq_num=35
 smooth_lengths=[0.5,1]
 discontinuity_thresh=5.0
 max_dist_parameter_space=4
-outfile="frequency_dependent_smoothing.hdf5"
+outfile="frequency_dependent_smoothing_test.hdf5"
 
 
 cell=0.5  ###arcsec

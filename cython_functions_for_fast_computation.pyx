@@ -26,7 +26,8 @@ cpdef void verify_new_coords(int[::1] new_coords_x,\
 			     int low_indy,\
 			     int high_indx,\
 			     int high_indy,\
-			     double smoothness_enforcer):
+			     double smoothness_enforcer,\
+			     ):
 
 
 	cdef int i,x1,y1,param,ind,n,p,product
@@ -37,6 +38,7 @@ cpdef void verify_new_coords(int[::1] new_coords_x,\
 	cdef double chisq=1e9
 	cdef double [:] spectrum
 	cdef int model_ind
+	cdef int stride=1
 	
 	cdef double *old_params
 	old_params=<double *>PyMem_Malloc((num_params+1)*sizeof(double))
@@ -48,7 +50,7 @@ cpdef void verify_new_coords(int[::1] new_coords_x,\
 		ind=y1*numx*(num_params+1)+x1*(num_params+1)
 		grad_chisqaure_old=fitted[ind+num_params]+calc_gradient_wrapper(x1,y1,fitted,\
 						numx,numy,num_params,param_lengths,\
-						smoothness_enforcer)
+						smoothness_enforcer,stride)
 		
 		freq_ind=y1*numx+x1
 		min_freq_ind=low_freq_ind[freq_ind]
@@ -74,7 +76,7 @@ cpdef void verify_new_coords(int[::1] new_coords_x,\
 		fitted[ind+num_params]=chisq_temp
 		grad_chisquare_new=chisq_temp+calc_gradient_wrapper(x1,y1,fitted,\
 						numx,numy,num_params,param_lengths,\
-						smoothness_enforcer)
+						smoothness_enforcer,stride)
 		if grad_chisquare_new>grad_chisquare_old:
 			for param in range(num_params+1):
 				fitted[ind+param]=old_params[param]		
@@ -412,10 +414,11 @@ cdef double calc_gradx(int x0,\
 		int numx,\
 		int numy,\
 		int num_params,\
-		double smoothness_enforcer):
+		double smoothness_enforcer,\
+		int stride):
 	
 	
-	cdef int x1=x0-1
+	cdef int x1=x0-stride
 	cdef int y1=y0
 	cdef int ind1=y1*numx*(num_params+1)+x1*(num_params+1)+param
 	cdef int ind=y0*numx*(num_params+1)+x0*(num_params+1)+param
@@ -425,9 +428,9 @@ cdef double calc_gradx(int x0,\
 	if x1<0:
 		grad1=0
 	elif fitted[ind1]>0 and fitted[ind]>0:
-		grad1=(fitted[ind]-fitted[ind1])
+		grad1=(fitted[ind]-fitted[ind1])/stride
 		
-	cdef int x2=x0+1
+	cdef int x2=x0+stride
 	cdef int y2=y0
 	cdef int ind2=y2*numx*(num_params+1)+x2*(num_params+1)+param
 	cdef double grad2=0
@@ -435,7 +438,7 @@ cdef double calc_gradx(int x0,\
 	if x2>numx-1:
 		grad2=0
 	if fitted[ind2]>0 and fitted[ind]>0:
-		grad2=(fitted[ind2]-fitted[ind])
+		grad2=(fitted[ind2]-fitted[ind])/stride
 		
 	cdef double grad=sqrt(square(grad1)+square(grad2))
 	return grad
@@ -447,10 +450,11 @@ cdef double calc_grady(int x0,\
 		int numx,\
 		int numy,\
 		int num_params,\
-		double smoothness_enforcer):
+		double smoothness_enforcer,\
+		int stride):
 	
 	cdef int x1=x0
-	cdef int y1=y0-1
+	cdef int y1=y0-stride
 	cdef int ind1=y1*numx*(num_params+1)+x1*(num_params+1)+param
 	cdef int ind=y0*numx*(num_params+1)+x0*(num_params+1)+param
 
@@ -459,17 +463,17 @@ cdef double calc_grady(int x0,\
 	if y1<0:
 		grad1=0
 	elif fitted[ind1]>0 and fitted[ind]>0:
-		grad1=(fitted[ind]-fitted[ind1])
+		grad1=(fitted[ind]-fitted[ind1])/stride
 		
 	cdef int x2=x0
-	cdef int y2=y0+1
+	cdef int y2=y0+stride
 	cdef int ind2=y2*numx*(num_params+1)+x2*(num_params+1)+param
 	cdef double grad2=0
 	
 	if y2>numy-1:
 		grad2=0
 	if fitted[ind2]>0 and fitted[ind]>0:
-		grad2=(fitted[ind2]-fitted[ind])
+		grad2=(fitted[ind2]-fitted[ind])/stride
 		
 	cdef double grad=sqrt(square(grad1)+square(grad2))
 	return grad	
@@ -481,8 +485,9 @@ cpdef double calc_gradient_wrapper(int x0,\
 			   int num_y,\
 			   int num_params,\
 			   int [:]param_lengths,\
-			   double smoothness_enforcer):
-	return calc_gradient(x0,y0,&fitted[0],num_x,num_y,num_params,&param_lengths[0],smoothness_enforcer)
+			   double smoothness_enforcer,\
+			   int stride):
+	return calc_gradient(x0,y0,&fitted[0],num_x,num_y,num_params,&param_lengths[0],smoothness_enforcer,stride)
 			   
 			   
 	
@@ -493,7 +498,8 @@ cdef double calc_gradient(int x0,\
 			   int num_y,\
 			   int num_params,\
 			   int *param_lengths,\
-			   double smoothness_enforcer):
+			   double smoothness_enforcer,\
+			   int stride):
 			   
 	cdef int ind,param
 	ind=y0*num_x*(num_params+1)+x0*(num_params+1)+num_params
@@ -506,8 +512,8 @@ cdef double calc_gradient(int x0,\
 		
 	cdef double gradx,grady
 	for param in range(num_params):
-		gradx=calc_gradx(x0,y0,param,fitted, num_x,num_y,num_params,smoothness_enforcer)
-		grady=calc_grady(x0,y0,param,fitted, num_x,num_y,num_params,smoothness_enforcer)
+		gradx=calc_gradx(x0,y0,param,fitted, num_x,num_y,num_params,smoothness_enforcer,stride)
+		grady=calc_grady(x0,y0,param,fitted, num_x,num_y,num_params,smoothness_enforcer,stride)
 		grad=grad+(square(gradx)+square(grady))*smoothness_enforcer*max_param_length/param_lengths[param]
 	return grad	
 	
@@ -554,14 +560,14 @@ cpdef double calc_grad_chisquare(int low_indx,\
 	cdef int *param_lengths1
 	param_lengths1=&param_lengths[0]
 	
-	for y1 in range(low_indy, high_indy+1,stride):
-		for x1 in range(low_indx,high_indx+1,stride):
+	for y1 in range(low_indy, high_indy):#stride):
+		for x1 in range(low_indx,high_indx):#,stride):
 			ind=y1*numx*(num_params+1)+x1*(num_params+1)+num_params
 			if fitted[ind]>0:
 				chi_square=chi_square+fitted[ind]+\
 						calc_gradient(x1,y1,fitted1,\
 						numx,numy,num_params,param_lengths1,\
-						smoothness_enforcer)
+						smoothness_enforcer,stride)
 						
 	return chi_square
 	

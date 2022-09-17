@@ -123,8 +123,10 @@ def list_discont(fitted,\
 		 numx,\
 		 numy,\
 		 num_params,\
-		 search_length,\
-		 thresh):
+		 smooth_length_frac,\
+		 thresh,\
+		 resolution,\
+		 upper_freq_ind):
 	'''
 	This function calls detect discont for every x,y and finally
 	returns all the detected discontinuitites.
@@ -141,6 +143,8 @@ def list_discont(fitted,\
 			ind5=y*numx*(num_params+1)+x*(num_params+1)+num_params
 			if fitted[ind5]<0:
 				continue
+			freq_ind=y*numx+x
+			search_length=int(smooth_length_frac*resolution[upper_freq_ind[freq_ind]])
 			discont_found=detect_discont(fitted, param_val,x,y,numx,numy,num_params,search_length,thresh)
 			if discont_found==1:
 				discont.append([x,y])
@@ -250,7 +254,7 @@ def get_clusters(fitted,\
 	
 	return cluster_list
 	
-def get_points_to_remove(cluster_list):
+def get_points_to_remove(cluster_list,stride=1):
 	'''
 	Here I am passed a cluster list, which was created in the box
 	where at least discontituity has been detected. Because of
@@ -268,7 +272,7 @@ def get_points_to_remove(cluster_list):
 		member_num.append(len(cluster))
 	
 	min_member=int(min(member_num))
-	max_member=int(min(max(member_num)//1.2,4))
+	max_member=int(max(member_num)/1.2)
 	## In earlier versions, max_member was always set to 4. 
 	points_to_remove=[]
 	max_points_to_remove=10
@@ -277,11 +281,22 @@ def get_points_to_remove(cluster_list):
 	for current_member_number in range(min_member,max_member+1):
 		for n,cluster in enumerate(cluster_list):
 			if member_num[n]==current_member_number:
-				if j+member_num[n]>max_points_to_remove:
+				if j+member_num[n]/stride**2>max_points_to_remove:
 					continue
 				for member in cluster:
-					points_to_remove.append(member)
-					j+=1
+					x=member[0]
+					y=member[1]
+					already_present=False
+					for p in range(x-stride//2,x+stride//2):
+						for q in range(y-stride//2, y+stride//2):
+							try:
+								ind=points_to_remove.index([p,q])
+								already_present=True
+							except ValueError:
+								pass			
+					if already_present==False:
+						points_to_remove.append(member)
+						j+=1
 	return points_to_remove
 	
 	
@@ -304,7 +319,8 @@ def find_new_params(points_to_remove,\
 		     low_freq_ind,\
 		     upper_freq_ind,\
 		     rms_thresh,\
-		     smoothness_enforcer):
+		     smoothness_enforcer,\
+		     stride=1):
 	'''
 	This function finds new parameter values for the points in
 	the list returned by points_to_remove function. I take the
@@ -354,8 +370,8 @@ def find_new_params(points_to_remove,\
 		inds=[]
 		for i in range(-2,3):
 			for j in range(-2,3):
-				x1=x0+j
-				y1=y0+i
+				x1=x0+j*stride
+				y1=y0+i*stride
 				if [x1,y1] not in points_to_remove:
 					ind=y1*numx*(num_params+1)+x1*(num_params+1)+num_params
 					if fitted[ind]>0:
@@ -364,7 +380,7 @@ def find_new_params(points_to_remove,\
 		upper_freq=upper_freq_ind[y0*numx+x0]
 		spectrum1=np.ravel(spectrum[y0-low_indy,x0-low_indx,:])
 		grad_chi_square=cfunc.calc_grad_chisquare(max(low_indx, x0-2),max(low_indy,y0-2),min(high_indx,x0+2),min(high_indy,y0+2), \
-					numx,numy,num_params, fitted, param_lengths, smoothness_enforcer)	
+					numx,numy,num_params, fitted, param_lengths, smoothness_enforcer,stride)	
 		for n,param_ind in enumerate(inds):
 			model_ind=0
 			for k in range(num_params):
@@ -377,7 +393,7 @@ def find_new_params(points_to_remove,\
 			chi_square=cfunc.calc_chi_square(spectrum1,rms,sys_error,model[int(model_ind):],low_freq,upper_freq,rms_thresh)
 			fitted[y0*numx*(num_params+1)+x0*(num_params+1)+num_params]=chi_square
 			grad_chi_square_temp=cfunc.calc_grad_chisquare(max(low_indx, x0-2),max(low_indy,y0-2),min(high_indx,x0+2),min(high_indy,y0+2),\
-						 numx,numy,num_params, fitted,param_lengths,smoothness_enforcer)		
+						 numx,numy,num_params, fitted,param_lengths,smoothness_enforcer,stride)		
 			if grad_chi_square_temp<grad_chi_square:
 				changed=True
 				grad_chi_square=grad_chi_square_temp
@@ -397,7 +413,7 @@ def remove_discont(spectral_cube, \
 			numx,\
 			numy,\
 			num_params,\
-			smooth_lengths,\
+			smooth_length_fracs,\
 			thresh,\
 			max_dist_parameter_space,\
 			 model,param_lengths,\
@@ -407,6 +423,7 @@ def remove_discont(spectral_cube, \
 			 upper_freq_ind,\
 			 rms_thresh,\
 			 smoothness_enforcer,\
+			 resolution,\
 			 max_iter=5):
 
 	'''
@@ -444,20 +461,22 @@ def remove_discont(spectral_cube, \
 	'''
 	
 	rms=np.ravel(err_cube[0,:])
-	for search_length in smooth_lengths:
+	for smooth_length_frac in smooth_length_fracs:
 		iter1=0
 		points_changed=0
 		while iter1<max_iter:
 			points_changed=0
-			discont_list=list_discont(fitted, param_val,numx,numy,num_params,search_length,thresh)
+			discont_list=list_discont(fitted, param_val,numx,numy,num_params,\
+						  smooth_length_frac,thresh,resolution,upper_freq_ind)
 			
 			for point_num,discont in enumerate(discont_list):
 				x=discont[0]
 				y=discont[1]
 				
 				if x<0 and y<0:
-		
 					continue
+				freq_ind=y*numx+x
+				search_length=int(smooth_length_frac*resolution[upper_freq_ind[freq_ind]])
 				low_indx=max(0,x-search_length//2)
 				low_indy=max(0,y-search_length//2)
 
@@ -467,18 +486,26 @@ def remove_discont(spectral_cube, \
 				if high_indx-low_indx<search_length or high_indy-low_indy<search_length:
 					continue
 				
+				sep=max(1,int(resolution[upper_freq_ind[freq_ind]])//3)
+				
 				spectrum=spectral_cube[0,low_indy:high_indy+1,low_indx:high_indx+1,:]
 				
 				
-				clusters=get_clusters(fitted,low_indx,low_indy, high_indx,high_indy,numx,numy,num_params,max_dist_parameter_space,param_lengths)
+				clusters=get_clusters(fitted,low_indx,low_indy, high_indx,high_indy,numx,numy,num_params,\
+							max_dist_parameter_space,param_lengths, stride=sep)
 				
 				
-				points_to_remove=get_points_to_remove(clusters)
+				points_to_remove=get_points_to_remove(clusters,sep)
 				
 				points_changed+=remove_all_points(points_to_remove,spectrum,rms,sys_err, fitted, param_val,numx,numy,num_params,\
 							search_length,thresh,max_dist_parameter_space, model, low_indx,low_indy,high_indx,high_indy,\
-							param_lengths,num_freqs,low_freq_ind,upper_freq_ind, rms_thresh,smoothness_enforcer)
-				
+							param_lengths,num_freqs,low_freq_ind,upper_freq_ind, rms_thresh,smoothness_enforcer,sep)
+				if sep>1:
+					find_param_val_all_points(x,y,numx,numy,num_params,num_freqs,search_length,clusters,\
+							  fitted,low_indx,low_indy,high_indx,high_indy, spectral_cube,\
+							  err_cube, low_freq_ind, upper_freq_ind,rms_thresh, param_lengths,\
+							  sys_err,smoothness_enforcer,model,sep)
+							  
 				for discont1 in discont_list[point_num+1:]:
 					if discont1[0]>=low_indx and discont1[0]<=high_indx	and discont1[1]>=low_indy and discont1[1]<=high_indy:
 						discont1[0]=-1
@@ -512,7 +539,8 @@ def remove_all_points(points_to_remove,\
 			low_freq_ind,\
 			upper_freq_ind,\
 			rms_thresh,\
-			smoothness_enforcer):
+			smoothness_enforcer,\
+			stride):
 	'''
 	This function first calls get_new_params and then decides if the
 	found points can be kept considering the full box.
@@ -558,11 +586,13 @@ def remove_all_points(points_to_remove,\
 		for i in range(ind,ind+num_params+1):
 			old_params[m].append(fitted[i])
 
-	grad_chi_square_old=cfunc.calc_grad_chisquare(low_indx,low_indy,high_indx,high_indy, numx,numy,num_params, fitted,param_lengths,smoothness_enforcer)	
+	grad_chi_square_old=cfunc.calc_grad_chisquare(low_indx,low_indy,high_indx,high_indy,\
+							 numx,numy,num_params, fitted,param_lengths,\
+							 smoothness_enforcer,1)	
 	
 	new_params,points_changed=find_new_params(points_to_remove,fitted,model,spectrum,sys_err,rms,param_val,numx,numy,num_params,\
 							 low_indx,low_indy,high_indx,high_indy,param_lengths,num_freqs, low_freq_ind,\
-							 upper_freq_ind, rms_thresh,smoothness_enforcer)
+							 upper_freq_ind, rms_thresh,smoothness_enforcer,stride)
 	
 	for m,point in enumerate(points_to_remove):
 		x0=point[0]
@@ -570,7 +600,9 @@ def remove_all_points(points_to_remove,\
 		ind=y0*numx*(num_params+1)+x0*(num_params+1)
 		for k,val in enumerate(new_params[m]):
 			fitted[ind+k]=val
-	grad_chi_square_new=cfunc.calc_grad_chisquare(low_indx,low_indy,high_indx,high_indy, numx,numy,num_params, fitted,param_lengths,smoothness_enforcer)	
+	grad_chi_square_new=cfunc.calc_grad_chisquare(low_indx,low_indy,high_indx,high_indy, \
+							numx,numy,num_params, fitted,param_lengths,\
+							smoothness_enforcer,stride)	
 	if grad_chi_square_new>grad_chi_square_old:
 		for m,point in enumerate(points_to_remove):
 			x0=point[0]
@@ -788,6 +820,7 @@ def form_subcubes_with_gradients(numx,\
 			freq_ind=y*numx+x
 			smooth_length=int(smooth_length_frac*\
 					resolution[upper_freq_ind[freq_ind]])
+			
 			low_indx=max(0,x-smooth_length//2)
 			low_indy=max(0,y-smooth_length//2)
 
@@ -802,7 +835,7 @@ def form_subcubes_with_gradients(numx,\
 			
 			cube_vals[j,0]=x
 			cube_vals[j,1]=y
-			grad=cfunc.calc_gradient_wrapper(x,y,fitted, numx,numy,num_params,param_lengths,smoothness_enforcer)
+			grad=cfunc.calc_gradient_wrapper(x,y,fitted, numx,numy,num_params,param_lengths,smoothness_enforcer,1)
 			cube_vals[j,2]=grad
 			j+=1
 	return cube_vals
@@ -916,6 +949,7 @@ def smooth_param_maps(spectral_cube,\
 				y=int(subcubes[sort_ind,1])
 				
 				print (x,y)
+				
 				freq_ind=y*numx+x
 				smooth_length=int(smooth_length_frac*\
 					resolution[upper_freq_ind[freq_ind]])
@@ -926,13 +960,17 @@ def smooth_param_maps(spectral_cube,\
 				high_indx=int(min(numx-1,x+smooth_length//2))
 				high_indy=int(min(numy-1,y+smooth_length//2))
 				
+				
 			
 				if high_indx-low_indx+1<smooth_length or high_indy-low_indy+1<smooth_length:
 					continue	
 					
 				sep=max(1,int(resolution[upper_freq_ind[freq_ind]])//3)
 				
+				#if sep>smooth_length/3.0:
+				#	sep=1
 				
+
 				clusters=get_clusters(fitted,low_indx,low_indy, high_indx,high_indy,\
 							numx,numy,num_params,max_dist_parameter_space,\
 							param_lengths,stride=sep)
@@ -943,8 +981,10 @@ def smooth_param_maps(spectral_cube,\
 				if tot_member<(smooth_length/sep)**2:
 					continue
 				
-				cluster_len=len(clusters)
 				
+								
+				cluster_len=len(clusters)
+			
 				
 				if sep!=1:
 					cluster1Dx=np.zeros(tot_member)
@@ -959,6 +999,7 @@ def smooth_param_maps(spectral_cube,\
 					uniquex=np.unique(cluster1Dx)
 					uniquey=np.unique(cluster1Dy)
 					if len(uniquex)==1 or len(uniquey==1):  ### this happends when at boundary.
+
 						sep=1
 						clusters=get_clusters(fitted,low_indx,low_indy, high_indx,high_indy,\
 							numx,numy,num_params,max_dist_parameter_space,\
@@ -976,7 +1017,8 @@ def smooth_param_maps(spectral_cube,\
 				member_num=np.array(member_num)
 				sorted_pos=np.argsort(member_num)[::-1]
 				
-				if member_num[sorted_pos[0]]==member_num[sorted_pos[1]]:
+				if member_num[sorted_pos[0]]==member_num[sorted_pos[1]] and sep!=1:
+					
 					sep=1
 					clusters=get_clusters(fitted,low_indx,low_indy, high_indx,high_indy,\
 						numx,numy,num_params,max_dist_parameter_space,\
@@ -993,7 +1035,9 @@ def smooth_param_maps(spectral_cube,\
 					member_num=np.array(member_num)
 					sorted_pos=np.argsort(member_num)[::-1]
 					if member_num[sorted_pos[0]]==member_num[sorted_pos[1]]:
-						continue	
+						continue
+				elif member_num[sorted_pos[0]]==member_num[sorted_pos[1]] and sep==1:
+					continue	
 				
 				cluster1=clusters[sorted_pos[0]]
 				len_cluster1=len(cluster1)
@@ -1015,9 +1059,7 @@ def smooth_param_maps(spectral_cube,\
 					del ind	
 				
 				
-				grad_chi_square_old=cfunc.calc_grad_chisquare(low_indx,low_indy,high_indx,\
-										high_indy,numx,numy,num_params,\
-										fitted,param_lengths,smoothness_enforcer,1)
+				
 				changed=False
 				changed_points_before=changed_points
 				for cluster_num in sorted_pos[1:]:			
@@ -1036,15 +1078,14 @@ def smooth_param_maps(spectral_cube,\
 							  fitted,low_indx,low_indy,high_indx,high_indy, spectral_cube,\
 							  err_cube, low_freq_ind, upper_freq_ind,rms_thresh, param_lengths,\
 							  sys_err,smoothness_enforcer,model,sep)
-					grad_chi_square_new=cfunc.calc_grad_chisquare(low_indx,low_indy,high_indx,high_indy,\
-											 numx,numy,num_params, fitted,param_lengths,\
-											 smoothness_enforcer,1)
+					
 				remove_overlapping_subcubes(subcubes,x,y,smooth_length,numy,numx)
 				
 			if changed_points==0:
 				break
 			
 			iter1+=1
+		
 	return
 	
 def verify_new_coords(new_coords_x,\
@@ -1086,7 +1127,7 @@ def verify_new_coords(new_coords_x,\
 		
 		grad_chisquare_old=fitted[ind+num_params]+cfunc.calc_gradient_wrapper(x1,y1,fitted,\
 						numx,numy,num_params,param_lengths,\
-						smoothness_enforcer)
+						smoothness_enforcer,1)
 		
 		freq_ind=y1*numx+x1
 		min_freq_ind=low_freq_ind[freq_ind]
@@ -1120,7 +1161,7 @@ def verify_new_coords(new_coords_x,\
 			fitted[ind+num_params]=chisq_temp
 			grad_chisquare_new=chisq_temp+cfunc.calc_gradient_wrapper(x1,y1,fitted,\
 							numx,numy,num_params,param_lengths,\
-							smoothness_enforcer)
+							smoothness_enforcer,1)
 		if grad_chisquare_new>grad_chisquare_old:
 			for param in range(num_params+1):
 				fitted[ind+param]=old_params[param]		
@@ -1689,7 +1730,7 @@ def smooth_param_maps_image_comparison(spectral_cube, \
 										high_indx,high_indy,min_params1,max_params1, resolution, low_freq_ind,\
 										upper_freq_ind, num_freqs,rms_thresh,param_lengths,smoothness_enforcer)
 						
-				remove_overlapping_subcubes(subcubes,x,y,smooth_length,numy,numx)
+				remove_overlapping_subcubes(subcubes,x,y,smooth_length//2,numy,numx)
 				
 			iter1+=1
 		
@@ -1769,15 +1810,15 @@ def main_func(xmin,\
 	upper_freq_ind=np.array(hf['upper_freq_ind'])
 	hf.close()
 		
-	#print ("removing discont")		
-	#remove_discont(spectrum.spectrum, spectrum.error, fitted, model.param_vals,numx,numy,num_params,\
-	#		smooth_lengths,discontinuity_thresh,max_dist_parameter_space, model1,param_lengths,\
-	#		sys_error,num_freqs,low_freq_ind,upper_freq_ind,rms_thresh,smoothness_enforcer)
+	print ("removing discont")		
+	remove_discont(spectrum.spectrum, spectrum.error, fitted, model.param_vals,numx,numy,num_params,\
+			smooth_lengths,discontinuity_thresh,max_dist_parameter_space, model1,param_lengths,\
+			sys_error,num_freqs,low_freq_ind,upper_freq_ind,rms_thresh,smoothness_enforcer,resolution)
 
 	print ("Calling cluster remover")		
 	smooth_param_maps(spectrum.spectrum, spectrum.error, fitted, model.param_vals,numx,numy,num_params,\
 			smooth_lengths,discontinuity_thresh,max_dist_parameter_space, model1,param_lengths,\
-			sys_error,num_freqs,low_freq_ind,upper_freq_ind,rms_thresh,smoothness_enforcer,resolution,max_iter=5)
+			sys_error,num_freqs,low_freq_ind,upper_freq_ind,rms_thresh,smoothness_enforcer,resolution)
 	
 	#print ("Doing image plane smoothing")	
 	#smooth_param_maps_image_comparison(spectrum.spectrum, spectrum.error, fitted, model.param_vals,numx,numy,\
