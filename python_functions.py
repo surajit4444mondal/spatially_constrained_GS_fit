@@ -372,6 +372,8 @@ def find_new_params(points_to_remove,\
 			for j in range(-2,3):
 				x1=x0+j*stride
 				y1=y0+i*stride
+				if x1<0 or x1>=numx or y1<0 or y1>=numy:
+					continue
 				if [x1,y1] not in points_to_remove:
 					ind=y1*numx*(num_params+1)+x1*(num_params+1)+num_params
 					if fitted[ind]>0:
@@ -379,6 +381,8 @@ def find_new_params(points_to_remove,\
 		low_freq=low_freq_ind[y0*numx+x0]
 		upper_freq=upper_freq_ind[y0*numx+x0]
 		spectrum1=np.ravel(spectrum[y0-low_indy,x0-low_indx,:])
+		ind=y0*numx*(num_params+1)+x0*(num_params+1)+num_params
+		
 		grad_chi_square=cfunc.calc_grad_chisquare(max(low_indx, x0-2),max(low_indy,y0-2),min(high_indx,x0+2),min(high_indy,y0+2), \
 					numx,numy,num_params, fitted, param_lengths, smoothness_enforcer,stride)	
 		for n,param_ind in enumerate(inds):
@@ -392,6 +396,7 @@ def find_new_params(points_to_remove,\
 			
 			chi_square=cfunc.calc_chi_square(spectrum1,rms,sys_error,model[int(model_ind):],low_freq,upper_freq,rms_thresh)
 			fitted[y0*numx*(num_params+1)+x0*(num_params+1)+num_params]=chi_square
+			
 			grad_chi_square_temp=cfunc.calc_grad_chisquare(max(low_indx, x0-2),max(low_indy,y0-2),min(high_indx,x0+2),min(high_indy,y0+2),\
 						 numx,numy,num_params, fitted,param_lengths,smoothness_enforcer,stride)		
 			if grad_chi_square_temp<grad_chi_square:
@@ -486,7 +491,7 @@ def remove_discont(spectral_cube, \
 				if high_indx-low_indx<search_length or high_indy-low_indy<search_length:
 					continue
 				
-				sep=max(1,int(resolution[upper_freq_ind[freq_ind]])//3)
+				sep=max(1,int(resolution[upper_freq_ind[freq_ind]])//10)
 				
 				spectrum=spectral_cube[0,low_indy:high_indy+1,low_indx:high_indx+1,:]
 				
@@ -588,7 +593,7 @@ def remove_all_points(points_to_remove,\
 
 	grad_chi_square_old=cfunc.calc_grad_chisquare(low_indx,low_indy,high_indx,high_indy,\
 							 numx,numy,num_params, fitted,param_lengths,\
-							 smoothness_enforcer,1)	
+							 smoothness_enforcer,stride)	
 	
 	new_params,points_changed=find_new_params(points_to_remove,fitted,model,spectrum,sys_err,rms,param_val,numx,numy,num_params,\
 							 low_indx,low_indy,high_indx,high_indy,param_lengths,num_freqs, low_freq_ind,\
@@ -948,7 +953,7 @@ def smooth_param_maps(spectral_cube,\
 				x=int(subcubes[sort_ind,0])
 				y=int(subcubes[sort_ind,1])
 				
-				print (x,y)
+
 				
 				freq_ind=y*numx+x
 				smooth_length=int(smooth_length_frac*\
@@ -965,8 +970,9 @@ def smooth_param_maps(spectral_cube,\
 				if high_indx-low_indx+1<smooth_length or high_indy-low_indy+1<smooth_length:
 					continue	
 					
-				sep=max(1,int(resolution[upper_freq_ind[freq_ind]])//3)
+				#sep=max(1,int(resolution[upper_freq_ind[freq_ind]])//10)
 				
+				sep=1
 				#if sep>smooth_length/3.0:
 				#	sep=1
 				
@@ -1798,27 +1804,33 @@ def main_func(xmin,\
 	error1=np.ravel(spectrum.error)
 	model1=np.ravel(model.model)
 	
-	print ("doing pixel fit")
-	#cfunc.compute_min_chi_square(model1,spectrum1,error1,lowest_freq,\
-	#	highest_freq,param_lengths,model.freqs,sys_error,rms_thresh,min_freq_num,\
-	#	model.num_params, num_times,num_freqs,numy,numx,param_vals,high_snr_freq_loc,\
-	#	fitted, low_freq_ind, upper_freq_ind)
-	
-	hf=h5py.File("python_cython_comb_test.hdf5")
-	fitted=np.load("python_cython_comb_test.npy")
-	low_freq_ind=np.array(hf['low_freq_ind'])
-	upper_freq_ind=np.array(hf['upper_freq_ind'])
+	hf=h5py.File("big_param_map_190200_190210.hdf5")
+	fitted=np.load("big_param_map_190200_190210_2.npy")
+	low_freq_ind=np.ravel(np.array(hf['low_freq_ind'],dtype=np.intc))
+	upper_freq_ind=np.ravel(np.array(hf['upper_freq_ind'],dtype=np.intc))
 	hf.close()
-		
+	
+	'''
+	print ("doing pixel fit")
+	cfunc.compute_min_chi_square(model1,spectrum1,error1,lowest_freq,\
+		highest_freq,param_lengths,model.freqs,sys_error,rms_thresh,min_freq_num,\
+		model.num_params, num_times,num_freqs,numy,numx,param_vals,high_snr_freq_loc,\
+		fitted, low_freq_ind, upper_freq_ind)
+	
+	
+	
+	#np.save(outfile[:-5]+".npy",fitted)
+	
 	print ("removing discont")		
 	remove_discont(spectrum.spectrum, spectrum.error, fitted, model.param_vals,numx,numy,num_params,\
 			smooth_lengths,discontinuity_thresh,max_dist_parameter_space, model1,param_lengths,\
 			sys_error,num_freqs,low_freq_ind,upper_freq_ind,rms_thresh,smoothness_enforcer,resolution)
-
+	'''
+	
 	print ("Calling cluster remover")		
 	smooth_param_maps(spectrum.spectrum, spectrum.error, fitted, model.param_vals,numx,numy,num_params,\
 			smooth_lengths,discontinuity_thresh,max_dist_parameter_space, model1,param_lengths,\
-			sys_error,num_freqs,low_freq_ind,upper_freq_ind,rms_thresh,smoothness_enforcer,resolution)
+			sys_error,num_freqs,low_freq_ind,upper_freq_ind,rms_thresh,smoothness_enforcer,resolution,max_iter=7)
 	
 	#print ("Doing image plane smoothing")	
 	#smooth_param_maps_image_comparison(spectrum.spectrum, spectrum.error, fitted, model.param_vals,numx,numy,\

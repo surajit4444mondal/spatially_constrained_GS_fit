@@ -2785,7 +2785,6 @@ static void __pyx_f_37cython_functions_for_fast_computation_verify_new_coords(__
   int __pyx_v_model_ind;
   int __pyx_v_stride;
   double *__pyx_v_old_params;
-  CYTHON_UNUSED PyObject *__pyx_v_grad_chisqaure_old = NULL;
   long __pyx_v_mid_ind;
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
@@ -2793,16 +2792,16 @@ static void __pyx_f_37cython_functions_for_fast_computation_verify_new_coords(__
   int __pyx_t_3;
   Py_ssize_t __pyx_t_4;
   int __pyx_t_5;
-  PyObject *__pyx_t_6 = NULL;
-  __Pyx_memviewslice __pyx_t_7 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_t_6 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  int __pyx_t_7;
   int __pyx_t_8;
   int __pyx_t_9;
-  int __pyx_t_10;
+  Py_ssize_t __pyx_t_10;
   Py_ssize_t __pyx_t_11;
-  Py_ssize_t __pyx_t_12;
+  int __pyx_t_12;
   int __pyx_t_13;
   int __pyx_t_14;
-  int __pyx_t_15;
+  PyObject *__pyx_t_15 = NULL;
   PyObject *__pyx_t_16 = NULL;
   PyObject *__pyx_t_17 = NULL;
   PyObject *__pyx_t_18 = NULL;
@@ -2880,7 +2879,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_verify_new_coords(__
  * 		x1=new_coords_x[i]
  * 		y1=new_coords_y[i]             # <<<<<<<<<<<<<<
  * 		ind=y1*numx*(num_params+1)+x1*(num_params+1)
- * 		grad_chisqaure_old=fitted[ind+num_params]+calc_gradient_wrapper(x1,y1,fitted,\
+ * 		grad_chisquare_old=fitted[ind+num_params]+calc_gradient_wrapper(x1,y1,fitted,\
  */
     __pyx_t_4 = __pyx_v_i;
     __pyx_t_5 = -1;
@@ -2898,7 +2897,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_verify_new_coords(__
  * 		x1=new_coords_x[i]
  * 		y1=new_coords_y[i]
  * 		ind=y1*numx*(num_params+1)+x1*(num_params+1)             # <<<<<<<<<<<<<<
- * 		grad_chisqaure_old=fitted[ind+num_params]+calc_gradient_wrapper(x1,y1,fitted,\
+ * 		grad_chisquare_old=fitted[ind+num_params]+calc_gradient_wrapper(x1,y1,fitted,\
  * 						numx,numy,num_params,param_lengths,\
  */
     __pyx_v_ind = (((__pyx_v_y1 * __pyx_v_numx) * (__pyx_v_num_params + 1)) + (__pyx_v_x1 * (__pyx_v_num_params + 1)));
@@ -2906,7 +2905,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_verify_new_coords(__
     /* "cython_functions_for_fast_computation.pyx":51
  * 		y1=new_coords_y[i]
  * 		ind=y1*numx*(num_params+1)+x1*(num_params+1)
- * 		grad_chisqaure_old=fitted[ind+num_params]+calc_gradient_wrapper(x1,y1,fitted,\             # <<<<<<<<<<<<<<
+ * 		grad_chisquare_old=fitted[ind+num_params]+calc_gradient_wrapper(x1,y1,fitted,\             # <<<<<<<<<<<<<<
  * 						numx,numy,num_params,param_lengths,\
  * 						smoothness_enforcer,stride)
  */
@@ -2922,16 +2921,13 @@ static void __pyx_f_37cython_functions_for_fast_computation_verify_new_coords(__
     }
 
     /* "cython_functions_for_fast_computation.pyx":53
- * 		grad_chisqaure_old=fitted[ind+num_params]+calc_gradient_wrapper(x1,y1,fitted,\
+ * 		grad_chisquare_old=fitted[ind+num_params]+calc_gradient_wrapper(x1,y1,fitted,\
  * 						numx,numy,num_params,param_lengths,\
  * 						smoothness_enforcer,stride)             # <<<<<<<<<<<<<<
  * 
  * 		freq_ind=y1*numx+x1
  */
-    __pyx_t_6 = PyFloat_FromDouble(((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_4 * __pyx_v_fitted.strides[0]) ))) + __pyx_f_37cython_functions_for_fast_computation_calc_gradient_wrapper(__pyx_v_x1, __pyx_v_y1, __pyx_v_fitted, __pyx_v_numx, __pyx_v_numy, __pyx_v_num_params, __pyx_v_param_lengths, __pyx_v_smoothness_enforcer, __pyx_v_stride, 0))); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 51, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_6);
-    __Pyx_XDECREF_SET(__pyx_v_grad_chisqaure_old, __pyx_t_6);
-    __pyx_t_6 = 0;
+    __pyx_v_grad_chisquare_old = ((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_4 * __pyx_v_fitted.strides[0]) ))) + __pyx_f_37cython_functions_for_fast_computation_calc_gradient_wrapper(__pyx_v_x1, __pyx_v_y1, __pyx_v_fitted, __pyx_v_numx, __pyx_v_numy, __pyx_v_num_params, __pyx_v_param_lengths, __pyx_v_smoothness_enforcer, __pyx_v_stride, 0));
 
     /* "cython_functions_for_fast_computation.pyx":55
  * 						smoothness_enforcer,stride)
@@ -2987,9 +2983,9 @@ static void __pyx_f_37cython_functions_for_fast_computation_verify_new_coords(__
  * 		for param in range(num_params):
  * 			old_params[param]=fitted[ind+param]
  */
-    __pyx_t_7.data = __pyx_v_spectral_cube.data;
-    __pyx_t_7.memview = __pyx_v_spectral_cube.memview;
-    __PYX_INC_MEMVIEW(&__pyx_t_7, 0);
+    __pyx_t_6.data = __pyx_v_spectral_cube.data;
+    __pyx_t_6.memview = __pyx_v_spectral_cube.memview;
+    __PYX_INC_MEMVIEW(&__pyx_t_6, 0);
     {
     Py_ssize_t __pyx_tmp_idx = __pyx_v_y1;
         Py_ssize_t __pyx_tmp_shape = __pyx_v_spectral_cube.shape[0];
@@ -3001,7 +2997,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_verify_new_coords(__
                             "Index out of bounds (axis 0)");
             __PYX_ERR(0, 58, __pyx_L1_error)
         }
-        __pyx_t_7.data += __pyx_tmp_idx * __pyx_tmp_stride;
+        __pyx_t_6.data += __pyx_tmp_idx * __pyx_tmp_stride;
 }
 
 {
@@ -3015,17 +3011,17 @@ static void __pyx_f_37cython_functions_for_fast_computation_verify_new_coords(__
                             "Index out of bounds (axis 1)");
             __PYX_ERR(0, 58, __pyx_L1_error)
         }
-        __pyx_t_7.data += __pyx_tmp_idx * __pyx_tmp_stride;
+        __pyx_t_6.data += __pyx_tmp_idx * __pyx_tmp_stride;
 }
 
-__pyx_t_7.shape[0] = __pyx_v_spectral_cube.shape[2];
-__pyx_t_7.strides[0] = __pyx_v_spectral_cube.strides[2];
-    __pyx_t_7.suboffsets[0] = -1;
+__pyx_t_6.shape[0] = __pyx_v_spectral_cube.shape[2];
+__pyx_t_6.strides[0] = __pyx_v_spectral_cube.strides[2];
+    __pyx_t_6.suboffsets[0] = -1;
 
 __PYX_XDEC_MEMVIEW(&__pyx_v_spectrum, 1);
-    __pyx_v_spectrum = __pyx_t_7;
-    __pyx_t_7.memview = NULL;
-    __pyx_t_7.data = NULL;
+    __pyx_v_spectrum = __pyx_t_6;
+    __pyx_t_6.memview = NULL;
+    __pyx_t_6.data = NULL;
 
     /* "cython_functions_for_fast_computation.pyx":59
  * 		max_freq_ind=high_freq_ind[freq_ind]
@@ -3035,9 +3031,9 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_spectrum, 1);
  * 			fitted[ind+param]=new_param_vals[param,i]
  */
     __pyx_t_5 = __pyx_v_num_params;
-    __pyx_t_8 = __pyx_t_5;
-    for (__pyx_t_9 = 0; __pyx_t_9 < __pyx_t_8; __pyx_t_9+=1) {
-      __pyx_v_param = __pyx_t_9;
+    __pyx_t_7 = __pyx_t_5;
+    for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
+      __pyx_v_param = __pyx_t_8;
 
       /* "cython_functions_for_fast_computation.pyx":60
  * 		spectrum=spectral_cube[y1,x1,:]
@@ -3047,13 +3043,13 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_spectrum, 1);
  * 		old_params[num_params]=fitted[ind+num_params]
  */
       __pyx_t_4 = (__pyx_v_ind + __pyx_v_param);
-      __pyx_t_10 = -1;
+      __pyx_t_9 = -1;
       if (__pyx_t_4 < 0) {
         __pyx_t_4 += __pyx_v_fitted.shape[0];
-        if (unlikely(__pyx_t_4 < 0)) __pyx_t_10 = 0;
-      } else if (unlikely(__pyx_t_4 >= __pyx_v_fitted.shape[0])) __pyx_t_10 = 0;
-      if (unlikely(__pyx_t_10 != -1)) {
-        __Pyx_RaiseBufferIndexError(__pyx_t_10);
+        if (unlikely(__pyx_t_4 < 0)) __pyx_t_9 = 0;
+      } else if (unlikely(__pyx_t_4 >= __pyx_v_fitted.shape[0])) __pyx_t_9 = 0;
+      if (unlikely(__pyx_t_9 != -1)) {
+        __Pyx_RaiseBufferIndexError(__pyx_t_9);
         __PYX_ERR(0, 60, __pyx_L1_error)
       }
       (__pyx_v_old_params[__pyx_v_param]) = (*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_4 * __pyx_v_fitted.strides[0]) )));
@@ -3066,31 +3062,31 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_spectrum, 1);
  * 
  */
       __pyx_t_4 = __pyx_v_param;
-      __pyx_t_11 = __pyx_v_i;
-      __pyx_t_10 = -1;
+      __pyx_t_10 = __pyx_v_i;
+      __pyx_t_9 = -1;
       if (__pyx_t_4 < 0) {
         __pyx_t_4 += __pyx_v_new_param_vals.shape[0];
-        if (unlikely(__pyx_t_4 < 0)) __pyx_t_10 = 0;
-      } else if (unlikely(__pyx_t_4 >= __pyx_v_new_param_vals.shape[0])) __pyx_t_10 = 0;
+        if (unlikely(__pyx_t_4 < 0)) __pyx_t_9 = 0;
+      } else if (unlikely(__pyx_t_4 >= __pyx_v_new_param_vals.shape[0])) __pyx_t_9 = 0;
+      if (__pyx_t_10 < 0) {
+        __pyx_t_10 += __pyx_v_new_param_vals.shape[1];
+        if (unlikely(__pyx_t_10 < 0)) __pyx_t_9 = 1;
+      } else if (unlikely(__pyx_t_10 >= __pyx_v_new_param_vals.shape[1])) __pyx_t_9 = 1;
+      if (unlikely(__pyx_t_9 != -1)) {
+        __Pyx_RaiseBufferIndexError(__pyx_t_9);
+        __PYX_ERR(0, 61, __pyx_L1_error)
+      }
+      __pyx_t_11 = (__pyx_v_ind + __pyx_v_param);
+      __pyx_t_9 = -1;
       if (__pyx_t_11 < 0) {
-        __pyx_t_11 += __pyx_v_new_param_vals.shape[1];
-        if (unlikely(__pyx_t_11 < 0)) __pyx_t_10 = 1;
-      } else if (unlikely(__pyx_t_11 >= __pyx_v_new_param_vals.shape[1])) __pyx_t_10 = 1;
-      if (unlikely(__pyx_t_10 != -1)) {
-        __Pyx_RaiseBufferIndexError(__pyx_t_10);
+        __pyx_t_11 += __pyx_v_fitted.shape[0];
+        if (unlikely(__pyx_t_11 < 0)) __pyx_t_9 = 0;
+      } else if (unlikely(__pyx_t_11 >= __pyx_v_fitted.shape[0])) __pyx_t_9 = 0;
+      if (unlikely(__pyx_t_9 != -1)) {
+        __Pyx_RaiseBufferIndexError(__pyx_t_9);
         __PYX_ERR(0, 61, __pyx_L1_error)
       }
-      __pyx_t_12 = (__pyx_v_ind + __pyx_v_param);
-      __pyx_t_10 = -1;
-      if (__pyx_t_12 < 0) {
-        __pyx_t_12 += __pyx_v_fitted.shape[0];
-        if (unlikely(__pyx_t_12 < 0)) __pyx_t_10 = 0;
-      } else if (unlikely(__pyx_t_12 >= __pyx_v_fitted.shape[0])) __pyx_t_10 = 0;
-      if (unlikely(__pyx_t_10 != -1)) {
-        __Pyx_RaiseBufferIndexError(__pyx_t_10);
-        __PYX_ERR(0, 61, __pyx_L1_error)
-      }
-      *((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_12 * __pyx_v_fitted.strides[0]) )) = (*((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_new_param_vals.data + __pyx_t_4 * __pyx_v_new_param_vals.strides[0]) ) + __pyx_t_11 * __pyx_v_new_param_vals.strides[1]) )));
+      *((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_11 * __pyx_v_fitted.strides[0]) )) = (*((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_new_param_vals.data + __pyx_t_4 * __pyx_v_new_param_vals.strides[0]) ) + __pyx_t_10 * __pyx_v_new_param_vals.strides[1]) )));
     }
 
     /* "cython_functions_for_fast_computation.pyx":62
@@ -3100,17 +3096,17 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_spectrum, 1);
  * 
  * 		model_ind=0
  */
-    __pyx_t_11 = (__pyx_v_ind + __pyx_v_num_params);
+    __pyx_t_10 = (__pyx_v_ind + __pyx_v_num_params);
     __pyx_t_5 = -1;
-    if (__pyx_t_11 < 0) {
-      __pyx_t_11 += __pyx_v_fitted.shape[0];
-      if (unlikely(__pyx_t_11 < 0)) __pyx_t_5 = 0;
-    } else if (unlikely(__pyx_t_11 >= __pyx_v_fitted.shape[0])) __pyx_t_5 = 0;
+    if (__pyx_t_10 < 0) {
+      __pyx_t_10 += __pyx_v_fitted.shape[0];
+      if (unlikely(__pyx_t_10 < 0)) __pyx_t_5 = 0;
+    } else if (unlikely(__pyx_t_10 >= __pyx_v_fitted.shape[0])) __pyx_t_5 = 0;
     if (unlikely(__pyx_t_5 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_5);
       __PYX_ERR(0, 62, __pyx_L1_error)
     }
-    (__pyx_v_old_params[__pyx_v_num_params]) = (*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_11 * __pyx_v_fitted.strides[0]) )));
+    (__pyx_v_old_params[__pyx_v_num_params]) = (*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_10 * __pyx_v_fitted.strides[0]) )));
 
     /* "cython_functions_for_fast_computation.pyx":64
  * 		old_params[num_params]=fitted[ind+num_params]
@@ -3129,9 +3125,9 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_spectrum, 1);
  * 			for p in range(n+1,num_params):
  */
     __pyx_t_5 = __pyx_v_num_params;
-    __pyx_t_8 = __pyx_t_5;
-    for (__pyx_t_9 = 0; __pyx_t_9 < __pyx_t_8; __pyx_t_9+=1) {
-      __pyx_v_n = __pyx_t_9;
+    __pyx_t_7 = __pyx_t_5;
+    for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
+      __pyx_v_n = __pyx_t_8;
 
       /* "cython_functions_for_fast_computation.pyx":66
  * 		model_ind=0
@@ -3149,10 +3145,10 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_spectrum, 1);
  * 				product=product*param_lengths[p]
  * 			model_ind+=int(new_param_vals[n,i])*product*num_freqs
  */
-      __pyx_t_10 = __pyx_v_num_params;
-      __pyx_t_13 = __pyx_t_10;
-      for (__pyx_t_14 = (__pyx_v_n + 1); __pyx_t_14 < __pyx_t_13; __pyx_t_14+=1) {
-        __pyx_v_p = __pyx_t_14;
+      __pyx_t_9 = __pyx_v_num_params;
+      __pyx_t_12 = __pyx_t_9;
+      for (__pyx_t_13 = (__pyx_v_n + 1); __pyx_t_13 < __pyx_t_12; __pyx_t_13+=1) {
+        __pyx_v_p = __pyx_t_13;
 
         /* "cython_functions_for_fast_computation.pyx":68
  * 			product=1
@@ -3161,17 +3157,17 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_spectrum, 1);
  * 			model_ind+=int(new_param_vals[n,i])*product*num_freqs
  * 		model_spec=model[model_ind:]
  */
-        __pyx_t_11 = __pyx_v_p;
-        __pyx_t_15 = -1;
-        if (__pyx_t_11 < 0) {
-          __pyx_t_11 += __pyx_v_param_lengths.shape[0];
-          if (unlikely(__pyx_t_11 < 0)) __pyx_t_15 = 0;
-        } else if (unlikely(__pyx_t_11 >= __pyx_v_param_lengths.shape[0])) __pyx_t_15 = 0;
-        if (unlikely(__pyx_t_15 != -1)) {
-          __Pyx_RaiseBufferIndexError(__pyx_t_15);
+        __pyx_t_10 = __pyx_v_p;
+        __pyx_t_14 = -1;
+        if (__pyx_t_10 < 0) {
+          __pyx_t_10 += __pyx_v_param_lengths.shape[0];
+          if (unlikely(__pyx_t_10 < 0)) __pyx_t_14 = 0;
+        } else if (unlikely(__pyx_t_10 >= __pyx_v_param_lengths.shape[0])) __pyx_t_14 = 0;
+        if (unlikely(__pyx_t_14 != -1)) {
+          __Pyx_RaiseBufferIndexError(__pyx_t_14);
           __PYX_ERR(0, 68, __pyx_L1_error)
         }
-        __pyx_v_product = (__pyx_v_product * (*((int *) ( /* dim=0 */ (__pyx_v_param_lengths.data + __pyx_t_11 * __pyx_v_param_lengths.strides[0]) ))));
+        __pyx_v_product = (__pyx_v_product * (*((int *) ( /* dim=0 */ (__pyx_v_param_lengths.data + __pyx_t_10 * __pyx_v_param_lengths.strides[0]) ))));
       }
 
       /* "cython_functions_for_fast_computation.pyx":69
@@ -3181,24 +3177,24 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_spectrum, 1);
  * 		model_spec=model[model_ind:]
  * 		mid_ind=(min_freq_ind+max_freq_ind)//2
  */
-      __pyx_t_6 = __Pyx_PyInt_From_int(__pyx_v_model_ind); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 69, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_6);
-      __pyx_t_11 = __pyx_v_n;
+      __pyx_t_15 = __Pyx_PyInt_From_int(__pyx_v_model_ind); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 69, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_15);
+      __pyx_t_10 = __pyx_v_n;
       __pyx_t_4 = __pyx_v_i;
-      __pyx_t_10 = -1;
-      if (__pyx_t_11 < 0) {
-        __pyx_t_11 += __pyx_v_new_param_vals.shape[0];
-        if (unlikely(__pyx_t_11 < 0)) __pyx_t_10 = 0;
-      } else if (unlikely(__pyx_t_11 >= __pyx_v_new_param_vals.shape[0])) __pyx_t_10 = 0;
+      __pyx_t_9 = -1;
+      if (__pyx_t_10 < 0) {
+        __pyx_t_10 += __pyx_v_new_param_vals.shape[0];
+        if (unlikely(__pyx_t_10 < 0)) __pyx_t_9 = 0;
+      } else if (unlikely(__pyx_t_10 >= __pyx_v_new_param_vals.shape[0])) __pyx_t_9 = 0;
       if (__pyx_t_4 < 0) {
         __pyx_t_4 += __pyx_v_new_param_vals.shape[1];
-        if (unlikely(__pyx_t_4 < 0)) __pyx_t_10 = 1;
-      } else if (unlikely(__pyx_t_4 >= __pyx_v_new_param_vals.shape[1])) __pyx_t_10 = 1;
-      if (unlikely(__pyx_t_10 != -1)) {
-        __Pyx_RaiseBufferIndexError(__pyx_t_10);
+        if (unlikely(__pyx_t_4 < 0)) __pyx_t_9 = 1;
+      } else if (unlikely(__pyx_t_4 >= __pyx_v_new_param_vals.shape[1])) __pyx_t_9 = 1;
+      if (unlikely(__pyx_t_9 != -1)) {
+        __Pyx_RaiseBufferIndexError(__pyx_t_9);
         __PYX_ERR(0, 69, __pyx_L1_error)
       }
-      __pyx_t_16 = __Pyx_PyInt_FromDouble((*((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_new_param_vals.data + __pyx_t_11 * __pyx_v_new_param_vals.strides[0]) ) + __pyx_t_4 * __pyx_v_new_param_vals.strides[1]) )))); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 69, __pyx_L1_error)
+      __pyx_t_16 = __Pyx_PyInt_FromDouble((*((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_new_param_vals.data + __pyx_t_10 * __pyx_v_new_param_vals.strides[0]) ) + __pyx_t_4 * __pyx_v_new_param_vals.strides[1]) )))); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 69, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_16);
       __pyx_t_17 = __Pyx_PyInt_From_int(__pyx_v_product); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 69, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_17);
@@ -3212,13 +3208,13 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_spectrum, 1);
       __Pyx_GOTREF(__pyx_t_16);
       __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
       __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
-      __pyx_t_17 = PyNumber_InPlaceAdd(__pyx_t_6, __pyx_t_16); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 69, __pyx_L1_error)
+      __pyx_t_17 = PyNumber_InPlaceAdd(__pyx_t_15, __pyx_t_16); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 69, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_17);
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
       __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
-      __pyx_t_10 = __Pyx_PyInt_As_int(__pyx_t_17); if (unlikely((__pyx_t_10 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 69, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyInt_As_int(__pyx_t_17); if (unlikely((__pyx_t_9 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 69, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
-      __pyx_v_model_ind = __pyx_t_10;
+      __pyx_v_model_ind = __pyx_t_9;
     }
 
     /* "cython_functions_for_fast_computation.pyx":70
@@ -3228,12 +3224,12 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_spectrum, 1);
  * 		mid_ind=(min_freq_ind+max_freq_ind)//2
  * 		ratio=spectrum[mid_ind]/model_spec[mid_ind]
  */
-    __pyx_t_7.data = __pyx_v_model.data;
-    __pyx_t_7.memview = __pyx_v_model.memview;
-    __PYX_INC_MEMVIEW(&__pyx_t_7, 0);
+    __pyx_t_6.data = __pyx_v_model.data;
+    __pyx_t_6.memview = __pyx_v_model.memview;
+    __PYX_INC_MEMVIEW(&__pyx_t_6, 0);
     __pyx_t_5 = -1;
     if (unlikely(__pyx_memoryview_slice_memviewslice(
-    &__pyx_t_7,
+    &__pyx_t_6,
     __pyx_v_model.shape[0], __pyx_v_model.strides[0], __pyx_v_model.suboffsets[0],
     0,
     0,
@@ -3250,9 +3246,9 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_spectrum, 1);
 }
 
 __PYX_XDEC_MEMVIEW(&__pyx_v_model_spec, 1);
-    __pyx_v_model_spec = __pyx_t_7;
-    __pyx_t_7.memview = NULL;
-    __pyx_t_7.data = NULL;
+    __pyx_v_model_spec = __pyx_t_6;
+    __pyx_t_6.memview = NULL;
+    __pyx_t_6.data = NULL;
 
     /* "cython_functions_for_fast_computation.pyx":71
  * 			model_ind+=int(new_param_vals[n,i])*product*num_freqs
@@ -3401,13 +3397,13 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_model_spec, 1);
  * 
  */
         __pyx_t_4 = (__pyx_v_ind + __pyx_v_param);
-        __pyx_t_8 = -1;
+        __pyx_t_7 = -1;
         if (__pyx_t_4 < 0) {
           __pyx_t_4 += __pyx_v_fitted.shape[0];
-          if (unlikely(__pyx_t_4 < 0)) __pyx_t_8 = 0;
-        } else if (unlikely(__pyx_t_4 >= __pyx_v_fitted.shape[0])) __pyx_t_8 = 0;
-        if (unlikely(__pyx_t_8 != -1)) {
-          __Pyx_RaiseBufferIndexError(__pyx_t_8);
+          if (unlikely(__pyx_t_4 < 0)) __pyx_t_7 = 0;
+        } else if (unlikely(__pyx_t_4 >= __pyx_v_fitted.shape[0])) __pyx_t_7 = 0;
+        if (unlikely(__pyx_t_7 != -1)) {
+          __Pyx_RaiseBufferIndexError(__pyx_t_7);
           __PYX_ERR(0, 82, __pyx_L1_error)
         }
         *((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_4 * __pyx_v_fitted.strides[0]) )) = (__pyx_v_old_params[__pyx_v_param]);
@@ -3452,8 +3448,8 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_model_spec, 1);
 
   /* function exit code */
   __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_6);
-  __PYX_XDEC_MEMVIEW(&__pyx_t_7, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_6, 1);
+  __Pyx_XDECREF(__pyx_t_15);
   __Pyx_XDECREF(__pyx_t_16);
   __Pyx_XDECREF(__pyx_t_17);
   __Pyx_XDECREF(__pyx_t_18);
@@ -3461,7 +3457,6 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_model_spec, 1);
   __pyx_L0:;
   __PYX_XDEC_MEMVIEW(&__pyx_v_model_spec, 1);
   __PYX_XDEC_MEMVIEW(&__pyx_v_spectrum, 1);
-  __Pyx_XDECREF(__pyx_v_grad_chisqaure_old);
   __Pyx_RefNannyFinishContext();
 }
 
@@ -6896,9 +6891,23 @@ static int __pyx_f_37cython_functions_for_fast_computation_find_max_pos(double *
 
 static void __pyx_f_37cython_functions_for_fast_computation_calc_fitrange_homogenous(double *__pyx_v_spectrum, int *__pyx_v_lower_freq_ind, int *__pyx_v_upper_freq_ind, int __pyx_v_num_freqs, double *__pyx_v_error, double __pyx_v_sys_error) {
   int __pyx_v_max_loc;
+  double *__pyx_v_smoothed_spectrum;
+  int __pyx_v_smooth_length;
+  int __pyx_v_i;
   int __pyx_v_j;
+  int __pyx_v_smooth_interval;
+  double __pyx_v_sum1;
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
+  int __pyx_t_2;
+  int __pyx_t_3;
+  long __pyx_t_4;
+  long __pyx_t_5;
+  int __pyx_t_6;
+  double __pyx_t_7;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("calc_fitrange_homogenous", 0);
 
   /* "cython_functions_for_fast_computation.pyx":362
@@ -6906,279 +6915,537 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_fitrange_homoge
  * 
  * 	cdef int max_loc=find_max_pos(spectrum,lower_freq_ind, upper_freq_ind, num_freqs)             # <<<<<<<<<<<<<<
  * 
- * 	cdef int i,j
+ * 	cdef double *smoothed_spectrum
  */
   __pyx_v_max_loc = __pyx_f_37cython_functions_for_fast_computation_find_max_pos(__pyx_v_spectrum, __pyx_v_lower_freq_ind, __pyx_v_upper_freq_ind, __pyx_v_num_freqs);
 
-  /* "cython_functions_for_fast_computation.pyx":366
- * 	cdef int i,j
+  /* "cython_functions_for_fast_computation.pyx":365
  * 
- * 	j=max_loc-1             # <<<<<<<<<<<<<<
- * 	while j>=0:
- * 		if spectrum[j]<1e-7:
+ * 	cdef double *smoothed_spectrum
+ * 	smoothed_spectrum=<double *>PyMem_Malloc(num_freqs*sizeof(double))             # <<<<<<<<<<<<<<
+ * 
+ * 
  */
-  __pyx_v_j = (__pyx_v_max_loc - 1);
+  __pyx_v_smoothed_spectrum = ((double *)PyMem_Malloc((__pyx_v_num_freqs * (sizeof(double)))));
 
-  /* "cython_functions_for_fast_computation.pyx":367
+  /* "cython_functions_for_fast_computation.pyx":369
  * 
- * 	j=max_loc-1
- * 	while j>=0:             # <<<<<<<<<<<<<<
- * 		if spectrum[j]<1e-7:
+ * 
+ * 	cdef int smooth_length=3             # <<<<<<<<<<<<<<
+ * 	cdef int i,j
+ * 	cdef int smooth_interval=smooth_length//2
+ */
+  __pyx_v_smooth_length = 3;
+
+  /* "cython_functions_for_fast_computation.pyx":371
+ * 	cdef int smooth_length=3
+ * 	cdef int i,j
+ * 	cdef int smooth_interval=smooth_length//2             # <<<<<<<<<<<<<<
+ * 	cdef double sum1
+ * 
+ */
+  __pyx_v_smooth_interval = __Pyx_div_long(__pyx_v_smooth_length, 2);
+
+  /* "cython_functions_for_fast_computation.pyx":374
+ * 	cdef double sum1
+ * 
+ * 	for i in range(num_freqs):             # <<<<<<<<<<<<<<
+ * 		smoothed_spectrum[i]=0.0
+ * 
+ */
+  __pyx_t_1 = __pyx_v_num_freqs;
+  __pyx_t_2 = __pyx_t_1;
+  for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
+    __pyx_v_i = __pyx_t_3;
+
+    /* "cython_functions_for_fast_computation.pyx":375
+ * 
+ * 	for i in range(num_freqs):
+ * 		smoothed_spectrum[i]=0.0             # <<<<<<<<<<<<<<
+ * 
+ * 	for i in range(lower_freq_ind[0],upper_freq_ind[0]+1):
+ */
+    (__pyx_v_smoothed_spectrum[__pyx_v_i]) = 0.0;
+  }
+
+  /* "cython_functions_for_fast_computation.pyx":377
+ * 		smoothed_spectrum[i]=0.0
+ * 
+ * 	for i in range(lower_freq_ind[0],upper_freq_ind[0]+1):             # <<<<<<<<<<<<<<
+ * 		if i<smooth_interval:
+ * 			smoothed_spectrum[i]=0.0
+ */
+  __pyx_t_4 = ((__pyx_v_upper_freq_ind[0]) + 1);
+  __pyx_t_5 = __pyx_t_4;
+  for (__pyx_t_1 = (__pyx_v_lower_freq_ind[0]); __pyx_t_1 < __pyx_t_5; __pyx_t_1+=1) {
+    __pyx_v_i = __pyx_t_1;
+
+    /* "cython_functions_for_fast_computation.pyx":378
+ * 
+ * 	for i in range(lower_freq_ind[0],upper_freq_ind[0]+1):
+ * 		if i<smooth_interval:             # <<<<<<<<<<<<<<
+ * 			smoothed_spectrum[i]=0.0
+ * 			continue
+ */
+    __pyx_t_6 = ((__pyx_v_i < __pyx_v_smooth_interval) != 0);
+    if (__pyx_t_6) {
+
+      /* "cython_functions_for_fast_computation.pyx":379
+ * 	for i in range(lower_freq_ind[0],upper_freq_ind[0]+1):
+ * 		if i<smooth_interval:
+ * 			smoothed_spectrum[i]=0.0             # <<<<<<<<<<<<<<
+ * 			continue
+ * 		elif i>num_freqs-1-smooth_interval:
+ */
+      (__pyx_v_smoothed_spectrum[__pyx_v_i]) = 0.0;
+
+      /* "cython_functions_for_fast_computation.pyx":380
+ * 		if i<smooth_interval:
+ * 			smoothed_spectrum[i]=0.0
+ * 			continue             # <<<<<<<<<<<<<<
+ * 		elif i>num_freqs-1-smooth_interval:
+ * 			smoothed_spectrum[i]=0.0
+ */
+      goto __pyx_L5_continue;
+
+      /* "cython_functions_for_fast_computation.pyx":378
+ * 
+ * 	for i in range(lower_freq_ind[0],upper_freq_ind[0]+1):
+ * 		if i<smooth_interval:             # <<<<<<<<<<<<<<
+ * 			smoothed_spectrum[i]=0.0
+ * 			continue
+ */
+    }
+
+    /* "cython_functions_for_fast_computation.pyx":381
+ * 			smoothed_spectrum[i]=0.0
+ * 			continue
+ * 		elif i>num_freqs-1-smooth_interval:             # <<<<<<<<<<<<<<
+ * 			smoothed_spectrum[i]=0.0
+ * 			continue
+ */
+    __pyx_t_6 = ((__pyx_v_i > ((__pyx_v_num_freqs - 1) - __pyx_v_smooth_interval)) != 0);
+    if (__pyx_t_6) {
+
+      /* "cython_functions_for_fast_computation.pyx":382
+ * 			continue
+ * 		elif i>num_freqs-1-smooth_interval:
+ * 			smoothed_spectrum[i]=0.0             # <<<<<<<<<<<<<<
+ * 			continue
+ * 		j=-smooth_interval
+ */
+      (__pyx_v_smoothed_spectrum[__pyx_v_i]) = 0.0;
+
+      /* "cython_functions_for_fast_computation.pyx":383
+ * 		elif i>num_freqs-1-smooth_interval:
+ * 			smoothed_spectrum[i]=0.0
+ * 			continue             # <<<<<<<<<<<<<<
+ * 		j=-smooth_interval
+ * 		sum1=0.0
+ */
+      goto __pyx_L5_continue;
+
+      /* "cython_functions_for_fast_computation.pyx":381
+ * 			smoothed_spectrum[i]=0.0
+ * 			continue
+ * 		elif i>num_freqs-1-smooth_interval:             # <<<<<<<<<<<<<<
+ * 			smoothed_spectrum[i]=0.0
+ * 			continue
+ */
+    }
+
+    /* "cython_functions_for_fast_computation.pyx":384
+ * 			smoothed_spectrum[i]=0.0
+ * 			continue
+ * 		j=-smooth_interval             # <<<<<<<<<<<<<<
+ * 		sum1=0.0
+ * 		while j<=smooth_interval:
+ */
+    __pyx_v_j = (-__pyx_v_smooth_interval);
+
+    /* "cython_functions_for_fast_computation.pyx":385
+ * 			continue
+ * 		j=-smooth_interval
+ * 		sum1=0.0             # <<<<<<<<<<<<<<
+ * 		while j<=smooth_interval:
+ * 			sum1=sum1+spectrum[i+j]
+ */
+    __pyx_v_sum1 = 0.0;
+
+    /* "cython_functions_for_fast_computation.pyx":386
+ * 		j=-smooth_interval
+ * 		sum1=0.0
+ * 		while j<=smooth_interval:             # <<<<<<<<<<<<<<
+ * 			sum1=sum1+spectrum[i+j]
+ * 			j=j+1
+ */
+    while (1) {
+      __pyx_t_6 = ((__pyx_v_j <= __pyx_v_smooth_interval) != 0);
+      if (!__pyx_t_6) break;
+
+      /* "cython_functions_for_fast_computation.pyx":387
+ * 		sum1=0.0
+ * 		while j<=smooth_interval:
+ * 			sum1=sum1+spectrum[i+j]             # <<<<<<<<<<<<<<
+ * 			j=j+1
+ * 		sum1=sum1/smooth_length
+ */
+      __pyx_v_sum1 = (__pyx_v_sum1 + (__pyx_v_spectrum[(__pyx_v_i + __pyx_v_j)]));
+
+      /* "cython_functions_for_fast_computation.pyx":388
+ * 		while j<=smooth_interval:
+ * 			sum1=sum1+spectrum[i+j]
+ * 			j=j+1             # <<<<<<<<<<<<<<
+ * 		sum1=sum1/smooth_length
+ * 		smoothed_spectrum[i]=sum1
+ */
+      __pyx_v_j = (__pyx_v_j + 1);
+    }
+
+    /* "cython_functions_for_fast_computation.pyx":389
+ * 			sum1=sum1+spectrum[i+j]
+ * 			j=j+1
+ * 		sum1=sum1/smooth_length             # <<<<<<<<<<<<<<
+ * 		smoothed_spectrum[i]=sum1
+ * 
+ */
+    if (unlikely(__pyx_v_smooth_length == 0)) {
+      PyErr_SetString(PyExc_ZeroDivisionError, "float division");
+      __PYX_ERR(0, 389, __pyx_L1_error)
+    }
+    __pyx_v_sum1 = (__pyx_v_sum1 / ((double)__pyx_v_smooth_length));
+
+    /* "cython_functions_for_fast_computation.pyx":390
+ * 			j=j+1
+ * 		sum1=sum1/smooth_length
+ * 		smoothed_spectrum[i]=sum1             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+    (__pyx_v_smoothed_spectrum[__pyx_v_i]) = __pyx_v_sum1;
+    __pyx_L5_continue:;
+  }
+
+  /* "cython_functions_for_fast_computation.pyx":393
+ * 
+ * 
+ * 	j=max_loc-smooth_interval             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  __pyx_v_j = (__pyx_v_max_loc - __pyx_v_smooth_interval);
+
+  /* "cython_functions_for_fast_computation.pyx":396
+ * 
+ * 
+ * 	while j>=smooth_interval:             # <<<<<<<<<<<<<<
+ * 		if smoothed_spectrum[j]<1e-7:
  * 			lower_freq_ind[0]=j
  */
   while (1) {
-    __pyx_t_1 = ((__pyx_v_j >= 0) != 0);
-    if (!__pyx_t_1) break;
+    __pyx_t_6 = ((__pyx_v_j >= __pyx_v_smooth_interval) != 0);
+    if (!__pyx_t_6) break;
 
-    /* "cython_functions_for_fast_computation.pyx":368
- * 	j=max_loc-1
- * 	while j>=0:
- * 		if spectrum[j]<1e-7:             # <<<<<<<<<<<<<<
+    /* "cython_functions_for_fast_computation.pyx":397
+ * 
+ * 	while j>=smooth_interval:
+ * 		if smoothed_spectrum[j]<1e-7:             # <<<<<<<<<<<<<<
  * 			lower_freq_ind[0]=j
  * 			break
  */
-    __pyx_t_1 = (((__pyx_v_spectrum[__pyx_v_j]) < 1e-7) != 0);
-    if (__pyx_t_1) {
+    __pyx_t_6 = (((__pyx_v_smoothed_spectrum[__pyx_v_j]) < 1e-7) != 0);
+    if (__pyx_t_6) {
 
-      /* "cython_functions_for_fast_computation.pyx":369
- * 	while j>=0:
- * 		if spectrum[j]<1e-7:
+      /* "cython_functions_for_fast_computation.pyx":398
+ * 	while j>=smooth_interval:
+ * 		if smoothed_spectrum[j]<1e-7:
  * 			lower_freq_ind[0]=j             # <<<<<<<<<<<<<<
  * 			break
  * 		if j==lower_freq_ind[0]:
  */
       (__pyx_v_lower_freq_ind[0]) = __pyx_v_j;
 
-      /* "cython_functions_for_fast_computation.pyx":370
- * 		if spectrum[j]<1e-7:
+      /* "cython_functions_for_fast_computation.pyx":399
+ * 		if smoothed_spectrum[j]<1e-7:
  * 			lower_freq_ind[0]=j
  * 			break             # <<<<<<<<<<<<<<
  * 		if j==lower_freq_ind[0]:
  * 			break
  */
-      goto __pyx_L4_break;
+      goto __pyx_L11_break;
 
-      /* "cython_functions_for_fast_computation.pyx":368
- * 	j=max_loc-1
- * 	while j>=0:
- * 		if spectrum[j]<1e-7:             # <<<<<<<<<<<<<<
+      /* "cython_functions_for_fast_computation.pyx":397
+ * 
+ * 	while j>=smooth_interval:
+ * 		if smoothed_spectrum[j]<1e-7:             # <<<<<<<<<<<<<<
  * 			lower_freq_ind[0]=j
  * 			break
  */
     }
 
-    /* "cython_functions_for_fast_computation.pyx":371
+    /* "cython_functions_for_fast_computation.pyx":400
  * 			lower_freq_ind[0]=j
  * 			break
  * 		if j==lower_freq_ind[0]:             # <<<<<<<<<<<<<<
  * 			break
- * 		if (spectrum[j-1]-spectrum[j])>sqrt(square(error[j])+\
+ * 		if (smoothed_spectrum[j-1]-smoothed_spectrum[j])>sqrt((square(error[j])+\
  */
-    __pyx_t_1 = ((__pyx_v_j == (__pyx_v_lower_freq_ind[0])) != 0);
-    if (__pyx_t_1) {
+    __pyx_t_6 = ((__pyx_v_j == (__pyx_v_lower_freq_ind[0])) != 0);
+    if (__pyx_t_6) {
 
-      /* "cython_functions_for_fast_computation.pyx":372
+      /* "cython_functions_for_fast_computation.pyx":401
  * 			break
  * 		if j==lower_freq_ind[0]:
  * 			break             # <<<<<<<<<<<<<<
- * 		if (spectrum[j-1]-spectrum[j])>sqrt(square(error[j])+\
- * 								   square(error[j-1])+\
+ * 		if (smoothed_spectrum[j-1]-smoothed_spectrum[j])>sqrt((square(error[j])+\
+ * 								   square(error[j-1]))/smooth_length+\
  */
-      goto __pyx_L4_break;
+      goto __pyx_L11_break;
 
-      /* "cython_functions_for_fast_computation.pyx":371
+      /* "cython_functions_for_fast_computation.pyx":400
  * 			lower_freq_ind[0]=j
  * 			break
  * 		if j==lower_freq_ind[0]:             # <<<<<<<<<<<<<<
  * 			break
- * 		if (spectrum[j-1]-spectrum[j])>sqrt(square(error[j])+\
+ * 		if (smoothed_spectrum[j-1]-smoothed_spectrum[j])>sqrt((square(error[j])+\
  */
     }
 
-    /* "cython_functions_for_fast_computation.pyx":373
+    /* "cython_functions_for_fast_computation.pyx":402
  * 		if j==lower_freq_ind[0]:
  * 			break
- * 		if (spectrum[j-1]-spectrum[j])>sqrt(square(error[j])+\             # <<<<<<<<<<<<<<
- * 								   square(error[j-1])+\
- * 								   square(sys_error*spectrum[j-1])+\
+ * 		if (smoothed_spectrum[j-1]-smoothed_spectrum[j])>sqrt((square(error[j])+\             # <<<<<<<<<<<<<<
+ * 								   square(error[j-1]))/smooth_length+\
+ * 								   square(sys_error*smoothed_spectrum[j-1])+\
  */
-    __pyx_t_1 = ((((__pyx_v_spectrum[(__pyx_v_j - 1)]) - (__pyx_v_spectrum[__pyx_v_j])) > sqrt((((__pyx_f_37cython_functions_for_fast_computation_square((__pyx_v_error[__pyx_v_j])) + __pyx_f_37cython_functions_for_fast_computation_square((__pyx_v_error[(__pyx_v_j - 1)]))) + __pyx_f_37cython_functions_for_fast_computation_square((__pyx_v_sys_error * (__pyx_v_spectrum[(__pyx_v_j - 1)])))) + __pyx_f_37cython_functions_for_fast_computation_square((__pyx_v_sys_error * (__pyx_v_spectrum[__pyx_v_j])))))) != 0);
-    if (__pyx_t_1) {
+    __pyx_t_7 = (__pyx_f_37cython_functions_for_fast_computation_square((__pyx_v_error[__pyx_v_j])) + __pyx_f_37cython_functions_for_fast_computation_square((__pyx_v_error[(__pyx_v_j - 1)])));
 
-      /* "cython_functions_for_fast_computation.pyx":377
- * 								   square(sys_error*spectrum[j-1])+\
- * 								   square(sys_error*spectrum[j])):
+    /* "cython_functions_for_fast_computation.pyx":403
+ * 			break
+ * 		if (smoothed_spectrum[j-1]-smoothed_spectrum[j])>sqrt((square(error[j])+\
+ * 								   square(error[j-1]))/smooth_length+\             # <<<<<<<<<<<<<<
+ * 								   square(sys_error*smoothed_spectrum[j-1])+\
+ * 								   square(sys_error*smoothed_spectrum[j])):
+ */
+    if (unlikely(__pyx_v_smooth_length == 0)) {
+      PyErr_SetString(PyExc_ZeroDivisionError, "float division");
+      __PYX_ERR(0, 403, __pyx_L1_error)
+    }
+
+    /* "cython_functions_for_fast_computation.pyx":402
+ * 		if j==lower_freq_ind[0]:
+ * 			break
+ * 		if (smoothed_spectrum[j-1]-smoothed_spectrum[j])>sqrt((square(error[j])+\             # <<<<<<<<<<<<<<
+ * 								   square(error[j-1]))/smooth_length+\
+ * 								   square(sys_error*smoothed_spectrum[j-1])+\
+ */
+    __pyx_t_6 = ((((__pyx_v_smoothed_spectrum[(__pyx_v_j - 1)]) - (__pyx_v_smoothed_spectrum[__pyx_v_j])) > sqrt((((__pyx_t_7 / ((double)__pyx_v_smooth_length)) + __pyx_f_37cython_functions_for_fast_computation_square((__pyx_v_sys_error * (__pyx_v_smoothed_spectrum[(__pyx_v_j - 1)])))) + __pyx_f_37cython_functions_for_fast_computation_square((__pyx_v_sys_error * (__pyx_v_smoothed_spectrum[__pyx_v_j])))))) != 0);
+    if (__pyx_t_6) {
+
+      /* "cython_functions_for_fast_computation.pyx":406
+ * 								   square(sys_error*smoothed_spectrum[j-1])+\
+ * 								   square(sys_error*smoothed_spectrum[j])):
  * 			lower_freq_ind[0]=j             # <<<<<<<<<<<<<<
  * 			break
  * 		j=j-1
  */
       (__pyx_v_lower_freq_ind[0]) = __pyx_v_j;
 
-      /* "cython_functions_for_fast_computation.pyx":378
- * 								   square(sys_error*spectrum[j])):
+      /* "cython_functions_for_fast_computation.pyx":407
+ * 								   square(sys_error*smoothed_spectrum[j])):
  * 			lower_freq_ind[0]=j
  * 			break             # <<<<<<<<<<<<<<
  * 		j=j-1
  * 
  */
-      goto __pyx_L4_break;
+      goto __pyx_L11_break;
 
-      /* "cython_functions_for_fast_computation.pyx":373
+      /* "cython_functions_for_fast_computation.pyx":402
  * 		if j==lower_freq_ind[0]:
  * 			break
- * 		if (spectrum[j-1]-spectrum[j])>sqrt(square(error[j])+\             # <<<<<<<<<<<<<<
- * 								   square(error[j-1])+\
- * 								   square(sys_error*spectrum[j-1])+\
+ * 		if (smoothed_spectrum[j-1]-smoothed_spectrum[j])>sqrt((square(error[j])+\             # <<<<<<<<<<<<<<
+ * 								   square(error[j-1]))/smooth_length+\
+ * 								   square(sys_error*smoothed_spectrum[j-1])+\
  */
     }
 
-    /* "cython_functions_for_fast_computation.pyx":379
+    /* "cython_functions_for_fast_computation.pyx":408
  * 			lower_freq_ind[0]=j
  * 			break
  * 		j=j-1             # <<<<<<<<<<<<<<
  * 
- * 	j=max_loc+1
+ * 	j=max_loc+1+smooth_interval
  */
     __pyx_v_j = (__pyx_v_j - 1);
   }
-  __pyx_L4_break:;
+  __pyx_L11_break:;
 
-  /* "cython_functions_for_fast_computation.pyx":381
+  /* "cython_functions_for_fast_computation.pyx":410
  * 		j=j-1
  * 
- * 	j=max_loc+1             # <<<<<<<<<<<<<<
- * 	while j<num_freqs:
- * 		if spectrum[j]<1e-7:
- */
-  __pyx_v_j = (__pyx_v_max_loc + 1);
-
-  /* "cython_functions_for_fast_computation.pyx":382
+ * 	j=max_loc+1+smooth_interval             # <<<<<<<<<<<<<<
  * 
- * 	j=max_loc+1
- * 	while j<num_freqs:             # <<<<<<<<<<<<<<
- * 		if spectrum[j]<1e-7:
+ * 
+ */
+  __pyx_v_j = ((__pyx_v_max_loc + 1) + __pyx_v_smooth_interval);
+
+  /* "cython_functions_for_fast_computation.pyx":413
+ * 
+ * 
+ * 	while j<=num_freqs-1-smooth_interval:             # <<<<<<<<<<<<<<
+ * 		if smoothed_spectrum[j]<1e-7:
  * 			upper_freq_ind[0]=j
  */
   while (1) {
-    __pyx_t_1 = ((__pyx_v_j < __pyx_v_num_freqs) != 0);
-    if (!__pyx_t_1) break;
+    __pyx_t_6 = ((__pyx_v_j <= ((__pyx_v_num_freqs - 1) - __pyx_v_smooth_interval)) != 0);
+    if (!__pyx_t_6) break;
 
-    /* "cython_functions_for_fast_computation.pyx":383
- * 	j=max_loc+1
- * 	while j<num_freqs:
- * 		if spectrum[j]<1e-7:             # <<<<<<<<<<<<<<
+    /* "cython_functions_for_fast_computation.pyx":414
+ * 
+ * 	while j<=num_freqs-1-smooth_interval:
+ * 		if smoothed_spectrum[j]<1e-7:             # <<<<<<<<<<<<<<
  * 			upper_freq_ind[0]=j
  * 			break
  */
-    __pyx_t_1 = (((__pyx_v_spectrum[__pyx_v_j]) < 1e-7) != 0);
-    if (__pyx_t_1) {
+    __pyx_t_6 = (((__pyx_v_smoothed_spectrum[__pyx_v_j]) < 1e-7) != 0);
+    if (__pyx_t_6) {
 
-      /* "cython_functions_for_fast_computation.pyx":384
- * 	while j<num_freqs:
- * 		if spectrum[j]<1e-7:
+      /* "cython_functions_for_fast_computation.pyx":415
+ * 	while j<=num_freqs-1-smooth_interval:
+ * 		if smoothed_spectrum[j]<1e-7:
  * 			upper_freq_ind[0]=j             # <<<<<<<<<<<<<<
  * 			break
  * 		if j==upper_freq_ind[0]:
  */
       (__pyx_v_upper_freq_ind[0]) = __pyx_v_j;
 
-      /* "cython_functions_for_fast_computation.pyx":385
- * 		if spectrum[j]<1e-7:
+      /* "cython_functions_for_fast_computation.pyx":416
+ * 		if smoothed_spectrum[j]<1e-7:
  * 			upper_freq_ind[0]=j
  * 			break             # <<<<<<<<<<<<<<
  * 		if j==upper_freq_ind[0]:
  * 			break
  */
-      goto __pyx_L9_break;
+      goto __pyx_L16_break;
 
-      /* "cython_functions_for_fast_computation.pyx":383
- * 	j=max_loc+1
- * 	while j<num_freqs:
- * 		if spectrum[j]<1e-7:             # <<<<<<<<<<<<<<
+      /* "cython_functions_for_fast_computation.pyx":414
+ * 
+ * 	while j<=num_freqs-1-smooth_interval:
+ * 		if smoothed_spectrum[j]<1e-7:             # <<<<<<<<<<<<<<
  * 			upper_freq_ind[0]=j
  * 			break
  */
     }
 
-    /* "cython_functions_for_fast_computation.pyx":386
+    /* "cython_functions_for_fast_computation.pyx":417
  * 			upper_freq_ind[0]=j
  * 			break
  * 		if j==upper_freq_ind[0]:             # <<<<<<<<<<<<<<
  * 			break
- * 		if (spectrum[j+1]-spectrum[j])>sqrt(square(error[j])+\
+ * 		if (smoothed_spectrum[j+1]-smoothed_spectrum[j])>sqrt((square(error[j])+\
  */
-    __pyx_t_1 = ((__pyx_v_j == (__pyx_v_upper_freq_ind[0])) != 0);
-    if (__pyx_t_1) {
+    __pyx_t_6 = ((__pyx_v_j == (__pyx_v_upper_freq_ind[0])) != 0);
+    if (__pyx_t_6) {
 
-      /* "cython_functions_for_fast_computation.pyx":387
+      /* "cython_functions_for_fast_computation.pyx":418
  * 			break
  * 		if j==upper_freq_ind[0]:
  * 			break             # <<<<<<<<<<<<<<
- * 		if (spectrum[j+1]-spectrum[j])>sqrt(square(error[j])+\
- * 								   square(error[j+1])+\
+ * 		if (smoothed_spectrum[j+1]-smoothed_spectrum[j])>sqrt((square(error[j])+\
+ * 								   square(error[j+1]))/smooth_length+\
  */
-      goto __pyx_L9_break;
+      goto __pyx_L16_break;
 
-      /* "cython_functions_for_fast_computation.pyx":386
+      /* "cython_functions_for_fast_computation.pyx":417
  * 			upper_freq_ind[0]=j
  * 			break
  * 		if j==upper_freq_ind[0]:             # <<<<<<<<<<<<<<
  * 			break
- * 		if (spectrum[j+1]-spectrum[j])>sqrt(square(error[j])+\
+ * 		if (smoothed_spectrum[j+1]-smoothed_spectrum[j])>sqrt((square(error[j])+\
  */
     }
 
-    /* "cython_functions_for_fast_computation.pyx":388
+    /* "cython_functions_for_fast_computation.pyx":419
  * 		if j==upper_freq_ind[0]:
  * 			break
- * 		if (spectrum[j+1]-spectrum[j])>sqrt(square(error[j])+\             # <<<<<<<<<<<<<<
- * 								   square(error[j+1])+\
- * 								   square(sys_error*spectrum[j+1])+\
+ * 		if (smoothed_spectrum[j+1]-smoothed_spectrum[j])>sqrt((square(error[j])+\             # <<<<<<<<<<<<<<
+ * 								   square(error[j+1]))/smooth_length+\
+ * 								   square(sys_error*smoothed_spectrum[j+1])+\
  */
-    __pyx_t_1 = ((((__pyx_v_spectrum[(__pyx_v_j + 1)]) - (__pyx_v_spectrum[__pyx_v_j])) > sqrt((((__pyx_f_37cython_functions_for_fast_computation_square((__pyx_v_error[__pyx_v_j])) + __pyx_f_37cython_functions_for_fast_computation_square((__pyx_v_error[(__pyx_v_j + 1)]))) + __pyx_f_37cython_functions_for_fast_computation_square((__pyx_v_sys_error * (__pyx_v_spectrum[(__pyx_v_j + 1)])))) + __pyx_f_37cython_functions_for_fast_computation_square((__pyx_v_sys_error * (__pyx_v_spectrum[__pyx_v_j])))))) != 0);
-    if (__pyx_t_1) {
+    __pyx_t_7 = (__pyx_f_37cython_functions_for_fast_computation_square((__pyx_v_error[__pyx_v_j])) + __pyx_f_37cython_functions_for_fast_computation_square((__pyx_v_error[(__pyx_v_j + 1)])));
 
-      /* "cython_functions_for_fast_computation.pyx":392
- * 								   square(sys_error*spectrum[j+1])+\
- * 								   square(sys_error*spectrum[j])):
+    /* "cython_functions_for_fast_computation.pyx":420
+ * 			break
+ * 		if (smoothed_spectrum[j+1]-smoothed_spectrum[j])>sqrt((square(error[j])+\
+ * 								   square(error[j+1]))/smooth_length+\             # <<<<<<<<<<<<<<
+ * 								   square(sys_error*smoothed_spectrum[j+1])+\
+ * 								   square(sys_error*smoothed_spectrum[j])):
+ */
+    if (unlikely(__pyx_v_smooth_length == 0)) {
+      PyErr_SetString(PyExc_ZeroDivisionError, "float division");
+      __PYX_ERR(0, 420, __pyx_L1_error)
+    }
+
+    /* "cython_functions_for_fast_computation.pyx":419
+ * 		if j==upper_freq_ind[0]:
+ * 			break
+ * 		if (smoothed_spectrum[j+1]-smoothed_spectrum[j])>sqrt((square(error[j])+\             # <<<<<<<<<<<<<<
+ * 								   square(error[j+1]))/smooth_length+\
+ * 								   square(sys_error*smoothed_spectrum[j+1])+\
+ */
+    __pyx_t_6 = ((((__pyx_v_smoothed_spectrum[(__pyx_v_j + 1)]) - (__pyx_v_smoothed_spectrum[__pyx_v_j])) > sqrt((((__pyx_t_7 / ((double)__pyx_v_smooth_length)) + __pyx_f_37cython_functions_for_fast_computation_square((__pyx_v_sys_error * (__pyx_v_smoothed_spectrum[(__pyx_v_j + 1)])))) + __pyx_f_37cython_functions_for_fast_computation_square((__pyx_v_sys_error * (__pyx_v_smoothed_spectrum[__pyx_v_j])))))) != 0);
+    if (__pyx_t_6) {
+
+      /* "cython_functions_for_fast_computation.pyx":423
+ * 								   square(sys_error*smoothed_spectrum[j+1])+\
+ * 								   square(sys_error*smoothed_spectrum[j])):
  * 			upper_freq_ind[0]=j             # <<<<<<<<<<<<<<
  * 			break
  * 		j=j+1
  */
       (__pyx_v_upper_freq_ind[0]) = __pyx_v_j;
 
-      /* "cython_functions_for_fast_computation.pyx":393
- * 								   square(sys_error*spectrum[j])):
+      /* "cython_functions_for_fast_computation.pyx":424
+ * 								   square(sys_error*smoothed_spectrum[j])):
  * 			upper_freq_ind[0]=j
  * 			break             # <<<<<<<<<<<<<<
  * 		j=j+1
  * 
  */
-      goto __pyx_L9_break;
+      goto __pyx_L16_break;
 
-      /* "cython_functions_for_fast_computation.pyx":388
+      /* "cython_functions_for_fast_computation.pyx":419
  * 		if j==upper_freq_ind[0]:
  * 			break
- * 		if (spectrum[j+1]-spectrum[j])>sqrt(square(error[j])+\             # <<<<<<<<<<<<<<
- * 								   square(error[j+1])+\
- * 								   square(sys_error*spectrum[j+1])+\
+ * 		if (smoothed_spectrum[j+1]-smoothed_spectrum[j])>sqrt((square(error[j])+\             # <<<<<<<<<<<<<<
+ * 								   square(error[j+1]))/smooth_length+\
+ * 								   square(sys_error*smoothed_spectrum[j+1])+\
  */
     }
 
-    /* "cython_functions_for_fast_computation.pyx":394
+    /* "cython_functions_for_fast_computation.pyx":425
  * 			upper_freq_ind[0]=j
  * 			break
  * 		j=j+1             # <<<<<<<<<<<<<<
  * 
- * 	return
+ * 	PyMem_Free(smoothed_spectrum)
  */
     __pyx_v_j = (__pyx_v_j + 1);
   }
-  __pyx_L9_break:;
+  __pyx_L16_break:;
 
-  /* "cython_functions_for_fast_computation.pyx":396
+  /* "cython_functions_for_fast_computation.pyx":427
  * 		j=j+1
  * 
+ * 	PyMem_Free(smoothed_spectrum)             # <<<<<<<<<<<<<<
+ * 	return
+ * 
+ */
+  PyMem_Free(__pyx_v_smoothed_spectrum);
+
+  /* "cython_functions_for_fast_computation.pyx":428
+ * 
+ * 	PyMem_Free(smoothed_spectrum)
  * 	return             # <<<<<<<<<<<<<<
  * 
  * cdef int find_maximum(int *param_lengths,\
@@ -7194,11 +7461,13 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_fitrange_homoge
  */
 
   /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_WriteUnraisable("cython_functions_for_fast_computation.calc_fitrange_homogenous", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
 }
 
-/* "cython_functions_for_fast_computation.pyx":398
+/* "cython_functions_for_fast_computation.pyx":430
  * 	return
  * 
  * cdef int find_maximum(int *param_lengths,\             # <<<<<<<<<<<<<<
@@ -7217,7 +7486,7 @@ static int __pyx_f_37cython_functions_for_fast_computation_find_maximum(int *__p
   int __pyx_t_4;
   __Pyx_RefNannySetupContext("find_maximum", 0);
 
-  /* "cython_functions_for_fast_computation.pyx":403
+  /* "cython_functions_for_fast_computation.pyx":435
  * 	cdef int i, max1
  * 
  * 	max1=0             # <<<<<<<<<<<<<<
@@ -7226,7 +7495,7 @@ static int __pyx_f_37cython_functions_for_fast_computation_find_maximum(int *__p
  */
   __pyx_v_max1 = 0;
 
-  /* "cython_functions_for_fast_computation.pyx":405
+  /* "cython_functions_for_fast_computation.pyx":437
  * 	max1=0
  * 
  * 	for i in range(num_params):             # <<<<<<<<<<<<<<
@@ -7238,7 +7507,7 @@ static int __pyx_f_37cython_functions_for_fast_computation_find_maximum(int *__p
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "cython_functions_for_fast_computation.pyx":406
+    /* "cython_functions_for_fast_computation.pyx":438
  * 
  * 	for i in range(num_params):
  * 		if max1<param_lengths[i]:             # <<<<<<<<<<<<<<
@@ -7248,7 +7517,7 @@ static int __pyx_f_37cython_functions_for_fast_computation_find_maximum(int *__p
     __pyx_t_4 = ((__pyx_v_max1 < (__pyx_v_param_lengths[__pyx_v_i])) != 0);
     if (__pyx_t_4) {
 
-      /* "cython_functions_for_fast_computation.pyx":407
+      /* "cython_functions_for_fast_computation.pyx":439
  * 	for i in range(num_params):
  * 		if max1<param_lengths[i]:
  * 			max1=param_lengths[i]             # <<<<<<<<<<<<<<
@@ -7257,7 +7526,7 @@ static int __pyx_f_37cython_functions_for_fast_computation_find_maximum(int *__p
  */
       __pyx_v_max1 = (__pyx_v_param_lengths[__pyx_v_i]);
 
-      /* "cython_functions_for_fast_computation.pyx":406
+      /* "cython_functions_for_fast_computation.pyx":438
  * 
  * 	for i in range(num_params):
  * 		if max1<param_lengths[i]:             # <<<<<<<<<<<<<<
@@ -7267,7 +7536,7 @@ static int __pyx_f_37cython_functions_for_fast_computation_find_maximum(int *__p
     }
   }
 
-  /* "cython_functions_for_fast_computation.pyx":408
+  /* "cython_functions_for_fast_computation.pyx":440
  * 		if max1<param_lengths[i]:
  * 			max1=param_lengths[i]
  * 	return max1             # <<<<<<<<<<<<<<
@@ -7277,7 +7546,7 @@ static int __pyx_f_37cython_functions_for_fast_computation_find_maximum(int *__p
   __pyx_r = __pyx_v_max1;
   goto __pyx_L0;
 
-  /* "cython_functions_for_fast_computation.pyx":398
+  /* "cython_functions_for_fast_computation.pyx":430
  * 	return
  * 
  * cdef int find_maximum(int *param_lengths,\             # <<<<<<<<<<<<<<
@@ -7291,7 +7560,7 @@ static int __pyx_f_37cython_functions_for_fast_computation_find_maximum(int *__p
   return __pyx_r;
 }
 
-/* "cython_functions_for_fast_computation.pyx":410
+/* "cython_functions_for_fast_computation.pyx":442
  * 	return max1
  * 
  * cdef double calc_gradx(int x0,\             # <<<<<<<<<<<<<<
@@ -7320,7 +7589,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradx(int __p
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("calc_gradx", 0);
 
-  /* "cython_functions_for_fast_computation.pyx":421
+  /* "cython_functions_for_fast_computation.pyx":453
  * 
  * 
  * 	cdef int x1=x0-stride             # <<<<<<<<<<<<<<
@@ -7329,7 +7598,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradx(int __p
  */
   __pyx_v_x1 = (__pyx_v_x0 - __pyx_v_stride);
 
-  /* "cython_functions_for_fast_computation.pyx":422
+  /* "cython_functions_for_fast_computation.pyx":454
  * 
  * 	cdef int x1=x0-stride
  * 	cdef int y1=y0             # <<<<<<<<<<<<<<
@@ -7338,7 +7607,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradx(int __p
  */
   __pyx_v_y1 = __pyx_v_y0;
 
-  /* "cython_functions_for_fast_computation.pyx":423
+  /* "cython_functions_for_fast_computation.pyx":455
  * 	cdef int x1=x0-stride
  * 	cdef int y1=y0
  * 	cdef int ind1=y1*numx*(num_params+1)+x1*(num_params+1)+param             # <<<<<<<<<<<<<<
@@ -7347,7 +7616,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradx(int __p
  */
   __pyx_v_ind1 = ((((__pyx_v_y1 * __pyx_v_numx) * (__pyx_v_num_params + 1)) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_param);
 
-  /* "cython_functions_for_fast_computation.pyx":424
+  /* "cython_functions_for_fast_computation.pyx":456
  * 	cdef int y1=y0
  * 	cdef int ind1=y1*numx*(num_params+1)+x1*(num_params+1)+param
  * 	cdef int ind=y0*numx*(num_params+1)+x0*(num_params+1)+param             # <<<<<<<<<<<<<<
@@ -7356,7 +7625,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradx(int __p
  */
   __pyx_v_ind = ((((__pyx_v_y0 * __pyx_v_numx) * (__pyx_v_num_params + 1)) + (__pyx_v_x0 * (__pyx_v_num_params + 1))) + __pyx_v_param);
 
-  /* "cython_functions_for_fast_computation.pyx":427
+  /* "cython_functions_for_fast_computation.pyx":459
  * 
  * 
  * 	cdef double grad1=0             # <<<<<<<<<<<<<<
@@ -7365,7 +7634,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradx(int __p
  */
   __pyx_v_grad1 = 0.0;
 
-  /* "cython_functions_for_fast_computation.pyx":428
+  /* "cython_functions_for_fast_computation.pyx":460
  * 
  * 	cdef double grad1=0
  * 	if x1<0:             # <<<<<<<<<<<<<<
@@ -7375,7 +7644,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradx(int __p
   __pyx_t_1 = ((__pyx_v_x1 < 0) != 0);
   if (__pyx_t_1) {
 
-    /* "cython_functions_for_fast_computation.pyx":429
+    /* "cython_functions_for_fast_computation.pyx":461
  * 	cdef double grad1=0
  * 	if x1<0:
  * 		grad1=0             # <<<<<<<<<<<<<<
@@ -7384,7 +7653,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradx(int __p
  */
     __pyx_v_grad1 = 0.0;
 
-    /* "cython_functions_for_fast_computation.pyx":428
+    /* "cython_functions_for_fast_computation.pyx":460
  * 
  * 	cdef double grad1=0
  * 	if x1<0:             # <<<<<<<<<<<<<<
@@ -7394,7 +7663,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradx(int __p
     goto __pyx_L3;
   }
 
-  /* "cython_functions_for_fast_computation.pyx":430
+  /* "cython_functions_for_fast_computation.pyx":462
  * 	if x1<0:
  * 		grad1=0
  * 	elif fitted[ind1]>0 and fitted[ind]>0:             # <<<<<<<<<<<<<<
@@ -7412,7 +7681,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradx(int __p
   __pyx_L4_bool_binop_done:;
   if (__pyx_t_1) {
 
-    /* "cython_functions_for_fast_computation.pyx":431
+    /* "cython_functions_for_fast_computation.pyx":463
  * 		grad1=0
  * 	elif fitted[ind1]>0 and fitted[ind]>0:
  * 		grad1=(fitted[ind]-fitted[ind1])/stride             # <<<<<<<<<<<<<<
@@ -7422,11 +7691,11 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradx(int __p
     __pyx_t_3 = ((__pyx_v_fitted[__pyx_v_ind]) - (__pyx_v_fitted[__pyx_v_ind1]));
     if (unlikely(__pyx_v_stride == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-      __PYX_ERR(0, 431, __pyx_L1_error)
+      __PYX_ERR(0, 463, __pyx_L1_error)
     }
     __pyx_v_grad1 = (__pyx_t_3 / ((double)__pyx_v_stride));
 
-    /* "cython_functions_for_fast_computation.pyx":430
+    /* "cython_functions_for_fast_computation.pyx":462
  * 	if x1<0:
  * 		grad1=0
  * 	elif fitted[ind1]>0 and fitted[ind]>0:             # <<<<<<<<<<<<<<
@@ -7436,7 +7705,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradx(int __p
   }
   __pyx_L3:;
 
-  /* "cython_functions_for_fast_computation.pyx":433
+  /* "cython_functions_for_fast_computation.pyx":465
  * 		grad1=(fitted[ind]-fitted[ind1])/stride
  * 
  * 	cdef int x2=x0+stride             # <<<<<<<<<<<<<<
@@ -7445,7 +7714,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradx(int __p
  */
   __pyx_v_x2 = (__pyx_v_x0 + __pyx_v_stride);
 
-  /* "cython_functions_for_fast_computation.pyx":434
+  /* "cython_functions_for_fast_computation.pyx":466
  * 
  * 	cdef int x2=x0+stride
  * 	cdef int y2=y0             # <<<<<<<<<<<<<<
@@ -7454,7 +7723,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradx(int __p
  */
   __pyx_v_y2 = __pyx_v_y0;
 
-  /* "cython_functions_for_fast_computation.pyx":435
+  /* "cython_functions_for_fast_computation.pyx":467
  * 	cdef int x2=x0+stride
  * 	cdef int y2=y0
  * 	cdef int ind2=y2*numx*(num_params+1)+x2*(num_params+1)+param             # <<<<<<<<<<<<<<
@@ -7463,7 +7732,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradx(int __p
  */
   __pyx_v_ind2 = ((((__pyx_v_y2 * __pyx_v_numx) * (__pyx_v_num_params + 1)) + (__pyx_v_x2 * (__pyx_v_num_params + 1))) + __pyx_v_param);
 
-  /* "cython_functions_for_fast_computation.pyx":436
+  /* "cython_functions_for_fast_computation.pyx":468
  * 	cdef int y2=y0
  * 	cdef int ind2=y2*numx*(num_params+1)+x2*(num_params+1)+param
  * 	cdef double grad2=0             # <<<<<<<<<<<<<<
@@ -7472,7 +7741,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradx(int __p
  */
   __pyx_v_grad2 = 0.0;
 
-  /* "cython_functions_for_fast_computation.pyx":438
+  /* "cython_functions_for_fast_computation.pyx":470
  * 	cdef double grad2=0
  * 
  * 	if x2>numx-1:             # <<<<<<<<<<<<<<
@@ -7482,7 +7751,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradx(int __p
   __pyx_t_1 = ((__pyx_v_x2 > (__pyx_v_numx - 1)) != 0);
   if (__pyx_t_1) {
 
-    /* "cython_functions_for_fast_computation.pyx":439
+    /* "cython_functions_for_fast_computation.pyx":471
  * 
  * 	if x2>numx-1:
  * 		grad2=0             # <<<<<<<<<<<<<<
@@ -7491,7 +7760,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradx(int __p
  */
     __pyx_v_grad2 = 0.0;
 
-    /* "cython_functions_for_fast_computation.pyx":438
+    /* "cython_functions_for_fast_computation.pyx":470
  * 	cdef double grad2=0
  * 
  * 	if x2>numx-1:             # <<<<<<<<<<<<<<
@@ -7500,7 +7769,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradx(int __p
  */
   }
 
-  /* "cython_functions_for_fast_computation.pyx":440
+  /* "cython_functions_for_fast_computation.pyx":472
  * 	if x2>numx-1:
  * 		grad2=0
  * 	if fitted[ind2]>0 and fitted[ind]>0:             # <<<<<<<<<<<<<<
@@ -7518,7 +7787,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradx(int __p
   __pyx_L8_bool_binop_done:;
   if (__pyx_t_1) {
 
-    /* "cython_functions_for_fast_computation.pyx":441
+    /* "cython_functions_for_fast_computation.pyx":473
  * 		grad2=0
  * 	if fitted[ind2]>0 and fitted[ind]>0:
  * 		grad2=(fitted[ind2]-fitted[ind])/stride             # <<<<<<<<<<<<<<
@@ -7528,11 +7797,11 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradx(int __p
     __pyx_t_3 = ((__pyx_v_fitted[__pyx_v_ind2]) - (__pyx_v_fitted[__pyx_v_ind]));
     if (unlikely(__pyx_v_stride == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-      __PYX_ERR(0, 441, __pyx_L1_error)
+      __PYX_ERR(0, 473, __pyx_L1_error)
     }
     __pyx_v_grad2 = (__pyx_t_3 / ((double)__pyx_v_stride));
 
-    /* "cython_functions_for_fast_computation.pyx":440
+    /* "cython_functions_for_fast_computation.pyx":472
  * 	if x2>numx-1:
  * 		grad2=0
  * 	if fitted[ind2]>0 and fitted[ind]>0:             # <<<<<<<<<<<<<<
@@ -7541,7 +7810,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradx(int __p
  */
   }
 
-  /* "cython_functions_for_fast_computation.pyx":443
+  /* "cython_functions_for_fast_computation.pyx":475
  * 		grad2=(fitted[ind2]-fitted[ind])/stride
  * 
  * 	cdef double grad=sqrt(square(grad1)+square(grad2))             # <<<<<<<<<<<<<<
@@ -7550,7 +7819,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradx(int __p
  */
   __pyx_v_grad = sqrt((__pyx_f_37cython_functions_for_fast_computation_square(__pyx_v_grad1) + __pyx_f_37cython_functions_for_fast_computation_square(__pyx_v_grad2)));
 
-  /* "cython_functions_for_fast_computation.pyx":444
+  /* "cython_functions_for_fast_computation.pyx":476
  * 
  * 	cdef double grad=sqrt(square(grad1)+square(grad2))
  * 	return grad             # <<<<<<<<<<<<<<
@@ -7560,7 +7829,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradx(int __p
   __pyx_r = __pyx_v_grad;
   goto __pyx_L0;
 
-  /* "cython_functions_for_fast_computation.pyx":410
+  /* "cython_functions_for_fast_computation.pyx":442
  * 	return max1
  * 
  * cdef double calc_gradx(int x0,\             # <<<<<<<<<<<<<<
@@ -7577,7 +7846,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradx(int __p
   return __pyx_r;
 }
 
-/* "cython_functions_for_fast_computation.pyx":446
+/* "cython_functions_for_fast_computation.pyx":478
  * 	return grad
  * 
  * cdef double calc_grady(int x0,\             # <<<<<<<<<<<<<<
@@ -7606,7 +7875,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grady(int __p
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("calc_grady", 0);
 
-  /* "cython_functions_for_fast_computation.pyx":456
+  /* "cython_functions_for_fast_computation.pyx":488
  * 		int stride):
  * 
  * 	cdef int x1=x0             # <<<<<<<<<<<<<<
@@ -7615,7 +7884,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grady(int __p
  */
   __pyx_v_x1 = __pyx_v_x0;
 
-  /* "cython_functions_for_fast_computation.pyx":457
+  /* "cython_functions_for_fast_computation.pyx":489
  * 
  * 	cdef int x1=x0
  * 	cdef int y1=y0-stride             # <<<<<<<<<<<<<<
@@ -7624,7 +7893,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grady(int __p
  */
   __pyx_v_y1 = (__pyx_v_y0 - __pyx_v_stride);
 
-  /* "cython_functions_for_fast_computation.pyx":458
+  /* "cython_functions_for_fast_computation.pyx":490
  * 	cdef int x1=x0
  * 	cdef int y1=y0-stride
  * 	cdef int ind1=y1*numx*(num_params+1)+x1*(num_params+1)+param             # <<<<<<<<<<<<<<
@@ -7633,7 +7902,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grady(int __p
  */
   __pyx_v_ind1 = ((((__pyx_v_y1 * __pyx_v_numx) * (__pyx_v_num_params + 1)) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_param);
 
-  /* "cython_functions_for_fast_computation.pyx":459
+  /* "cython_functions_for_fast_computation.pyx":491
  * 	cdef int y1=y0-stride
  * 	cdef int ind1=y1*numx*(num_params+1)+x1*(num_params+1)+param
  * 	cdef int ind=y0*numx*(num_params+1)+x0*(num_params+1)+param             # <<<<<<<<<<<<<<
@@ -7642,7 +7911,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grady(int __p
  */
   __pyx_v_ind = ((((__pyx_v_y0 * __pyx_v_numx) * (__pyx_v_num_params + 1)) + (__pyx_v_x0 * (__pyx_v_num_params + 1))) + __pyx_v_param);
 
-  /* "cython_functions_for_fast_computation.pyx":462
+  /* "cython_functions_for_fast_computation.pyx":494
  * 
  * 
  * 	cdef double grad1=0             # <<<<<<<<<<<<<<
@@ -7651,7 +7920,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grady(int __p
  */
   __pyx_v_grad1 = 0.0;
 
-  /* "cython_functions_for_fast_computation.pyx":463
+  /* "cython_functions_for_fast_computation.pyx":495
  * 
  * 	cdef double grad1=0
  * 	if y1<0:             # <<<<<<<<<<<<<<
@@ -7661,7 +7930,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grady(int __p
   __pyx_t_1 = ((__pyx_v_y1 < 0) != 0);
   if (__pyx_t_1) {
 
-    /* "cython_functions_for_fast_computation.pyx":464
+    /* "cython_functions_for_fast_computation.pyx":496
  * 	cdef double grad1=0
  * 	if y1<0:
  * 		grad1=0             # <<<<<<<<<<<<<<
@@ -7670,7 +7939,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grady(int __p
  */
     __pyx_v_grad1 = 0.0;
 
-    /* "cython_functions_for_fast_computation.pyx":463
+    /* "cython_functions_for_fast_computation.pyx":495
  * 
  * 	cdef double grad1=0
  * 	if y1<0:             # <<<<<<<<<<<<<<
@@ -7680,7 +7949,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grady(int __p
     goto __pyx_L3;
   }
 
-  /* "cython_functions_for_fast_computation.pyx":465
+  /* "cython_functions_for_fast_computation.pyx":497
  * 	if y1<0:
  * 		grad1=0
  * 	elif fitted[ind1]>0 and fitted[ind]>0:             # <<<<<<<<<<<<<<
@@ -7698,7 +7967,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grady(int __p
   __pyx_L4_bool_binop_done:;
   if (__pyx_t_1) {
 
-    /* "cython_functions_for_fast_computation.pyx":466
+    /* "cython_functions_for_fast_computation.pyx":498
  * 		grad1=0
  * 	elif fitted[ind1]>0 and fitted[ind]>0:
  * 		grad1=(fitted[ind]-fitted[ind1])/stride             # <<<<<<<<<<<<<<
@@ -7708,11 +7977,11 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grady(int __p
     __pyx_t_3 = ((__pyx_v_fitted[__pyx_v_ind]) - (__pyx_v_fitted[__pyx_v_ind1]));
     if (unlikely(__pyx_v_stride == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-      __PYX_ERR(0, 466, __pyx_L1_error)
+      __PYX_ERR(0, 498, __pyx_L1_error)
     }
     __pyx_v_grad1 = (__pyx_t_3 / ((double)__pyx_v_stride));
 
-    /* "cython_functions_for_fast_computation.pyx":465
+    /* "cython_functions_for_fast_computation.pyx":497
  * 	if y1<0:
  * 		grad1=0
  * 	elif fitted[ind1]>0 and fitted[ind]>0:             # <<<<<<<<<<<<<<
@@ -7722,7 +7991,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grady(int __p
   }
   __pyx_L3:;
 
-  /* "cython_functions_for_fast_computation.pyx":468
+  /* "cython_functions_for_fast_computation.pyx":500
  * 		grad1=(fitted[ind]-fitted[ind1])/stride
  * 
  * 	cdef int x2=x0             # <<<<<<<<<<<<<<
@@ -7731,7 +8000,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grady(int __p
  */
   __pyx_v_x2 = __pyx_v_x0;
 
-  /* "cython_functions_for_fast_computation.pyx":469
+  /* "cython_functions_for_fast_computation.pyx":501
  * 
  * 	cdef int x2=x0
  * 	cdef int y2=y0+stride             # <<<<<<<<<<<<<<
@@ -7740,7 +8009,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grady(int __p
  */
   __pyx_v_y2 = (__pyx_v_y0 + __pyx_v_stride);
 
-  /* "cython_functions_for_fast_computation.pyx":470
+  /* "cython_functions_for_fast_computation.pyx":502
  * 	cdef int x2=x0
  * 	cdef int y2=y0+stride
  * 	cdef int ind2=y2*numx*(num_params+1)+x2*(num_params+1)+param             # <<<<<<<<<<<<<<
@@ -7749,7 +8018,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grady(int __p
  */
   __pyx_v_ind2 = ((((__pyx_v_y2 * __pyx_v_numx) * (__pyx_v_num_params + 1)) + (__pyx_v_x2 * (__pyx_v_num_params + 1))) + __pyx_v_param);
 
-  /* "cython_functions_for_fast_computation.pyx":471
+  /* "cython_functions_for_fast_computation.pyx":503
  * 	cdef int y2=y0+stride
  * 	cdef int ind2=y2*numx*(num_params+1)+x2*(num_params+1)+param
  * 	cdef double grad2=0             # <<<<<<<<<<<<<<
@@ -7758,7 +8027,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grady(int __p
  */
   __pyx_v_grad2 = 0.0;
 
-  /* "cython_functions_for_fast_computation.pyx":473
+  /* "cython_functions_for_fast_computation.pyx":505
  * 	cdef double grad2=0
  * 
  * 	if y2>numy-1:             # <<<<<<<<<<<<<<
@@ -7768,7 +8037,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grady(int __p
   __pyx_t_1 = ((__pyx_v_y2 > (__pyx_v_numy - 1)) != 0);
   if (__pyx_t_1) {
 
-    /* "cython_functions_for_fast_computation.pyx":474
+    /* "cython_functions_for_fast_computation.pyx":506
  * 
  * 	if y2>numy-1:
  * 		grad2=0             # <<<<<<<<<<<<<<
@@ -7777,7 +8046,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grady(int __p
  */
     __pyx_v_grad2 = 0.0;
 
-    /* "cython_functions_for_fast_computation.pyx":473
+    /* "cython_functions_for_fast_computation.pyx":505
  * 	cdef double grad2=0
  * 
  * 	if y2>numy-1:             # <<<<<<<<<<<<<<
@@ -7786,7 +8055,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grady(int __p
  */
   }
 
-  /* "cython_functions_for_fast_computation.pyx":475
+  /* "cython_functions_for_fast_computation.pyx":507
  * 	if y2>numy-1:
  * 		grad2=0
  * 	if fitted[ind2]>0 and fitted[ind]>0:             # <<<<<<<<<<<<<<
@@ -7804,7 +8073,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grady(int __p
   __pyx_L8_bool_binop_done:;
   if (__pyx_t_1) {
 
-    /* "cython_functions_for_fast_computation.pyx":476
+    /* "cython_functions_for_fast_computation.pyx":508
  * 		grad2=0
  * 	if fitted[ind2]>0 and fitted[ind]>0:
  * 		grad2=(fitted[ind2]-fitted[ind])/stride             # <<<<<<<<<<<<<<
@@ -7814,11 +8083,11 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grady(int __p
     __pyx_t_3 = ((__pyx_v_fitted[__pyx_v_ind2]) - (__pyx_v_fitted[__pyx_v_ind]));
     if (unlikely(__pyx_v_stride == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-      __PYX_ERR(0, 476, __pyx_L1_error)
+      __PYX_ERR(0, 508, __pyx_L1_error)
     }
     __pyx_v_grad2 = (__pyx_t_3 / ((double)__pyx_v_stride));
 
-    /* "cython_functions_for_fast_computation.pyx":475
+    /* "cython_functions_for_fast_computation.pyx":507
  * 	if y2>numy-1:
  * 		grad2=0
  * 	if fitted[ind2]>0 and fitted[ind]>0:             # <<<<<<<<<<<<<<
@@ -7827,7 +8096,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grady(int __p
  */
   }
 
-  /* "cython_functions_for_fast_computation.pyx":478
+  /* "cython_functions_for_fast_computation.pyx":510
  * 		grad2=(fitted[ind2]-fitted[ind])/stride
  * 
  * 	cdef double grad=sqrt(square(grad1)+square(grad2))             # <<<<<<<<<<<<<<
@@ -7836,7 +8105,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grady(int __p
  */
   __pyx_v_grad = sqrt((__pyx_f_37cython_functions_for_fast_computation_square(__pyx_v_grad1) + __pyx_f_37cython_functions_for_fast_computation_square(__pyx_v_grad2)));
 
-  /* "cython_functions_for_fast_computation.pyx":479
+  /* "cython_functions_for_fast_computation.pyx":511
  * 
  * 	cdef double grad=sqrt(square(grad1)+square(grad2))
  * 	return grad             # <<<<<<<<<<<<<<
@@ -7846,7 +8115,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grady(int __p
   __pyx_r = __pyx_v_grad;
   goto __pyx_L0;
 
-  /* "cython_functions_for_fast_computation.pyx":446
+  /* "cython_functions_for_fast_computation.pyx":478
  * 	return grad
  * 
  * cdef double calc_grady(int x0,\             # <<<<<<<<<<<<<<
@@ -7863,7 +8132,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grady(int __p
   return __pyx_r;
 }
 
-/* "cython_functions_for_fast_computation.pyx":481
+/* "cython_functions_for_fast_computation.pyx":513
  * 	return grad
  * 
  * cpdef double calc_gradient_wrapper(int x0,\             # <<<<<<<<<<<<<<
@@ -7883,7 +8152,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradient_wrap
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("calc_gradient_wrapper", 0);
 
-  /* "cython_functions_for_fast_computation.pyx":490
+  /* "cython_functions_for_fast_computation.pyx":522
  * 			   double smoothness_enforcer,\
  * 			   int stride):
  * 	return calc_gradient(x0,y0,&fitted[0],num_x,num_y,num_params,&param_lengths[0],smoothness_enforcer,stride)             # <<<<<<<<<<<<<<
@@ -7898,7 +8167,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradient_wrap
   } else if (unlikely(__pyx_t_1 >= __pyx_v_fitted.shape[0])) __pyx_t_2 = 0;
   if (unlikely(__pyx_t_2 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_2);
-    __PYX_ERR(0, 490, __pyx_L1_error)
+    __PYX_ERR(0, 522, __pyx_L1_error)
   }
   __pyx_t_3 = 0;
   __pyx_t_2 = -1;
@@ -7908,12 +8177,12 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradient_wrap
   } else if (unlikely(__pyx_t_3 >= __pyx_v_param_lengths.shape[0])) __pyx_t_2 = 0;
   if (unlikely(__pyx_t_2 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_2);
-    __PYX_ERR(0, 490, __pyx_L1_error)
+    __PYX_ERR(0, 522, __pyx_L1_error)
   }
   __pyx_r = __pyx_f_37cython_functions_for_fast_computation_calc_gradient(__pyx_v_x0, __pyx_v_y0, (&(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_1 * __pyx_v_fitted.strides[0]) )))), __pyx_v_num_x, __pyx_v_num_y, __pyx_v_num_params, (&(*((int *) ( /* dim=0 */ (__pyx_v_param_lengths.data + __pyx_t_3 * __pyx_v_param_lengths.strides[0]) )))), __pyx_v_smoothness_enforcer, __pyx_v_stride);
   goto __pyx_L0;
 
-  /* "cython_functions_for_fast_computation.pyx":481
+  /* "cython_functions_for_fast_computation.pyx":513
  * 	return grad
  * 
  * cpdef double calc_gradient_wrapper(int x0,\             # <<<<<<<<<<<<<<
@@ -7985,53 +8254,53 @@ static PyObject *__pyx_pw_37cython_functions_for_fast_computation_9calc_gradient
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_y0)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("calc_gradient_wrapper", 1, 9, 9, 1); __PYX_ERR(0, 481, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("calc_gradient_wrapper", 1, 9, 9, 1); __PYX_ERR(0, 513, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_fitted)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("calc_gradient_wrapper", 1, 9, 9, 2); __PYX_ERR(0, 481, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("calc_gradient_wrapper", 1, 9, 9, 2); __PYX_ERR(0, 513, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_num_x)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("calc_gradient_wrapper", 1, 9, 9, 3); __PYX_ERR(0, 481, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("calc_gradient_wrapper", 1, 9, 9, 3); __PYX_ERR(0, 513, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  4:
         if (likely((values[4] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_num_y)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("calc_gradient_wrapper", 1, 9, 9, 4); __PYX_ERR(0, 481, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("calc_gradient_wrapper", 1, 9, 9, 4); __PYX_ERR(0, 513, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  5:
         if (likely((values[5] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_num_params)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("calc_gradient_wrapper", 1, 9, 9, 5); __PYX_ERR(0, 481, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("calc_gradient_wrapper", 1, 9, 9, 5); __PYX_ERR(0, 513, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  6:
         if (likely((values[6] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_param_lengths)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("calc_gradient_wrapper", 1, 9, 9, 6); __PYX_ERR(0, 481, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("calc_gradient_wrapper", 1, 9, 9, 6); __PYX_ERR(0, 513, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  7:
         if (likely((values[7] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_smoothness_enforcer)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("calc_gradient_wrapper", 1, 9, 9, 7); __PYX_ERR(0, 481, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("calc_gradient_wrapper", 1, 9, 9, 7); __PYX_ERR(0, 513, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  8:
         if (likely((values[8] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_stride)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("calc_gradient_wrapper", 1, 9, 9, 8); __PYX_ERR(0, 481, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("calc_gradient_wrapper", 1, 9, 9, 8); __PYX_ERR(0, 513, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "calc_gradient_wrapper") < 0)) __PYX_ERR(0, 481, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "calc_gradient_wrapper") < 0)) __PYX_ERR(0, 513, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 9) {
       goto __pyx_L5_argtuple_error;
@@ -8046,19 +8315,19 @@ static PyObject *__pyx_pw_37cython_functions_for_fast_computation_9calc_gradient
       values[7] = PyTuple_GET_ITEM(__pyx_args, 7);
       values[8] = PyTuple_GET_ITEM(__pyx_args, 8);
     }
-    __pyx_v_x0 = __Pyx_PyInt_As_int(values[0]); if (unlikely((__pyx_v_x0 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 481, __pyx_L3_error)
-    __pyx_v_y0 = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_y0 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 482, __pyx_L3_error)
-    __pyx_v_fitted = __Pyx_PyObject_to_MemoryviewSlice_ds_double(values[2], PyBUF_WRITABLE); if (unlikely(!__pyx_v_fitted.memview)) __PYX_ERR(0, 483, __pyx_L3_error)
-    __pyx_v_num_x = __Pyx_PyInt_As_int(values[3]); if (unlikely((__pyx_v_num_x == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 484, __pyx_L3_error)
-    __pyx_v_num_y = __Pyx_PyInt_As_int(values[4]); if (unlikely((__pyx_v_num_y == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 485, __pyx_L3_error)
-    __pyx_v_num_params = __Pyx_PyInt_As_int(values[5]); if (unlikely((__pyx_v_num_params == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 486, __pyx_L3_error)
-    __pyx_v_param_lengths = __Pyx_PyObject_to_MemoryviewSlice_ds_int(values[6], PyBUF_WRITABLE); if (unlikely(!__pyx_v_param_lengths.memview)) __PYX_ERR(0, 487, __pyx_L3_error)
-    __pyx_v_smoothness_enforcer = __pyx_PyFloat_AsDouble(values[7]); if (unlikely((__pyx_v_smoothness_enforcer == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 488, __pyx_L3_error)
-    __pyx_v_stride = __Pyx_PyInt_As_int(values[8]); if (unlikely((__pyx_v_stride == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 489, __pyx_L3_error)
+    __pyx_v_x0 = __Pyx_PyInt_As_int(values[0]); if (unlikely((__pyx_v_x0 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 513, __pyx_L3_error)
+    __pyx_v_y0 = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_y0 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 514, __pyx_L3_error)
+    __pyx_v_fitted = __Pyx_PyObject_to_MemoryviewSlice_ds_double(values[2], PyBUF_WRITABLE); if (unlikely(!__pyx_v_fitted.memview)) __PYX_ERR(0, 515, __pyx_L3_error)
+    __pyx_v_num_x = __Pyx_PyInt_As_int(values[3]); if (unlikely((__pyx_v_num_x == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 516, __pyx_L3_error)
+    __pyx_v_num_y = __Pyx_PyInt_As_int(values[4]); if (unlikely((__pyx_v_num_y == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 517, __pyx_L3_error)
+    __pyx_v_num_params = __Pyx_PyInt_As_int(values[5]); if (unlikely((__pyx_v_num_params == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 518, __pyx_L3_error)
+    __pyx_v_param_lengths = __Pyx_PyObject_to_MemoryviewSlice_ds_int(values[6], PyBUF_WRITABLE); if (unlikely(!__pyx_v_param_lengths.memview)) __PYX_ERR(0, 519, __pyx_L3_error)
+    __pyx_v_smoothness_enforcer = __pyx_PyFloat_AsDouble(values[7]); if (unlikely((__pyx_v_smoothness_enforcer == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 520, __pyx_L3_error)
+    __pyx_v_stride = __Pyx_PyInt_As_int(values[8]); if (unlikely((__pyx_v_stride == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 521, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("calc_gradient_wrapper", 1, 9, 9, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 481, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("calc_gradient_wrapper", 1, 9, 9, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 513, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("cython_functions_for_fast_computation.calc_gradient_wrapper", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -8080,9 +8349,9 @@ static PyObject *__pyx_pf_37cython_functions_for_fast_computation_8calc_gradient
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("calc_gradient_wrapper", 0);
   __Pyx_XDECREF(__pyx_r);
-  if (unlikely(!__pyx_v_fitted.memview)) { __Pyx_RaiseUnboundLocalError("fitted"); __PYX_ERR(0, 481, __pyx_L1_error) }
-  if (unlikely(!__pyx_v_param_lengths.memview)) { __Pyx_RaiseUnboundLocalError("param_lengths"); __PYX_ERR(0, 481, __pyx_L1_error) }
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_37cython_functions_for_fast_computation_calc_gradient_wrapper(__pyx_v_x0, __pyx_v_y0, __pyx_v_fitted, __pyx_v_num_x, __pyx_v_num_y, __pyx_v_num_params, __pyx_v_param_lengths, __pyx_v_smoothness_enforcer, __pyx_v_stride, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 481, __pyx_L1_error)
+  if (unlikely(!__pyx_v_fitted.memview)) { __Pyx_RaiseUnboundLocalError("fitted"); __PYX_ERR(0, 513, __pyx_L1_error) }
+  if (unlikely(!__pyx_v_param_lengths.memview)) { __Pyx_RaiseUnboundLocalError("param_lengths"); __PYX_ERR(0, 513, __pyx_L1_error) }
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_37cython_functions_for_fast_computation_calc_gradient_wrapper(__pyx_v_x0, __pyx_v_y0, __pyx_v_fitted, __pyx_v_num_x, __pyx_v_num_y, __pyx_v_num_params, __pyx_v_param_lengths, __pyx_v_smoothness_enforcer, __pyx_v_stride, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 513, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -8101,7 +8370,7 @@ static PyObject *__pyx_pf_37cython_functions_for_fast_computation_8calc_gradient
   return __pyx_r;
 }
 
-/* "cython_functions_for_fast_computation.pyx":494
+/* "cython_functions_for_fast_computation.pyx":526
  * 
  * 
  * cdef double calc_gradient(int x0,\             # <<<<<<<<<<<<<<
@@ -8128,7 +8397,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradient(int 
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("calc_gradient", 0);
 
-  /* "cython_functions_for_fast_computation.pyx":505
+  /* "cython_functions_for_fast_computation.pyx":537
  * 
  * 	cdef int ind,param
  * 	ind=y0*num_x*(num_params+1)+x0*(num_params+1)+num_params             # <<<<<<<<<<<<<<
@@ -8137,7 +8406,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradient(int 
  */
   __pyx_v_ind = ((((__pyx_v_y0 * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + (__pyx_v_x0 * (__pyx_v_num_params + 1))) + __pyx_v_num_params);
 
-  /* "cython_functions_for_fast_computation.pyx":506
+  /* "cython_functions_for_fast_computation.pyx":538
  * 	cdef int ind,param
  * 	ind=y0*num_x*(num_params+1)+x0*(num_params+1)+num_params
  * 	if fitted[ind]<0:             # <<<<<<<<<<<<<<
@@ -8147,7 +8416,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradient(int 
   __pyx_t_1 = (((__pyx_v_fitted[__pyx_v_ind]) < 0.0) != 0);
   if (__pyx_t_1) {
 
-    /* "cython_functions_for_fast_computation.pyx":507
+    /* "cython_functions_for_fast_computation.pyx":539
  * 	ind=y0*num_x*(num_params+1)+x0*(num_params+1)+num_params
  * 	if fitted[ind]<0:
  * 		return 0             # <<<<<<<<<<<<<<
@@ -8157,7 +8426,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradient(int 
     __pyx_r = 0.0;
     goto __pyx_L0;
 
-    /* "cython_functions_for_fast_computation.pyx":506
+    /* "cython_functions_for_fast_computation.pyx":538
  * 	cdef int ind,param
  * 	ind=y0*num_x*(num_params+1)+x0*(num_params+1)+num_params
  * 	if fitted[ind]<0:             # <<<<<<<<<<<<<<
@@ -8166,7 +8435,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradient(int 
  */
   }
 
-  /* "cython_functions_for_fast_computation.pyx":509
+  /* "cython_functions_for_fast_computation.pyx":541
  * 		return 0
  * 
  * 	cdef double grad=0.0             # <<<<<<<<<<<<<<
@@ -8175,7 +8444,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradient(int 
  */
   __pyx_v_grad = 0.0;
 
-  /* "cython_functions_for_fast_computation.pyx":511
+  /* "cython_functions_for_fast_computation.pyx":543
  * 	cdef double grad=0.0
  * 
  * 	cdef int max_param_length=find_maximum(param_lengths,num_params)             # <<<<<<<<<<<<<<
@@ -8184,7 +8453,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradient(int 
  */
   __pyx_v_max_param_length = __pyx_f_37cython_functions_for_fast_computation_find_maximum(__pyx_v_param_lengths, __pyx_v_num_params);
 
-  /* "cython_functions_for_fast_computation.pyx":514
+  /* "cython_functions_for_fast_computation.pyx":546
  * 
  * 	cdef double gradx,grady
  * 	for param in range(num_params):             # <<<<<<<<<<<<<<
@@ -8196,7 +8465,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradient(int 
   for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
     __pyx_v_param = __pyx_t_4;
 
-    /* "cython_functions_for_fast_computation.pyx":515
+    /* "cython_functions_for_fast_computation.pyx":547
  * 	cdef double gradx,grady
  * 	for param in range(num_params):
  * 		gradx=calc_gradx(x0,y0,param,fitted, num_x,num_y,num_params,smoothness_enforcer,stride)             # <<<<<<<<<<<<<<
@@ -8205,7 +8474,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradient(int 
  */
     __pyx_v_gradx = __pyx_f_37cython_functions_for_fast_computation_calc_gradx(__pyx_v_x0, __pyx_v_y0, __pyx_v_param, __pyx_v_fitted, __pyx_v_num_x, __pyx_v_num_y, __pyx_v_num_params, __pyx_v_smoothness_enforcer, __pyx_v_stride);
 
-    /* "cython_functions_for_fast_computation.pyx":516
+    /* "cython_functions_for_fast_computation.pyx":548
  * 	for param in range(num_params):
  * 		gradx=calc_gradx(x0,y0,param,fitted, num_x,num_y,num_params,smoothness_enforcer,stride)
  * 		grady=calc_grady(x0,y0,param,fitted, num_x,num_y,num_params,smoothness_enforcer,stride)             # <<<<<<<<<<<<<<
@@ -8214,7 +8483,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradient(int 
  */
     __pyx_v_grady = __pyx_f_37cython_functions_for_fast_computation_calc_grady(__pyx_v_x0, __pyx_v_y0, __pyx_v_param, __pyx_v_fitted, __pyx_v_num_x, __pyx_v_num_y, __pyx_v_num_params, __pyx_v_smoothness_enforcer, __pyx_v_stride);
 
-    /* "cython_functions_for_fast_computation.pyx":517
+    /* "cython_functions_for_fast_computation.pyx":549
  * 		gradx=calc_gradx(x0,y0,param,fitted, num_x,num_y,num_params,smoothness_enforcer,stride)
  * 		grady=calc_grady(x0,y0,param,fitted, num_x,num_y,num_params,smoothness_enforcer,stride)
  * 		grad=grad+(square(gradx)+square(grady))*smoothness_enforcer*max_param_length/param_lengths[param]             # <<<<<<<<<<<<<<
@@ -8224,12 +8493,12 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradient(int 
     __pyx_t_5 = (((__pyx_f_37cython_functions_for_fast_computation_square(__pyx_v_gradx) + __pyx_f_37cython_functions_for_fast_computation_square(__pyx_v_grady)) * __pyx_v_smoothness_enforcer) * __pyx_v_max_param_length);
     if (unlikely((__pyx_v_param_lengths[__pyx_v_param]) == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-      __PYX_ERR(0, 517, __pyx_L1_error)
+      __PYX_ERR(0, 549, __pyx_L1_error)
     }
     __pyx_v_grad = (__pyx_v_grad + (__pyx_t_5 / ((double)(__pyx_v_param_lengths[__pyx_v_param]))));
   }
 
-  /* "cython_functions_for_fast_computation.pyx":518
+  /* "cython_functions_for_fast_computation.pyx":550
  * 		grady=calc_grady(x0,y0,param,fitted, num_x,num_y,num_params,smoothness_enforcer,stride)
  * 		grad=grad+(square(gradx)+square(grady))*smoothness_enforcer*max_param_length/param_lengths[param]
  * 	return grad             # <<<<<<<<<<<<<<
@@ -8239,7 +8508,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradient(int 
   __pyx_r = __pyx_v_grad;
   goto __pyx_L0;
 
-  /* "cython_functions_for_fast_computation.pyx":494
+  /* "cython_functions_for_fast_computation.pyx":526
  * 
  * 
  * cdef double calc_gradient(int x0,\             # <<<<<<<<<<<<<<
@@ -8256,7 +8525,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_gradient(int 
   return __pyx_r;
 }
 
-/* "cython_functions_for_fast_computation.pyx":520
+/* "cython_functions_for_fast_computation.pyx":552
  * 	return grad
  * 
  * cpdef double calc_chi_square(double [:]spectrum,\             # <<<<<<<<<<<<<<
@@ -8285,7 +8554,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_chi_square(__
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("calc_chi_square", 0);
 
-  /* "cython_functions_for_fast_computation.pyx":527
+  /* "cython_functions_for_fast_computation.pyx":559
  * 				 int high_ind,\
  * 				 double rms_thresh):
  * 	cdef double chi_square=0             # <<<<<<<<<<<<<<
@@ -8294,7 +8563,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_chi_square(__
  */
   __pyx_v_chi_square = 0.0;
 
-  /* "cython_functions_for_fast_computation.pyx":531
+  /* "cython_functions_for_fast_computation.pyx":563
  * 	cdef double error
  * 
  * 	for freq_ind in range(low_ind,high_ind+1):             # <<<<<<<<<<<<<<
@@ -8306,7 +8575,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_chi_square(__
   for (__pyx_t_3 = __pyx_v_low_ind; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_freq_ind = __pyx_t_3;
 
-    /* "cython_functions_for_fast_computation.pyx":532
+    /* "cython_functions_for_fast_computation.pyx":564
  * 
  * 	for freq_ind in range(low_ind,high_ind+1):
  * 		if spectrum[freq_ind]>=rms_thresh*rms[freq_ind]:             # <<<<<<<<<<<<<<
@@ -8321,7 +8590,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_chi_square(__
     } else if (unlikely(__pyx_t_4 >= __pyx_v_spectrum.shape[0])) __pyx_t_5 = 0;
     if (unlikely(__pyx_t_5 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_5);
-      __PYX_ERR(0, 532, __pyx_L1_error)
+      __PYX_ERR(0, 564, __pyx_L1_error)
     }
     __pyx_t_6 = __pyx_v_freq_ind;
     __pyx_t_5 = -1;
@@ -8331,12 +8600,12 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_chi_square(__
     } else if (unlikely(__pyx_t_6 >= __pyx_v_rms.shape[0])) __pyx_t_5 = 0;
     if (unlikely(__pyx_t_5 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_5);
-      __PYX_ERR(0, 532, __pyx_L1_error)
+      __PYX_ERR(0, 564, __pyx_L1_error)
     }
     __pyx_t_7 = (((*((double *) ( /* dim=0 */ (__pyx_v_spectrum.data + __pyx_t_4 * __pyx_v_spectrum.strides[0]) ))) >= (__pyx_v_rms_thresh * (*((double *) ( /* dim=0 */ (__pyx_v_rms.data + __pyx_t_6 * __pyx_v_rms.strides[0]) ))))) != 0);
     if (__pyx_t_7) {
 
-      /* "cython_functions_for_fast_computation.pyx":533
+      /* "cython_functions_for_fast_computation.pyx":565
  * 	for freq_ind in range(low_ind,high_ind+1):
  * 		if spectrum[freq_ind]>=rms_thresh*rms[freq_ind]:
  * 			error=sqrt(square(rms[freq_ind])+square(sys_error*spectrum[freq_ind]))             # <<<<<<<<<<<<<<
@@ -8351,7 +8620,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_chi_square(__
       } else if (unlikely(__pyx_t_6 >= __pyx_v_rms.shape[0])) __pyx_t_5 = 0;
       if (unlikely(__pyx_t_5 != -1)) {
         __Pyx_RaiseBufferIndexError(__pyx_t_5);
-        __PYX_ERR(0, 533, __pyx_L1_error)
+        __PYX_ERR(0, 565, __pyx_L1_error)
       }
       __pyx_t_4 = __pyx_v_freq_ind;
       __pyx_t_5 = -1;
@@ -8361,11 +8630,11 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_chi_square(__
       } else if (unlikely(__pyx_t_4 >= __pyx_v_spectrum.shape[0])) __pyx_t_5 = 0;
       if (unlikely(__pyx_t_5 != -1)) {
         __Pyx_RaiseBufferIndexError(__pyx_t_5);
-        __PYX_ERR(0, 533, __pyx_L1_error)
+        __PYX_ERR(0, 565, __pyx_L1_error)
       }
       __pyx_v_error = sqrt((__pyx_f_37cython_functions_for_fast_computation_square((*((double *) ( /* dim=0 */ (__pyx_v_rms.data + __pyx_t_6 * __pyx_v_rms.strides[0]) )))) + __pyx_f_37cython_functions_for_fast_computation_square((__pyx_v_sys_error * (*((double *) ( /* dim=0 */ (__pyx_v_spectrum.data + __pyx_t_4 * __pyx_v_spectrum.strides[0]) )))))));
 
-      /* "cython_functions_for_fast_computation.pyx":534
+      /* "cython_functions_for_fast_computation.pyx":566
  * 		if spectrum[freq_ind]>=rms_thresh*rms[freq_ind]:
  * 			error=sqrt(square(rms[freq_ind])+square(sys_error*spectrum[freq_ind]))
  * 			chi_square+=square(spectrum[freq_ind]-model_spectrum[freq_ind])/square(error)             # <<<<<<<<<<<<<<
@@ -8380,7 +8649,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_chi_square(__
       } else if (unlikely(__pyx_t_4 >= __pyx_v_spectrum.shape[0])) __pyx_t_5 = 0;
       if (unlikely(__pyx_t_5 != -1)) {
         __Pyx_RaiseBufferIndexError(__pyx_t_5);
-        __PYX_ERR(0, 534, __pyx_L1_error)
+        __PYX_ERR(0, 566, __pyx_L1_error)
       }
       __pyx_t_6 = __pyx_v_freq_ind;
       __pyx_t_5 = -1;
@@ -8390,17 +8659,17 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_chi_square(__
       } else if (unlikely(__pyx_t_6 >= __pyx_v_model_spectrum.shape[0])) __pyx_t_5 = 0;
       if (unlikely(__pyx_t_5 != -1)) {
         __Pyx_RaiseBufferIndexError(__pyx_t_5);
-        __PYX_ERR(0, 534, __pyx_L1_error)
+        __PYX_ERR(0, 566, __pyx_L1_error)
       }
       __pyx_t_8 = __pyx_f_37cython_functions_for_fast_computation_square(((*((double *) ( /* dim=0 */ (__pyx_v_spectrum.data + __pyx_t_4 * __pyx_v_spectrum.strides[0]) ))) - (*((double *) ( /* dim=0 */ (__pyx_v_model_spectrum.data + __pyx_t_6 * __pyx_v_model_spectrum.strides[0]) )))));
       __pyx_t_9 = __pyx_f_37cython_functions_for_fast_computation_square(__pyx_v_error);
       if (unlikely(__pyx_t_9 == 0)) {
         PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-        __PYX_ERR(0, 534, __pyx_L1_error)
+        __PYX_ERR(0, 566, __pyx_L1_error)
       }
       __pyx_v_chi_square = (__pyx_v_chi_square + (__pyx_t_8 / __pyx_t_9));
 
-      /* "cython_functions_for_fast_computation.pyx":532
+      /* "cython_functions_for_fast_computation.pyx":564
  * 
  * 	for freq_ind in range(low_ind,high_ind+1):
  * 		if spectrum[freq_ind]>=rms_thresh*rms[freq_ind]:             # <<<<<<<<<<<<<<
@@ -8410,7 +8679,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_chi_square(__
       goto __pyx_L5;
     }
 
-    /* "cython_functions_for_fast_computation.pyx":536
+    /* "cython_functions_for_fast_computation.pyx":568
  * 			chi_square+=square(spectrum[freq_ind]-model_spectrum[freq_ind])/square(error)
  * 		else:
  * 			if model_spectrum[freq_ind]<(1+sys_error)*rms_thresh*rms[freq_ind]:             # <<<<<<<<<<<<<<
@@ -8426,7 +8695,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_chi_square(__
       } else if (unlikely(__pyx_t_6 >= __pyx_v_model_spectrum.shape[0])) __pyx_t_5 = 0;
       if (unlikely(__pyx_t_5 != -1)) {
         __Pyx_RaiseBufferIndexError(__pyx_t_5);
-        __PYX_ERR(0, 536, __pyx_L1_error)
+        __PYX_ERR(0, 568, __pyx_L1_error)
       }
       __pyx_t_4 = __pyx_v_freq_ind;
       __pyx_t_5 = -1;
@@ -8436,12 +8705,12 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_chi_square(__
       } else if (unlikely(__pyx_t_4 >= __pyx_v_rms.shape[0])) __pyx_t_5 = 0;
       if (unlikely(__pyx_t_5 != -1)) {
         __Pyx_RaiseBufferIndexError(__pyx_t_5);
-        __PYX_ERR(0, 536, __pyx_L1_error)
+        __PYX_ERR(0, 568, __pyx_L1_error)
       }
       __pyx_t_7 = (((*((double *) ( /* dim=0 */ (__pyx_v_model_spectrum.data + __pyx_t_6 * __pyx_v_model_spectrum.strides[0]) ))) < (((1.0 + __pyx_v_sys_error) * __pyx_v_rms_thresh) * (*((double *) ( /* dim=0 */ (__pyx_v_rms.data + __pyx_t_4 * __pyx_v_rms.strides[0]) ))))) != 0);
       if (__pyx_t_7) {
 
-        /* "cython_functions_for_fast_computation.pyx":537
+        /* "cython_functions_for_fast_computation.pyx":569
  * 		else:
  * 			if model_spectrum[freq_ind]<(1+sys_error)*rms_thresh*rms[freq_ind]:
  * 				chi_square+=0.0             # <<<<<<<<<<<<<<
@@ -8450,7 +8719,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_chi_square(__
  */
         __pyx_v_chi_square = (__pyx_v_chi_square + 0.0);
 
-        /* "cython_functions_for_fast_computation.pyx":536
+        /* "cython_functions_for_fast_computation.pyx":568
  * 			chi_square+=square(spectrum[freq_ind]-model_spectrum[freq_ind])/square(error)
  * 		else:
  * 			if model_spectrum[freq_ind]<(1+sys_error)*rms_thresh*rms[freq_ind]:             # <<<<<<<<<<<<<<
@@ -8460,7 +8729,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_chi_square(__
         goto __pyx_L6;
       }
 
-      /* "cython_functions_for_fast_computation.pyx":539
+      /* "cython_functions_for_fast_computation.pyx":571
  * 				chi_square+=0.0
  * 			else:
  * 				chi_square+=1000.0             # <<<<<<<<<<<<<<
@@ -8475,7 +8744,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_chi_square(__
     __pyx_L5:;
   }
 
-  /* "cython_functions_for_fast_computation.pyx":540
+  /* "cython_functions_for_fast_computation.pyx":572
  * 			else:
  * 				chi_square+=1000.0
  * 	return chi_square             # <<<<<<<<<<<<<<
@@ -8485,7 +8754,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_chi_square(__
   __pyx_r = __pyx_v_chi_square;
   goto __pyx_L0;
 
-  /* "cython_functions_for_fast_computation.pyx":520
+  /* "cython_functions_for_fast_computation.pyx":552
  * 	return grad
  * 
  * cpdef double calc_chi_square(double [:]spectrum,\             # <<<<<<<<<<<<<<
@@ -8551,41 +8820,41 @@ static PyObject *__pyx_pw_37cython_functions_for_fast_computation_11calc_chi_squ
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_rms)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("calc_chi_square", 1, 7, 7, 1); __PYX_ERR(0, 520, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("calc_chi_square", 1, 7, 7, 1); __PYX_ERR(0, 552, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_sys_error)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("calc_chi_square", 1, 7, 7, 2); __PYX_ERR(0, 520, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("calc_chi_square", 1, 7, 7, 2); __PYX_ERR(0, 552, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_model_spectrum)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("calc_chi_square", 1, 7, 7, 3); __PYX_ERR(0, 520, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("calc_chi_square", 1, 7, 7, 3); __PYX_ERR(0, 552, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  4:
         if (likely((values[4] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_low_ind)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("calc_chi_square", 1, 7, 7, 4); __PYX_ERR(0, 520, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("calc_chi_square", 1, 7, 7, 4); __PYX_ERR(0, 552, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  5:
         if (likely((values[5] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_high_ind)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("calc_chi_square", 1, 7, 7, 5); __PYX_ERR(0, 520, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("calc_chi_square", 1, 7, 7, 5); __PYX_ERR(0, 552, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  6:
         if (likely((values[6] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_rms_thresh)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("calc_chi_square", 1, 7, 7, 6); __PYX_ERR(0, 520, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("calc_chi_square", 1, 7, 7, 6); __PYX_ERR(0, 552, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "calc_chi_square") < 0)) __PYX_ERR(0, 520, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "calc_chi_square") < 0)) __PYX_ERR(0, 552, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 7) {
       goto __pyx_L5_argtuple_error;
@@ -8598,17 +8867,17 @@ static PyObject *__pyx_pw_37cython_functions_for_fast_computation_11calc_chi_squ
       values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
       values[6] = PyTuple_GET_ITEM(__pyx_args, 6);
     }
-    __pyx_v_spectrum = __Pyx_PyObject_to_MemoryviewSlice_ds_double(values[0], PyBUF_WRITABLE); if (unlikely(!__pyx_v_spectrum.memview)) __PYX_ERR(0, 520, __pyx_L3_error)
-    __pyx_v_rms = __Pyx_PyObject_to_MemoryviewSlice_ds_double(values[1], PyBUF_WRITABLE); if (unlikely(!__pyx_v_rms.memview)) __PYX_ERR(0, 521, __pyx_L3_error)
-    __pyx_v_sys_error = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_sys_error == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 522, __pyx_L3_error)
-    __pyx_v_model_spectrum = __Pyx_PyObject_to_MemoryviewSlice_ds_double(values[3], PyBUF_WRITABLE); if (unlikely(!__pyx_v_model_spectrum.memview)) __PYX_ERR(0, 523, __pyx_L3_error)
-    __pyx_v_low_ind = __Pyx_PyInt_As_int(values[4]); if (unlikely((__pyx_v_low_ind == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 524, __pyx_L3_error)
-    __pyx_v_high_ind = __Pyx_PyInt_As_int(values[5]); if (unlikely((__pyx_v_high_ind == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 525, __pyx_L3_error)
-    __pyx_v_rms_thresh = __pyx_PyFloat_AsDouble(values[6]); if (unlikely((__pyx_v_rms_thresh == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 526, __pyx_L3_error)
+    __pyx_v_spectrum = __Pyx_PyObject_to_MemoryviewSlice_ds_double(values[0], PyBUF_WRITABLE); if (unlikely(!__pyx_v_spectrum.memview)) __PYX_ERR(0, 552, __pyx_L3_error)
+    __pyx_v_rms = __Pyx_PyObject_to_MemoryviewSlice_ds_double(values[1], PyBUF_WRITABLE); if (unlikely(!__pyx_v_rms.memview)) __PYX_ERR(0, 553, __pyx_L3_error)
+    __pyx_v_sys_error = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_sys_error == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 554, __pyx_L3_error)
+    __pyx_v_model_spectrum = __Pyx_PyObject_to_MemoryviewSlice_ds_double(values[3], PyBUF_WRITABLE); if (unlikely(!__pyx_v_model_spectrum.memview)) __PYX_ERR(0, 555, __pyx_L3_error)
+    __pyx_v_low_ind = __Pyx_PyInt_As_int(values[4]); if (unlikely((__pyx_v_low_ind == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 556, __pyx_L3_error)
+    __pyx_v_high_ind = __Pyx_PyInt_As_int(values[5]); if (unlikely((__pyx_v_high_ind == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 557, __pyx_L3_error)
+    __pyx_v_rms_thresh = __pyx_PyFloat_AsDouble(values[6]); if (unlikely((__pyx_v_rms_thresh == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 558, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("calc_chi_square", 1, 7, 7, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 520, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("calc_chi_square", 1, 7, 7, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 552, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("cython_functions_for_fast_computation.calc_chi_square", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -8630,10 +8899,10 @@ static PyObject *__pyx_pf_37cython_functions_for_fast_computation_10calc_chi_squ
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("calc_chi_square", 0);
   __Pyx_XDECREF(__pyx_r);
-  if (unlikely(!__pyx_v_spectrum.memview)) { __Pyx_RaiseUnboundLocalError("spectrum"); __PYX_ERR(0, 520, __pyx_L1_error) }
-  if (unlikely(!__pyx_v_rms.memview)) { __Pyx_RaiseUnboundLocalError("rms"); __PYX_ERR(0, 520, __pyx_L1_error) }
-  if (unlikely(!__pyx_v_model_spectrum.memview)) { __Pyx_RaiseUnboundLocalError("model_spectrum"); __PYX_ERR(0, 520, __pyx_L1_error) }
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_37cython_functions_for_fast_computation_calc_chi_square(__pyx_v_spectrum, __pyx_v_rms, __pyx_v_sys_error, __pyx_v_model_spectrum, __pyx_v_low_ind, __pyx_v_high_ind, __pyx_v_rms_thresh, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 520, __pyx_L1_error)
+  if (unlikely(!__pyx_v_spectrum.memview)) { __Pyx_RaiseUnboundLocalError("spectrum"); __PYX_ERR(0, 552, __pyx_L1_error) }
+  if (unlikely(!__pyx_v_rms.memview)) { __Pyx_RaiseUnboundLocalError("rms"); __PYX_ERR(0, 552, __pyx_L1_error) }
+  if (unlikely(!__pyx_v_model_spectrum.memview)) { __Pyx_RaiseUnboundLocalError("model_spectrum"); __PYX_ERR(0, 552, __pyx_L1_error) }
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_37cython_functions_for_fast_computation_calc_chi_square(__pyx_v_spectrum, __pyx_v_rms, __pyx_v_sys_error, __pyx_v_model_spectrum, __pyx_v_low_ind, __pyx_v_high_ind, __pyx_v_rms_thresh, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 552, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -8653,7 +8922,7 @@ static PyObject *__pyx_pf_37cython_functions_for_fast_computation_10calc_chi_squ
   return __pyx_r;
 }
 
-/* "cython_functions_for_fast_computation.pyx":542
+/* "cython_functions_for_fast_computation.pyx":574
  * 	return chi_square
  * 
  * cpdef double calc_grad_chisquare(int low_indx,\             # <<<<<<<<<<<<<<
@@ -8685,7 +8954,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grad_chisquar
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("calc_grad_chisquare", 0);
 
-  /* "cython_functions_for_fast_computation.pyx":554
+  /* "cython_functions_for_fast_computation.pyx":586
  * 				  int stride):
  * 
  * 	cdef double chi_square=0.0             # <<<<<<<<<<<<<<
@@ -8694,7 +8963,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grad_chisquar
  */
   __pyx_v_chi_square = 0.0;
 
-  /* "cython_functions_for_fast_computation.pyx":558
+  /* "cython_functions_for_fast_computation.pyx":590
  * 
  * 	cdef double *fitted1
  * 	fitted1=&fitted[0]             # <<<<<<<<<<<<<<
@@ -8709,11 +8978,11 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grad_chisquar
   } else if (unlikely(__pyx_t_1 >= __pyx_v_fitted.shape[0])) __pyx_t_2 = 0;
   if (unlikely(__pyx_t_2 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_2);
-    __PYX_ERR(0, 558, __pyx_L1_error)
+    __PYX_ERR(0, 590, __pyx_L1_error)
   }
   __pyx_v_fitted1 = (&(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_1 * __pyx_v_fitted.strides[0]) ))));
 
-  /* "cython_functions_for_fast_computation.pyx":561
+  /* "cython_functions_for_fast_computation.pyx":593
  * 
  * 	cdef int *param_lengths1
  * 	param_lengths1=&param_lengths[0]             # <<<<<<<<<<<<<<
@@ -8728,11 +8997,11 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grad_chisquar
   } else if (unlikely(__pyx_t_1 >= __pyx_v_param_lengths.shape[0])) __pyx_t_2 = 0;
   if (unlikely(__pyx_t_2 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_2);
-    __PYX_ERR(0, 561, __pyx_L1_error)
+    __PYX_ERR(0, 593, __pyx_L1_error)
   }
   __pyx_v_param_lengths1 = (&(*((int *) ( /* dim=0 */ (__pyx_v_param_lengths.data + __pyx_t_1 * __pyx_v_param_lengths.strides[0]) ))));
 
-  /* "cython_functions_for_fast_computation.pyx":563
+  /* "cython_functions_for_fast_computation.pyx":595
  * 	param_lengths1=&param_lengths[0]
  * 
  * 	for y1 in range(low_indy, high_indy):#stride):             # <<<<<<<<<<<<<<
@@ -8744,7 +9013,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grad_chisquar
   for (__pyx_t_4 = __pyx_v_low_indy; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
     __pyx_v_y1 = __pyx_t_4;
 
-    /* "cython_functions_for_fast_computation.pyx":564
+    /* "cython_functions_for_fast_computation.pyx":596
  * 
  * 	for y1 in range(low_indy, high_indy):#stride):
  * 		for x1 in range(low_indx,high_indx):#,stride):             # <<<<<<<<<<<<<<
@@ -8756,7 +9025,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grad_chisquar
     for (__pyx_t_7 = __pyx_v_low_indx; __pyx_t_7 < __pyx_t_6; __pyx_t_7+=1) {
       __pyx_v_x1 = __pyx_t_7;
 
-      /* "cython_functions_for_fast_computation.pyx":565
+      /* "cython_functions_for_fast_computation.pyx":597
  * 	for y1 in range(low_indy, high_indy):#stride):
  * 		for x1 in range(low_indx,high_indx):#,stride):
  * 			ind=y1*numx*(num_params+1)+x1*(num_params+1)+num_params             # <<<<<<<<<<<<<<
@@ -8765,7 +9034,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grad_chisquar
  */
       __pyx_v_ind = ((((__pyx_v_y1 * __pyx_v_numx) * (__pyx_v_num_params + 1)) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_num_params);
 
-      /* "cython_functions_for_fast_computation.pyx":566
+      /* "cython_functions_for_fast_computation.pyx":598
  * 		for x1 in range(low_indx,high_indx):#,stride):
  * 			ind=y1*numx*(num_params+1)+x1*(num_params+1)+num_params
  * 			if fitted[ind]>0:             # <<<<<<<<<<<<<<
@@ -8780,12 +9049,12 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grad_chisquar
       } else if (unlikely(__pyx_t_1 >= __pyx_v_fitted.shape[0])) __pyx_t_8 = 0;
       if (unlikely(__pyx_t_8 != -1)) {
         __Pyx_RaiseBufferIndexError(__pyx_t_8);
-        __PYX_ERR(0, 566, __pyx_L1_error)
+        __PYX_ERR(0, 598, __pyx_L1_error)
       }
       __pyx_t_9 = (((*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_1 * __pyx_v_fitted.strides[0]) ))) > 0.0) != 0);
       if (__pyx_t_9) {
 
-        /* "cython_functions_for_fast_computation.pyx":567
+        /* "cython_functions_for_fast_computation.pyx":599
  * 			ind=y1*numx*(num_params+1)+x1*(num_params+1)+num_params
  * 			if fitted[ind]>0:
  * 				chi_square=chi_square+fitted[ind]+\             # <<<<<<<<<<<<<<
@@ -8800,10 +9069,10 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grad_chisquar
         } else if (unlikely(__pyx_t_1 >= __pyx_v_fitted.shape[0])) __pyx_t_8 = 0;
         if (unlikely(__pyx_t_8 != -1)) {
           __Pyx_RaiseBufferIndexError(__pyx_t_8);
-          __PYX_ERR(0, 567, __pyx_L1_error)
+          __PYX_ERR(0, 599, __pyx_L1_error)
         }
 
-        /* "cython_functions_for_fast_computation.pyx":568
+        /* "cython_functions_for_fast_computation.pyx":600
  * 			if fitted[ind]>0:
  * 				chi_square=chi_square+fitted[ind]+\
  * 						calc_gradient(x1,y1,fitted1,\             # <<<<<<<<<<<<<<
@@ -8812,7 +9081,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grad_chisquar
  */
         __pyx_v_chi_square = ((__pyx_v_chi_square + (*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_1 * __pyx_v_fitted.strides[0]) )))) + __pyx_f_37cython_functions_for_fast_computation_calc_gradient(__pyx_v_x1, __pyx_v_y1, __pyx_v_fitted1, __pyx_v_numx, __pyx_v_numy, __pyx_v_num_params, __pyx_v_param_lengths1, __pyx_v_smoothness_enforcer, __pyx_v_stride));
 
-        /* "cython_functions_for_fast_computation.pyx":566
+        /* "cython_functions_for_fast_computation.pyx":598
  * 		for x1 in range(low_indx,high_indx):#,stride):
  * 			ind=y1*numx*(num_params+1)+x1*(num_params+1)+num_params
  * 			if fitted[ind]>0:             # <<<<<<<<<<<<<<
@@ -8823,7 +9092,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grad_chisquar
     }
   }
 
-  /* "cython_functions_for_fast_computation.pyx":572
+  /* "cython_functions_for_fast_computation.pyx":604
  * 						smoothness_enforcer,stride)
  * 
  * 	return chi_square             # <<<<<<<<<<<<<<
@@ -8833,7 +9102,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_calc_grad_chisquar
   __pyx_r = __pyx_v_chi_square;
   goto __pyx_L0;
 
-  /* "cython_functions_for_fast_computation.pyx":542
+  /* "cython_functions_for_fast_computation.pyx":574
  * 	return chi_square
  * 
  * cpdef double calc_grad_chisquare(int low_indx,\             # <<<<<<<<<<<<<<
@@ -8911,65 +9180,65 @@ static PyObject *__pyx_pw_37cython_functions_for_fast_computation_13calc_grad_ch
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_low_indy)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("calc_grad_chisquare", 1, 11, 11, 1); __PYX_ERR(0, 542, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("calc_grad_chisquare", 1, 11, 11, 1); __PYX_ERR(0, 574, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_high_indx)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("calc_grad_chisquare", 1, 11, 11, 2); __PYX_ERR(0, 542, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("calc_grad_chisquare", 1, 11, 11, 2); __PYX_ERR(0, 574, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_high_indy)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("calc_grad_chisquare", 1, 11, 11, 3); __PYX_ERR(0, 542, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("calc_grad_chisquare", 1, 11, 11, 3); __PYX_ERR(0, 574, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  4:
         if (likely((values[4] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_numx)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("calc_grad_chisquare", 1, 11, 11, 4); __PYX_ERR(0, 542, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("calc_grad_chisquare", 1, 11, 11, 4); __PYX_ERR(0, 574, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  5:
         if (likely((values[5] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_numy)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("calc_grad_chisquare", 1, 11, 11, 5); __PYX_ERR(0, 542, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("calc_grad_chisquare", 1, 11, 11, 5); __PYX_ERR(0, 574, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  6:
         if (likely((values[6] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_num_params)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("calc_grad_chisquare", 1, 11, 11, 6); __PYX_ERR(0, 542, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("calc_grad_chisquare", 1, 11, 11, 6); __PYX_ERR(0, 574, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  7:
         if (likely((values[7] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_fitted)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("calc_grad_chisquare", 1, 11, 11, 7); __PYX_ERR(0, 542, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("calc_grad_chisquare", 1, 11, 11, 7); __PYX_ERR(0, 574, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  8:
         if (likely((values[8] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_param_lengths)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("calc_grad_chisquare", 1, 11, 11, 8); __PYX_ERR(0, 542, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("calc_grad_chisquare", 1, 11, 11, 8); __PYX_ERR(0, 574, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  9:
         if (likely((values[9] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_smoothness_enforcer)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("calc_grad_chisquare", 1, 11, 11, 9); __PYX_ERR(0, 542, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("calc_grad_chisquare", 1, 11, 11, 9); __PYX_ERR(0, 574, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case 10:
         if (likely((values[10] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_stride)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("calc_grad_chisquare", 1, 11, 11, 10); __PYX_ERR(0, 542, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("calc_grad_chisquare", 1, 11, 11, 10); __PYX_ERR(0, 574, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "calc_grad_chisquare") < 0)) __PYX_ERR(0, 542, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "calc_grad_chisquare") < 0)) __PYX_ERR(0, 574, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 11) {
       goto __pyx_L5_argtuple_error;
@@ -8986,21 +9255,21 @@ static PyObject *__pyx_pw_37cython_functions_for_fast_computation_13calc_grad_ch
       values[9] = PyTuple_GET_ITEM(__pyx_args, 9);
       values[10] = PyTuple_GET_ITEM(__pyx_args, 10);
     }
-    __pyx_v_low_indx = __Pyx_PyInt_As_int(values[0]); if (unlikely((__pyx_v_low_indx == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 542, __pyx_L3_error)
-    __pyx_v_low_indy = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_low_indy == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 543, __pyx_L3_error)
-    __pyx_v_high_indx = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_high_indx == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 544, __pyx_L3_error)
-    __pyx_v_high_indy = __Pyx_PyInt_As_int(values[3]); if (unlikely((__pyx_v_high_indy == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 545, __pyx_L3_error)
-    __pyx_v_numx = __Pyx_PyInt_As_int(values[4]); if (unlikely((__pyx_v_numx == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 546, __pyx_L3_error)
-    __pyx_v_numy = __Pyx_PyInt_As_int(values[5]); if (unlikely((__pyx_v_numy == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 547, __pyx_L3_error)
-    __pyx_v_num_params = __Pyx_PyInt_As_int(values[6]); if (unlikely((__pyx_v_num_params == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 548, __pyx_L3_error)
-    __pyx_v_fitted = __Pyx_PyObject_to_MemoryviewSlice_ds_double(values[7], PyBUF_WRITABLE); if (unlikely(!__pyx_v_fitted.memview)) __PYX_ERR(0, 549, __pyx_L3_error)
-    __pyx_v_param_lengths = __Pyx_PyObject_to_MemoryviewSlice_ds_int(values[8], PyBUF_WRITABLE); if (unlikely(!__pyx_v_param_lengths.memview)) __PYX_ERR(0, 550, __pyx_L3_error)
-    __pyx_v_smoothness_enforcer = __pyx_PyFloat_AsDouble(values[9]); if (unlikely((__pyx_v_smoothness_enforcer == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 551, __pyx_L3_error)
-    __pyx_v_stride = __Pyx_PyInt_As_int(values[10]); if (unlikely((__pyx_v_stride == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 552, __pyx_L3_error)
+    __pyx_v_low_indx = __Pyx_PyInt_As_int(values[0]); if (unlikely((__pyx_v_low_indx == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 574, __pyx_L3_error)
+    __pyx_v_low_indy = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_low_indy == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 575, __pyx_L3_error)
+    __pyx_v_high_indx = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_high_indx == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 576, __pyx_L3_error)
+    __pyx_v_high_indy = __Pyx_PyInt_As_int(values[3]); if (unlikely((__pyx_v_high_indy == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 577, __pyx_L3_error)
+    __pyx_v_numx = __Pyx_PyInt_As_int(values[4]); if (unlikely((__pyx_v_numx == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 578, __pyx_L3_error)
+    __pyx_v_numy = __Pyx_PyInt_As_int(values[5]); if (unlikely((__pyx_v_numy == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 579, __pyx_L3_error)
+    __pyx_v_num_params = __Pyx_PyInt_As_int(values[6]); if (unlikely((__pyx_v_num_params == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 580, __pyx_L3_error)
+    __pyx_v_fitted = __Pyx_PyObject_to_MemoryviewSlice_ds_double(values[7], PyBUF_WRITABLE); if (unlikely(!__pyx_v_fitted.memview)) __PYX_ERR(0, 581, __pyx_L3_error)
+    __pyx_v_param_lengths = __Pyx_PyObject_to_MemoryviewSlice_ds_int(values[8], PyBUF_WRITABLE); if (unlikely(!__pyx_v_param_lengths.memview)) __PYX_ERR(0, 582, __pyx_L3_error)
+    __pyx_v_smoothness_enforcer = __pyx_PyFloat_AsDouble(values[9]); if (unlikely((__pyx_v_smoothness_enforcer == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 583, __pyx_L3_error)
+    __pyx_v_stride = __Pyx_PyInt_As_int(values[10]); if (unlikely((__pyx_v_stride == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 584, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("calc_grad_chisquare", 1, 11, 11, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 542, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("calc_grad_chisquare", 1, 11, 11, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 574, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("cython_functions_for_fast_computation.calc_grad_chisquare", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -9022,9 +9291,9 @@ static PyObject *__pyx_pf_37cython_functions_for_fast_computation_12calc_grad_ch
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("calc_grad_chisquare", 0);
   __Pyx_XDECREF(__pyx_r);
-  if (unlikely(!__pyx_v_fitted.memview)) { __Pyx_RaiseUnboundLocalError("fitted"); __PYX_ERR(0, 542, __pyx_L1_error) }
-  if (unlikely(!__pyx_v_param_lengths.memview)) { __Pyx_RaiseUnboundLocalError("param_lengths"); __PYX_ERR(0, 542, __pyx_L1_error) }
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_37cython_functions_for_fast_computation_calc_grad_chisquare(__pyx_v_low_indx, __pyx_v_low_indy, __pyx_v_high_indx, __pyx_v_high_indy, __pyx_v_numx, __pyx_v_numy, __pyx_v_num_params, __pyx_v_fitted, __pyx_v_param_lengths, __pyx_v_smoothness_enforcer, __pyx_v_stride, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 542, __pyx_L1_error)
+  if (unlikely(!__pyx_v_fitted.memview)) { __Pyx_RaiseUnboundLocalError("fitted"); __PYX_ERR(0, 574, __pyx_L1_error) }
+  if (unlikely(!__pyx_v_param_lengths.memview)) { __Pyx_RaiseUnboundLocalError("param_lengths"); __PYX_ERR(0, 574, __pyx_L1_error) }
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_37cython_functions_for_fast_computation_calc_grad_chisquare(__pyx_v_low_indx, __pyx_v_low_indy, __pyx_v_high_indx, __pyx_v_high_indy, __pyx_v_numx, __pyx_v_numy, __pyx_v_num_params, __pyx_v_fitted, __pyx_v_param_lengths, __pyx_v_smoothness_enforcer, __pyx_v_stride, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 574, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -9043,7 +9312,7 @@ static PyObject *__pyx_pf_37cython_functions_for_fast_computation_12calc_grad_ch
   return __pyx_r;
 }
 
-/* "cython_functions_for_fast_computation.pyx":574
+/* "cython_functions_for_fast_computation.pyx":606
  * 	return chi_square
  * 
  * cdef void make_cube_fit_ready(int num_times,\             # <<<<<<<<<<<<<<
@@ -9081,7 +9350,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(
   int __pyx_t_13;
   __Pyx_RefNannySetupContext("make_cube_fit_ready", 0);
 
-  /* "cython_functions_for_fast_computation.pyx":597
+  /* "cython_functions_for_fast_computation.pyx":629
  * 	cdef int freq_ind
  * 
  * 	spectrum=<double *>PyMem_Malloc(num_freqs*sizeof(double))             # <<<<<<<<<<<<<<
@@ -9090,7 +9359,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(
  */
   __pyx_v_spectrum = ((double *)PyMem_Malloc((__pyx_v_num_freqs * (sizeof(double)))));
 
-  /* "cython_functions_for_fast_computation.pyx":598
+  /* "cython_functions_for_fast_computation.pyx":630
  * 
  * 	spectrum=<double *>PyMem_Malloc(num_freqs*sizeof(double))
  * 	rms=<double *>PyMem_Malloc(num_freqs*sizeof(double))             # <<<<<<<<<<<<<<
@@ -9099,7 +9368,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(
  */
   __pyx_v_rms = ((double *)PyMem_Malloc((__pyx_v_num_freqs * (sizeof(double)))));
 
-  /* "cython_functions_for_fast_computation.pyx":601
+  /* "cython_functions_for_fast_computation.pyx":633
  * 
  * 
  * 	for t in range(num_times):             # <<<<<<<<<<<<<<
@@ -9111,7 +9380,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_t = __pyx_t_3;
 
-    /* "cython_functions_for_fast_computation.pyx":602
+    /* "cython_functions_for_fast_computation.pyx":634
  * 
  * 	for t in range(num_times):
  * 		for i in range(num_freqs):             # <<<<<<<<<<<<<<
@@ -9123,7 +9392,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_i = __pyx_t_6;
 
-      /* "cython_functions_for_fast_computation.pyx":603
+      /* "cython_functions_for_fast_computation.pyx":635
  * 	for t in range(num_times):
  * 		for i in range(num_freqs):
  * 			freq_ind=t*num_freqs+i             # <<<<<<<<<<<<<<
@@ -9132,7 +9401,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(
  */
       __pyx_v_freq_ind = ((__pyx_v_t * __pyx_v_num_freqs) + __pyx_v_i);
 
-      /* "cython_functions_for_fast_computation.pyx":604
+      /* "cython_functions_for_fast_computation.pyx":636
  * 		for i in range(num_freqs):
  * 			freq_ind=t*num_freqs+i
  * 			rms[i]=err_cube[freq_ind]             # <<<<<<<<<<<<<<
@@ -9142,7 +9411,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(
       (__pyx_v_rms[__pyx_v_i]) = (__pyx_v_err_cube[__pyx_v_freq_ind]);
     }
 
-    /* "cython_functions_for_fast_computation.pyx":605
+    /* "cython_functions_for_fast_computation.pyx":637
  * 			freq_ind=t*num_freqs+i
  * 			rms[i]=err_cube[freq_ind]
  * 		for y1 in range(num_y):             # <<<<<<<<<<<<<<
@@ -9154,7 +9423,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_y1 = __pyx_t_6;
 
-      /* "cython_functions_for_fast_computation.pyx":606
+      /* "cython_functions_for_fast_computation.pyx":638
  * 			rms[i]=err_cube[freq_ind]
  * 		for y1 in range(num_y):
  * 			for x1 in range(num_x):             # <<<<<<<<<<<<<<
@@ -9166,7 +9435,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(
       for (__pyx_t_9 = 0; __pyx_t_9 < __pyx_t_8; __pyx_t_9+=1) {
         __pyx_v_x1 = __pyx_t_9;
 
-        /* "cython_functions_for_fast_computation.pyx":607
+        /* "cython_functions_for_fast_computation.pyx":639
  * 		for y1 in range(num_y):
  * 			for x1 in range(num_x):
  * 				for i in range(num_freqs):             # <<<<<<<<<<<<<<
@@ -9178,7 +9447,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(
         for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12+=1) {
           __pyx_v_i = __pyx_t_12;
 
-          /* "cython_functions_for_fast_computation.pyx":608
+          /* "cython_functions_for_fast_computation.pyx":640
  * 			for x1 in range(num_x):
  * 				for i in range(num_freqs):
  * 					freq_ind=t*num_y*num_x*num_freqs+y1*num_x*num_freqs+x1*num_freqs+i             # <<<<<<<<<<<<<<
@@ -9187,7 +9456,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(
  */
           __pyx_v_freq_ind = ((((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * __pyx_v_num_freqs) + ((__pyx_v_y1 * __pyx_v_num_x) * __pyx_v_num_freqs)) + (__pyx_v_x1 * __pyx_v_num_freqs)) + __pyx_v_i);
 
-          /* "cython_functions_for_fast_computation.pyx":609
+          /* "cython_functions_for_fast_computation.pyx":641
  * 				for i in range(num_freqs):
  * 					freq_ind=t*num_y*num_x*num_freqs+y1*num_x*num_freqs+x1*num_freqs+i
  * 					spectrum[i]=cube[freq_ind]             # <<<<<<<<<<<<<<
@@ -9197,7 +9466,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(
           (__pyx_v_spectrum[__pyx_v_i]) = (__pyx_v_cube[__pyx_v_freq_ind]);
         }
 
-        /* "cython_functions_for_fast_computation.pyx":610
+        /* "cython_functions_for_fast_computation.pyx":642
  * 					freq_ind=t*num_y*num_x*num_freqs+y1*num_x*num_freqs+x1*num_freqs+i
  * 					spectrum[i]=cube[freq_ind]
  * 				ind3=t*num_y*num_x*num_freqs+y1*num_x*num_freqs+x1*num_freqs             # <<<<<<<<<<<<<<
@@ -9206,7 +9475,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(
  */
         __pyx_v_ind3 = (((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * __pyx_v_num_freqs) + ((__pyx_v_y1 * __pyx_v_num_x) * __pyx_v_num_freqs)) + (__pyx_v_x1 * __pyx_v_num_freqs));
 
-        /* "cython_functions_for_fast_computation.pyx":611
+        /* "cython_functions_for_fast_computation.pyx":643
  * 					spectrum[i]=cube[freq_ind]
  * 				ind3=t*num_y*num_x*num_freqs+y1*num_x*num_freqs+x1*num_freqs
  * 				low_ind=find_min_freq(freqs1,lower_freq,num_freqs)             # <<<<<<<<<<<<<<
@@ -9215,7 +9484,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(
  */
         __pyx_v_low_ind = __pyx_f_37cython_functions_for_fast_computation_find_min_freq(__pyx_v_freqs1, __pyx_v_lower_freq, __pyx_v_num_freqs);
 
-        /* "cython_functions_for_fast_computation.pyx":612
+        /* "cython_functions_for_fast_computation.pyx":644
  * 				ind3=t*num_y*num_x*num_freqs+y1*num_x*num_freqs+x1*num_freqs
  * 				low_ind=find_min_freq(freqs1,lower_freq,num_freqs)
  * 				high_ind=find_max_freq(freqs1,upper_freq,num_freqs)             # <<<<<<<<<<<<<<
@@ -9224,35 +9493,35 @@ static void __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(
  */
         __pyx_v_high_ind = __pyx_f_37cython_functions_for_fast_computation_find_max_freq(__pyx_v_freqs1, __pyx_v_upper_freq, __pyx_v_num_freqs);
 
-        /* "cython_functions_for_fast_computation.pyx":613
+        /* "cython_functions_for_fast_computation.pyx":645
  * 				low_ind=find_min_freq(freqs1,lower_freq,num_freqs)
  * 				high_ind=find_max_freq(freqs1,upper_freq,num_freqs)
  * 				freq_ind=t*num_freqs             # <<<<<<<<<<<<<<
  * 				calc_fitrange_homogenous(spectrum, &low_ind, &high_ind,num_freqs,err_cube+freq_ind, sys_error)
- * 
+ * 				freq_ind=t*num_y*num_x+y1*num_x+x1
  */
         __pyx_v_freq_ind = (__pyx_v_t * __pyx_v_num_freqs);
 
-        /* "cython_functions_for_fast_computation.pyx":614
+        /* "cython_functions_for_fast_computation.pyx":646
  * 				high_ind=find_max_freq(freqs1,upper_freq,num_freqs)
  * 				freq_ind=t*num_freqs
  * 				calc_fitrange_homogenous(spectrum, &low_ind, &high_ind,num_freqs,err_cube+freq_ind, sys_error)             # <<<<<<<<<<<<<<
- * 
  * 				freq_ind=t*num_y*num_x+y1*num_x+x1
+ * 				low_freq_ind[freq_ind]=low_ind
  */
         __pyx_f_37cython_functions_for_fast_computation_calc_fitrange_homogenous(__pyx_v_spectrum, (&__pyx_v_low_ind), (&__pyx_v_high_ind), __pyx_v_num_freqs, (__pyx_v_err_cube + __pyx_v_freq_ind), __pyx_v_sys_error);
 
-        /* "cython_functions_for_fast_computation.pyx":616
+        /* "cython_functions_for_fast_computation.pyx":647
+ * 				freq_ind=t*num_freqs
  * 				calc_fitrange_homogenous(spectrum, &low_ind, &high_ind,num_freqs,err_cube+freq_ind, sys_error)
- * 
  * 				freq_ind=t*num_y*num_x+y1*num_x+x1             # <<<<<<<<<<<<<<
  * 				low_freq_ind[freq_ind]=low_ind
  * 				upper_freq_ind[freq_ind]=high_ind
  */
         __pyx_v_freq_ind = ((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) + (__pyx_v_y1 * __pyx_v_num_x)) + __pyx_v_x1);
 
-        /* "cython_functions_for_fast_computation.pyx":617
- * 
+        /* "cython_functions_for_fast_computation.pyx":648
+ * 				calc_fitrange_homogenous(spectrum, &low_ind, &high_ind,num_freqs,err_cube+freq_ind, sys_error)
  * 				freq_ind=t*num_y*num_x+y1*num_x+x1
  * 				low_freq_ind[freq_ind]=low_ind             # <<<<<<<<<<<<<<
  * 				upper_freq_ind[freq_ind]=high_ind
@@ -9260,7 +9529,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(
  */
         (__pyx_v_low_freq_ind[__pyx_v_freq_ind]) = __pyx_v_low_ind;
 
-        /* "cython_functions_for_fast_computation.pyx":618
+        /* "cython_functions_for_fast_computation.pyx":649
  * 				freq_ind=t*num_y*num_x+y1*num_x+x1
  * 				low_freq_ind[freq_ind]=low_ind
  * 				upper_freq_ind[freq_ind]=high_ind             # <<<<<<<<<<<<<<
@@ -9269,7 +9538,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(
  */
         (__pyx_v_upper_freq_ind[__pyx_v_freq_ind]) = __pyx_v_high_ind;
 
-        /* "cython_functions_for_fast_computation.pyx":619
+        /* "cython_functions_for_fast_computation.pyx":650
  * 				low_freq_ind[freq_ind]=low_ind
  * 				upper_freq_ind[freq_ind]=high_ind
  * 				high_snr_freq_num=detect_low_snr_freqs(spectrum,rms,rms_thresh,pos+ind3,low_ind,high_ind,num_freqs)             # <<<<<<<<<<<<<<
@@ -9278,7 +9547,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(
  */
         __pyx_v_high_snr_freq_num = __pyx_f_37cython_functions_for_fast_computation_detect_low_snr_freqs(__pyx_v_spectrum, __pyx_v_rms, __pyx_v_rms_thresh, (__pyx_v_pos + __pyx_v_ind3), __pyx_v_low_ind, __pyx_v_high_ind, __pyx_v_num_freqs);
 
-        /* "cython_functions_for_fast_computation.pyx":621
+        /* "cython_functions_for_fast_computation.pyx":652
  * 				high_snr_freq_num=detect_low_snr_freqs(spectrum,rms,rms_thresh,pos+ind3,low_ind,high_ind,num_freqs)
  * 
  * 				if high_snr_freq_num<min_freq_num:             # <<<<<<<<<<<<<<
@@ -9288,7 +9557,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(
         __pyx_t_13 = ((__pyx_v_high_snr_freq_num < __pyx_v_min_freq_num) != 0);
         if (__pyx_t_13) {
 
-          /* "cython_functions_for_fast_computation.pyx":622
+          /* "cython_functions_for_fast_computation.pyx":653
  * 
  * 				if high_snr_freq_num<min_freq_num:
  * 					for l in range(num_params):             # <<<<<<<<<<<<<<
@@ -9300,7 +9569,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(
           for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12+=1) {
             __pyx_v_l = __pyx_t_12;
 
-            /* "cython_functions_for_fast_computation.pyx":623
+            /* "cython_functions_for_fast_computation.pyx":654
  * 				if high_snr_freq_num<min_freq_num:
  * 					for l in range(num_params):
  * 						ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+l             # <<<<<<<<<<<<<<
@@ -9309,7 +9578,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(
  */
             __pyx_v_ind5 = ((((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_l);
 
-            /* "cython_functions_for_fast_computation.pyx":624
+            /* "cython_functions_for_fast_computation.pyx":655
  * 					for l in range(num_params):
  * 						ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+l
  * 						fitted[ind5]=-1             # <<<<<<<<<<<<<<
@@ -9319,7 +9588,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(
             (__pyx_v_fitted[__pyx_v_ind5]) = -1.0;
           }
 
-          /* "cython_functions_for_fast_computation.pyx":625
+          /* "cython_functions_for_fast_computation.pyx":656
  * 						ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+l
  * 						fitted[ind5]=-1
  * 					ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params             # <<<<<<<<<<<<<<
@@ -9328,7 +9597,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(
  */
           __pyx_v_ind5 = ((((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_num_params);
 
-          /* "cython_functions_for_fast_computation.pyx":626
+          /* "cython_functions_for_fast_computation.pyx":657
  * 						fitted[ind5]=-1
  * 					ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
  * 					fitted[ind5]=-1             # <<<<<<<<<<<<<<
@@ -9337,7 +9606,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(
  */
           (__pyx_v_fitted[__pyx_v_ind5]) = -1.0;
 
-          /* "cython_functions_for_fast_computation.pyx":621
+          /* "cython_functions_for_fast_computation.pyx":652
  * 				high_snr_freq_num=detect_low_snr_freqs(spectrum,rms,rms_thresh,pos+ind3,low_ind,high_ind,num_freqs)
  * 
  * 				if high_snr_freq_num<min_freq_num:             # <<<<<<<<<<<<<<
@@ -9347,7 +9616,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(
           goto __pyx_L13;
         }
 
-        /* "cython_functions_for_fast_computation.pyx":628
+        /* "cython_functions_for_fast_computation.pyx":659
  * 					fitted[ind5]=-1
  * 				else:
  * 					ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params             # <<<<<<<<<<<<<<
@@ -9357,7 +9626,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(
         /*else*/ {
           __pyx_v_ind5 = ((((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_num_params);
 
-          /* "cython_functions_for_fast_computation.pyx":629
+          /* "cython_functions_for_fast_computation.pyx":660
  * 				else:
  * 					ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
  * 					fitted[ind5]=0.00             # <<<<<<<<<<<<<<
@@ -9371,7 +9640,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(
     }
   }
 
-  /* "cython_functions_for_fast_computation.pyx":631
+  /* "cython_functions_for_fast_computation.pyx":662
  * 					fitted[ind5]=0.00
  * 
  * 	PyMem_Free(spectrum)             # <<<<<<<<<<<<<<
@@ -9380,7 +9649,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(
  */
   PyMem_Free(__pyx_v_spectrum);
 
-  /* "cython_functions_for_fast_computation.pyx":632
+  /* "cython_functions_for_fast_computation.pyx":663
  * 
  * 	PyMem_Free(spectrum)
  * 	PyMem_Free(rms)             # <<<<<<<<<<<<<<
@@ -9389,7 +9658,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(
  */
   PyMem_Free(__pyx_v_rms);
 
-  /* "cython_functions_for_fast_computation.pyx":633
+  /* "cython_functions_for_fast_computation.pyx":664
  * 	PyMem_Free(spectrum)
  * 	PyMem_Free(rms)
  * 	return             # <<<<<<<<<<<<<<
@@ -9398,7 +9667,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(
  */
   goto __pyx_L0;
 
-  /* "cython_functions_for_fast_computation.pyx":574
+  /* "cython_functions_for_fast_computation.pyx":606
  * 	return chi_square
  * 
  * cdef void make_cube_fit_ready(int num_times,\             # <<<<<<<<<<<<<<
@@ -9411,7 +9680,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(
   __Pyx_RefNannyFinishContext();
 }
 
-/* "cython_functions_for_fast_computation.pyx":635
+/* "cython_functions_for_fast_computation.pyx":666
  * 	return
  * 
  * cdef void calc_red_chi_all_pix(int num_times,\             # <<<<<<<<<<<<<<
@@ -9459,7 +9728,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("calc_red_chi_all_pix", 0);
 
-  /* "cython_functions_for_fast_computation.pyx":667
+  /* "cython_functions_for_fast_computation.pyx":698
  * 	cdef int ind5
  * 
  * 	spectrum=<double *>PyMem_Malloc(num_freqs*sizeof(double))             # <<<<<<<<<<<<<<
@@ -9468,7 +9737,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
  */
   __pyx_v_spectrum = ((double *)PyMem_Malloc((__pyx_v_num_freqs * (sizeof(double)))));
 
-  /* "cython_functions_for_fast_computation.pyx":668
+  /* "cython_functions_for_fast_computation.pyx":699
  * 
  * 	spectrum=<double *>PyMem_Malloc(num_freqs*sizeof(double))
  * 	rms=<double *>PyMem_Malloc(num_freqs*sizeof(double))             # <<<<<<<<<<<<<<
@@ -9477,7 +9746,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
  */
   __pyx_v_rms = ((double *)PyMem_Malloc((__pyx_v_num_freqs * (sizeof(double)))));
 
-  /* "cython_functions_for_fast_computation.pyx":669
+  /* "cython_functions_for_fast_computation.pyx":700
  * 	spectrum=<double *>PyMem_Malloc(num_freqs*sizeof(double))
  * 	rms=<double *>PyMem_Malloc(num_freqs*sizeof(double))
  * 	sys_err=<double *>PyMem_Malloc(num_freqs*sizeof(double))             # <<<<<<<<<<<<<<
@@ -9486,7 +9755,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
  */
   __pyx_v_sys_err = ((double *)PyMem_Malloc((__pyx_v_num_freqs * (sizeof(double)))));
 
-  /* "cython_functions_for_fast_computation.pyx":670
+  /* "cython_functions_for_fast_computation.pyx":701
  * 	rms=<double *>PyMem_Malloc(num_freqs*sizeof(double))
  * 	sys_err=<double *>PyMem_Malloc(num_freqs*sizeof(double))
  * 	error=<double *>PyMem_Malloc(num_freqs*sizeof(double))             # <<<<<<<<<<<<<<
@@ -9495,25 +9764,25 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
  */
   __pyx_v_error = ((double *)PyMem_Malloc((__pyx_v_num_freqs * (sizeof(double)))));
 
-  /* "cython_functions_for_fast_computation.pyx":672
+  /* "cython_functions_for_fast_computation.pyx":703
  * 	error=<double *>PyMem_Malloc(num_freqs*sizeof(double))
  * 
  * 	for i in range(num_freqs):             # <<<<<<<<<<<<<<
  * 		spectrum[i]=0.0
  * 		rms[i]=0.0
  */
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_num_freqs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 672, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_num_freqs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 703, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_builtin_range, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 672, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_builtin_range, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 703, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (likely(PyList_CheckExact(__pyx_t_2)) || PyTuple_CheckExact(__pyx_t_2)) {
     __pyx_t_1 = __pyx_t_2; __Pyx_INCREF(__pyx_t_1); __pyx_t_3 = 0;
     __pyx_t_4 = NULL;
   } else {
-    __pyx_t_3 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 672, __pyx_L1_error)
+    __pyx_t_3 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 703, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 672, __pyx_L1_error)
+    __pyx_t_4 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 703, __pyx_L1_error)
   }
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   for (;;) {
@@ -9521,17 +9790,17 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
       if (likely(PyList_CheckExact(__pyx_t_1))) {
         if (__pyx_t_3 >= PyList_GET_SIZE(__pyx_t_1)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_2 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_3); __Pyx_INCREF(__pyx_t_2); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 672, __pyx_L1_error)
+        __pyx_t_2 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_3); __Pyx_INCREF(__pyx_t_2); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 703, __pyx_L1_error)
         #else
-        __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 672, __pyx_L1_error)
+        __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 703, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         #endif
       } else {
         if (__pyx_t_3 >= PyTuple_GET_SIZE(__pyx_t_1)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_3); __Pyx_INCREF(__pyx_t_2); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 672, __pyx_L1_error)
+        __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_3); __Pyx_INCREF(__pyx_t_2); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 703, __pyx_L1_error)
         #else
-        __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 672, __pyx_L1_error)
+        __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 703, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         #endif
       }
@@ -9541,7 +9810,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 672, __pyx_L1_error)
+          else __PYX_ERR(0, 703, __pyx_L1_error)
         }
         break;
       }
@@ -9550,47 +9819,47 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
     __Pyx_XDECREF_SET(__pyx_v_i, __pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "cython_functions_for_fast_computation.pyx":673
+    /* "cython_functions_for_fast_computation.pyx":704
  * 
  * 	for i in range(num_freqs):
  * 		spectrum[i]=0.0             # <<<<<<<<<<<<<<
  * 		rms[i]=0.0
  * 		sys_err[i]=0.0
  */
-    __pyx_t_5 = __Pyx_PyIndex_AsSsize_t(__pyx_v_i); if (unlikely((__pyx_t_5 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 673, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyIndex_AsSsize_t(__pyx_v_i); if (unlikely((__pyx_t_5 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 704, __pyx_L1_error)
     (__pyx_v_spectrum[__pyx_t_5]) = 0.0;
 
-    /* "cython_functions_for_fast_computation.pyx":674
+    /* "cython_functions_for_fast_computation.pyx":705
  * 	for i in range(num_freqs):
  * 		spectrum[i]=0.0
  * 		rms[i]=0.0             # <<<<<<<<<<<<<<
  * 		sys_err[i]=0.0
  * 		error[i]=0.0
  */
-    __pyx_t_5 = __Pyx_PyIndex_AsSsize_t(__pyx_v_i); if (unlikely((__pyx_t_5 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 674, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyIndex_AsSsize_t(__pyx_v_i); if (unlikely((__pyx_t_5 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 705, __pyx_L1_error)
     (__pyx_v_rms[__pyx_t_5]) = 0.0;
 
-    /* "cython_functions_for_fast_computation.pyx":675
+    /* "cython_functions_for_fast_computation.pyx":706
  * 		spectrum[i]=0.0
  * 		rms[i]=0.0
  * 		sys_err[i]=0.0             # <<<<<<<<<<<<<<
  * 		error[i]=0.0
  * 
  */
-    __pyx_t_5 = __Pyx_PyIndex_AsSsize_t(__pyx_v_i); if (unlikely((__pyx_t_5 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 675, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyIndex_AsSsize_t(__pyx_v_i); if (unlikely((__pyx_t_5 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 706, __pyx_L1_error)
     (__pyx_v_sys_err[__pyx_t_5]) = 0.0;
 
-    /* "cython_functions_for_fast_computation.pyx":676
+    /* "cython_functions_for_fast_computation.pyx":707
  * 		rms[i]=0.0
  * 		sys_err[i]=0.0
  * 		error[i]=0.0             # <<<<<<<<<<<<<<
  * 
  * 
  */
-    __pyx_t_5 = __Pyx_PyIndex_AsSsize_t(__pyx_v_i); if (unlikely((__pyx_t_5 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 676, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyIndex_AsSsize_t(__pyx_v_i); if (unlikely((__pyx_t_5 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 707, __pyx_L1_error)
     (__pyx_v_error[__pyx_t_5]) = 0.0;
 
-    /* "cython_functions_for_fast_computation.pyx":672
+    /* "cython_functions_for_fast_computation.pyx":703
  * 	error=<double *>PyMem_Malloc(num_freqs*sizeof(double))
  * 
  * 	for i in range(num_freqs):             # <<<<<<<<<<<<<<
@@ -9600,7 +9869,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "cython_functions_for_fast_computation.pyx":679
+  /* "cython_functions_for_fast_computation.pyx":710
  * 
  * 
  * 	for t in range(num_times):             # <<<<<<<<<<<<<<
@@ -9612,25 +9881,25 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
   for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
     __pyx_v_t = __pyx_t_8;
 
-    /* "cython_functions_for_fast_computation.pyx":680
+    /* "cython_functions_for_fast_computation.pyx":711
  * 
  * 	for t in range(num_times):
  * 		for i in range(num_freqs):             # <<<<<<<<<<<<<<
  * 			freq_ind=t*num_freqs+i
  * 			rms[i]=err_cube[freq_ind]
  */
-    __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_num_freqs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 680, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_num_freqs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 711, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_builtin_range, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 680, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_builtin_range, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 711, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     if (likely(PyList_CheckExact(__pyx_t_2)) || PyTuple_CheckExact(__pyx_t_2)) {
       __pyx_t_1 = __pyx_t_2; __Pyx_INCREF(__pyx_t_1); __pyx_t_3 = 0;
       __pyx_t_4 = NULL;
     } else {
-      __pyx_t_3 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 680, __pyx_L1_error)
+      __pyx_t_3 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 711, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_4 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 680, __pyx_L1_error)
+      __pyx_t_4 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 711, __pyx_L1_error)
     }
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     for (;;) {
@@ -9638,17 +9907,17 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
         if (likely(PyList_CheckExact(__pyx_t_1))) {
           if (__pyx_t_3 >= PyList_GET_SIZE(__pyx_t_1)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_2 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_3); __Pyx_INCREF(__pyx_t_2); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 680, __pyx_L1_error)
+          __pyx_t_2 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_3); __Pyx_INCREF(__pyx_t_2); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 711, __pyx_L1_error)
           #else
-          __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 680, __pyx_L1_error)
+          __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 711, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
           #endif
         } else {
           if (__pyx_t_3 >= PyTuple_GET_SIZE(__pyx_t_1)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_3); __Pyx_INCREF(__pyx_t_2); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 680, __pyx_L1_error)
+          __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_3); __Pyx_INCREF(__pyx_t_2); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 711, __pyx_L1_error)
           #else
-          __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 680, __pyx_L1_error)
+          __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 711, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
           #endif
         }
@@ -9658,7 +9927,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
             if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-            else __PYX_ERR(0, 680, __pyx_L1_error)
+            else __PYX_ERR(0, 711, __pyx_L1_error)
           }
           break;
         }
@@ -9667,33 +9936,33 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
       __Pyx_XDECREF_SET(__pyx_v_i, __pyx_t_2);
       __pyx_t_2 = 0;
 
-      /* "cython_functions_for_fast_computation.pyx":681
+      /* "cython_functions_for_fast_computation.pyx":712
  * 	for t in range(num_times):
  * 		for i in range(num_freqs):
  * 			freq_ind=t*num_freqs+i             # <<<<<<<<<<<<<<
  * 			rms[i]=err_cube[freq_ind]
  * 		for y1 in range(num_y):
  */
-      __pyx_t_2 = __Pyx_PyInt_From_int((__pyx_v_t * __pyx_v_num_freqs)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 681, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_PyInt_From_int((__pyx_v_t * __pyx_v_num_freqs)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 712, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_9 = PyNumber_Add(__pyx_t_2, __pyx_v_i); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 681, __pyx_L1_error)
+      __pyx_t_9 = PyNumber_Add(__pyx_t_2, __pyx_v_i); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 712, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      __pyx_t_10 = __Pyx_PyInt_As_int(__pyx_t_9); if (unlikely((__pyx_t_10 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 681, __pyx_L1_error)
+      __pyx_t_10 = __Pyx_PyInt_As_int(__pyx_t_9); if (unlikely((__pyx_t_10 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 712, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
       __pyx_v_freq_ind = __pyx_t_10;
 
-      /* "cython_functions_for_fast_computation.pyx":682
+      /* "cython_functions_for_fast_computation.pyx":713
  * 		for i in range(num_freqs):
  * 			freq_ind=t*num_freqs+i
  * 			rms[i]=err_cube[freq_ind]             # <<<<<<<<<<<<<<
  * 		for y1 in range(num_y):
  * 			for x1 in range(num_x):
  */
-      __pyx_t_5 = __Pyx_PyIndex_AsSsize_t(__pyx_v_i); if (unlikely((__pyx_t_5 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 682, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyIndex_AsSsize_t(__pyx_v_i); if (unlikely((__pyx_t_5 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 713, __pyx_L1_error)
       (__pyx_v_rms[__pyx_t_5]) = (__pyx_v_err_cube[__pyx_v_freq_ind]);
 
-      /* "cython_functions_for_fast_computation.pyx":680
+      /* "cython_functions_for_fast_computation.pyx":711
  * 
  * 	for t in range(num_times):
  * 		for i in range(num_freqs):             # <<<<<<<<<<<<<<
@@ -9703,7 +9972,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
     }
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "cython_functions_for_fast_computation.pyx":683
+    /* "cython_functions_for_fast_computation.pyx":714
  * 			freq_ind=t*num_freqs+i
  * 			rms[i]=err_cube[freq_ind]
  * 		for y1 in range(num_y):             # <<<<<<<<<<<<<<
@@ -9715,7 +9984,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
     for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12+=1) {
       __pyx_v_y1 = __pyx_t_12;
 
-      /* "cython_functions_for_fast_computation.pyx":684
+      /* "cython_functions_for_fast_computation.pyx":715
  * 			rms[i]=err_cube[freq_ind]
  * 		for y1 in range(num_y):
  * 			for x1 in range(num_x):             # <<<<<<<<<<<<<<
@@ -9727,7 +9996,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
       for (__pyx_t_15 = 0; __pyx_t_15 < __pyx_t_14; __pyx_t_15+=1) {
         __pyx_v_x1 = __pyx_t_15;
 
-        /* "cython_functions_for_fast_computation.pyx":685
+        /* "cython_functions_for_fast_computation.pyx":716
  * 		for y1 in range(num_y):
  * 			for x1 in range(num_x):
  * 				for j in range(num_freqs):             # <<<<<<<<<<<<<<
@@ -9739,7 +10008,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
         for (__pyx_t_18 = 0; __pyx_t_18 < __pyx_t_17; __pyx_t_18+=1) {
           __pyx_v_j = __pyx_t_18;
 
-          /* "cython_functions_for_fast_computation.pyx":686
+          /* "cython_functions_for_fast_computation.pyx":717
  * 			for x1 in range(num_x):
  * 				for j in range(num_freqs):
  * 					freq_ind=t*num_y*num_x*num_freqs+y1*num_x*num_freqs+x1*num_freqs+j             # <<<<<<<<<<<<<<
@@ -9748,7 +10017,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
  */
           __pyx_v_freq_ind = ((((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * __pyx_v_num_freqs) + ((__pyx_v_y1 * __pyx_v_num_x) * __pyx_v_num_freqs)) + (__pyx_v_x1 * __pyx_v_num_freqs)) + __pyx_v_j);
 
-          /* "cython_functions_for_fast_computation.pyx":687
+          /* "cython_functions_for_fast_computation.pyx":718
  * 				for j in range(num_freqs):
  * 					freq_ind=t*num_y*num_x*num_freqs+y1*num_x*num_freqs+x1*num_freqs+j
  * 					spectrum[j]=cube[freq_ind]             # <<<<<<<<<<<<<<
@@ -9757,7 +10026,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
  */
           (__pyx_v_spectrum[__pyx_v_j]) = (__pyx_v_cube[__pyx_v_freq_ind]);
 
-          /* "cython_functions_for_fast_computation.pyx":688
+          /* "cython_functions_for_fast_computation.pyx":719
  * 					freq_ind=t*num_y*num_x*num_freqs+y1*num_x*num_freqs+x1*num_freqs+j
  * 					spectrum[j]=cube[freq_ind]
  * 					sys_err[j]=sys_error*spectrum[j]             # <<<<<<<<<<<<<<
@@ -9766,7 +10035,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
  */
           (__pyx_v_sys_err[__pyx_v_j]) = (__pyx_v_sys_error * (__pyx_v_spectrum[__pyx_v_j]));
 
-          /* "cython_functions_for_fast_computation.pyx":689
+          /* "cython_functions_for_fast_computation.pyx":720
  * 					spectrum[j]=cube[freq_ind]
  * 					sys_err[j]=sys_error*spectrum[j]
  * 					error[j]=sqrt(square(rms[j])+square(sys_err[j]))             # <<<<<<<<<<<<<<
@@ -9776,7 +10045,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
           (__pyx_v_error[__pyx_v_j]) = sqrt((__pyx_f_37cython_functions_for_fast_computation_square((__pyx_v_rms[__pyx_v_j])) + __pyx_f_37cython_functions_for_fast_computation_square((__pyx_v_sys_err[__pyx_v_j]))));
         }
 
-        /* "cython_functions_for_fast_computation.pyx":691
+        /* "cython_functions_for_fast_computation.pyx":722
  * 					error[j]=sqrt(square(rms[j])+square(sys_err[j]))
  * 
  * 				ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params             # <<<<<<<<<<<<<<
@@ -9785,7 +10054,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
  */
         __pyx_v_ind5 = ((((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_num_params);
 
-        /* "cython_functions_for_fast_computation.pyx":692
+        /* "cython_functions_for_fast_computation.pyx":723
  * 
  * 				ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
  * 				if fitted[ind5]<-0.2:             # <<<<<<<<<<<<<<
@@ -9795,7 +10064,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
         __pyx_t_19 = (((__pyx_v_fitted[__pyx_v_ind5]) < -0.2) != 0);
         if (__pyx_t_19) {
 
-          /* "cython_functions_for_fast_computation.pyx":693
+          /* "cython_functions_for_fast_computation.pyx":724
  * 				ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
  * 				if fitted[ind5]<-0.2:
  * 					continue             # <<<<<<<<<<<<<<
@@ -9804,7 +10073,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
  */
           goto __pyx_L11_continue;
 
-          /* "cython_functions_for_fast_computation.pyx":692
+          /* "cython_functions_for_fast_computation.pyx":723
  * 
  * 				ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
  * 				if fitted[ind5]<-0.2:             # <<<<<<<<<<<<<<
@@ -9813,7 +10082,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
  */
         }
 
-        /* "cython_functions_for_fast_computation.pyx":694
+        /* "cython_functions_for_fast_computation.pyx":725
  * 				if fitted[ind5]<-0.2:
  * 					continue
  * 				ind3=t*num_y*num_x*num_freqs+y1*num_x*num_freqs+x1*num_freqs             # <<<<<<<<<<<<<<
@@ -9822,7 +10091,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
  */
         __pyx_v_ind3 = (((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * __pyx_v_num_freqs) + ((__pyx_v_y1 * __pyx_v_num_x) * __pyx_v_num_freqs)) + (__pyx_v_x1 * __pyx_v_num_freqs));
 
-        /* "cython_functions_for_fast_computation.pyx":695
+        /* "cython_functions_for_fast_computation.pyx":726
  * 					continue
  * 				ind3=t*num_y*num_x*num_freqs+y1*num_x*num_freqs+x1*num_freqs
  * 				freq_ind=t*num_y*num_x+y1*num_x+x1             # <<<<<<<<<<<<<<
@@ -9831,7 +10100,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
  */
         __pyx_v_freq_ind = ((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) + (__pyx_v_y1 * __pyx_v_num_x)) + __pyx_v_x1);
 
-        /* "cython_functions_for_fast_computation.pyx":696
+        /* "cython_functions_for_fast_computation.pyx":727
  * 				ind3=t*num_y*num_x*num_freqs+y1*num_x*num_freqs+x1*num_freqs
  * 				freq_ind=t*num_y*num_x+y1*num_x+x1
  * 				red_chi=min_chi_square(model,spectrum,error,low_freq_ind[freq_ind],upper_freq_ind[freq_ind],\             # <<<<<<<<<<<<<<
@@ -9840,25 +10109,25 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
  */
         __pyx_v_red_chi = __pyx_f_37cython_functions_for_fast_computation_min_chi_square(__pyx_v_model, __pyx_v_spectrum, __pyx_v_error, (__pyx_v_low_freq_ind[__pyx_v_freq_ind]), (__pyx_v_upper_freq_ind[__pyx_v_freq_ind]), __pyx_v_rms_thresh, __pyx_v_rms, __pyx_v_num_params, __pyx_v_num_freqs, __pyx_v_param_lengths1, (__pyx_v_pos + __pyx_v_ind3), __pyx_v_sys_error, __pyx_v_param_ind);
 
-        /* "cython_functions_for_fast_computation.pyx":699
+        /* "cython_functions_for_fast_computation.pyx":730
  * 							rms_thresh,rms,num_params,num_freqs,param_lengths1,pos+ind3,sys_error,param_ind)
  * 
  * 				for l in range(num_params):             # <<<<<<<<<<<<<<
  * 					ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+l
  * 					fitted[ind5]=param_ind[l]
  */
-        __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_num_params); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 699, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_num_params); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 730, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_9 = __Pyx_PyObject_CallOneArg(__pyx_builtin_range, __pyx_t_1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 699, __pyx_L1_error)
+        __pyx_t_9 = __Pyx_PyObject_CallOneArg(__pyx_builtin_range, __pyx_t_1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 730, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_9);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         if (likely(PyList_CheckExact(__pyx_t_9)) || PyTuple_CheckExact(__pyx_t_9)) {
           __pyx_t_1 = __pyx_t_9; __Pyx_INCREF(__pyx_t_1); __pyx_t_3 = 0;
           __pyx_t_4 = NULL;
         } else {
-          __pyx_t_3 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_t_9); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 699, __pyx_L1_error)
+          __pyx_t_3 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_t_9); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 730, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
-          __pyx_t_4 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 699, __pyx_L1_error)
+          __pyx_t_4 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 730, __pyx_L1_error)
         }
         __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
         for (;;) {
@@ -9866,17 +10135,17 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
             if (likely(PyList_CheckExact(__pyx_t_1))) {
               if (__pyx_t_3 >= PyList_GET_SIZE(__pyx_t_1)) break;
               #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-              __pyx_t_9 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_3); __Pyx_INCREF(__pyx_t_9); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 699, __pyx_L1_error)
+              __pyx_t_9 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_3); __Pyx_INCREF(__pyx_t_9); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 730, __pyx_L1_error)
               #else
-              __pyx_t_9 = PySequence_ITEM(__pyx_t_1, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 699, __pyx_L1_error)
+              __pyx_t_9 = PySequence_ITEM(__pyx_t_1, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 730, __pyx_L1_error)
               __Pyx_GOTREF(__pyx_t_9);
               #endif
             } else {
               if (__pyx_t_3 >= PyTuple_GET_SIZE(__pyx_t_1)) break;
               #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-              __pyx_t_9 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_3); __Pyx_INCREF(__pyx_t_9); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 699, __pyx_L1_error)
+              __pyx_t_9 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_3); __Pyx_INCREF(__pyx_t_9); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 730, __pyx_L1_error)
               #else
-              __pyx_t_9 = PySequence_ITEM(__pyx_t_1, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 699, __pyx_L1_error)
+              __pyx_t_9 = PySequence_ITEM(__pyx_t_1, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 730, __pyx_L1_error)
               __Pyx_GOTREF(__pyx_t_9);
               #endif
             }
@@ -9886,7 +10155,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
               PyObject* exc_type = PyErr_Occurred();
               if (exc_type) {
                 if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-                else __PYX_ERR(0, 699, __pyx_L1_error)
+                else __PYX_ERR(0, 730, __pyx_L1_error)
               }
               break;
             }
@@ -9895,33 +10164,33 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
           __Pyx_XDECREF_SET(__pyx_v_l, __pyx_t_9);
           __pyx_t_9 = 0;
 
-          /* "cython_functions_for_fast_computation.pyx":700
+          /* "cython_functions_for_fast_computation.pyx":731
  * 
  * 				for l in range(num_params):
  * 					ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+l             # <<<<<<<<<<<<<<
  * 					fitted[ind5]=param_ind[l]
  * 				ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
  */
-          __pyx_t_9 = __Pyx_PyInt_From_long((((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1)))); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 700, __pyx_L1_error)
+          __pyx_t_9 = __Pyx_PyInt_From_long((((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1)))); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 731, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_9);
-          __pyx_t_2 = PyNumber_Add(__pyx_t_9, __pyx_v_l); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 700, __pyx_L1_error)
+          __pyx_t_2 = PyNumber_Add(__pyx_t_9, __pyx_v_l); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 731, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-          __pyx_t_16 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_16 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 700, __pyx_L1_error)
+          __pyx_t_16 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_16 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 731, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
           __pyx_v_ind5 = __pyx_t_16;
 
-          /* "cython_functions_for_fast_computation.pyx":701
+          /* "cython_functions_for_fast_computation.pyx":732
  * 				for l in range(num_params):
  * 					ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+l
  * 					fitted[ind5]=param_ind[l]             # <<<<<<<<<<<<<<
  * 				ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
  * 				fitted[ind5]=red_chi
  */
-          __pyx_t_5 = __Pyx_PyIndex_AsSsize_t(__pyx_v_l); if (unlikely((__pyx_t_5 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 701, __pyx_L1_error)
+          __pyx_t_5 = __Pyx_PyIndex_AsSsize_t(__pyx_v_l); if (unlikely((__pyx_t_5 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 732, __pyx_L1_error)
           (__pyx_v_fitted[__pyx_v_ind5]) = (__pyx_v_param_ind[__pyx_t_5]);
 
-          /* "cython_functions_for_fast_computation.pyx":699
+          /* "cython_functions_for_fast_computation.pyx":730
  * 							rms_thresh,rms,num_params,num_freqs,param_lengths1,pos+ind3,sys_error,param_ind)
  * 
  * 				for l in range(num_params):             # <<<<<<<<<<<<<<
@@ -9931,7 +10200,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
         }
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-        /* "cython_functions_for_fast_computation.pyx":702
+        /* "cython_functions_for_fast_computation.pyx":733
  * 					ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+l
  * 					fitted[ind5]=param_ind[l]
  * 				ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params             # <<<<<<<<<<<<<<
@@ -9940,7 +10209,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
  */
         __pyx_v_ind5 = ((((((__pyx_v_t * __pyx_v_num_y) * __pyx_v_num_x) * (__pyx_v_num_params + 1)) + ((__pyx_v_y1 * __pyx_v_num_x) * (__pyx_v_num_params + 1))) + (__pyx_v_x1 * (__pyx_v_num_params + 1))) + __pyx_v_num_params);
 
-        /* "cython_functions_for_fast_computation.pyx":703
+        /* "cython_functions_for_fast_computation.pyx":734
  * 					fitted[ind5]=param_ind[l]
  * 				ind5=t*num_y*num_x*(num_params+1)+y1*num_x*(num_params+1)+x1*(num_params+1)+num_params
  * 				fitted[ind5]=red_chi             # <<<<<<<<<<<<<<
@@ -9953,7 +10222,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
     }
   }
 
-  /* "cython_functions_for_fast_computation.pyx":705
+  /* "cython_functions_for_fast_computation.pyx":736
  * 				fitted[ind5]=red_chi
  * 
  * 	PyMem_Free(spectrum)             # <<<<<<<<<<<<<<
@@ -9962,7 +10231,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
  */
   PyMem_Free(__pyx_v_spectrum);
 
-  /* "cython_functions_for_fast_computation.pyx":706
+  /* "cython_functions_for_fast_computation.pyx":737
  * 
  * 	PyMem_Free(spectrum)
  * 	PyMem_Free(rms)             # <<<<<<<<<<<<<<
@@ -9971,7 +10240,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
  */
   PyMem_Free(__pyx_v_rms);
 
-  /* "cython_functions_for_fast_computation.pyx":707
+  /* "cython_functions_for_fast_computation.pyx":738
  * 	PyMem_Free(spectrum)
  * 	PyMem_Free(rms)
  * 	PyMem_Free(sys_err)             # <<<<<<<<<<<<<<
@@ -9980,7 +10249,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
  */
   PyMem_Free(__pyx_v_sys_err);
 
-  /* "cython_functions_for_fast_computation.pyx":708
+  /* "cython_functions_for_fast_computation.pyx":739
  * 	PyMem_Free(rms)
  * 	PyMem_Free(sys_err)
  * 	PyMem_Free(error)             # <<<<<<<<<<<<<<
@@ -9989,7 +10258,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
  */
   PyMem_Free(__pyx_v_error);
 
-  /* "cython_functions_for_fast_computation.pyx":711
+  /* "cython_functions_for_fast_computation.pyx":742
  * 
  * 
  * 	return             # <<<<<<<<<<<<<<
@@ -9998,7 +10267,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
  */
   goto __pyx_L0;
 
-  /* "cython_functions_for_fast_computation.pyx":635
+  /* "cython_functions_for_fast_computation.pyx":666
  * 	return
  * 
  * cdef void calc_red_chi_all_pix(int num_times,\             # <<<<<<<<<<<<<<
@@ -10018,7 +10287,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix
   __Pyx_RefNannyFinishContext();
 }
 
-/* "cython_functions_for_fast_computation.pyx":714
+/* "cython_functions_for_fast_computation.pyx":745
  * 
  * 
  * cdef double absolute (double x):             # <<<<<<<<<<<<<<
@@ -10032,7 +10301,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_absolute(double __
   int __pyx_t_1;
   __Pyx_RefNannySetupContext("absolute", 0);
 
-  /* "cython_functions_for_fast_computation.pyx":715
+  /* "cython_functions_for_fast_computation.pyx":746
  * 
  * cdef double absolute (double x):
  * 	if x<0:             # <<<<<<<<<<<<<<
@@ -10042,7 +10311,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_absolute(double __
   __pyx_t_1 = ((__pyx_v_x < 0.0) != 0);
   if (__pyx_t_1) {
 
-    /* "cython_functions_for_fast_computation.pyx":716
+    /* "cython_functions_for_fast_computation.pyx":747
  * cdef double absolute (double x):
  * 	if x<0:
  * 		return -x             # <<<<<<<<<<<<<<
@@ -10052,7 +10321,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_absolute(double __
     __pyx_r = (-__pyx_v_x);
     goto __pyx_L0;
 
-    /* "cython_functions_for_fast_computation.pyx":715
+    /* "cython_functions_for_fast_computation.pyx":746
  * 
  * cdef double absolute (double x):
  * 	if x<0:             # <<<<<<<<<<<<<<
@@ -10061,7 +10330,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_absolute(double __
  */
   }
 
-  /* "cython_functions_for_fast_computation.pyx":717
+  /* "cython_functions_for_fast_computation.pyx":748
  * 	if x<0:
  * 		return -x
  * 	return x             # <<<<<<<<<<<<<<
@@ -10071,7 +10340,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_absolute(double __
   __pyx_r = __pyx_v_x;
   goto __pyx_L0;
 
-  /* "cython_functions_for_fast_computation.pyx":714
+  /* "cython_functions_for_fast_computation.pyx":745
  * 
  * 
  * cdef double absolute (double x):             # <<<<<<<<<<<<<<
@@ -10085,7 +10354,7 @@ static double __pyx_f_37cython_functions_for_fast_computation_absolute(double __
   return __pyx_r;
 }
 
-/* "cython_functions_for_fast_computation.pyx":718
+/* "cython_functions_for_fast_computation.pyx":749
  * 		return -x
  * 	return x
  * cpdef void compute_min_chi_square(double[::1] model, \             # <<<<<<<<<<<<<<
@@ -10116,7 +10385,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_compute_min_chi_squa
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("compute_min_chi_square", 0);
 
-  /* "cython_functions_for_fast_computation.pyx":744
+  /* "cython_functions_for_fast_computation.pyx":775
  * 	cdef double *cube1
  * 	cdef double *err_cube1
  * 	fitted1=&fitted[0]             # <<<<<<<<<<<<<<
@@ -10131,11 +10400,11 @@ static void __pyx_f_37cython_functions_for_fast_computation_compute_min_chi_squa
   } else if (unlikely(__pyx_t_1 >= __pyx_v_fitted.shape[0])) __pyx_t_2 = 0;
   if (unlikely(__pyx_t_2 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_2);
-    __PYX_ERR(0, 744, __pyx_L1_error)
+    __PYX_ERR(0, 775, __pyx_L1_error)
   }
   __pyx_v_fitted1 = (&(*((double *) ( /* dim=0 */ (__pyx_v_fitted.data + __pyx_t_1 * __pyx_v_fitted.strides[0]) ))));
 
-  /* "cython_functions_for_fast_computation.pyx":745
+  /* "cython_functions_for_fast_computation.pyx":776
  * 	cdef double *err_cube1
  * 	fitted1=&fitted[0]
  * 	model1=&model[0]             # <<<<<<<<<<<<<<
@@ -10150,11 +10419,11 @@ static void __pyx_f_37cython_functions_for_fast_computation_compute_min_chi_squa
   } else if (unlikely(__pyx_t_1 >= __pyx_v_model.shape[0])) __pyx_t_2 = 0;
   if (unlikely(__pyx_t_2 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_2);
-    __PYX_ERR(0, 745, __pyx_L1_error)
+    __PYX_ERR(0, 776, __pyx_L1_error)
   }
   __pyx_v_model1 = (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_model.data) + __pyx_t_1)) ))));
 
-  /* "cython_functions_for_fast_computation.pyx":746
+  /* "cython_functions_for_fast_computation.pyx":777
  * 	fitted1=&fitted[0]
  * 	model1=&model[0]
  * 	cube1=&cube[0]             # <<<<<<<<<<<<<<
@@ -10169,11 +10438,11 @@ static void __pyx_f_37cython_functions_for_fast_computation_compute_min_chi_squa
   } else if (unlikely(__pyx_t_1 >= __pyx_v_cube.shape[0])) __pyx_t_2 = 0;
   if (unlikely(__pyx_t_2 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_2);
-    __PYX_ERR(0, 746, __pyx_L1_error)
+    __PYX_ERR(0, 777, __pyx_L1_error)
   }
   __pyx_v_cube1 = (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_cube.data) + __pyx_t_1)) ))));
 
-  /* "cython_functions_for_fast_computation.pyx":747
+  /* "cython_functions_for_fast_computation.pyx":778
  * 	model1=&model[0]
  * 	cube1=&cube[0]
  * 	err_cube1=&err_cube[0]             # <<<<<<<<<<<<<<
@@ -10188,11 +10457,11 @@ static void __pyx_f_37cython_functions_for_fast_computation_compute_min_chi_squa
   } else if (unlikely(__pyx_t_1 >= __pyx_v_err_cube.shape[0])) __pyx_t_2 = 0;
   if (unlikely(__pyx_t_2 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_2);
-    __PYX_ERR(0, 747, __pyx_L1_error)
+    __PYX_ERR(0, 778, __pyx_L1_error)
   }
   __pyx_v_err_cube1 = (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_err_cube.data) + __pyx_t_1)) ))));
 
-  /* "cython_functions_for_fast_computation.pyx":749
+  /* "cython_functions_for_fast_computation.pyx":780
  * 	err_cube1=&err_cube[0]
  * 	cdef int *pos
  * 	pos=&high_snr_freq_loc[0]             # <<<<<<<<<<<<<<
@@ -10207,11 +10476,11 @@ static void __pyx_f_37cython_functions_for_fast_computation_compute_min_chi_squa
   } else if (unlikely(__pyx_t_1 >= __pyx_v_high_snr_freq_loc.shape[0])) __pyx_t_2 = 0;
   if (unlikely(__pyx_t_2 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_2);
-    __PYX_ERR(0, 749, __pyx_L1_error)
+    __PYX_ERR(0, 780, __pyx_L1_error)
   }
   __pyx_v_pos = (&(*((int *) ( /* dim=0 */ (__pyx_v_high_snr_freq_loc.data + __pyx_t_1 * __pyx_v_high_snr_freq_loc.strides[0]) ))));
 
-  /* "cython_functions_for_fast_computation.pyx":751
+  /* "cython_functions_for_fast_computation.pyx":782
  * 	pos=&high_snr_freq_loc[0]
  * 
  * 	for i in range(num_times*num_y*num_x*num_freqs):             # <<<<<<<<<<<<<<
@@ -10223,7 +10492,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_compute_min_chi_squa
   for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
     __pyx_v_i = __pyx_t_4;
 
-    /* "cython_functions_for_fast_computation.pyx":752
+    /* "cython_functions_for_fast_computation.pyx":783
  * 
  * 	for i in range(num_times*num_y*num_x*num_freqs):
  * 		pos[i]=-1             # <<<<<<<<<<<<<<
@@ -10233,7 +10502,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_compute_min_chi_squa
     (__pyx_v_pos[__pyx_v_i]) = -1;
   }
 
-  /* "cython_functions_for_fast_computation.pyx":755
+  /* "cython_functions_for_fast_computation.pyx":786
  * 
  * 	cdef int *param_ind
  * 	param_ind=<int *>PyMem_Malloc(num_params*sizeof(int))             # <<<<<<<<<<<<<<
@@ -10242,7 +10511,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_compute_min_chi_squa
  */
   __pyx_v_param_ind = ((int *)PyMem_Malloc((__pyx_v_num_params * (sizeof(int)))));
 
-  /* "cython_functions_for_fast_computation.pyx":757
+  /* "cython_functions_for_fast_computation.pyx":788
  * 	param_ind=<int *>PyMem_Malloc(num_params*sizeof(int))
  * 
  * 	for i in range(num_params):             # <<<<<<<<<<<<<<
@@ -10254,7 +10523,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_compute_min_chi_squa
   for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
     __pyx_v_i = __pyx_t_4;
 
-    /* "cython_functions_for_fast_computation.pyx":758
+    /* "cython_functions_for_fast_computation.pyx":789
  * 
  * 	for i in range(num_params):
  * 		param_ind[i]=-1             # <<<<<<<<<<<<<<
@@ -10264,7 +10533,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_compute_min_chi_squa
     (__pyx_v_param_ind[__pyx_v_i]) = -1;
   }
 
-  /* "cython_functions_for_fast_computation.pyx":765
+  /* "cython_functions_for_fast_computation.pyx":796
  * 
  * 	cdef int *param_lengths1
  * 	param_lengths1=&param_lengths[0]             # <<<<<<<<<<<<<<
@@ -10279,11 +10548,11 @@ static void __pyx_f_37cython_functions_for_fast_computation_compute_min_chi_squa
   } else if (unlikely(__pyx_t_1 >= __pyx_v_param_lengths.shape[0])) __pyx_t_2 = 0;
   if (unlikely(__pyx_t_2 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_2);
-    __PYX_ERR(0, 765, __pyx_L1_error)
+    __PYX_ERR(0, 796, __pyx_L1_error)
   }
   __pyx_v_param_lengths1 = (&(*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_param_lengths.data) + __pyx_t_1)) ))));
 
-  /* "cython_functions_for_fast_computation.pyx":769
+  /* "cython_functions_for_fast_computation.pyx":800
  * 
  * 	cdef double *freqs1
  * 	freqs1=&freqs[0]             # <<<<<<<<<<<<<<
@@ -10298,11 +10567,11 @@ static void __pyx_f_37cython_functions_for_fast_computation_compute_min_chi_squa
   } else if (unlikely(__pyx_t_1 >= __pyx_v_freqs.shape[0])) __pyx_t_2 = 0;
   if (unlikely(__pyx_t_2 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_2);
-    __PYX_ERR(0, 769, __pyx_L1_error)
+    __PYX_ERR(0, 800, __pyx_L1_error)
   }
   __pyx_v_freqs1 = (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_freqs.data) + __pyx_t_1)) ))));
 
-  /* "cython_functions_for_fast_computation.pyx":775
+  /* "cython_functions_for_fast_computation.pyx":806
  * 	cdef int *upper_freq_ind1
  * 
  * 	low_freq_ind1=&low_freq_ind[0]             # <<<<<<<<<<<<<<
@@ -10317,11 +10586,11 @@ static void __pyx_f_37cython_functions_for_fast_computation_compute_min_chi_squa
   } else if (unlikely(__pyx_t_1 >= __pyx_v_low_freq_ind.shape[0])) __pyx_t_2 = 0;
   if (unlikely(__pyx_t_2 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_2);
-    __PYX_ERR(0, 775, __pyx_L1_error)
+    __PYX_ERR(0, 806, __pyx_L1_error)
   }
   __pyx_v_low_freq_ind1 = (&(*((int *) ( /* dim=0 */ (__pyx_v_low_freq_ind.data + __pyx_t_1 * __pyx_v_low_freq_ind.strides[0]) ))));
 
-  /* "cython_functions_for_fast_computation.pyx":776
+  /* "cython_functions_for_fast_computation.pyx":807
  * 
  * 	low_freq_ind1=&low_freq_ind[0]
  * 	upper_freq_ind1=&upper_freq_ind[0]             # <<<<<<<<<<<<<<
@@ -10336,11 +10605,11 @@ static void __pyx_f_37cython_functions_for_fast_computation_compute_min_chi_squa
   } else if (unlikely(__pyx_t_1 >= __pyx_v_upper_freq_ind.shape[0])) __pyx_t_2 = 0;
   if (unlikely(__pyx_t_2 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_2);
-    __PYX_ERR(0, 776, __pyx_L1_error)
+    __PYX_ERR(0, 807, __pyx_L1_error)
   }
   __pyx_v_upper_freq_ind1 = (&(*((int *) ( /* dim=0 */ (__pyx_v_upper_freq_ind.data + __pyx_t_1 * __pyx_v_upper_freq_ind.strides[0]) ))));
 
-  /* "cython_functions_for_fast_computation.pyx":778
+  /* "cython_functions_for_fast_computation.pyx":809
  * 	upper_freq_ind1=&upper_freq_ind[0]
  * 
  * 	make_cube_fit_ready(num_times, num_y, num_x,num_freqs, err_cube1,\             # <<<<<<<<<<<<<<
@@ -10349,7 +10618,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_compute_min_chi_squa
  */
   __pyx_f_37cython_functions_for_fast_computation_make_cube_fit_ready(__pyx_v_num_times, __pyx_v_num_y, __pyx_v_num_x, __pyx_v_num_freqs, __pyx_v_err_cube1, __pyx_v_cube1, __pyx_v_freqs1, __pyx_v_lower_freq, __pyx_v_upper_freq, __pyx_v_low_freq_ind1, __pyx_v_upper_freq_ind1, __pyx_v_min_freq_num, __pyx_v_num_params, __pyx_v_fitted1, __pyx_v_pos, __pyx_v_rms_thresh, __pyx_v_sys_error);
 
-  /* "cython_functions_for_fast_computation.pyx":783
+  /* "cython_functions_for_fast_computation.pyx":814
  * 			num_params, fitted1, pos,rms_thresh,sys_error)
  * 
  * 	calc_red_chi_all_pix(num_times, num_freqs, num_y, num_x, num_params,low_freq_ind1,\             # <<<<<<<<<<<<<<
@@ -10358,7 +10627,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_compute_min_chi_squa
  */
   __pyx_f_37cython_functions_for_fast_computation_calc_red_chi_all_pix(__pyx_v_num_times, __pyx_v_num_freqs, __pyx_v_num_y, __pyx_v_num_x, __pyx_v_num_params, __pyx_v_low_freq_ind1, __pyx_v_upper_freq_ind1, __pyx_v_cube1, __pyx_v_err_cube1, __pyx_v_model1, __pyx_v_sys_error, __pyx_v_pos, __pyx_v_fitted1, __pyx_v_freqs1, __pyx_v_lower_freq, __pyx_v_upper_freq, __pyx_v_rms_thresh, __pyx_v_min_freq_num, __pyx_v_param_lengths1, __pyx_v_param_ind);
 
-  /* "cython_functions_for_fast_computation.pyx":789
+  /* "cython_functions_for_fast_computation.pyx":820
  * 						param_lengths1,param_ind)
  * 
  * 	PyMem_Free(param_ind)             # <<<<<<<<<<<<<<
@@ -10367,7 +10636,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_compute_min_chi_squa
  */
   PyMem_Free(__pyx_v_param_ind);
 
-  /* "cython_functions_for_fast_computation.pyx":790
+  /* "cython_functions_for_fast_computation.pyx":821
  * 
  * 	PyMem_Free(param_ind)
  * 	return             # <<<<<<<<<<<<<<
@@ -10375,7 +10644,7 @@ static void __pyx_f_37cython_functions_for_fast_computation_compute_min_chi_squa
  */
   goto __pyx_L0;
 
-  /* "cython_functions_for_fast_computation.pyx":718
+  /* "cython_functions_for_fast_computation.pyx":749
  * 		return -x
  * 	return x
  * cpdef void compute_min_chi_square(double[::1] model, \             # <<<<<<<<<<<<<<
@@ -10478,119 +10747,119 @@ static PyObject *__pyx_pw_37cython_functions_for_fast_computation_15compute_min_
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_cube)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 1); __PYX_ERR(0, 718, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 1); __PYX_ERR(0, 749, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_err_cube)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 2); __PYX_ERR(0, 718, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 2); __PYX_ERR(0, 749, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_lower_freq)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 3); __PYX_ERR(0, 718, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 3); __PYX_ERR(0, 749, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  4:
         if (likely((values[4] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_upper_freq)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 4); __PYX_ERR(0, 718, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 4); __PYX_ERR(0, 749, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  5:
         if (likely((values[5] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_param_lengths)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 5); __PYX_ERR(0, 718, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 5); __PYX_ERR(0, 749, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  6:
         if (likely((values[6] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_freqs)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 6); __PYX_ERR(0, 718, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 6); __PYX_ERR(0, 749, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  7:
         if (likely((values[7] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_sys_error)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 7); __PYX_ERR(0, 718, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 7); __PYX_ERR(0, 749, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  8:
         if (likely((values[8] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_rms_thresh)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 8); __PYX_ERR(0, 718, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 8); __PYX_ERR(0, 749, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  9:
         if (likely((values[9] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_min_freq_num)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 9); __PYX_ERR(0, 718, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 9); __PYX_ERR(0, 749, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case 10:
         if (likely((values[10] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_num_params)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 10); __PYX_ERR(0, 718, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 10); __PYX_ERR(0, 749, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case 11:
         if (likely((values[11] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_num_times)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 11); __PYX_ERR(0, 718, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 11); __PYX_ERR(0, 749, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case 12:
         if (likely((values[12] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_num_freqs)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 12); __PYX_ERR(0, 718, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 12); __PYX_ERR(0, 749, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case 13:
         if (likely((values[13] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_num_y)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 13); __PYX_ERR(0, 718, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 13); __PYX_ERR(0, 749, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case 14:
         if (likely((values[14] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_num_x)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 14); __PYX_ERR(0, 718, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 14); __PYX_ERR(0, 749, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case 15:
         if (likely((values[15] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_param_vals)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 15); __PYX_ERR(0, 718, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 15); __PYX_ERR(0, 749, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case 16:
         if (likely((values[16] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_high_snr_freq_loc)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 16); __PYX_ERR(0, 718, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 16); __PYX_ERR(0, 749, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case 17:
         if (likely((values[17] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_fitted)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 17); __PYX_ERR(0, 718, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 17); __PYX_ERR(0, 749, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case 18:
         if (likely((values[18] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_low_freq_ind)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 18); __PYX_ERR(0, 718, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 18); __PYX_ERR(0, 749, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case 19:
         if (likely((values[19] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_upper_freq_ind)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 19); __PYX_ERR(0, 718, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, 19); __PYX_ERR(0, 749, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "compute_min_chi_square") < 0)) __PYX_ERR(0, 718, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "compute_min_chi_square") < 0)) __PYX_ERR(0, 749, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 20) {
       goto __pyx_L5_argtuple_error;
@@ -10616,30 +10885,30 @@ static PyObject *__pyx_pw_37cython_functions_for_fast_computation_15compute_min_
       values[18] = PyTuple_GET_ITEM(__pyx_args, 18);
       values[19] = PyTuple_GET_ITEM(__pyx_args, 19);
     }
-    __pyx_v_model = __Pyx_PyObject_to_MemoryviewSlice_dc_double(values[0], PyBUF_WRITABLE); if (unlikely(!__pyx_v_model.memview)) __PYX_ERR(0, 718, __pyx_L3_error)
-    __pyx_v_cube = __Pyx_PyObject_to_MemoryviewSlice_dc_double(values[1], PyBUF_WRITABLE); if (unlikely(!__pyx_v_cube.memview)) __PYX_ERR(0, 719, __pyx_L3_error)
-    __pyx_v_err_cube = __Pyx_PyObject_to_MemoryviewSlice_dc_double(values[2], PyBUF_WRITABLE); if (unlikely(!__pyx_v_err_cube.memview)) __PYX_ERR(0, 720, __pyx_L3_error)
-    __pyx_v_lower_freq = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_lower_freq == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 721, __pyx_L3_error)
-    __pyx_v_upper_freq = __pyx_PyFloat_AsDouble(values[4]); if (unlikely((__pyx_v_upper_freq == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 722, __pyx_L3_error)
-    __pyx_v_param_lengths = __Pyx_PyObject_to_MemoryviewSlice_dc_int(values[5], PyBUF_WRITABLE); if (unlikely(!__pyx_v_param_lengths.memview)) __PYX_ERR(0, 723, __pyx_L3_error)
-    __pyx_v_freqs = __Pyx_PyObject_to_MemoryviewSlice_dc_double(values[6], PyBUF_WRITABLE); if (unlikely(!__pyx_v_freqs.memview)) __PYX_ERR(0, 724, __pyx_L3_error)
-    __pyx_v_sys_error = __pyx_PyFloat_AsDouble(values[7]); if (unlikely((__pyx_v_sys_error == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 725, __pyx_L3_error)
-    __pyx_v_rms_thresh = __pyx_PyFloat_AsDouble(values[8]); if (unlikely((__pyx_v_rms_thresh == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 726, __pyx_L3_error)
-    __pyx_v_min_freq_num = __Pyx_PyInt_As_int(values[9]); if (unlikely((__pyx_v_min_freq_num == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 727, __pyx_L3_error)
-    __pyx_v_num_params = __Pyx_PyInt_As_int(values[10]); if (unlikely((__pyx_v_num_params == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 728, __pyx_L3_error)
-    __pyx_v_num_times = __Pyx_PyInt_As_int(values[11]); if (unlikely((__pyx_v_num_times == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 729, __pyx_L3_error)
-    __pyx_v_num_freqs = __Pyx_PyInt_As_int(values[12]); if (unlikely((__pyx_v_num_freqs == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 730, __pyx_L3_error)
-    __pyx_v_num_y = __Pyx_PyInt_As_int(values[13]); if (unlikely((__pyx_v_num_y == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 731, __pyx_L3_error)
-    __pyx_v_num_x = __Pyx_PyInt_As_int(values[14]); if (unlikely((__pyx_v_num_x == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 732, __pyx_L3_error)
-    __pyx_v_param_vals = __Pyx_PyObject_to_MemoryviewSlice_dc_double(values[15], PyBUF_WRITABLE); if (unlikely(!__pyx_v_param_vals.memview)) __PYX_ERR(0, 733, __pyx_L3_error)
-    __pyx_v_high_snr_freq_loc = __Pyx_PyObject_to_MemoryviewSlice_ds_int(values[16], PyBUF_WRITABLE); if (unlikely(!__pyx_v_high_snr_freq_loc.memview)) __PYX_ERR(0, 734, __pyx_L3_error)
-    __pyx_v_fitted = __Pyx_PyObject_to_MemoryviewSlice_ds_double(values[17], PyBUF_WRITABLE); if (unlikely(!__pyx_v_fitted.memview)) __PYX_ERR(0, 735, __pyx_L3_error)
-    __pyx_v_low_freq_ind = __Pyx_PyObject_to_MemoryviewSlice_ds_int(values[18], PyBUF_WRITABLE); if (unlikely(!__pyx_v_low_freq_ind.memview)) __PYX_ERR(0, 736, __pyx_L3_error)
-    __pyx_v_upper_freq_ind = __Pyx_PyObject_to_MemoryviewSlice_ds_int(values[19], PyBUF_WRITABLE); if (unlikely(!__pyx_v_upper_freq_ind.memview)) __PYX_ERR(0, 737, __pyx_L3_error)
+    __pyx_v_model = __Pyx_PyObject_to_MemoryviewSlice_dc_double(values[0], PyBUF_WRITABLE); if (unlikely(!__pyx_v_model.memview)) __PYX_ERR(0, 749, __pyx_L3_error)
+    __pyx_v_cube = __Pyx_PyObject_to_MemoryviewSlice_dc_double(values[1], PyBUF_WRITABLE); if (unlikely(!__pyx_v_cube.memview)) __PYX_ERR(0, 750, __pyx_L3_error)
+    __pyx_v_err_cube = __Pyx_PyObject_to_MemoryviewSlice_dc_double(values[2], PyBUF_WRITABLE); if (unlikely(!__pyx_v_err_cube.memview)) __PYX_ERR(0, 751, __pyx_L3_error)
+    __pyx_v_lower_freq = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_lower_freq == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 752, __pyx_L3_error)
+    __pyx_v_upper_freq = __pyx_PyFloat_AsDouble(values[4]); if (unlikely((__pyx_v_upper_freq == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 753, __pyx_L3_error)
+    __pyx_v_param_lengths = __Pyx_PyObject_to_MemoryviewSlice_dc_int(values[5], PyBUF_WRITABLE); if (unlikely(!__pyx_v_param_lengths.memview)) __PYX_ERR(0, 754, __pyx_L3_error)
+    __pyx_v_freqs = __Pyx_PyObject_to_MemoryviewSlice_dc_double(values[6], PyBUF_WRITABLE); if (unlikely(!__pyx_v_freqs.memview)) __PYX_ERR(0, 755, __pyx_L3_error)
+    __pyx_v_sys_error = __pyx_PyFloat_AsDouble(values[7]); if (unlikely((__pyx_v_sys_error == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 756, __pyx_L3_error)
+    __pyx_v_rms_thresh = __pyx_PyFloat_AsDouble(values[8]); if (unlikely((__pyx_v_rms_thresh == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 757, __pyx_L3_error)
+    __pyx_v_min_freq_num = __Pyx_PyInt_As_int(values[9]); if (unlikely((__pyx_v_min_freq_num == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 758, __pyx_L3_error)
+    __pyx_v_num_params = __Pyx_PyInt_As_int(values[10]); if (unlikely((__pyx_v_num_params == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 759, __pyx_L3_error)
+    __pyx_v_num_times = __Pyx_PyInt_As_int(values[11]); if (unlikely((__pyx_v_num_times == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 760, __pyx_L3_error)
+    __pyx_v_num_freqs = __Pyx_PyInt_As_int(values[12]); if (unlikely((__pyx_v_num_freqs == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 761, __pyx_L3_error)
+    __pyx_v_num_y = __Pyx_PyInt_As_int(values[13]); if (unlikely((__pyx_v_num_y == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 762, __pyx_L3_error)
+    __pyx_v_num_x = __Pyx_PyInt_As_int(values[14]); if (unlikely((__pyx_v_num_x == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 763, __pyx_L3_error)
+    __pyx_v_param_vals = __Pyx_PyObject_to_MemoryviewSlice_dc_double(values[15], PyBUF_WRITABLE); if (unlikely(!__pyx_v_param_vals.memview)) __PYX_ERR(0, 764, __pyx_L3_error)
+    __pyx_v_high_snr_freq_loc = __Pyx_PyObject_to_MemoryviewSlice_ds_int(values[16], PyBUF_WRITABLE); if (unlikely(!__pyx_v_high_snr_freq_loc.memview)) __PYX_ERR(0, 765, __pyx_L3_error)
+    __pyx_v_fitted = __Pyx_PyObject_to_MemoryviewSlice_ds_double(values[17], PyBUF_WRITABLE); if (unlikely(!__pyx_v_fitted.memview)) __PYX_ERR(0, 766, __pyx_L3_error)
+    __pyx_v_low_freq_ind = __Pyx_PyObject_to_MemoryviewSlice_ds_int(values[18], PyBUF_WRITABLE); if (unlikely(!__pyx_v_low_freq_ind.memview)) __PYX_ERR(0, 767, __pyx_L3_error)
+    __pyx_v_upper_freq_ind = __Pyx_PyObject_to_MemoryviewSlice_ds_int(values[19], PyBUF_WRITABLE); if (unlikely(!__pyx_v_upper_freq_ind.memview)) __PYX_ERR(0, 768, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 718, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("compute_min_chi_square", 1, 20, 20, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 749, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("cython_functions_for_fast_computation.compute_min_chi_square", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -10661,17 +10930,17 @@ static PyObject *__pyx_pf_37cython_functions_for_fast_computation_14compute_min_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("compute_min_chi_square", 0);
   __Pyx_XDECREF(__pyx_r);
-  if (unlikely(!__pyx_v_model.memview)) { __Pyx_RaiseUnboundLocalError("model"); __PYX_ERR(0, 718, __pyx_L1_error) }
-  if (unlikely(!__pyx_v_cube.memview)) { __Pyx_RaiseUnboundLocalError("cube"); __PYX_ERR(0, 718, __pyx_L1_error) }
-  if (unlikely(!__pyx_v_err_cube.memview)) { __Pyx_RaiseUnboundLocalError("err_cube"); __PYX_ERR(0, 718, __pyx_L1_error) }
-  if (unlikely(!__pyx_v_param_lengths.memview)) { __Pyx_RaiseUnboundLocalError("param_lengths"); __PYX_ERR(0, 718, __pyx_L1_error) }
-  if (unlikely(!__pyx_v_freqs.memview)) { __Pyx_RaiseUnboundLocalError("freqs"); __PYX_ERR(0, 718, __pyx_L1_error) }
-  if (unlikely(!__pyx_v_param_vals.memview)) { __Pyx_RaiseUnboundLocalError("param_vals"); __PYX_ERR(0, 718, __pyx_L1_error) }
-  if (unlikely(!__pyx_v_high_snr_freq_loc.memview)) { __Pyx_RaiseUnboundLocalError("high_snr_freq_loc"); __PYX_ERR(0, 718, __pyx_L1_error) }
-  if (unlikely(!__pyx_v_fitted.memview)) { __Pyx_RaiseUnboundLocalError("fitted"); __PYX_ERR(0, 718, __pyx_L1_error) }
-  if (unlikely(!__pyx_v_low_freq_ind.memview)) { __Pyx_RaiseUnboundLocalError("low_freq_ind"); __PYX_ERR(0, 718, __pyx_L1_error) }
-  if (unlikely(!__pyx_v_upper_freq_ind.memview)) { __Pyx_RaiseUnboundLocalError("upper_freq_ind"); __PYX_ERR(0, 718, __pyx_L1_error) }
-  __pyx_t_1 = __Pyx_void_to_None(__pyx_f_37cython_functions_for_fast_computation_compute_min_chi_square(__pyx_v_model, __pyx_v_cube, __pyx_v_err_cube, __pyx_v_lower_freq, __pyx_v_upper_freq, __pyx_v_param_lengths, __pyx_v_freqs, __pyx_v_sys_error, __pyx_v_rms_thresh, __pyx_v_min_freq_num, __pyx_v_num_params, __pyx_v_num_times, __pyx_v_num_freqs, __pyx_v_num_y, __pyx_v_num_x, __pyx_v_param_vals, __pyx_v_high_snr_freq_loc, __pyx_v_fitted, __pyx_v_low_freq_ind, __pyx_v_upper_freq_ind, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 718, __pyx_L1_error)
+  if (unlikely(!__pyx_v_model.memview)) { __Pyx_RaiseUnboundLocalError("model"); __PYX_ERR(0, 749, __pyx_L1_error) }
+  if (unlikely(!__pyx_v_cube.memview)) { __Pyx_RaiseUnboundLocalError("cube"); __PYX_ERR(0, 749, __pyx_L1_error) }
+  if (unlikely(!__pyx_v_err_cube.memview)) { __Pyx_RaiseUnboundLocalError("err_cube"); __PYX_ERR(0, 749, __pyx_L1_error) }
+  if (unlikely(!__pyx_v_param_lengths.memview)) { __Pyx_RaiseUnboundLocalError("param_lengths"); __PYX_ERR(0, 749, __pyx_L1_error) }
+  if (unlikely(!__pyx_v_freqs.memview)) { __Pyx_RaiseUnboundLocalError("freqs"); __PYX_ERR(0, 749, __pyx_L1_error) }
+  if (unlikely(!__pyx_v_param_vals.memview)) { __Pyx_RaiseUnboundLocalError("param_vals"); __PYX_ERR(0, 749, __pyx_L1_error) }
+  if (unlikely(!__pyx_v_high_snr_freq_loc.memview)) { __Pyx_RaiseUnboundLocalError("high_snr_freq_loc"); __PYX_ERR(0, 749, __pyx_L1_error) }
+  if (unlikely(!__pyx_v_fitted.memview)) { __Pyx_RaiseUnboundLocalError("fitted"); __PYX_ERR(0, 749, __pyx_L1_error) }
+  if (unlikely(!__pyx_v_low_freq_ind.memview)) { __Pyx_RaiseUnboundLocalError("low_freq_ind"); __PYX_ERR(0, 749, __pyx_L1_error) }
+  if (unlikely(!__pyx_v_upper_freq_ind.memview)) { __Pyx_RaiseUnboundLocalError("upper_freq_ind"); __PYX_ERR(0, 749, __pyx_L1_error) }
+  __pyx_t_1 = __Pyx_void_to_None(__pyx_f_37cython_functions_for_fast_computation_compute_min_chi_square(__pyx_v_model, __pyx_v_cube, __pyx_v_err_cube, __pyx_v_lower_freq, __pyx_v_upper_freq, __pyx_v_param_lengths, __pyx_v_freqs, __pyx_v_sys_error, __pyx_v_rms_thresh, __pyx_v_min_freq_num, __pyx_v_num_params, __pyx_v_num_times, __pyx_v_num_freqs, __pyx_v_num_y, __pyx_v_num_x, __pyx_v_param_vals, __pyx_v_high_snr_freq_loc, __pyx_v_fitted, __pyx_v_low_freq_ind, __pyx_v_upper_freq_ind, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 749, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
