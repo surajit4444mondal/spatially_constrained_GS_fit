@@ -30,19 +30,19 @@ class Model:
 time_slice='190200_190210'
 model_file='/home/surajit/Downloads/20210507/eovsa_data/model_gs_spectra.hdf5'
 
-xmin=492
-ymin=464
-xmax=597
-ymax=583
+xmin=519
+ymin=482
+xmax=576
+ymax=558
 lowest_freq=2
 highest_freq=15
 sys_error=0.2
 rms_thresh=3.0
-min_freq_num=10
-smooth_lengths=[0.5,1]
+min_freq_num=35
+smooth_lengths=[0.5,1.0]
 discontinuity_thresh=5.0
 max_dist_parameter_space=4
-outfile="big_param_map_190200_190210_3.hdf5"
+outfile="param_map_190200_190210_new2.hdf5"
 
 
 cell=0.5  ###arcsec

@@ -592,8 +592,8 @@ cpdef double calc_grad_chisquare(int low_indx,\
 	cdef int *param_lengths1
 	param_lengths1=&param_lengths[0]
 	
-	for y1 in range(low_indy, high_indy):#stride):
-		for x1 in range(low_indx,high_indx):#,stride):
+	for y1 in range(low_indy, high_indy+1):#stride):
+		for x1 in range(low_indx,high_indx+1):#,stride):
 			ind=y1*numx*(num_params+1)+x1*(num_params+1)+num_params
 			if fitted[ind]>0:
 				chi_square=chi_square+fitted[ind]+\
@@ -739,6 +739,25 @@ cdef void calc_red_chi_all_pix(int num_times,\
 	PyMem_Free(error)
 	
 		
+	return
+	
+cpdef void mask_bad_fits(double[:] fitted,\
+			 int numx,\
+			 int numy,\
+			 int num_params,\
+			 int [:]low_freq_ind,\
+			 int [:]upper_freq_ind,\
+			 double max_chi):
+
+	cdef int y1,x1
+	cdef unsigned int ind,freq_ind
+	
+	for y1 in range(numy):
+		for x1 in range(numx):
+			ind=y1*numx*(num_params+1)+x1*(num_params+1)+num_params
+			freq_ind=y1*numx+x1
+			if fitted[ind]>0 and fitted[ind]>max_chi*(upper_freq_ind[freq_ind]-low_freq_ind[freq_ind]-num_params):
+				fitted[ind]=-1.0
 	return
 	
 
