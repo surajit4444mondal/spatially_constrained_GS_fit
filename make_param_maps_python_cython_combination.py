@@ -42,7 +42,7 @@ min_freq_num=35
 smooth_lengths=[0.5,1.0]
 discontinuity_thresh=5.0
 max_dist_parameter_space=4
-outfile="param_map_190200_190210_new2.hdf5"
+outfile="final_param_map_boundary.hdf5"
 
 
 cell=0.5  ###arcsec

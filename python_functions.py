@@ -2496,7 +2496,6 @@ def main_func(xmin,\
 		model.num_params, num_times,num_freqs,numy,numx,param_vals,high_snr_freq_loc,\
 		fitted, low_freq_ind, upper_freq_ind)
 	
-	np.save("python_cython_comb_test.npy",fitted)
 	
 	#cfunc.mask_bad_fits(fitted,numx,numy,model.num_params,low_freq_ind,upper_freq_ind,2.5)
 	
@@ -2523,14 +2522,14 @@ def main_func(xmin,\
 	
 	#cfunc.mask_bad_fits(fitted,numx,numy,model.num_params,low_freq_ind,upper_freq_ind,8.0)		
 	
-	
+	'''
 	#print ("Doing image plane smoothing")	
 	#smooth_param_maps_image_comparison(spectrum.spectrum, spectrum.error, fitted, model.param_vals,numx,numy,\
 	#				num_params,smooth_lengths,discontinuity_thresh,max_dist_parameter_space,\
 	#				model.model,resolution,param_lengths,sys_error,num_freqs,low_freq_ind,\
 	#				upper_freq_ind,rms_thresh,smoothness_enforcer,max_iter=1)
 	
-			
+	'''		
 	param_maps=np.zeros((num_times,numy,numx,num_params))
 	chi_map=np.zeros((num_times,numy,numx))
 	low_freq_ind_map=np.zeros((num_times,numy,numx))
