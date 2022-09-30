@@ -124,6 +124,35 @@ cpdef void get_image_chisquare(double [:,:,:] observed_image_cube,\
 		i+=1	
 		
 	return
+	
+cpdef double modified_image_chisquare(double [:,:] observed_image_cube,\
+					  double [:,:] model_image_cube,\
+					  double rms,\
+					  int low_indx,\
+					  int low_indy,\
+					  int high_indx,\
+					  int high_indy,\
+					  double rms_thresh,\
+					  double sys_err):
+	
+	cdef int i=0
+	cdef double chi_sq=0.0
+	cdef int y1,x1
+	cdef int j
+	cdef unsigned int ind,freq_ind
+	cdef double error_square
+
+	
+	for y1 in range(low_indy,high_indy+1):
+		for x1 in range(low_indx,high_indx+1):
+			if observed_image_cube[y1,x1]>=rms_thresh*rms:
+				error_square=(square(rms)+(sys_err*observed_image_cube[y1,x1])**2)
+				chi_sq+=square(observed_image_cube[y1,x1]-model_image_cube[y1,x1])/error_square
+			else:
+				if model_image_cube[y1,x1]>(sys_err+1)*rms:
+					chi_sq+=1000
+				
+	return chi_sq
 
 cpdef void get_new_param_inds(double [:]spectrum,\
 			  double [:]rms,
@@ -602,6 +631,38 @@ cpdef double calc_grad_chisquare(int low_indx,\
 						smoothness_enforcer,stride)
 						
 	return chi_square
+	
+cpdef get_image_grad_chisquare(int low_indx,\
+				int low_indy,\
+				int high_indx,
+				int high_indy,\
+				int numx,\
+				int numy, \
+				int num_params, \
+				double [:]fitted,\
+				int [:] param_lengths,\
+				double smoothness_enforcer,\
+				int stride):
+	
+	cdef double chi_square=0.0
+	cdef int y1,x1,ind
+	
+	cdef double *fitted1
+	fitted1=&fitted[0] 
+	
+	cdef int *param_lengths1
+	param_lengths1=&param_lengths[0]
+	
+	for y1 in range(low_indy, high_indy+1):#stride):
+		for x1 in range(low_indx,high_indx+1):#,stride):
+			ind=y1*numx*(num_params+1)+x1*(num_params+1)+num_params
+			if fitted[ind]>0:
+				chi_square=chi_square+\
+						calc_gradient(x1,y1,fitted1,\
+						numx,numy,num_params,param_lengths1,\
+						smoothness_enforcer,stride)
+						
+	return chi_square				
 	
 cdef void make_cube_fit_ready(int num_times,\
 				int num_y,\

@@ -42,7 +42,7 @@ min_freq_num=35
 smooth_lengths=[0.5,1.0]
 discontinuity_thresh=5.0
 max_dist_parameter_space=4
-outfile="final_param_map_image_new.hdf5"
+outfile="final_param_map_image_new_image_smoothing.hdf5"
 
 
 cell=0.5  ###arcsec
