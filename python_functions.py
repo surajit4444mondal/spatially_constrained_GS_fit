@@ -1524,7 +1524,7 @@ def get_image_grad_chisquare(observed_image_cube,\
 	
 	chisquare=0
 	for i in range(low_freq_ind_conv,high_freq_ind_conv+1):
-		sep=resolution[i]/max(3,resolution[high_freq_ind_conv+1]/stride)
+		sep=int(resolution[i]/max(6,resolution[high_freq_ind_conv+1]/stride))
 		res=resolution[i]
 		sigma=res/(2*np.sqrt(2*np.log(2)))
 		sigma_pix=int(sigma)+1
@@ -1535,11 +1535,11 @@ def get_image_grad_chisquare(observed_image_cube,\
 		high_indx_conv=int(min(high_indx+truncate_sigma*sigma_pix,numx-1))
 		high_indy_conv=int(min(high_indy+truncate_sigma*sigma_pix,numy-1))
 		
-		smooth_model=model_image_cube[low_indy_conv:high_indy_conv+1:stride,\
-						 low_indx_conv:high_indx_conv+1:stride,i]
+		smooth_model=model_image_cube[low_indy_conv:high_indy_conv+1:sep,\
+						 low_indx_conv:high_indx_conv+1:sep,i]
 		
-		shapey=(high_indy_conv-low_indy_conv+1)//stride
-		shapex=(high_indx_conv-low_indx_conv+1)//stride
+		shapey=(high_indy_conv-low_indy_conv+1)//sep
+		shapex=(high_indx_conv-low_indx_conv+1)//sep
 		
 		
 		sigma_pix/=sep
@@ -1558,8 +1558,8 @@ def get_image_grad_chisquare(observed_image_cube,\
 			smooth_model=convolve_fft(smooth_model,kernel)
 		else:
 			smooth_model=convolve(smooth_model,kernel)
-		observed_data=observed_image_cube[low_indy_conv:high_indy_conv+1:stride,\
-						 low_indx_conv:high_indx_conv+1:stride,i]
+		observed_data=observed_image_cube[low_indy_conv:high_indy_conv+1:sep,\
+						 low_indx_conv:high_indx_conv+1:sep,i]
 		
 		low_indx_sampled=int((low_indx-low_indx_conv)/sep)
 		low_indy_sampled=int((low_indy-low_indy_conv)/sep)
