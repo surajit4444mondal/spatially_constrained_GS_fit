@@ -1332,7 +1332,7 @@ def create_smoothed_model_image(low_freq_ind,\
 	for y1 in range(num_y):
 		for x1 in range(num_x):
 			ind=y1*num_x*(num_params+1)+x1*(num_params+1)
-			if fitted[ind]>0:
+			if fitted[ind+num_params]>0:
 				model_ind=0
 				for n in range(num_params):
 					product1=1
@@ -1512,7 +1512,7 @@ def get_image_grad_chisquare(observed_image_cube,\
 	for y1 in range(numy):
 		for x1 in range(numx):
 			ind=y1*numx*(num_params+1)+x1*(num_params+1)
-			if fitted[ind]>0:
+			if fitted[ind+num_params]>0:
 				model_ind=0
 				for n in range(num_params):
 					product1=1
@@ -1524,7 +1524,7 @@ def get_image_grad_chisquare(observed_image_cube,\
 	
 	chisquare=0
 	for i in range(low_freq_ind_conv,high_freq_ind_conv+1):
-		sep=int(resolution[i]/max(6,resolution[high_freq_ind_conv+1]/stride))
+		sep=max(1,int(resolution[i]/max(3,resolution[high_freq_ind_conv+1]/stride)))
 		res=resolution[i]
 		sigma=res/(2*np.sqrt(2*np.log(2)))
 		sigma_pix=int(sigma)+1
@@ -1828,14 +1828,14 @@ def smooth_param_maps_image_comparison(spectral_cube, \
 	j=0
 	
 	iter1=0
-	max_iter=3
+	
 	
 	err=np.ravel(err_cube[0,:])
 	
 	
 	for smooth_length_frac in smooth_length_fracs:
 		print (smooth_length_frac)
-		iter1=0
+	#	iter1=0
 		while iter1<max_iter:
 			print (iter1)
 			subcubes=form_subcubes_with_gradients(numx,numy,num_params,fitted,smooth_length_frac,\
