@@ -4,3 +4,5 @@ __pycache__/*
 *.so
 *.html
 *.hdf5
+*.npy
+tests/*
