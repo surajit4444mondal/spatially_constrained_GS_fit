@@ -42,7 +42,7 @@ min_freq_num=35
 smooth_lengths=[0.5,1.0]
 discontinuity_thresh=5.0
 max_dist_parameter_space=4
-outfile="final_param_map_image_smoothing_0.5_scale.hdf5"
+outfile="test_parallel.hdf5"
 
 
 cell=0.5  ###arcsec
@@ -64,7 +64,7 @@ upper_freq_ind=np.load("test_upper_freq_ind.npy")
 pf.main_func(xmin,ymin,xmax,ymax,lowest_freq,highest_freq,min_freq_num,spectrum_files,model,resolution, smooth_lengths,\
 		sys_error=sys_error,rms_thresh=rms_thresh,discontinuity_thresh=discontinuity_thresh,\
 		max_dist_parameter_space=max_dist_parameter_space, outfile=outfile,image_smoothing=True,\
-		discont_removal=False,cluster_removal=False,pixel_fit=False,fitted=fitted, low_freq_ind=low_freq_ind,\
+		discont_removal=True,cluster_removal=True,pixel_fit=False,fitted=fitted, low_freq_ind=low_freq_ind,\
 		upper_freq_ind=upper_freq_ind)
 
 

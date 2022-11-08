@@ -11,6 +11,7 @@ from functools import partial
 import timeit
 from multiprocessing import Pool,shared_memory
 from concurrent import futures
+from multiprocessing.managers import SharedMemoryManager
 
 
 def check_at_boundary(x0,\
@@ -1750,12 +1751,155 @@ def remove_big_clusters_image_comparison(clusters,\
 						  sys_err,smoothness_enforcer,model,stride,verify=True)
 	return	
 								
-def create_shared_memory(a):
-	shm = shared_memory.SharedMemory(create=True, size=a.nbytes)
+def create_shared_memory(shared_memory_manager,a):
+	shm = shared_memory_manager.SharedMemory(size=a.nbytes)
 	a_shared = np.ndarray(a.shape, dtype=a.dtype, buffer=shm.buf)
 	a_shared[...] = a[...]
 	name_a=shm.name
 	return name_a
+	
+def create_array_from_shared_memory(memory_name,shape):
+	existing_shm = shared_memory.SharedMemory(name=memory_name)
+	c=np.ndarray(shape,dtype=np.float64,buffer=existing_shm.buf)
+	return c
+	
+def smooth_image_parallel(cubes,\
+			    spectral_cube_name,\
+			    err_name,\
+			    fitted_name,\
+			    numx,\
+			    numy,\
+			    num_params,\
+			    smooth_length_frac,\
+			    thresh,\
+			    max_dist_parameter_space,\
+			    model_name,\
+			    resolution_name,\
+			    param_lengths_name,\
+			    sys_err,\
+			    num_freqs,\
+			    low_freq_ind_name,\
+			    upper_freq_ind_name,\
+			    rms_thresh,\
+			    smoothness_enforcer):
+			    
+	spectral_cube=create_array_from_shared_memory(spectral_cube_name,shape=(1,numy,numx,num_freqs))
+	err=create_array_from_shared_memory(err_name,shape=(num_freqs))
+	fitted=create_array_from_shared_memory(fitted_name,shape=(numy*numx*(num_params+1)))
+	resolution=create_array_from_shared_memory(resolution_name,shape=(num_freqs))
+	param_lengths=create_array_from_shared_memory(param_lengths_name,shape=(num_params))
+	low_freq_ind=create_array_from_shared_memory(low_freq_ind_name,shape=(numy*numx))
+	upper_freq_ind=create_array_from_shared_memory(upper_freq_ind_name,shape=(numy*numx))
+	model=create_array_from_shared_memory(model_name,shape=(np.prod(param_lengths)*num_freqs))
+	
+			    
+	for subcubes in cubes:
+		x=int(subcubes[0])
+		y=int(subcubes[1])
+		freq_ind=y*numx+x
+		smooth_length=int(smooth_length_frac*\
+			resolution[upper_freq_ind[freq_ind]])
+		
+		low_indx=max(0,x-smooth_length//2)
+		low_indy=max(0,y-smooth_length//2)
+
+		high_indx=min(numx-1,x+smooth_length//2)
+		high_indy=min(numy-1,y+smooth_length//2)
+		
+		sep=max(1,int(resolution[upper_freq_ind[freq_ind]])//3)
+				
+				
+		clusters=get_clusters(fitted,low_indx,low_indy, high_indx,high_indy,\
+					numx,numy,num_params,max_dist_parameter_space,\
+					param_lengths,stride=sep)
+					
+		
+		if len(clusters)<=1:
+			continue	
+		tot_member=get_total_members(clusters)
+		if tot_member<(smooth_length/sep)**2:
+			continue
+		
+		cluster_len=len(clusters)
+		if cluster_len<=1:
+			continue
+		
+		
+		if sep!=1:
+			cluster1Dx=np.zeros(tot_member)
+			cluster1Dy=np.zeros(tot_member)
+			
+			m=0
+			for cluster in clusters:
+				for point in cluster:
+					cluster1Dx[m]=point[0]
+					cluster1Dy[m]=point[1]
+					m+=1
+
+			uniquex=np.unique(cluster1Dx)
+			uniquey=np.unique(cluster1Dy)
+			
+			
+			if len(uniquex)==1 or len(uniquey)==1:  ### this happends when at boundary.
+				
+				sep=1
+				clusters=get_clusters(fitted,low_indx,low_indy, high_indx,high_indy,\
+					numx,numy,num_params,max_dist_parameter_space,\
+					param_lengths,stride=sep)
+				tot_member=get_total_members(clusters)
+				cluster_len=len(clusters)
+				if cluster_len<=1:
+					continue
+				
+			
+		
+		member_num=[]
+		for cluster in clusters:
+			member_num.append(len(cluster))	
+		
+		member_num=np.array(member_num)
+		sorted_pos=np.argsort(member_num)[::-1]
+		
+		cluster1=clusters[sorted_pos[0]]
+		
+		
+		len_cluster1=len(cluster1)
+		
+		min_params1=np.zeros(num_params,dtype=int)
+		max_params1=np.zeros(num_params,dtype=int)
+		for param in range(num_params):
+			ind=[]
+			for i in range(len_cluster1):
+				x1=cluster1[i][0]
+				y1=cluster1[i][1]
+				ind1=y1*numx*(num_params+1)+x1*(num_params+1)+param
+				ind.append(fitted[ind1])
+			ind=np.array(ind)
+			min_params1[param]=max(0,int(np.min(ind))-2)
+			max_params1[param]=min(int(np.max(ind))+2,param_lengths[param]-1)
+			del ind	
+		
+		
+		for cluster_num in sorted_pos[1:]:
+			if member_num[cluster_num]<0.8*member_num[sorted_pos[0]] and member_num[cluster_num]<8:
+				remove_big_clusters_image_comparison(clusters,cluster1,clusters[cluster_num],\
+								spectral_cube,err,sys_err,fitted, numx,numy,num_params,\
+								smooth_length,thresh,max_dist_parameter_space, model, low_indx,low_indy,\
+								high_indx,high_indy,min_params1,max_params1, resolution, low_freq_ind,\
+								upper_freq_ind, num_freqs,rms_thresh,param_lengths,smoothness_enforcer,sep)
+		
+	
+	spectral_cube_name.close()
+	err_name.close()
+	fitted_name.close()
+	model_name.close()
+	resolution_name.close()
+	param_lengths_name.close()
+	low_freq_ind_name.close()
+	upper_freq_ind_name.close()
+	
+	
+	return
 												
 def smooth_param_maps_image_comparison(spectral_cube, \
 					err_cube, \
@@ -1825,153 +1969,93 @@ def smooth_param_maps_image_comparison(spectral_cube, \
 	j=0
 	
 	iter1=0
-	max_workers=4
+	max_workers=3
 	
 	err=np.ravel(err_cube[0,:])
 	
-	fitted_shared_name=create_shared_memory(fitted)
-	err_shared_name=create_shared_memory(err)
-	spectral_cube_shared_name=create_shared_memory(spectral_cube)
-	resolution_shared_name=create_shared_memory(resolution)
-	param_lengths_shared_name=create_shared_memory(param_lengths)
-	low_freq_ind_shared_name=create_shared_memory(low_freq_ind)
-	upper_freq_ind_shared_name=create_shared_memory(upper_freq_ind)
-	smooth_length_fracs_shared_name=create_shared_memory(np.array(smooth_length_fracs))
-	model_shared_name=create_shared_memory(model)
+	smm = SharedMemoryManager()
+	smm.start()
 	
-	for smooth_length_frac in smooth_length_fracs:
-		print (smooth_length_frac)
-	#	iter1=0
-		while iter1<max_iter:
-			print (iter1)
-			subcubes=form_subcubes_with_gradients(numx,numy,num_params,fitted,smooth_length_frac,\
-								param_lengths,smoothness_enforcer, low_freq_ind,\
-								upper_freq_ind,resolution)
-			grads=subcubes[:,2]
-			sorted_indices=np.argsort(grads)[::-1]
-			
-			num_cubes=0
-			cubes_for_calculation=[]
-			parallel_cubes_for_computation=[[]]*max_workers
-			for num_ind,sort_ind in enumerate(sorted_indices):
-				if subcubes[sort_ind,2]<0:
-					continue
-				x=int(subcubes[sort_ind,0])
-				y=int(subcubes[sort_ind,1])
-				
-				
-				
-				freq_ind=y*numx+x
-				smooth_length=int(smooth_length_frac*\
-					resolution[upper_freq_ind[freq_ind]])
-				
-				low_indx=max(0,x-smooth_length//2)
-				low_indy=max(0,y-smooth_length//2)
-
-				high_indx=min(numx-1,x+smooth_length//2)
-				high_indy=min(numy-1,y+smooth_length//2)
-				
-				
-				if high_indx-low_indx+1<smooth_length or high_indy-low_indy+1<smooth_length:
-					continue	
-				cubes_for_calculation.append([x,y])	
-				remove_overlapping_subcubes(subcubes,x,y,smooth_length,numy,numx)
-				num_cubes+=1
-			
-			for i1 in range(0,num_cubes,max_workers):
-				for j2 in range(max_workers):
-					parallel_cubes_for_computation[j2].append(cubes_for_calculation[i1+j2])
-			
-			
-				
-			
-				sep=max(1,int(resolution[upper_freq_ind[freq_ind]])//3)
-				
-				
-				clusters=get_clusters(fitted,low_indx,low_indy, high_indx,high_indy,\
-							numx,numy,num_params,max_dist_parameter_space,\
-							param_lengths,stride=sep)
-							
-				
-				if len(clusters)<=1:
-					continue	
-				tot_member=get_total_members(clusters)
-				if tot_member<(smooth_length/sep)**2:
-					continue
-				
-				cluster_len=len(clusters)
-				if cluster_len<=1:
-					continue
-				
-				
-				if sep!=1:
-					cluster1Dx=np.zeros(tot_member)
-					cluster1Dy=np.zeros(tot_member)
-					
-					m=0
-					for cluster in clusters:
-						for point in cluster:
-							cluster1Dx[m]=point[0]
-							cluster1Dy[m]=point[1]
-							m+=1
-
-					uniquex=np.unique(cluster1Dx)
-					uniquey=np.unique(cluster1Dy)
-					
-					
-					if len(uniquex)==1 or len(uniquey)==1:  ### this happends when at boundary.
-						
-						sep=1
-						clusters=get_clusters(fitted,low_indx,low_indy, high_indx,high_indy,\
-							numx,numy,num_params,max_dist_parameter_space,\
-							param_lengths,stride=sep)
-						tot_member=get_total_members(clusters)
-						cluster_len=len(clusters)
-						if cluster_len<=1:
-							continue
-						
-					
-				
-				member_num=[]
-				for cluster in clusters:
-					member_num.append(len(cluster))	
-				
-				member_num=np.array(member_num)
-				sorted_pos=np.argsort(member_num)[::-1]
-				
-				cluster1=clusters[sorted_pos[0]]
-				
-				
-				len_cluster1=len(cluster1)
-				
-				min_params1=np.zeros(num_params,dtype=int)
-				max_params1=np.zeros(num_params,dtype=int)
-				for param in range(num_params):
-					ind=[]
-					for i in range(len_cluster1):
-						x1=cluster1[i][0]
-						y1=cluster1[i][1]
-						ind1=y1*numx*(num_params+1)+x1*(num_params+1)+param
-						ind.append(fitted[ind1])
-					ind=np.array(ind)
-					min_params1[param]=max(0,int(np.min(ind))-2)
-					max_params1[param]=min(int(np.max(ind))+2,param_lengths[param]-1)
-					del ind	
-				
-				
-				for cluster_num in sorted_pos[1:]:
-					if member_num[cluster_num]<0.8*member_num[sorted_pos[0]] and member_num[cluster_num]<8:
-						
-						remove_big_clusters_image_comparison(clusters,cluster1,clusters[cluster_num],\
-										spectral_cube,err,sys_err,fitted, numx,numy,num_params,\
-										smooth_length,thresh,max_dist_parameter_space, model, low_indx,low_indy,\
-										high_indx,high_indy,min_params1,max_params1, resolution, low_freq_ind,\
-										upper_freq_ind, num_freqs,rms_thresh,param_lengths,smoothness_enforcer,sep)
-						
-				#remove_overlapping_subcubes(subcubes,x,y,smooth_length,numy,numx)
-				
-			iter1+=1
+	try:
+		fitted_shared_name=create_shared_memory(smm,fitted)
+		err_shared_name=create_shared_memory(smm,err)
+		spectral_cube_shared_name=create_shared_memory(smm,spectral_cube)
+		resolution_shared_name=create_shared_memory(smm,resolution)
+		param_lengths_shared_name=create_shared_memory(smm,param_lengths)
+		low_freq_ind_shared_name=create_shared_memory(smm,low_freq_ind)
+		upper_freq_ind_shared_name=create_shared_memory(smm,upper_freq_ind)
+		model_shared_name=create_shared_memory(smm,model)
 		
+		for smooth_length_frac in smooth_length_fracs:
+			print (smooth_length_frac)
+			while iter1<max_iter:
+				print (iter1)
+				subcubes=form_subcubes_with_gradients(numx,numy,num_params,fitted,smooth_length_frac,\
+									param_lengths,smoothness_enforcer, low_freq_ind,\
+									upper_freq_ind,resolution)
+				grads=subcubes[:,2]
+				sorted_indices=np.argsort(grads)[::-1]
+				
+				num_cubes=0
+				cubes_for_calculation=[]
+				parallel_cubes_for_computation=[[]]*max_workers
+				for num_ind,sort_ind in enumerate(sorted_indices):
+					if subcubes[sort_ind,2]<0:
+						continue
+					x=int(subcubes[sort_ind,0])
+					y=int(subcubes[sort_ind,1])
+					
+					
+					
+					freq_ind=y*numx+x
+					smooth_length=int(smooth_length_frac*\
+						resolution[upper_freq_ind[freq_ind]])
+					
+					low_indx=max(0,x-smooth_length//2)
+					low_indy=max(0,y-smooth_length//2)
+
+					high_indx=min(numx-1,x+smooth_length//2)
+					high_indy=min(numy-1,y+smooth_length//2)
+					
+					
+					if high_indx-low_indx+1<smooth_length or high_indy-low_indy+1<smooth_length:
+						continue	
+					cubes_for_calculation.append([x,y])	
+					remove_overlapping_subcubes(subcubes,x,y,smooth_length,numy,numx)
+					num_cubes+=1
+				
+				for i1 in range(0,num_cubes,max_workers):
+					for j2 in range(max_workers):
+						parallel_cubes_for_computation[j2].append(cubes_for_calculation[i1+j2])
+				
+				with PoolExecutor(max_workers=max_workers) as executor:
+					executor.map(partial(smooth_image_parallel,\
+							    spectral_cube_name=spectral_cube_shared_name,\
+							    err_name=err_shared_name,\
+							    fitted_name=fitted_shared_name,\
+							    numx=numx,\
+							    numy=numy,\
+							    num_params=num_params,\
+							    smooth_length_frac=smooth_length_frac,\
+							    thresh=thresh,\
+							    max_dist_parameter_space=max_dist_parameter_space,\
+							    model_name=model_shared_name,\
+							    resolution_name=resolution_shared_name,\
+							    param_lengths_name=param_lengths_shared_name,\
+							    sys_err=sys_err,\
+							    num_freqs=num_freqs,\
+							    low_freq_ind_name=low_freq_ind_shared_name,\
+							    upper_freq_ind_name=upper_freq_ind_shared_name,\
+							    rms_thresh=rms_thresh,\
+							    smoothness_enforcer=smoothness_enforcer),\
+							    parallel_cubes_for_computation)
+			
+									    
+		
+				iter1+=1
+	finally:
+		print("cleaning up")
+		smm.shutdown()	
 			
 	return
 
@@ -2706,7 +2790,7 @@ def main_func(xmin,\
 						model1,resolution,param_lengths,sys_error,num_freqs,low_freq_ind,\
 						upper_freq_ind,rms_thresh,smoothness_enforcer)
 	
-	'''		
+		
 	param_maps=np.zeros((num_times,numy,numx,num_params))
 	chi_map=np.zeros((num_times,numy,numx))
 	low_freq_ind_map=np.zeros((num_times,numy,numx))
@@ -2747,5 +2831,5 @@ def main_func(xmin,\
 		hf.create_dataset(key,data=param_maps[:,:,:,n])
 	hf.create_dataset('chi_sq',data=chi_map[:,:,:])
 	hf.close()
-	'''
+	
 	return
