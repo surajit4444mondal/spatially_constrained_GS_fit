@@ -6,6 +6,11 @@ from scipy.ndimage import gaussian_filter
 from itertools import product
 from scipy.interpolate import griddata
 from astropy.convolution import convolve_fft,Gaussian2DKernel,convolve
+from concurrent.futures import ThreadPoolExecutor as PoolExecutor
+from functools import partial
+import timeit
+from multiprocessing import Pool,shared_memory
+from concurrent import futures
 
 
 def check_at_boundary(x0,\
@@ -1474,6 +1479,7 @@ def check_if_smoothness_condition_satisfied(cluster2, fitted,numx,numy,num_param
 					if abs(fitted[ind0+param]-fitted[ind1+param])>2:
 						return False
 	return True
+	
 
 def get_image_grad_chisquare(observed_image_cube,\
 			model_image_cube,\
@@ -1523,6 +1529,8 @@ def get_image_grad_chisquare(observed_image_cube,\
 	
 	
 	chisquare=0
+	
+	
 	for i in range(low_freq_ind_conv,high_freq_ind_conv+1):
 		sep=max(1,int(resolution[i]/max(3,resolution[high_freq_ind_conv+1]/stride)))
 		res=resolution[i]
@@ -1568,8 +1576,9 @@ def get_image_grad_chisquare(observed_image_cube,\
 		chisquare+=cfunc.modified_image_chisquare(observed_data,smooth_model,rms[i],low_indx_sampled,low_indy_sampled,\
 								high_indx_sampled,high_indy_sampled, rms_thresh, sys_err)
 		del smooth_model
+	
 	grad_chisquare=chisquare+cfunc.get_image_grad_chisquare(low_indx,low_indy,high_indx,high_indy,numx,numy, num_params, \
-							fitted,param_lengths,smoothness_enforcer,1)		
+							fitted,param_lengths,smoothness_enforcer,1)	
 	return grad_chisquare
 						
 										
@@ -1649,19 +1658,10 @@ def remove_big_clusters_image_comparison(clusters,\
 	
 	model_image_cube[:,:,:]=observed_image_cube
 	
-	#create_smoothed_model_image(low_freq_ind,upper_freq_ind,numx, numy, num_params, num_freqs, resolution,model,fitted,\
-	#				 model_image_cube, low_indx, low_indy, high_indx,high_indy,param_lengths)
-					 
-	
-	
-	#cfunc.get_image_chisquare(observed_image_cube,model_image_cube,rms,low_indx,low_indy,high_indx,high_indy,numx,numy,\
-	#			num_params,fitted,sys_err, num_freqs,low_freq_ind, upper_freq_ind,rms_thresh)
 	
 	grad_chisquare_old=get_image_grad_chisquare(observed_image_cube,model_image_cube,rms,low_indx,low_indy,high_indx,high_indy,numx,numy,\
 				num_params,fitted,sys_err, num_freqs,low_freq_ind, upper_freq_ind,rms_thresh,resolution, model, param_lengths,\
 				stride)
-	#grad_chisquare_old=cfunc.calc_grad_chisquare(low_indx,low_indy,high_indx,high_indy,numx,numy, num_params, \
-	#						fitted,param_lengths,smoothness_enforcer,1)
 	
 	
 	grad_chisquare_temp=grad_chisquare_old
@@ -1689,7 +1689,6 @@ def remove_big_clusters_image_comparison(clusters,\
 					temp2.append(fitted[ind])
 			temp.append([i for i in temp2])
 			del temp2
-		#param_indices.append(find_ind_combinations(temp))
 		param_indices.append(product(*temp))
 		del temp		
 		
@@ -1702,16 +1701,13 @@ def remove_big_clusters_image_comparison(clusters,\
 		for i in range(num_params+1):
 			old_params[n].append(fitted[ind+i])	
 			
-	#num_trials=len(param_indices[0])
-	
-	#for i in range(num_trials):
 	for param_comb in zip(*param_indices):
 		for n,member in enumerate(cluster2):
 			x0=member[0]
 			y0=member[1]
 			ind=y0*numx*(num_params+1)+x0*(num_params+1)
 			for j in range(num_params):
-				fitted[ind+j]=param_comb[j][n]#param_indices[j][i][n]
+				fitted[ind+j]=param_comb[j][n]
 		satisfies_smoothness_condition=check_if_smoothness_condition_satisfied(cluster2, fitted,numx,numy,num_params,stride)
 		if satisfies_smoothness_condition==False:
 			continue
@@ -1721,18 +1717,12 @@ def remove_big_clusters_image_comparison(clusters,\
 							  rms, low_freq_ind, upper_freq_ind,rms_thresh, param_lengths,\
 							  sys_err,smoothness_enforcer,model,stride,verify=False)
 							  
-		#create_smoothed_model_image(low_freq_ind,upper_freq_ind,numx, numy, num_params, num_freqs, resolution,model,\
-		#				fitted, model_image_cube, low_indx, low_indy, high_indx,high_indy,param_lengths)
-						
-		#cfunc.get_image_chisquare(observed_image_cube,model_image_cube,rms,low_indx,low_indy,high_indx,high_indy,numx,numy,\
-		#		num_params,fitted,sys_err, num_freqs,low_freq_ind, upper_freq_ind,rms_thresh)
-				
-		#grad_chisquare_new=cfunc.calc_grad_chisquare(low_indx,low_indy,high_indx,high_indy,numx,numy, num_params, \
-		#					fitted,param_lengths,smoothness_enforcer,1)
 		grad_chisquare_new=get_image_grad_chisquare(observed_image_cube,model_image_cube,rms,low_indx,low_indy,\
 								high_indx,high_indy,numx,numy,num_params,fitted,sys_err, \
 								num_freqs,low_freq_ind, upper_freq_ind,rms_thresh,resolution,\
 								model, param_lengths,stride)
+		
+		
 		if grad_chisquare_temp>grad_chisquare_new:
 			for m,member in enumerate(cluster2):
 				x0=member[0]
@@ -1760,7 +1750,13 @@ def remove_big_clusters_image_comparison(clusters,\
 						  sys_err,smoothness_enforcer,model,stride,verify=True)
 	return	
 								
-										
+def create_shared_memory(a):
+	shm = shared_memory.SharedMemory(create=True, size=a.nbytes)
+	a_shared = np.ndarray(a.shape, dtype=a.dtype, buffer=shm.buf)
+	a_shared[...] = a[...]
+	name_a=shm.name
+	return name_a
+												
 def smooth_param_maps_image_comparison(spectral_cube, \
 					err_cube, \
 					fitted, \
@@ -1825,13 +1821,23 @@ def smooth_param_maps_image_comparison(spectral_cube, \
 	check that combination. If you have less pixels in your resolution element, consider
 	these checks. or you can decrease the strength of the conditions.
 	'''
+	
 	j=0
 	
 	iter1=0
-	
+	max_workers=4
 	
 	err=np.ravel(err_cube[0,:])
 	
+	fitted_shared_name=create_shared_memory(fitted)
+	err_shared_name=create_shared_memory(err)
+	spectral_cube_shared_name=create_shared_memory(spectral_cube)
+	resolution_shared_name=create_shared_memory(resolution)
+	param_lengths_shared_name=create_shared_memory(param_lengths)
+	low_freq_ind_shared_name=create_shared_memory(low_freq_ind)
+	upper_freq_ind_shared_name=create_shared_memory(upper_freq_ind)
+	smooth_length_fracs_shared_name=create_shared_memory(np.array(smooth_length_fracs))
+	model_shared_name=create_shared_memory(model)
 	
 	for smooth_length_frac in smooth_length_fracs:
 		print (smooth_length_frac)
@@ -1844,10 +1850,12 @@ def smooth_param_maps_image_comparison(spectral_cube, \
 			grads=subcubes[:,2]
 			sorted_indices=np.argsort(grads)[::-1]
 			
+			num_cubes=0
+			cubes_for_calculation=[]
+			parallel_cubes_for_computation=[[]]*max_workers
 			for num_ind,sort_ind in enumerate(sorted_indices):
 				if subcubes[sort_ind,2]<0:
 					continue
-				
 				x=int(subcubes[sort_ind,0])
 				y=int(subcubes[sort_ind,1])
 				
@@ -1866,7 +1874,17 @@ def smooth_param_maps_image_comparison(spectral_cube, \
 				
 				if high_indx-low_indx+1<smooth_length or high_indy-low_indy+1<smooth_length:
 					continue	
-					
+				cubes_for_calculation.append([x,y])	
+				remove_overlapping_subcubes(subcubes,x,y,smooth_length,numy,numx)
+				num_cubes+=1
+			
+			for i1 in range(0,num_cubes,max_workers):
+				for j2 in range(max_workers):
+					parallel_cubes_for_computation[j2].append(cubes_for_calculation[i1+j2])
+			
+			
+				
+			
 				sep=max(1,int(resolution[upper_freq_ind[freq_ind]])//3)
 				
 				
@@ -1950,7 +1968,7 @@ def smooth_param_maps_image_comparison(spectral_cube, \
 										high_indx,high_indy,min_params1,max_params1, resolution, low_freq_ind,\
 										upper_freq_ind, num_freqs,rms_thresh,param_lengths,smoothness_enforcer,sep)
 						
-				remove_overlapping_subcubes(subcubes,x,y,smooth_length,numy,numx)
+				#remove_overlapping_subcubes(subcubes,x,y,smooth_length,numy,numx)
 				
 			iter1+=1
 		
@@ -2688,7 +2706,7 @@ def main_func(xmin,\
 						model1,resolution,param_lengths,sys_error,num_freqs,low_freq_ind,\
 						upper_freq_ind,rms_thresh,smoothness_enforcer)
 	
-			
+	'''		
 	param_maps=np.zeros((num_times,numy,numx,num_params))
 	chi_map=np.zeros((num_times,numy,numx))
 	low_freq_ind_map=np.zeros((num_times,numy,numx))
@@ -2729,5 +2747,5 @@ def main_func(xmin,\
 		hf.create_dataset(key,data=param_maps[:,:,:,n])
 	hf.create_dataset('chi_sq',data=chi_map[:,:,:])
 	hf.close()
-	
+	'''
 	return

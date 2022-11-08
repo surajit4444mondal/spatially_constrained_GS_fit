@@ -56,15 +56,16 @@ for i in range(num_freqs):
 spectrum_files=['/home/surajit/Downloads/20210507/eovsa_data/time_'+time_slice+'_scaled.fits']
 
 model=Model(model_file)
-'''
+
 fitted=np.load("test_fitted.npy")
 low_freq_ind=np.load("test_low_freq_ind.npy")
 upper_freq_ind=np.load("test_upper_freq_ind.npy")
-'''
+
 pf.main_func(xmin,ymin,xmax,ymax,lowest_freq,highest_freq,min_freq_num,spectrum_files,model,resolution, smooth_lengths,\
 		sys_error=sys_error,rms_thresh=rms_thresh,discontinuity_thresh=discontinuity_thresh,\
 		max_dist_parameter_space=max_dist_parameter_space, outfile=outfile,image_smoothing=True,\
-		discont_removal=True,cluster_removal=True)
+		discont_removal=False,cluster_removal=False,pixel_fit=False,fitted=fitted, low_freq_ind=low_freq_ind,\
+		upper_freq_ind=upper_freq_ind)
 
 
 
